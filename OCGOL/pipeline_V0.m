@@ -44,7 +44,8 @@ options.defineDir = 1;
 %setDir ='G:\I53LT_AB_sal_PSEM_113018_120118\4';
 
 %setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1';
+
+setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\3';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\4';
@@ -80,14 +81,14 @@ options.defineDir = 1;
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 0;
+options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 0;
+options.loadImagingData = 1;
 
 %choose the behavior that the animal ran
 % RF, GOL, OCGOL
-options.BehaviorType = 'OCGOL';
+options.BehaviorType = 'GOL';
 
 %type of calcium data
 options.calcium_data_input = 'CNMF';
@@ -166,7 +167,13 @@ options.textures = true;
 if options.textures == true
     %[Behavior] = extractTextures(CSV, Behavior, options);
     %all signals, not just texture related signals
-    [Behavior] = extractTextures_OCGOL(CSV, Behavior, options);
+    switch options.BehaviorType
+        case 'GOL'
+            [Behavior] = extractTextures_GOL(CSV, Behavior, options);
+        case 'OCGOL'
+            [Behavior] = extractTextures_OCGOL(CSV, Behavior, options);
+            
+    end
 end
 
 %% After here CSV raw data matrix should not be necessary 
