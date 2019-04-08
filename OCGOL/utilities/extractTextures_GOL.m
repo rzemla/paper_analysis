@@ -351,7 +351,7 @@ for ii=1:size(textures,2)
 stem(textures{ii}.time, textures{ii}.position,'Color',colorRange(ii+2,:),'LineStyle','none');
 end
 %sound
-stem(sound.time, sound.position, 'g','LineStyle','none')
+%stem(sound.time, sound.position, 'g','LineStyle','none')
 
 %reward zone and trial type
 subplot(4,1,2)
@@ -365,12 +365,12 @@ plot(time,position, 'k')
 %B trial rewards (red) - early
 stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','none')
 %A trial rewards (blue) - late
-stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','none')
+%stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','none')
 
-%trial type signal
+%trial type signal (either Block 1 or Block 2, not both)
 %A trial rewards (blue) (2 - high voltage, far, A, blue) - check name
 %assignment
-stem(trialType.time{2}, trialType.position{2}, 'b','LineStyle','none')
+%stem(trialType.time{2}, trialType.position{2}, 'b','LineStyle','none')
 %A trial rewards (blue) (1 - high voltage, far, A, blue)
 stem(trialType.time{1}, trialType.position{1}, 'r','LineStyle','none')
 
@@ -389,7 +389,7 @@ stem(lick.time, lick.position, 'g','LineStyle','none')
 %B trial rewards (red) - early
 stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','-')
 %A trial rewards (blue) - late
-stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','-')
+%stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','-')
 
 %licks vs. reward collected
 subplot(4,1,4)
@@ -407,9 +407,7 @@ stem(reward_coll.time, reward_coll.position, 'r','LineStyle','--')
  
  %% Save to textures and reward substruct
  
-%sound
-Behavior.sound = sound;
- 
+
 %texture signals
 Behavior.textures = textures;
  

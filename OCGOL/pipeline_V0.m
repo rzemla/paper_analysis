@@ -46,7 +46,7 @@ options.defineDir = 1;
 %setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF)
-setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
+setDir = 'F:\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 
 %home workstation directory
 
@@ -88,7 +88,7 @@ setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 0;
+options.loadImagingData = 1;
 
 %choose the behavior that the animal ran
 % RF, GOL, OCGOL

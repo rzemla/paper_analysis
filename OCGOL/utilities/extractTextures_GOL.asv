@@ -253,14 +253,12 @@ stem(sound.time, sound.position, 'g','LineStyle','none')
 %assign trial type channel to separate variable
 trialTypeCh = CSV(:,2);
 
-%run discovery of trial types
-[trialRanges] = discoverTrialType(trialTypeCh, position);
-
+%run block type for GOL
 [trialRanges] = discoverBlockType(trialTypeCh, position);
 
 %get time and position of trial textures (may change to findpeaks approach
 %like done above depending on stability)
-[trialType] = defineTrialSignal(trialRanges, trialTypeCh, Behavior);
+[trialType] = defineBlockSignal(trialRanges, trialTypeCh, Behavior);
 
 %% Lick signal onsets, position, norm_position, time, idx
 
@@ -369,10 +367,10 @@ stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','none')
 %A trial rewards (blue) - late
 stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','none')
 
-%trial type signal
+%trial type signal (
 %A trial rewards (blue) (2 - high voltage, far, A, blue) - check name
 %assignment
-stem(trialType.time{2}, trialType.position{2}, 'b','LineStyle','none')
+%stem(trialType.time{2}, trialType.position{2}, 'b','LineStyle','none')
 %A trial rewards (blue) (1 - high voltage, far, A, blue)
 stem(trialType.time{1}, trialType.position{1}, 'r','LineStyle','none')
 

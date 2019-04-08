@@ -86,14 +86,24 @@ if idx_min ~= 1
      position_tex([1,2]) =  position_tex([2,1]);
      time_tex([1,2]) =  time_tex([2,1]);
      position_med([1,2]) = position_med([2,1]);
-     voltage_tex([1,2]) =  voltage_tex([2,1]);
+     voltage_tex([1,2]) =  voltage_tex([2,5]);
 end
 
 %define block name based on voltage signal
-find(voltage
-%trial name based on voltage output A or B
-trialName{1} = 'Low voltage (B trial - near)';
-trialName{2} = 'High voltage (A trial - far)';
+volt_idx_temp = find(voltage_tex{1} < 3);
+if size(volt_idx_temp,1) == size(voltage_tex{1},1)
+    disp('All signals are Block 1 (early) signals.');
+    trialName{1} = 'Block 1';
+else
+    volt_idx_temp = find(voltage_tex{1} > 3);
+    if size(volt_idx_temp,1) == size(voltage_tex{1},1)
+        disp('All signals are Block 2 (late) signals.');
+        trialName{1} = 'Block 2';
+    else
+        disp('Mixed of missing block signals !!!');
+        trialName{1} = 'Mixed/missing';
+    end
+end
 
 %% Only include trial signals that are within complete laps
 %start time of 1st complete lap
@@ -104,7 +114,7 @@ end_full_lap_time = lap{end}(2);
 %for first set of trials
 first_set_exclude = find(time_tex{1} < start_full_lap_time | time_tex{1} > end_full_lap_time);
 %for second set of trials
-second_set_exclude = find(time_tex{2} < start_full_lap_time | time_tex{2} > end_full_lap_time);
+%second_set_exclude = find(time_tex{2} < start_full_lap_time | time_tex{2} > end_full_lap_time);
 
 %remove trial signals that are outside of complete laps
 if ~isempty(first_set_exclude)
@@ -113,11 +123,11 @@ if ~isempty(first_set_exclude)
     position_norm_tex{1}(first_set_exclude) = [];
 end
 
-if ~isempty(second_set_exclude)
-    time_tex{2}(second_set_exclude) = [];
-    position_tex{2}(second_set_exclude) = [];
-    position_norm_tex{2}(second_set_exclude) = [];
-end
+% if ~isempty(second_set_exclude)
+%     time_tex{2}(second_set_exclude) = [];
+%     position_tex{2}(second_set_exclude) = [];
+%     position_norm_tex{2}(second_set_exclude) = [];
+% end
 
 %% Assign trial type info to struct
 
