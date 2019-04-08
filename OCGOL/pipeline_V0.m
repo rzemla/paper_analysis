@@ -47,6 +47,10 @@ options.defineDir = 1;
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF)
 setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
+
+%home workstation directory
+
+
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\3';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\4';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\5';
