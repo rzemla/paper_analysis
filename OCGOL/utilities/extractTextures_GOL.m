@@ -253,12 +253,12 @@ stem(sound.time, sound.position, 'g','LineStyle','none')
 %assign trial type channel to separate variable
 trialTypeCh = CSV(:,2);
 
-%run discovery of trial types
-[trialRanges] = discoverTrialType(trialTypeCh, position);
+%run block type for GOL
+[trialRanges] = discoverBlockType(trialTypeCh, position);
 
 %get time and position of trial textures (may change to findpeaks approach
 %like done above depending on stability)
-[trialType] = defineTrialSignal(trialRanges, trialTypeCh, Behavior);
+[trialType] = defineBlockSignal(trialRanges, trialTypeCh, Behavior);
 
 %% Lick signal onsets, position, norm_position, time, idx
 

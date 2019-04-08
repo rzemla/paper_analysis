@@ -1,9 +1,11 @@
-function [trialRanges] = discoverTrialType(trialTypeCh ,position)
+function [trialRanges] = discoverBlockType(trialTypeCh ,position)
 
 %% Texture signal discovery
 
 %how many voltage bins; 20 = 0.25 V, 10 = 0.50 V
-voltageBins = 10;
+%define fixed bins for this
+%voltageBins = 10;
+voltageEdges = 0:0.3:5;
 
 %discover voltage peaks
 [pks, pks_idx] = findpeaks(trialTypeCh, 'MinPeakHeight',0.4);
@@ -22,7 +24,8 @@ pks_final_idx = pks_idx(keep_peaks);
 pks_final = pks(keep_peaks);
 
 %bin the voltage signals associated with textures
-[N_voltage_bins,~] = histcounts(pks_final,voltageBins);
+[N_voltage_bins, N_edges] = histcounts(pks_final,voltageEdges);
+
 
 %find unique bins (= # of textures for input into k means)
 uniqueTexBins = length(find(N_voltage_bins ~= 0));

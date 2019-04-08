@@ -172,7 +172,6 @@ if options.textures == true
             [Behavior] = extractTextures_GOL(CSV, Behavior, options);
         case 'OCGOL'
             [Behavior] = extractTextures_OCGOL(CSV, Behavior, options);
-            
     end
 end
 

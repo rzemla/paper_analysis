@@ -256,6 +256,8 @@ trialTypeCh = CSV(:,2);
 %run discovery of trial types
 [trialRanges] = discoverTrialType(trialTypeCh, position);
 
+[trialRanges] = discoverBlockType(trialTypeCh, position);
+
 %get time and position of trial textures (may change to findpeaks approach
 %like done above depending on stability)
 [trialType] = defineTrialSignal(trialRanges, trialTypeCh, Behavior);
@@ -322,7 +324,10 @@ if strcmpi(options.BehaviorType,'OCGOL')
     %displays alerts when signals are missed or don't match to what is
     %expected
     [lap_id] = OCGOL_QC(Behavior,textures, rewards, trialType, sound);
-
+    
+elseif strcmpi(options.BehaviorType,'GOL')
+    
+    [lap_id] = GOL_QC(Behavior,textures, rewards, trialType);
 end
 
 %% Plot summary plot
