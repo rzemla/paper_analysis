@@ -45,8 +45,8 @@ options.defineDir = 1;
 
 %setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
 
-setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1';
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2';
+%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF)
+setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\3';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\4';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\5';

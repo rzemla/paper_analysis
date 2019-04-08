@@ -72,12 +72,18 @@ end
 %% Check signals that are detected
 
 x=1;
+figure;
+hold on
 
 
 %% Parse the signals into their respective classes
 
 %split the reward tags (alternate between two reward zones
 %split the first cue tags and sound on tags
+
+%preallocate empty index assignment
+lap_cue_tex_idx = [];
+reward_cue_tex_idx = [];
 
 for kk=1:size(pks_final_pos,2)
     %first cue tag vs. sound tag
@@ -117,9 +123,16 @@ for kk=1:size(pks_final_pos,2)
     
 end
 
-%remaining idxs of texture signals
+%define remaining idxs of texture signals
 tex_signals_idx = 1:size(pks_final_pos,2);
+
+%check if reward lap flag is empty
+if ~isempty(lap_cue_tex_idx)
 tex_signals_idx([first_cue_tex_idx, reward_cue_tex_idx, lap_cue_tex_idx]) = [];
+%if no lap texture and there is a reward texture
+elseif isempty(lap_cue_tex_idx) && ~isempty(reward_cue_tex_idx)
+    tex_signals_idx([first_cue_tex_idx, reward_cue_tex_idx]) = [];
+end
 
 
 %isolate first cue and sound signal in separate cells by absolute indices
@@ -235,7 +248,7 @@ end
 %sound
 stem(sound.time, sound.position, 'g','LineStyle','none')
 
-%% Trial type discovery
+%% Trial type discovery - early or late block run for GOL - work on this
 
 %assign trial type channel to separate variable
 trialTypeCh = CSV(:,2);
@@ -309,7 +322,10 @@ if strcmpi(options.BehaviorType,'OCGOL')
     %displays alerts when signals are missed or don't match to what is
     %expected
     [lap_id] = OCGOL_QC(Behavior,textures, rewards, trialType, sound);
-
+    
+elseif strcmpi(options.BehaviorType,'GOL')
+    
+    [lap_id] = GOL_QC(Behavior,textures, rewards, trialType);
 end
 
 %% Plot summary plot
