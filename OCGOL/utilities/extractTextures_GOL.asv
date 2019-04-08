@@ -72,6 +72,8 @@ end
 %% Check signals that are detected
 
 x=1;
+figure;
+hold on
 
 
 %% Parse the signals into their respective classes
@@ -235,7 +237,7 @@ end
 %sound
 stem(sound.time, sound.position, 'g','LineStyle','none')
 
-%% Trial type discovery
+%% Trial type discovery - early or late block run 
 
 %assign trial type channel to separate variable
 trialTypeCh = CSV(:,2);

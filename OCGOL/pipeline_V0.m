@@ -84,7 +84,7 @@ setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1';
 options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 1;
+options.loadImagingData = 0;
 
 %choose the behavior that the animal ran
 % RF, GOL, OCGOL
