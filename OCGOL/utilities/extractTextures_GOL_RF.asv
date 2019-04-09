@@ -73,8 +73,12 @@ end
 
 %change the folder to Block 1 d1; (1 = RF, 2 = Block 1 d1);
 dir_Block1_d1 = [options.dir_name(1:(end-1)), '2'];
+%load the behavior struct from the following day
+block1_d1_data = load(fullfile(dir_Block1_d1,'output','Behavior.mat'),'Behavior');
 
-block1_D1_data = load(dir_Block1_d1
+%median reward location from previous day
+reward_loc = block1_d1_data.Behavior.performance.reward_loc;
+
 
 
 %% Parse the signals into their respective classes
@@ -149,34 +153,35 @@ elseif isempty(lap_cue_tex_idx) && ~isempty(reward_cue_tex_idx)
     tex_signals_idx([first_cue_tex_idx, reward_cue_tex_idx]) = [];
 end
 
-
+%skip these for RF
 %isolate first cue and sound signal in separate cells by absolute indices
-first_cue_onsets = pks_final_indexes{first_cue_tex_idx}(first_cue_on);
+%not important here
+%first_cue_onsets = pks_final_indexes{first_cue_tex_idx}(first_cue_on);
 
-sound_onsets = pks_final_indexes{first_cue_tex_idx}(~first_cue_on);
+%sound_onsets = pks_final_indexes{first_cue_tex_idx}(~first_cue_on);
 
-early_reward_onsets = pks_final_indexes{reward_cue_tex_idx}(reward_early_on);
+%early_reward_onsets = pks_final_indexes{reward_cue_tex_idx}(reward_early_on);
 
-late_reward_onsets = pks_final_indexes{reward_cue_tex_idx}(~reward_early_on);
+%late_reward_onsets = pks_final_indexes{reward_cue_tex_idx}(~reward_early_on);
 
 %% Get the indices of each class of signal
 
 %place all texture indices on behavior into cells
 %first tex in  first cell
-textures_idx{1} = first_cue_onsets;
+%textures_idx{1} = first_cue_onsets;
 
-for ii=2:(size(tex_signals_idx,2)+1)
-    textures_idx{ii} =  pks_final_indexes{tex_signals_idx(ii-1)};
+for ii=1:(size(tex_signals_idx,2))
+    textures_idx{ii} =  pks_final_indexes{tex_signals_idx(ii)};
 end
 
 %rewards
 %early (B trial = 3)
-rewards_idx{1} = early_reward_onsets;
+%rewards_idx{1} = early_reward_onsets;
 %late (A trial = 2)
-rewards_idx{2} = late_reward_onsets;
+%rewards_idx{2} = late_reward_onsets;
 
 %sound
-sound_idx = sound_onsets;
+%sound_idx = sound_onsets;
 
 %sound, 4 microtextures, 2 reward zones
 %% Get position, normalized postion, and time for each signal + store indices
@@ -190,34 +195,34 @@ for ii=1:size(textures_idx,2)
 end
 
 %rewards
-for ii=1:size(rewards_idx,2)
-    rewards{ii}.position = position(rewards_idx{ii});
-    rewards{ii}.position_norm = position_norm(rewards_idx{ii});
-    rewards{ii}.time = time(rewards_idx{ii});
-    rewards{ii}.idx = rewards_idx{ii};    
-end
+% for ii=1:size(rewards_idx,2)
+%     rewards{ii}.position = position(rewards_idx{ii});
+%     rewards{ii}.position_norm = position_norm(rewards_idx{ii});
+%     rewards{ii}.time = time(rewards_idx{ii});
+%     rewards{ii}.idx = rewards_idx{ii};    
+% end
 
 %make copy of reward_idx
-rewards_full_lap_idx = rewards_idx;
-
-for ii =1:size(rewards_full_lap_idx,2)
-    rewards_full_lap_idx{ii}((rewards_full_lap_idx{ii} < start_lap_idx)) = [];
-    rewards_full_lap_idx{ii}((rewards_full_lap_idx{ii} > end_lap_idx)) = [];
-end
+% rewards_full_lap_idx = rewards_idx;
+% 
+% for ii =1:size(rewards_full_lap_idx,2)
+%     rewards_full_lap_idx{ii}((rewards_full_lap_idx{ii} < start_lap_idx)) = [];
+%     rewards_full_lap_idx{ii}((rewards_full_lap_idx{ii} > end_lap_idx)) = [];
+% end
 
 %complete lap rewards
-for ii=1:size(rewards_idx,2)
-    rewards{ii}.full_laps.position = position(rewards_full_lap_idx{ii});
-    rewards{ii}.full_laps.position_norm = position_norm(rewards_full_lap_idx{ii});
-    rewards{ii}.full_laps.time = time(rewards_full_lap_idx{ii});
-    rewards{ii}.full_laps.idx = rewards_full_lap_idx{ii};    
-end
+% for ii=1:size(rewards_idx,2)
+%     rewards{ii}.full_laps.position = position(rewards_full_lap_idx{ii});
+%     rewards{ii}.full_laps.position_norm = position_norm(rewards_full_lap_idx{ii});
+%     rewards{ii}.full_laps.time = time(rewards_full_lap_idx{ii});
+%     rewards{ii}.full_laps.idx = rewards_full_lap_idx{ii};    
+% end
 
 %sound
-    sound.position = position(sound_idx);
-    sound.position_norm = position_norm(sound_idx);
-    sound.time = time(sound_idx);
-    sound.idx = sound_idx;
+%     sound.position = position(sound_idx);
+%     sound.position_norm = position_norm(sound_idx);
+%     sound.time = time(sound_idx);
+%     sound.idx = sound_idx;
 
 %% (Not significant) - check how the distance/time changes for each cue if shift to the start of signal    
     
@@ -248,9 +253,9 @@ ylabel('Position [cm]');
 plot(time,position, 'k')
 
 %A trial rewards (blue)
-stem(rewards{1}.time, rewards{1}.position, 'b','LineStyle','none')
+%stem(rewards{1}.time, rewards{1}.position, 'b','LineStyle','none')
 %B trial rewards (red)
-stem(rewards{2}.time, rewards{2}.position, 'r','LineStyle','none')
+%stem(rewards{2}.time, rewards{2}.position, 'r','LineStyle','none')
 
 %colormap to iterate through
 colorRange = cbrewer('qual', 'Dark2',8);
@@ -261,9 +266,9 @@ stem(textures{ii}.time, textures{ii}.position,'Color',colorRange(ii+2,:),'LineSt
 end
 
 %sound
-stem(sound.time, sound.position, 'g','LineStyle','none')
+%stem(sound.time, sound.position, 'g','LineStyle','none')
 
-%% Trial type discovery - early or late block run for GOL - work on this
+%% Random reward locations discovery - work on this for RF
 
 %assign trial type channel to separate variable
 trialTypeCh = CSV(:,2);
@@ -355,9 +360,9 @@ ylabel('Position [cm]');
 plot(time,position, 'k')
 
 %B trial rewards (red) - early
-stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','none')
+%stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','none')
 %A trial rewards (blue) - far
-stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','none')
+%stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','none')
 
 %colormap to iterate through
 colorRange = cbrewer('qual', 'Dark2',8);
@@ -371,14 +376,14 @@ end
 %reward zone and trial type
 subplot(4,1,2)
 hold on
-title('Reward zones and trial types');
+title('Random reward locations');
 xlabel('Time [s]');
 ylabel('Position [cm]');
 plot(time,position, 'k')
 
 %reward zone signal
 %B trial rewards (red) - early
-stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','none')
+%stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','none')
 %A trial rewards (blue) - late
 %stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','none')
 
@@ -388,6 +393,10 @@ stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','none')
 %stem(trialType.time{2}, trialType.position{2}, 'b','LineStyle','none')
 %A trial rewards (blue) (1 - high voltage, far, A, blue)
 stem(trialType.time{1}, trialType.position{1}, 'r','LineStyle','none')
+
+%plot raw signal at reward location
+plot(time,20*trialTypeCh,'b');
+hold off
 
 %correct reward zones and licks
 subplot(4,1,3)
@@ -402,7 +411,7 @@ stem(lick.time, lick.position, 'g','LineStyle','none')
 
 %reward zone signal
 %B trial rewards (red) - early
-stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','-')
+%stem(rewards{1}.time, rewards{1}.position, 'r','LineStyle','-')
 %A trial rewards (blue) - late
 %stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','-')
 
@@ -427,7 +436,7 @@ stem(reward_coll.time, reward_coll.position, 'r','LineStyle','--')
 Behavior.textures = textures;
  
  %reward signals
- Behavior.rewards = rewards;
+%Behavior.rewards = rewards;
  
  %lick signals
  Behavior.lick = lick; 
@@ -438,14 +447,14 @@ Behavior.textures = textures;
  %laps identified based on reward and texture signal
  Behavior.lap_id = lap_id;
  
- %trial type signals
- Behavior.trialType = trialType;
+ %trial type signals (random rewards for RF)
+ Behavior.randomRewards = trialType;
   
  %laps with respective A or B rewards/trials
  %B trials (3); early;
- Behavior.reward.reward_early = find(reward_early_on);
+ %Behavior.reward.reward_early = find(reward_early_on);
  %A trials; (2) late reward indices
- Behavior.reward.reward_late =  find(~reward_early_on);
+ %Behavior.reward.reward_late =  find(~reward_early_on);
  
  %% Testing code that is related
  

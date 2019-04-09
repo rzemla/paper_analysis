@@ -45,9 +45,9 @@ options.defineDir = 1;
 
 %setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
 
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF of GOL)
+setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF of GOL)
 
-setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
+%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\6'; %(Block 2 day 5)
 
@@ -180,7 +180,6 @@ if options.textures == true
         
         case 'GOL-RF' %special case for day 1 of GOLr
             [Behavior] = extractTextures_GOL_RF(CSV, Behavior, options);
-            
         case 'GOL'
             [Behavior] = extractTextures_GOL(CSV, Behavior, options);
         case 'OCGOL'
