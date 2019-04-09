@@ -71,10 +71,6 @@ end
 
 %% Check signals that are detected
 
-x=1;
-figure;
-hold on
-
 
 %% Parse the signals into their respective classes
 
@@ -109,6 +105,20 @@ for kk=1:size(pks_final_pos,2)
         %make a logical with first cue signals = 1
         reward_early_on = false(size(pks_final_pos{kk},1),1);
         reward_early_on(reward_cue_idx) = 1;
+        
+        reward_cue_tex_idx = kk;
+    end
+    
+    %check for presence of late reward
+        reward_cue_idx = find(pks_final_pos{kk} > 134 & pks_final_pos{kk} < 144);
+    %when discovered:
+    if ~isempty(reward_cue_idx)
+        %within this cue, get the indices of the early rewards
+        %reward_early_idx = reward_cue_idx;
+        %make a logical with first cue signals = 1
+        reward_early_on = false(size(pks_final_pos{kk},1),1);
+        reward_early_on(reward_cue_idx) = 1;
+        reward_early_on = ~reward_early_on;
         
         reward_cue_tex_idx = kk;
     end

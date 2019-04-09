@@ -261,7 +261,14 @@ fprintf('Total B trials: %d \n', B_nb);
 %% Find number of licks in respective zones
 
 %median of the reward positon across all complete laps
-reward_start_loc = median(rewards{1}.position);
+%assign based on whether it's a Block 1 early vs Block 2 late trial
+if ~isempty(rewards{1}.position) %Block 1 early
+    reward_start_loc = median(rewards{1}.position);
+elseif ~isempty(rewards{2}.position) % Block 2 late
+    reward_start_loc = median(rewards{2}.position);
+else
+    disp('No rewards discovered in performance calculation !!!');
+end
 
 reward_zone_licks_idx = find(lick_position_R >= reward_start_loc & lick_position_R <= (reward_start_loc + 10));
 ant_zone_licks_idx = find(lick_position_R >= (reward_start_loc-10) & lick_position_R < reward_start_loc);
@@ -272,7 +279,7 @@ frac_reward_zone_licks = length(reward_zone_licks_idx)/length(lick_position_R);
 frac_ant_zone_licks = length(ant_zone_licks_idx)/length(lick_position_R);
 
 %dislay fraction of licks in anticipatory zone and reward zone
-disp(sprintf('Fraction of licks in ranticipatory zone: %f', frac_ant_zone_licks))
+disp(sprintf('Fraction of licks in anticipatory zone: %f', frac_ant_zone_licks))
 disp(sprintf('Fraction of licks in reward zone: %f', frac_reward_zone_licks))
 
 %% Plot lick distributions

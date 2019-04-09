@@ -260,6 +260,10 @@ fprintf('Total B trials: %d \n', B_nb);
 
 %% Find number of licks in respective zones
 
+%median of the reward positon across all complete laps
+%assign based on whether it's a Blcok
+reward_start_loc = median(rewards{1}.position);
+
 reward_zone_licks_idx = find(lick_position_R >= reward_start_loc & lick_position_R <= (reward_start_loc + 10));
 ant_zone_licks_idx = find(lick_position_R >= (reward_start_loc-10) & lick_position_R < reward_start_loc);
 
@@ -269,7 +273,7 @@ frac_reward_zone_licks = length(reward_zone_licks_idx)/length(lick_position_R);
 frac_ant_zone_licks = length(ant_zone_licks_idx)/length(lick_position_R);
 
 %dislay fraction of licks in anticipatory zone and reward zone
-disp(sprintf('Fraction of licks in ranticipatory zone: %f', frac_ant_zone_licks))
+disp(sprintf('Fraction of licks in anticipatory zone: %f', frac_ant_zone_licks))
 disp(sprintf('Fraction of licks in reward zone: %f', frac_reward_zone_licks))
 
 %% Plot lick distributions
@@ -282,7 +286,7 @@ subplot(2,1,1)
 hold on
 xlim([0 200])
 title('Distribution of licks across entire session');
-h = histogram(lick_position,nb_spatial_bins,'Normalization','probability');
+h = histogram(lick.position,nb_spatial_bins,'Normalization','probability');
 %ylabel('Lick Count')
 ylabel('Normalized density');
 ylim([0 0.5]);
