@@ -98,7 +98,7 @@ elseif ~isempty(find(textures.position_med >= 136 & textures.position_med <= 148
     reward_start_loc = textures.position_med(reward_idx);
 else
     disp('No reward location discovered - random foraging')
-    %give block 1 reward as location
+    %give block 1 reward as location (RF)
     reward_start_loc = 58.6;
 end
 

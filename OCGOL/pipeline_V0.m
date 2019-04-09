@@ -188,7 +188,7 @@ switch options.BehaviorType
     case 'RF' %same as GOL for now
         [Behavior] = GOL_performance(Behavior, CSV);
     case 'GOL'
-        [Behavior] = GOL_performance(Behavior, CSV);
+        [Behavior] = GOL_performance_new_inputs(Behavior);
     case 'OCGOL'
         %works well for (I52RT AB PSEM/sal 113018)
         %fault with missed reward (I53LT AB PSEM/sal 113018)
