@@ -45,7 +45,7 @@ options.defineDir = 1;
 
 %setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
 
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF)
+%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF of GOL)
 
 setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 
@@ -53,9 +53,6 @@ setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 
 %home workstation directory
 %setDir = 'F:\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
-
-
-
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\3';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\4';
@@ -97,8 +94,8 @@ options.loadBehaviorData = 1;
 options.loadImagingData = 1;
 
 %choose the behavior that the animal ran
-% RF, GOL, OCGOL
-options.BehaviorType = 'GOL';
+% RF, GOL-RF (GOL day 0), GOL, OCGOL
+options.BehaviorType = 'GOL-RF';
 
 %type of calcium data
 options.calcium_data_input = 'CNMF';
@@ -116,6 +113,8 @@ elseif options.defineDir == 1
     %assign from setDir
     directory_name = setDir;
 end
+%save dir_name into options struct
+options.dir_name = directory_name;
 
 %% Import behavioral data and store as MATLAB workspace or load from workspace
 
@@ -178,9 +177,11 @@ if options.textures == true
     %[Behavior] = extractTextures(CSV, Behavior, options);
     %all signals, not just texture related signals
     switch options.BehaviorType
+        
+        case 'GOL-RF' %special case for day 1 of GOLr
+            [Behavior] = extractTextures_GOL_RF(CSV, Behavior, options);
+            
         case 'GOL'
-            %add flag to discrimiante between RF, Block1, and Block 2
-            %session
             [Behavior] = extractTextures_GOL(CSV, Behavior, options);
         case 'OCGOL'
             [Behavior] = extractTextures_OCGOL(CSV, Behavior, options);
@@ -206,6 +207,12 @@ switch options.BehaviorType
         %for reward collected as well
         [Behavior] = OCGOL_performance_new_inputs(Behavior);
 end
+
+%% Save Behavior struct temporarily here - later do at end
+
+fprintf('Saving behavioral data...');
+save(fullfile(directory_name,'output','Behavior.mat'),'Behavior');
+fprintf('Done\n');
 
 %% Restrict data to complete laps - work on texture integration
 
