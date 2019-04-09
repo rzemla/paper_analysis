@@ -46,9 +46,13 @@ options.defineDir = 1;
 %setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF)
-setDir = 'F:\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
+
+setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 
 %home workstation directory
+%setDir = 'F:\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
+
+
 
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\3';
@@ -188,6 +192,8 @@ switch options.BehaviorType
     case 'RF' %same as GOL for now
         [Behavior] = GOL_performance(Behavior, CSV);
     case 'GOL'
+        %update lick struct in behavior to retain info about restricted
+        %licks and median reward position
         [Behavior] = GOL_performance_new_inputs(Behavior);
     case 'OCGOL'
         %works well for (I52RT AB PSEM/sal 113018)

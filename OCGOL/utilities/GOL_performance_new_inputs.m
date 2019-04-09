@@ -61,12 +61,9 @@ hold off
 end
 
 %restrict licks to only complete laps
-lick.time
-
-%restrict licks to only complete laps
-lick_time_R_idx = find(lick_time >= first_lap_start_time & lick_time <= final_lap_end_time);
-lick_time_R = lick_time(lick_time_R_idx);
-lick_position_R = lick_position(lick_time_R_idx);
+lick_time_R_idx = find(lick.time >= first_lap_start_time & lick.time <= final_lap_end_time);
+lick_time_R = lick.time(lick_time_R_idx);
+lick_position_R = lick.position(lick_time_R_idx);
 
 %% reward location (not collection)
 %get reward position on each lap
@@ -263,6 +260,9 @@ fprintf('Total B trials: %d \n', B_nb);
 
 %% Find number of licks in respective zones
 
+%median of the reward positon across all complete laps
+reward_start_loc = median(rewards{1}.position);
+
 reward_zone_licks_idx = find(lick_position_R >= reward_start_loc & lick_position_R <= (reward_start_loc + 10));
 ant_zone_licks_idx = find(lick_position_R >= (reward_start_loc-10) & lick_position_R < reward_start_loc);
 
@@ -285,7 +285,7 @@ subplot(2,1,1)
 hold on
 xlim([0 200])
 title('Distribution of licks across entire session');
-h = histogram(lick_position,nb_spatial_bins,'Normalization','probability');
+h = histogram(lick.position,nb_spatial_bins,'Normalization','probability');
 %ylabel('Lick Count')
 ylabel('Normalized density');
 ylim([0 0.5]);
