@@ -28,6 +28,11 @@ reward_coll = Behavior.reward_coll;
 start_lap_idx = find(time == lap{1}(1));
 end_lap_idx = find(time == lap{end}(2));
 
+%first lap start times for constraining variables to full laps
+first_lap_start_time = Behavior.lap{1}(1);
+%last lap end time
+final_lap_end_time = Behavior.lap{end}(2);
+
 %% Set parameters
 
 %reward zone size (cm)
@@ -54,6 +59,14 @@ xlim([0,200])
 stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
 hold off
 end
+
+%restrict licks to only complete laps
+lick.time
+
+%restrict licks to only complete laps
+lick_time_R_idx = find(lick_time >= first_lap_start_time & lick_time <= final_lap_end_time);
+lick_time_R = lick_time(lick_time_R_idx);
+lick_position_R = lick_position(lick_time_R_idx);
 
 %% reward location (not collection)
 %get reward position on each lap
@@ -129,9 +142,9 @@ trialOrder = lap_id.trial_based';
 %assign to string names for plotting based on trial layout
 for ii=1:size(trialOrder,1)
     if (trialOrder(ii) == 2)
-        trialName{ii} = 'A';
+        trialName{ii} = 'Bl 2';
     elseif (trialOrder(ii) == 3)
-        trialName{ii} = 'B';
+        trialName{ii} = 'Bl 1';
     end
 end
 
@@ -222,8 +235,6 @@ else
     disp('Missed reward collection on at least 1 lap/trial');
 end
 
-%% Missed lap == wrong lap (possible change in future)
-
 %% Display fraction correct trials in command line
 
 %all
@@ -250,6 +261,60 @@ fprintf('Total A trials: %d \n', A_nb);
 fprintf('Fraction of correct B trials: %0.2f \n', frac_B);
 fprintf('Total B trials: %d \n', B_nb); 
 
+%% Find number of licks in respective zones
+
+reward_zone_licks_idx = find(lick_position_R >= reward_start_loc & lick_position_R <= (reward_start_loc + 10));
+ant_zone_licks_idx = find(lick_position_R >= (reward_start_loc-10) & lick_position_R < reward_start_loc);
+
+%fraction of licks in reward zone
+frac_reward_zone_licks = length(reward_zone_licks_idx)/length(lick_position_R);
+%fraction of lick in anticipatory zone
+frac_ant_zone_licks = length(ant_zone_licks_idx)/length(lick_position_R);
+
+%dislay fraction of licks in anticipatory zone and reward zone
+disp(sprintf('Fraction of licks in ranticipatory zone: %f', frac_ant_zone_licks))
+disp(sprintf('Fraction of licks in reward zone: %f', frac_reward_zone_licks))
+
+%% Plot lick distributions
+
+%how many spatial bins
+nb_spatial_bins = 100;
+
+figure;
+subplot(2,1,1)
+hold on
+xlim([0 200])
+title('Distribution of licks across entire session');
+h = histogram(lick_position,nb_spatial_bins,'Normalization','probability');
+%ylabel('Lick Count')
+ylabel('Normalized density');
+ylim([0 0.5]);
+xlabel('Binned position [cm]')
+%reward start
+stem(reward_start_loc, 0.5,'g');
+%reward end
+stem(reward_start_loc + 10, 0.5,'g');
+%ant start
+stem(reward_start_loc-10, 0.5,'m');
+hold off
+
+subplot(2,1,2)
+hold on
+xlim([0 200])
+title('Distribution of licks across complete laps');
+histogram(lick_position_R,nb_spatial_bins,'Normalization','probability');
+%ylabel('Lick Count')
+ylabel('Normalized density');
+ylim([0 0.5]);
+xlabel('Binned position [cm]')
+%reward start
+stem(reward_start_loc, 0.5,'g');
+%reward end
+stem(reward_start_loc + 10, 0.5,'g');
+%ant start
+stem(reward_start_loc-10, 0.5,'m');
+hold off
+
 %% plot
 %as single plot with trials increase along y axis
 
@@ -274,8 +339,16 @@ hold off
 %30 - (first number is trial type 3 - B trial, 2 - A trial, 0 - wrong, 1 - missed)
 %performance.trialCorrect = columns vector 1 if correct, 0 = if wrong, -1 = missed
 
+%carried over from OCGOL
 Behavior.performance.trialOrder = trialOrder;
 Behavior.performance.trialCorrect = trialCorrect';
+
+%reward location
+Behavior.performance.reward_loc = reward_start_loc;
+%fraction of licks in reward zone
+Behavior.performance.frac_rew = frac_reward_zone_licks;
+%fraction of licks in the anticipatory zone
+Behavior.performance.frac_ant = frac_ant_zone_licks;
 
 end
 
