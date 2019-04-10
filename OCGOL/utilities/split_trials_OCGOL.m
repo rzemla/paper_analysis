@@ -408,6 +408,7 @@ end
 
 %% Plot a sample ROI from each trial type
 ROI = randi(size(onset_offset,2));
+ROI = 401;
 
 %plot all laps
 figure
@@ -415,13 +416,46 @@ figure
 subplot(2,1,1)
 hold on
 title('A trials')
-%color the traces by run and no run epochs
-plot(Imaging_split{1}.time_restricted(logical(Behavior_split{1}.run_ones)),...
-    Imaging_split{1}.trace_restricted(logical(Behavior_split{1}.run_ones),ROI),'g') 
 
-plot(Imaging_split{1}.time_restricted(~logical(Behavior_split{1}.run_ones)),...
-    Imaging_split{1}.trace_restricted(~logical(Behavior_split{1}.run_ones),ROI),'r') 
+%plot whole A trace as continuous frames
+plot(traces_split{1}(:,ROI),'k')
 
+%shade traces that are in run epochs green
+for ii=1:size(run_on_off_idx{1},1)
+    plot(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2),...
+        traces_split{1}(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2),ROI),'Color', [0 100 0]/255);
+end
+%shade traces that are in not in run epochs red
+for ii=1:size(norun_on_off_idx{1},1)
+    plot(norun_on_off_idx{1}(ii,1):norun_on_off_idx{1}(ii,2),...
+        traces_split{1}(norun_on_off_idx{1}(ii,1):norun_on_off_idx{1}(ii,2),ROI),'r');
+end
+
+subplot(2,1,2)
+hold on
+title('B trials')
+
+%plot whole A trace as continuous frames
+plot(traces_split{2}(:,ROI),'k')
+
+%shade traces that are in run epochs green
+for ii=1:size(run_on_off_idx{2},1)
+    plot(run_on_off_idx{2}(ii,1):run_on_off_idx{2}(ii,2),...
+        traces_split{2}(run_on_off_idx{2}(ii,1):run_on_off_idx{2}(ii,2),ROI),'Color', [0 100 0]/255);
+end
+%shade traces that are in not in run epochs red
+for ii=1:size(norun_on_off_idx{2},1)
+    plot(norun_on_off_idx{2}(ii,1):norun_on_off_idx{2}(ii,2),...
+        traces_split{2}(norun_on_off_idx{2}(ii,1):norun_on_off_idx{2}(ii,2),ROI),'r');
+end
+
+
+%% plot the split laps for visual confirmation
+
+figure;
+subplot(2,1,1)
+hold on
+title('A trials');
 plot(traces_split{1}(:,ROI),'k')
 plot((positions_split{1}/200) -1.2, 'r')
 ylim([-2 3]);
