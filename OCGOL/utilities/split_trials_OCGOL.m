@@ -120,6 +120,10 @@ for ii=startLap:endLap
     run_onset_binary_lap{ii} = run_onset_binary(lapFramesIdx{ii},:);
     run_onset_ones_lap{ii} = run_onset_ones(lapFramesIdx{ii},:);
     
+    %event no run data
+    norun_onset_binary_lap{ii} = norun_onset_binary(lapFramesIdx{ii},:);
+    norun_onset_ones_lap{ii} = norun_onset_ones(lapFramesIdx{ii},:);
+    
 end
 
 %% Create cell that assigns each event for each ROI to a given lap based on event onset frame
@@ -197,6 +201,10 @@ run_onset_binary_split = cell(1,size(lapSelect,2));
 lapNb_split = cell(1,size(lapSelect,2));
 run_ones_split = cell(1,size(lapSelect,2));
 
+%norun events
+norun_onset_ones_split = cell(1,size(lapSelect,2));
+norun_onset_binary_split = cell(1,size(lapSelect,2));
+
 %% 
 %for each set of laps
 for ii=1:size(lapSelect,2)
@@ -220,9 +228,16 @@ for ii=1:size(lapSelect,2)
         %events
         onset_binaries_split{ii} = [onset_binaries_split{ii}; onset_binary_lap{lapSelect{ii}(jj)}];
         onset_ones_split{ii} = [onset_ones_split{ii}; onset_ones_lap{lapSelect{ii}(jj)}];
+        %run
         run_onset_binary_split{ii} = [run_onset_binary_split{ii}; run_onset_binary_lap{lapSelect{ii}(jj)}];
         run_onset_ones_split{ii} = [run_onset_ones_split{ii}; run_onset_ones_lap{lapSelect{ii}(jj)}];
         run_ones_split{ii}  = [run_ones_split{ii}; lapRunEpochs{lapSelect{ii}(jj)}];
+        %no run
+        norun_onset_binary_split{ii} = [norun_onset_binary_split{ii}; norun_onset_binary_lap{lapSelect{ii}(jj)}];
+        norun_onset_ones_split{ii} = [norun_onset_ones_split{ii}; norun_onset_ones_lap{lapSelect{ii}(jj)}];
+        %address this later
+        %norun_ones_split{ii}  = [norun_ones_split{ii}; lapRunEpochs{lapSelect{ii}(jj)}];
+        
     end
     
     %extract run time, position and labNb for each lap
@@ -308,10 +323,14 @@ for ii=1:size(lapSelect,2)
     Imaging_split{ii}.dt = Imaging.dt;
     
     %Events
+    %run
     Events_split{ii}.Run.run_onset_ones = run_onset_ones_split{ii};
     Events_split{ii}.Run.run_onset_binary = run_onset_binary_split{ii};
     Events_split{ii}.Run.run_onset_offset = onset_offset_run_split{ii};
     
+    %no run
+    Events_split{ii}.NoRun.norun_onset_ones = norun_onset_ones_split{ii};
+    Events_split{ii}.NoRun.norun_onset_binary = norun_onset_binary_split{ii};
     Events_split{ii}.NoRun.norun_onset_offset = onset_offset_norun_split{ii};
     
     Events_split{ii}.onset_offset = onset_offset_split{ii};
@@ -418,17 +437,32 @@ hold on
 title('A trials')
 
 %plot whole A trace as continuous frames
-plot(traces_split{1}(:,ROI),'k')
+%plot(traces_split{1}(:,ROI),'k')
 
 %shade traces that are in run epochs green
 for ii=1:size(run_on_off_idx{1},1)
     plot(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2),...
         traces_split{1}(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2),ROI),'Color', [0 100 0]/255);
+    %shades norm positions below
+    plot(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2),...,
+        positions_norm_split{1}(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2))-1.2,'Color', [0 100 0]/255)
+    %mark the significant events on the lap position
+    stem(find(Events_split{1}.Run.run_onset_binary(:,ROI) ==1),...
+        positions_norm_split{1}(logical(Events_split{1}.Run.run_onset_binary(:,ROI)))-1.2, 'LineStyle','none',...
+        'MarkerFaceColor',[0 100 0]/255,'MarkerEdgeColor',[0 100 0]/255)
 end
+
 %shade traces that are in not in run epochs red
 for ii=1:size(norun_on_off_idx{1},1)
     plot(norun_on_off_idx{1}(ii,1):norun_on_off_idx{1}(ii,2),...
         traces_split{1}(norun_on_off_idx{1}(ii,1):norun_on_off_idx{1}(ii,2),ROI),'r');
+    %shades norm positions below
+    plot(norun_on_off_idx{1}(ii,1):norun_on_off_idx{1}(ii,2),...,
+        positions_norm_split{1}(norun_on_off_idx{1}(ii,1):norun_on_off_idx{1}(ii,2))-1.2,'Color', 'r')
+        %mark the significant events on the lap position
+    stem(find(Events_split{1}.NoRun.norun_onset_binary(:,ROI) ==1),...
+        positions_norm_split{1}(logical(Events_split{1}.NoRun.norun_onset_binary(:,ROI)))-1.2, 'LineStyle','none',...
+        'MarkerFaceColor','r','MarkerEdgeColor','r')
 end
 
 subplot(2,1,2)
@@ -442,35 +476,28 @@ plot(traces_split{2}(:,ROI),'k')
 for ii=1:size(run_on_off_idx{2},1)
     plot(run_on_off_idx{2}(ii,1):run_on_off_idx{2}(ii,2),...
         traces_split{2}(run_on_off_idx{2}(ii,1):run_on_off_idx{2}(ii,2),ROI),'Color', [0 100 0]/255);
+        %shades norm positions below
+    plot(run_on_off_idx{2}(ii,1):run_on_off_idx{2}(ii,2),...,
+        positions_norm_split{2}(run_on_off_idx{2}(ii,1):run_on_off_idx{2}(ii,2))-1.2,'Color', [0 100 0]/255)
+    %mark the significant events on the lap position 
+    stem(find(Events_split{2}.Run.run_onset_binary(:,ROI) ==1),...
+        positions_norm_split{2}(logical(Events_split{2}.Run.run_onset_binary(:,ROI)))-1.2, 'LineStyle','none',...
+        'MarkerFaceColor',[0 100 0]/255,'MarkerEdgeColor',[0 100 0]/255)
+
 end
 %shade traces that are in not in run epochs red
 for ii=1:size(norun_on_off_idx{2},1)
     plot(norun_on_off_idx{2}(ii,1):norun_on_off_idx{2}(ii,2),...
         traces_split{2}(norun_on_off_idx{2}(ii,1):norun_on_off_idx{2}(ii,2),ROI),'r');
+    %plot position
+        plot(norun_on_off_idx{2}(ii,1):norun_on_off_idx{2}(ii,2),...,
+        positions_norm_split{2}(norun_on_off_idx{2}(ii,1):norun_on_off_idx{2}(ii,2))-1.2,'Color', 'r')
+    %mark the significant events on the lap position
+            %mark the significant events on the lap position
+    stem(find(Events_split{2}.NoRun.norun_onset_binary(:,ROI) ==1),...
+        positions_norm_split{2}(logical(Events_split{2}.NoRun.norun_onset_binary(:,ROI)))-1.2, 'LineStyle','none',...
+        'MarkerFaceColor','r','MarkerEdgeColor','r')
 end
-
-
-%% plot the split laps for visual confirmation
-
-figure;
-subplot(2,1,1)
-hold on
-title('A trials');
-plot(traces_split{1}(:,ROI),'k')
-plot((positions_split{1}/200) -1.2, 'r')
-ylim([-2 3]);
-xlim([0 size(traces_split{1},1)]);
-hold off
-
-%B laps
-subplot(2,1,2)
-hold on
-title('B trials');
-plot(traces_split{2}(:,ROI),'k')
-plot((positions_split{2}/200) -1.2, 'r')
-ylim([-2 3]);
-xlim([0 size(traces_split{2},1)]);
-hold off
 
 end
 
