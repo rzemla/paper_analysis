@@ -415,6 +415,19 @@ figure
 subplot(2,1,1)
 hold on
 title('A trials')
+
+traceAcomb = [];
+%plot each run segment in correct A trials
+for ii=1:size(run_on_off_idx{1},1)
+    %plot(Imaging_split{1}.time_restricted(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2)),...
+        %traces_split{1}(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2),ROI))
+    %plot(traces_split{1}(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2),ROI))
+    %plot whole A trace as continuous frames
+    plot(traces_split{1}(:,ROI),'k')
+    %traceAcomb = [traceAcomb; traces_split{1}(run_on_off_idx{1}(ii,1):run_on_off_idx{1}(ii,2),ROI)];
+end
+plot(traceAcomb)
+
 %color the traces by run and no run epochs
 plot(Imaging_split{1}.time_restricted(logical(Behavior_split{1}.run_ones)),...
     Imaging_split{1}.trace_restricted(logical(Behavior_split{1}.run_ones),ROI),'g') 

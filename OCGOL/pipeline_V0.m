@@ -24,7 +24,7 @@ options.defineDir = 1;
 %setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I45_RT_AB_d1_062018';
 
 %performance/texture code works - backup this dataset!
-%setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\1';
+setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\1';
 
 %performance/texture code works
 %setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\2';
@@ -45,7 +45,7 @@ options.defineDir = 1;
 
 %setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
 
-setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF of GOL)
+%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF of GOL)
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 
@@ -95,7 +95,7 @@ options.loadImagingData = 1;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
-options.BehaviorType = 'GOL-RF';
+options.BehaviorType = 'OCGOL';
 
 %type of calcium data
 options.calcium_data_input = 'CNMF';
@@ -215,7 +215,7 @@ fprintf('Saving behavioral data...');
 save(fullfile(directory_name,'output','Behavior.mat'),'Behavior');
 fprintf('Done\n');
 
-%% Restrict data to complete laps - work on texture integration
+%% Restrict data to complete laps
 
 % Restrict calcium data to selected lap -  restrict trace to only full laps
 options.restrict=1; 
