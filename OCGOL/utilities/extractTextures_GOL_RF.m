@@ -444,6 +444,9 @@ Behavior.textures = textures;
  %reward collected signal
  Behavior.reward_coll = reward_coll;
  
+ %median reward from the following day
+ Behavior.rewardLocD1 = reward_loc;
+ 
  %laps identified based on reward and texture signal
  %Behavior.lap_id = lap_id;
  
@@ -455,105 +458,7 @@ Behavior.textures = textures;
  %Behavior.reward.reward_early = find(reward_early_on);
  %A trials; (2) late reward indices
  %Behavior.reward.reward_late =  find(~reward_early_on);
- 
- %% Testing code that is related
- 
- 
-%check all tags
-% figure
-% for ii=1:size(pks_final_idx,1)
-%     hold on
-%     title(num2str(ii));
-%     plot(tagLocationCh(pks_final_idx(ii)-10: pks_final_idx(ii)+10));
-%     pause;
-%      clf;
-% end
 
-% ii=5;
-% 
-%     figure;
-%     hold on
-%     title(num2str(ii));
-%     plot(tagLocationCh(pks_final_idx(ii)-10: pks_final_idx(ii)+10));
-%     
-%     figure;
-%     [double_pk_temp,~] = findpeaks(diff(tagLocationCh(pks_final_idx(ii)-10: pks_final_idx(ii)+10)),'MinPeakHeight',0.3);
-%     
-% %deal with 
-% %if
-% for ee=1:size(sig_2_discharge,2)
-%     ii= sig_2_discharge(ee);
-%     %temp{ee} = find(diff(tagLocationCh(pks_final_idx(ii)-10: pks_final_idx(ii)+10)) > 0.3);
-%     [double_pk_temp,~] = findpeaks(diff(tagLocationCh(pks_final_idx(ii)-10: pks_final_idx(ii)+10)),'MinPeakHeight',0.3);
-%     temp(ee) = length(double_pk_temp);
-% end
-% 
-% for ee=1:size(all_rest,2)
-%     ii= all_rest(ee);
-%     [double_pk_temp_rest,~] = findpeaks(diff(tagLocationCh(pks_final_idx(ii)-10: pks_final_idx(ii)+10)),'MinPeakHeight',0.3);
-%     temp_rest(ee) = length(double_pk_temp_rest);
-% end
-% 
-% sig_2_discharge = [4 11 18 25 32 39 46 53 60 67 74 81 88 95 102 109 116 123 130 137 144 151 158];
-% 
-% all_rest = 1:158;
-% all_rest(sig_2_discharge) = [];
-
-
-%check the each voltage class has the same position; if divergent position,
-%separate into additional classes
- 
- 
-% %% Plot peak filtered
-% figure
-% subplot(2,1,1)
-% hold on;
-% title('Before peak filter');
-% plot(time,position, 'k')
-% stem(time(pks_idx),position(pks_idx),'r')
-% hold off
-% 
-% subplot(2,1,2)
-% hold on;
-% title('After peak filter');
-% plot(time,position, 'k')
-% stem(time(pks_final_idx),position(pks_final_idx),'g')
-% hold off
-
-
-%% Plot selected textures with signal clustering
-
-% figure
-% hold on;
-% title('Before peak filter');
-% plot(time,position, 'k')
-% for tt=1:size(pks_final_pos,2)
-%     stem(pks_final_time{tt},pks_final_pos{tt},'Color',colorRange(tt,:))
-% end
-% 
-% hold off
-
- %% Plot the textures on the restricted laps
-        
-%  figure;
-%  hold on
-%  title('Texture locations on each lap');
-%  %plot time (seconds) against normalized position
-%  plot(Behavior.time,Behavior.normalizedposition,'k');
-%  xlabel('Time [s]');
-%  ylabel('Position');
-%  
-%  %plot RFID crossing indices against time
-%  plot(Behavior.time,Behavior.lap_binary, 'm');
-%  
-%  %plot each microtexture (should be 4)
-%  for ii=1:size(time_tex,2)
-%      stem(time_tex{ii}, position_norm_tex{ii}, '*r');
-%  end
-%  
-%  %plot the lap index - lap # scaled down by a factor of 20 - each
-%  %step 0.05
-%  plot(Behavior.time,Behavior.lapNb./20,'b');
 
 end
 

@@ -162,122 +162,119 @@ trialOrder = 3*ones(size(Behavior.lap,2),1);
 
 %determine which laps were correct/wrong
 %for each lap
-% for ii = 1:size(lap,2)
-%     %if A trial - check if licks in B ant or reward zone
-%     if trialOrder(ii) == 2
-%         %if there are licks in reward zone of A (2, far reward)
-%         if ~isempty(find(lick_lap{ii}.position >= reward_loc & lick_lap{ii}.position <= reward_loc+rew_size))
-%             %and not in ant or reward zone of B (based on mean reward
-%             %position)
-%             if isempty(find(lick_lap{ii}.position >= (mean_B_reward - rew_size) & lick_lap{ii}.position <= mean_B_reward+rew_size))
-%                 trialCorrect(ii) = 1;
-%                 trialCorrName{ii} = 'Y';
-%             else
-%                 trialCorrect(ii) = 0;
-%                 trialCorrName{ii} = 'N';
-%                 trialOrder(ii) = 20;
-%             end
-%             
-%         else
-%             trialCorrect(ii) = 0;
-%             trialCorrName{ii} = 'N';
-%             trialOrder(ii) = 20;
-%         end
-%         %if B trial
-%     elseif trialOrder(ii) == 3
-%         %if there are licks in reward zone of B (3, near reward)
-%         if ~isempty(find(lick_lap{ii}.position >= reward_position(ii) & lick_lap{ii}.position <= reward_position(ii)+rew_size))
-%             %and not in ant or reward zone of A (based on mean reward
-%             %position)
-%             if isempty(find(lick_lap{ii}.position >= (mean_A_reward - rew_size) & lick_lap{ii}.position <= mean_A_reward+rew_size))
-%                 trialCorrect(ii) = 1;
-%                 trialCorrName{ii} = 'Y';
-%             else
-%                 trialCorrect(ii) = 0;
-%                 trialCorrName{ii} = 'N';
-%                 trialOrder(ii) = 30;
-%             end
-%             
-%         else
-%             trialCorrect(ii) = 0;
-%             trialCorrName{ii} = 'N';
-%             trialOrder(ii) = 30;
-%         end
-%         
-%     end
-% end
+for ii = 1:size(lap,2)
+    %if A trial - check if licks in B ant or reward zone
+    if trialOrder(ii) == 2
+        %if there are licks in reward zone of A (2, far reward)
+        if ~isempty(find(lick_lap{ii}.position >= reward_loc & lick_lap{ii}.position <= reward_loc+rew_size))
+            %and not in ant or reward zone of B (based on mean reward
+            %position)
+            if isempty(find(lick_lap{ii}.position >= (mean_B_reward - rew_size) & lick_lap{ii}.position <= mean_B_reward+rew_size))
+                trialCorrect(ii) = 1;
+                trialCorrName{ii} = 'Y';
+            else
+                trialCorrect(ii) = 0;
+                trialCorrName{ii} = 'N';
+                trialOrder(ii) = 20;
+            end
+            
+        else
+            trialCorrect(ii) = 0;
+            trialCorrName{ii} = 'N';
+            trialOrder(ii) = 20;
+        end
+        %if B trial
+    elseif trialOrder(ii) == 3
+        %if there are licks in reward zone of B (3, near reward)
+        if ~isempty(find(lick_lap{ii}.position >= reward_position(ii) & lick_lap{ii}.position <= reward_position(ii)+rew_size))
+            %and not in ant or reward zone of A (based on mean reward
+            %position)
+            if isempty(find(lick_lap{ii}.position >= (mean_A_reward - rew_size) & lick_lap{ii}.position <= mean_A_reward+rew_size))
+                trialCorrect(ii) = 1;
+                trialCorrName{ii} = 'Y';
+            else
+                trialCorrect(ii) = 0;
+                trialCorrName{ii} = 'N';
+                trialOrder(ii) = 30;
+            end
+            
+        else
+            trialCorrect(ii) = 0;
+            trialCorrName{ii} = 'N';
+            trialOrder(ii) = 30;
+        end
+        
+    end
+end
 
 %% Check that at least 1 reward was collected in 
 
 %determine which laps were correct/wrong
-% %for each lap
-% for ii = 1:size(lap,2)
-%     %if A trial, check that at least 1 reward delivered in reward zone area
-%     
-%     if trialOrder(ii) == 2
-%         if  ~isempty(find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size))
-%             reward_collected_check(ii) = 1;
-%         else
-%             reward_collected_check(ii) = 0;
-%         end
-%         %if B trial, check that at least 1 reward delivered in reward zone area
-%     elseif trialOrder(ii) == 3
-%         if  ~isempty(find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size))
-%             reward_collected_check(ii) = 1;
-%         else
-%             reward_collected_check(ii) = 0;
-%             
-%         end
-%     end
-% end
+%for each lap
+for ii = 1:size(lap,2)
+    %if A trial, check that at least 1 reward delivered in reward zone area
+    
+    if trialOrder(ii) == 2
+        if  ~isempty(find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size))
+            reward_collected_check(ii) = 1;
+        else
+            reward_collected_check(ii) = 0;
+        end
+        %if B trial, check that at least 1 reward delivered in reward zone area
+    elseif trialOrder(ii) == 3
+        if  ~isempty(find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size))
+            reward_collected_check(ii) = 1;
+        else
+            reward_collected_check(ii) = 0;
+            
+        end
+    end
+end
 
 %check at least 1 reward collected on each lap
-% if sum(and(trialCorrect,reward_collected_check)) == lap_nb
-%     disp('At least 1 reward collected on each lap/trial.');
-% else
-%     disp('Missed reward collection on at least 1 lap/trial');
-% end
+if sum(and(trialCorrect,reward_collected_check)) == lap_nb
+    disp('At least 1 reward collected on each lap/trial.');
+else
+    disp('Missed reward collection on at least 1 lap/trial');
+end
 
 %% Display fraction correct trials in command line
 
-% %all
-% frac_correct = sum(trialCorrect)./lap_nb;
-% %A trials
-% A_trial_idx = find(lap_id.trial_based == 2);
-% A_nb = length(A_trial_idx);
-% 
-% A_corr = trialCorrect(A_trial_idx);
-% frac_A = sum(A_corr)./A_nb;
-% 
-% %B trials
-% B_trial_idx = find(lap_id.trial_based == 3);
-% B_nb = length(B_trial_idx);
-% 
-% B_corr = trialCorrect(B_trial_idx);
-% frac_B = sum(B_corr)./B_nb;
-% 
-% %print resutls to command line
-% fprintf('Fraction of correct laps/trials: %0.2f \n', frac_correct);
-% fprintf('Total laps/trials: %d \n', lap_nb);
-% fprintf('Fraction of correct A trials: %0.2f \n', frac_A);
-% fprintf('Total A trials: %d \n', A_nb);
-% fprintf('Fraction of correct B trials: %0.2f \n', frac_B);
-% fprintf('Total B trials: %d \n', B_nb); 
+%all
+frac_correct = sum(trialCorrect)./lap_nb;
+%A trials
+A_trial_idx = find(lap_id.trial_based == 2);
+A_nb = length(A_trial_idx);
+
+A_corr = trialCorrect(A_trial_idx);
+frac_A = sum(A_corr)./A_nb;
+
+%B trials
+B_trial_idx = find(lap_id.trial_based == 3);
+B_nb = length(B_trial_idx);
+
+B_corr = trialCorrect(B_trial_idx);
+frac_B = sum(B_corr)./B_nb;
+
+%print resutls to command line
+fprintf('Fraction of correct laps/trials: %0.2f \n', frac_correct);
+fprintf('Total laps/trials: %d \n', lap_nb);
+fprintf('Fraction of correct A trials: %0.2f \n', frac_A);
+fprintf('Total A trials: %d \n', A_nb);
+fprintf('Fraction of correct B trials: %0.2f \n', frac_B);
+fprintf('Total B trials: %d \n', B_nb); 
 
 %% Find number of licks in respective zones
 
 %median of the reward positon across all complete laps
 %assign based on whether it's a Block 1 early vs Block 2 late trial
-% if ~isempty(rewards{1}.position) %Block 1 early
-%     reward_start_loc = median(rewards{1}.position);
-% elseif ~isempty(rewards{2}.position) % Block 2 late
-%     reward_start_loc = median(rewards{2}.position);
-% else
-%     disp('No rewards discovered in performance calculation !!!');
-% end
-
-%use Block 1 d1 median position
-reward_start_loc = reward_loc; 
+if ~isempty(rewards{1}.position) %Block 1 early
+    reward_start_loc = median(rewards{1}.position);
+elseif ~isempty(rewards{2}.position) % Block 2 late
+    reward_start_loc = median(rewards{2}.position);
+else
+    disp('No rewards discovered in performance calculation !!!');
+end
 
 reward_zone_licks_idx = find(lick_position_R >= reward_start_loc & lick_position_R <= (reward_start_loc + 10));
 ant_zone_licks_idx = find(lick_position_R >= (reward_start_loc-10) & lick_position_R < reward_start_loc);
@@ -339,9 +336,9 @@ figure('Position',[150 150 900 600]);
 imagesc(N_licks);
 hold on;
 %trial type
-%text(105*ones(lap_nb,1),1:lap_nb,trialName);
+text(105*ones(lap_nb,1),1:lap_nb,trialName);
 %correct/wrong
-%tc = text(110*ones(lap_nb,1),1:lap_nb,trialCorrName);
+tc = text(110*ones(lap_nb,1),1:lap_nb,trialCorrName);
 %add red color to wrong trials
 
 title('Lick map')
@@ -357,7 +354,7 @@ hold off
 
 %carried over from OCGOL
 Behavior.performance.trialOrder = trialOrder;
-%Behavior.performance.trialCorrect = trialCorrect';
+Behavior.performance.trialCorrect = trialCorrect';
 
 %reward location
 Behavior.performance.reward_loc = reward_start_loc;
