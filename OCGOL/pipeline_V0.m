@@ -195,6 +195,8 @@ end
 switch options.BehaviorType
     case 'RF' %same as GOL for now
         [Behavior] = GOL_performance(Behavior, CSV);
+    case 'GOL-RF'
+        [Behavior] = GOL_RF_performance_new_inputs(Behavior);
     case 'GOL'
         %update lick struct in behavior to retain info about restricted
         %licks and median reward position
