@@ -1,4 +1,4 @@
-function [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior, Imaging, Events)
+function [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior, Imaging, Events, options)
 % takes behavioral and calcium data as inputs from all laps and splits them
 % into two structures in each behavioral, imaging, and calcium cell 
 %INPUTS (structs):
@@ -432,8 +432,9 @@ for ii=1:size(lapSelect,2)
 end
 
 %% Plot a sample ROI from each trial type
-ROI = randi(size(onset_offset,2));
-ROI = 401;
+ROI = options.ROI;
+%randi(size(onset_offset,2));
+%ROI = 401;
 
 %plot all laps
 figure

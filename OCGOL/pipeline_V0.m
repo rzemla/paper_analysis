@@ -317,14 +317,26 @@ options.c2plot = 40;
 %modify to split laps irrespective of behavior - save into a single struct
 %[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_laps(Behavior,Imaging,CSV,Events);
 
-%% Split trials based on OCGOL performance - working on this! RESUME HERE
+%% Split trials based on OCGOL performance
+switch options.BehaviorType
+    case 'RF' %work on this
+        %[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_laps(Behavior,Imaging,CSV,Events);
+    case 'GOL-RF' %work on this
+        
+    case 'GOL' %work on this
+        
+    case 'OCGOL'
+        [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
+end
 
-[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events);
+%% Extract calcium event properties for split and all laps - check this
 
-%% Extract calcium event properties for split and all laps 
-
-%for each of 3 conditions = 1 - all
-Events_split{1} = event_properties(updated_dff, Events_split{1},options);
+%for OCGOL data
+%for each of 3 conditions = 1 - all, 2 - run, 3 = norun (inside function)
+%for each trial type (trial type)
+for ii=1:3
+    Events_split{ii} = event_properties(updated_dff, Events_split{ii},options);
+end
 
 %without split on all lap restricted data
 Events = event_properties(updated_dff, Events,options);
@@ -336,7 +348,7 @@ options.smooth_span=3; % span for moving average filter on dF/F (Dombeck 2010 = 
 options.minevents=3; % Min nb of events during session
 options.Nbin=[2;4;5;8;10;20;25;100]; % Number of bins to test ([2;4;5;8;10;20;25;100] Danielson et al. 2016)
 options.bin_spatial_tuning=100; % Number of bins to compute spatial tuning curve (rate map) -value must be in options.Nbin
-options.Nshuffle=1000; % Nb of shuffle to perform
+options.Nshuffle=10; % Nb of shuffle to perform
 options.pvalue=0.05; % Min p value to be considered as significant
 options.dispfig=1; % Display figure 
 
@@ -346,7 +358,7 @@ options.binPosition = 1;
 %for all type of trials --> current: 1 -A trials; 2 -B trials; 3 - all
 %laps/trials 
 tic;
-for ii=1
+for ii=1:3
     %spatial binning, rate maps, and spatial tuning score
     %check formulas - RZ
     %change Gaussian and average filter smoothing to convolving with kernel
@@ -355,6 +367,7 @@ for ii=1
     
     disp('1')
     %STCs, properties etc. calculated
+    %WORK ON THIS  - break this down into separate functions
     [Place_cell{ii}]=spatial_info_newEvents_placeField_support_RZ_V5(Behavior_split{ii}, Events_split{ii}, Imaging_split{ii},options);
     %spatial info calculation function here
     
@@ -372,6 +385,7 @@ end
 toc; 
 
 %% Create tuned ROI binary mask for tuned cells and add to Place_cell struct
+%add this to shuffle script and remove from there
 %nb of ROIs
 ROInb = size(Imaging.trace,2);
 
