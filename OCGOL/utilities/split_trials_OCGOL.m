@@ -424,6 +424,12 @@ if sum(check_run_intervals) == size(Behavior_split,2)
     disp('Run intervals for each sub-split agree.');
 end
 
+%% Add these run on/off indices for each split to the struct
+
+for ii=1:size(lapSelect,2)
+    Behavior_split{ii}.run_on_off_idx = run_on_off_idx{ii};
+    Behavior_split{ii}.norun_on_off_idx = norun_on_off_idx{ii};
+end
 
 %% Plot a sample ROI from each trial type
 ROI = randi(size(onset_offset,2));
