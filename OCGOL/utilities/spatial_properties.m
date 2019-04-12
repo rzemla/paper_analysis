@@ -27,7 +27,7 @@ runtime=Behavior.resampled.run_time;
 %matches the number of indices of the taken from run epochs only - RZ
 run_position=Behavior.resampled.run_position; 
 
-%sampled lap index
+%sampled lap index (lap index during run epochs only)
 run_lapNb = Behavior.resampled.run_lapNb;
 
 %EVENT ACTIVITY
@@ -45,7 +45,6 @@ run_onset_binary=Events.Run.run_onset_binary;
 [gaussFilter] = define_Gaussian_kernel(options);
 
 %% Mask C_df for significant events detected - set non significant frames to nan
-%figure this out again; not sure how this input follows 
 %turn into logical for masking non run, not sig dF/F traces for Barthos PF
 %detection code
 mask_nonsig_dFF = ~logical(run_onset_offset_ones);
@@ -53,7 +52,7 @@ mask_nonsig_dFF = ~logical(run_onset_offset_ones);
 %take lap restricted C_df and set nonsig no run dF/F parts of trace to nan
 %make copy
 C_df_masked = C_df; 
-%set nan
+%set nan (every timepoint that is not part of a significant run event
 C_df_masked(mask_nonsig_dFF) = nan;
 
 %% Bin data spatially - binned by run only
@@ -72,10 +71,15 @@ for ii=1:length(options.Nbin)
     [count_bin{ii},edges{ii},bin{ii}] = histcounts(run_position_norm, options.Nbin(ii));
 end
 
+%% Mask with only run epoch bin assignments
+
 %export bin mask that corresponds to index of resticted frames
 binFrameMask = zeros(1,size(C_df,1));
+%all run indices 
 runIdx = find(run_ones ==1);
+%assign the run time points their respecitive spatial bins (100 bins = 8)
 binFrameMask(runIdx) = bin{8};
+%set all else to nan
 binFrameMask(find(binFrameMask==0)) = nan;
 
 
@@ -120,11 +124,11 @@ hold off
 %belongs to
 
 %for each binning size
-%i - each binning
-%n - each ROI
-for i=1:length(options.Nbin)
+%bb - each binning
+%rr - each ROI
+for bb=1:length(options.Nbin)
     %for each ROI
-    for n=1:size(run_onset_bin,2)
+    for rr=1:size(run_onset_bin,2)
         %find the corresponding bin #s of each event that occurred the run
         %epochs
         %run_onset_bin(:,n)==1 - turns to logical run frames where an event
@@ -132,29 +136,29 @@ for i=1:length(options.Nbin)
         %returns the bin values of where the running onset occured for each
         %ROI
         %RUNNING RELATED ONSET TRANSIENTS FOR EACH ROI BY BIN
-        onset_bin{i}{n}=bin{i}(run_onset_bin(:,n)==1);
+        onset_bin{bb}{rr}=bin{bb}(run_onset_bin(:,rr)==1);
         %for contigous events (frames during which a sig event occurred)
-        onset_bin_conti{i}{n}=bin{i}(run_onset_offset_runEpochs(:,n)==1);
+        onset_bin_conti{bb}{rr}=bin{bb}(run_onset_offset_runEpochs(:,rr)==1);
     end
 end
 
 %return the corresponding lap of the bin on which the event occurred
-for i=1:length(options.Nbin)
+for bb=1:length(options.Nbin)
     %for each ROI
-    for n=1:size(run_onset_bin,2)
+    for rr=1:size(run_onset_bin,2)
         %find associated absolute lap index for each run event 
-        onset_lap_bin{i}{n} = run_lapNb(run_onset_bin(:,n)==1);
+        onset_lap_bin{bb}{rr} = run_lapNb(run_onset_bin(:,rr)==1);
     end
 end
 
 %2)value for each bin dF/F
 
 %for each bin range
-for i=1:length(options.Nbin)
-    %for each bin
-    for binN=1:options.Nbin(i)
+for bb=1:length(options.Nbin)
+    %for each bin in bin range
+    for binN=1:options.Nbin(bb)
         %for each ROI
-        for n=1:size(run_onset_bin,2)
+        for rr=1:size(run_onset_bin,2)
             %for calcium activity for each ROI during running epoch, find
             %indices of each bin and take dF/F activity in that bin
             %for each binning range, for each bin in that range, return
@@ -165,16 +169,16 @@ for i=1:length(options.Nbin)
             %into separate cells
             %takes dF/F values regardless of significance in this case
             %one mean dF/F per bin range, per bin, per ROI
-            dF_bin{i}{binN}(:,n)=run_C_df(find(bin{i}==binN),n);
+            dF_bin{bb}{binN}(:,rr)=run_C_df(find(bin{bb}==binN),rr);
             %with non_sig dF/F removed
-            dF_sig_bin{i}{binN}(:,n)=run_sig_C_df(find(bin{i}==binN),n);
+            dF_sig_bin{bb}{binN}(:,rr)=run_sig_C_df(find(bin{bb}==binN),rr);
         end
         %take mean of dF/F values for each bin range, in each bin for each ROI
         %takes mean over each column which corresponds to each ROI
         %over each interation of bin range and bin
-        dF_map{i}(binN,:)=nanmean(dF_bin{i}{binN});
+        dF_map{bb}(binN,:)=nanmean(dF_bin{bb}{binN});
         %with non_sig dF/F removed
-        dF_sig_map{i}(binN,:)=nanmean(dF_sig_bin{i}{binN});
+        dF_sig_map{bb}(binN,:)=nanmean(dF_sig_bin{bb}{binN});
     end
 end
 
@@ -196,13 +200,13 @@ end
 avg_fr = dt;
 
 %for each bin range
-for i=1:length(options.Nbin)
+for bb=1:length(options.Nbin)
     %how many frames in each bin when animal is running for each bin range
     %multiple each frame count in each in by dt of each frame
-    occupancy_time_s{i}=count_bin{i}*avg_fr; % time spend (in sec)
+    occupancy_time_s{bb}=count_bin{bb}*avg_fr; % time spend (in sec)
     %probability that the animal is the given bin during running
     %frames in each bin/total # of frames
-    proba_bin{i}=count_bin{i}/sum(count_bin{i}); % time spend / total time
+    proba_bin{bb}=count_bin{bb}/sum(count_bin{bb}); % time spend / total time
 end
 
 %same regardless of how you bin the data - using first bin here
@@ -333,7 +337,7 @@ Place_cell.dF_lap_map_ROI = dF_lap_map_ROI;
 
 %non-occupancy normalized (100 bins) smoothed with average moving filter
 %(Sheffield 2015)
-Place_cell. dF_lap_map_ROI_smooth =  dF_lap_map_ROI_smooth;
+Place_cell.dF_lap_map_ROI_smooth =  dF_lap_map_ROI_smooth;
 
 %occupancy normalized (mean dF/F/s)
 Place_cell.dF_lap_map_ROI_norm = dF_lap_map_ROI_norm;
@@ -413,7 +417,7 @@ for i=1:length(options.Nbin)
     end
 end
 
-%% Overall firing rate
+%% Overall firing rate - overall rate and mean rate
 %Mean firing rate - this is based on the smoothed rate (not actual)! - RZ
 %rate map not normalized yet
 
@@ -428,11 +432,12 @@ for i=1:length(options.Nbin)
     
     mean_rate_sm{i} = mean(rate_map_sm{i});
     mean_rate{i} = mean(rate_map{i});
+    
     %Skaggs definition - smaller but same scale as mean_rate
     mean_rate_Sk{i} = sum(rate_map{i}.*proba_bin{i}');
 end
 
-%NORMALIZE TUNING CURVES
+%% Normalize rate maps (smoothed)
 %Normalize rate map and dF map - RZ - min/max range
 %for each bin range
 for i=1:length(options.Nbin)
@@ -441,12 +446,12 @@ for i=1:length(options.Nbin)
         %normalize each ROI against min and max value in each bin range
         %using previous smoothed rate map
         
-        norm_rate_map_sm{i}(:,n)=( rate_map_sm{i}(:,n)-min(rate_map_sm{i}(:,n)) )/( max(rate_map_sm{i}(:,n)) - min(rate_map_sm{i}(:,n)) );
+        norm_rate_map_sm{i}(:,n)=( rate_map_sm{i}(:,n) - min(rate_map_sm{i}(:,n)) )/( max(rate_map_sm{i}(:,n)) - min(rate_map_sm{i}(:,n)) );
         norm_dF_map_sm{i}(:,n)=( dF_map_sm{i}(:,n) - min(dF_map_sm{i}(:,n)) )/( max(dF_map_sm{i}(:,n))-min(dF_map_sm{i}(:,n)) );
     end
 end
 
-%% Spatial tuning curve (=normalized rate map) = STC - RZ
+%% Spatial tuning curve (=normalized rate map) = STC 
 %store # of spatial bins used to construct tuning curve
 bin_STC=find(options.bin_spatial_tuning==options.Nbin);
 

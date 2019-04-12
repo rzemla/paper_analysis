@@ -355,32 +355,30 @@ options.dispfig=1; % Display figure
 %use binned position rather than raw for tuning specificity calculation
 options.binPosition = 1;
 
-tic;
+%work on this part
+%spatial binning, rate maps, and spatial tuning score
+[Place_cell{1}] = spatial_properties(Behavior_split{1}, Events_split{1}, Imaging_split{1},options);
+
+
 %for all type of trials --> current: 1 -A trials; 2 -B trials; 3 - all
-%laps/trials
-for ii=1:3
-    %work on this part
-    %spatial binning, rate maps, and spatial tuning score
-    disp('Calculate bin space, events, rate maps, generate STCs, and SI score')
-    [Place_cell{ii}] = spatial_properties(Behavior_split{ii}, Events_split{ii}, Imaging_split{ii},options);
+%laps/trials 
+
+   
+
+        
     %tuning specific calculation function here
     disp('Calculate turining specificity score')
-    [Place_cell{ii}] = tuning_specificity_RZ_V2(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
+    [Place_cell{ii}]=tuning_specificity_RZ_V2(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
+
+    %disp('4')
+    %[Place_cell{ii}]=shuffle_place_cell_spatial_V2_RZ(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
     
+    disp('End session')
 end
 toc; 
+%% Run place cell shuffle for spatial infor mation
 
-%% Save relevant variables for shuffle processing
-
-save(fullfile(directory_name,))
-
-%% Run place cell shuffle for spatial information
-%offload this to HPC for processing
-
-[Place_cell{ii}] = shuffle_place_cell(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
-%alternative way of calculating shuffle for SI and TS - not finalized
-%[Place_cell{ii}]=shuffle_place_cell_spatial_V2_RZ(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
-
+ [Place_cell{ii}]=shuffle_place_cell(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
 %% Create tuned ROI binary mask for tuned cells and add to Place_cell struct
 %add this to shuffle script and remove from there
 %nb of ROIs
