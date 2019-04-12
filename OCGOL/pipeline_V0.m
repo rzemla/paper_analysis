@@ -355,6 +355,10 @@ options.dispfig=1; % Display figure
 %use binned position rather than raw for tuning specificity calculation
 options.binPosition = 1;
 
+%work on this part
+[Place_cell{1}] = spatial_properties(Behavior_split{1}, Events_split{1}, Imaging_split{1},options);
+
+
 %for all type of trials --> current: 1 -A trials; 2 -B trials; 3 - all
 %laps/trials 
 tic;
