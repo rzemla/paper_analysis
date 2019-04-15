@@ -24,7 +24,7 @@ options.defineDir = 1;
 %setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I45_RT_AB_d1_062018';
 
 %performance/texture code works - backup this dataset!
-setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\1';
+%setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\1';
 
 %performance/texture code works
 %setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\2';
@@ -53,6 +53,8 @@ setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\1';
 
 %home workstation directory
 %setDir = 'F:\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
+
+setDir = 'F:\I52RT_AB_sal_PSEM_113018_120118\1';
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\3';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\4';
@@ -153,6 +155,7 @@ options.removeROI = 1;
 if options.removeROI == 1
     %remove the respective ROIs from F_vars struct and C_df
     [C_df,F_vars] = removeROI_V2(C_df,F_vars,directory_name);
+    disp('Non-somatic ROIs removed');
 end
 
 %% Extract position and laps
@@ -211,9 +214,9 @@ end
 
 %% Save Behavior struct temporarily here - later do at end
 
-fprintf('Saving behavioral data...');
-save(fullfile(directory_name,'output','Behavior.mat'),'Behavior');
-fprintf('Done\n');
+% fprintf('Saving behavioral data...');
+% save(fullfile(directory_name,'output','Behavior.mat'),'Behavior');
+% fprintf('Done\n');
 
 %% Restrict data to complete laps
 
@@ -348,7 +351,7 @@ options.smooth_span=3; % span for moving average filter on dF/F (Dombeck 2010 = 
 options.minevents=3; % Min nb of events during session
 options.Nbin=[2;4;5;8;10;20;25;100]; % Number of bins to test ([2;4;5;8;10;20;25;100] Danielson et al. 2016)
 options.bin_spatial_tuning=100; % Number of bins to compute spatial tuning curve (rate map) -value must be in options.Nbin
-options.Nshuffle=10; % Nb of shuffle to perform
+options.Nshuffle=50; % Nb of shuffle to perform
 options.pvalue=0.05; % Min p value to be considered as significant
 options.dispfig=1; % Display figure 
 
@@ -372,12 +375,14 @@ toc;
 
 %% Save relevant variables for shuffle processing
 
-save(fullfile(directory_name,))
+%save(fullfile(directory_name,))
 
 %% Run place cell shuffle for spatial information
 %offload this to HPC for processing
-
-[Place_cell{ii}] = shuffle_place_cell(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
+%check what the difference is between 
+for ii=1:3
+    [Place_cell{ii}] = shuffle_place_cell(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
+end
 %alternative way of calculating shuffle for SI and TS - not finalized
 %[Place_cell{ii}]=shuffle_place_cell_spatial_V2_RZ(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
 
