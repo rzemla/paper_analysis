@@ -2,7 +2,6 @@
 
 options.defineDir = 1;
 
-%change made2
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -12,6 +11,12 @@ options.defineDir = 1;
 
 %performance/texture code works - backup this dataset!
 %setDir = 'E:\I42R_AB_1\I42R_AB_d1_032118_1';
+
+
+%setDir = 'G:\OCGOL_training\I56_RTLS_ABrand_no_punish_041519';
+%setDir = 'G:\OCGOL_training\I57_RLTS_5AB_041019';
+
+setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
 
 %performance/texture code works - backup this dataset!
 %check missed reward collection feature
@@ -54,7 +59,7 @@ options.defineDir = 1;
 %home workstation directory
 %setDir = 'F:\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
 
-setDir = 'F:\I52RT_AB_sal_PSEM_113018_120118\1';
+%setDir = 'F:\I52RT_AB_sal_PSEM_113018_120118\1';
 
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\3';
 %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\4';
@@ -181,7 +186,7 @@ if options.textures == true
     %all signals, not just texture related signals
     switch options.BehaviorType
         
-        case 'GOL-RF' %special case for day 1 of GOLr
+        case 'GOL-RF' %special case for day 1 of GOL
             [Behavior] = extractTextures_GOL_RF(CSV, Behavior, options);
         case 'GOL'
             [Behavior] = extractTextures_GOL(CSV, Behavior, options);
@@ -431,6 +436,8 @@ save([currentDate,'_ca_analysis.mat'],...
     'F_vars', 'options', 'Behavior_split_lap',...
     'Events_split_lap','-v7.3');
 toc
+
+disp('Done saving.');
 
 %% For modifcation below
 %{

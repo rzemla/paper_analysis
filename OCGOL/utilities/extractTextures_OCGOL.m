@@ -30,6 +30,7 @@ tagLocationCh = CSV(:,3);
 
 %how many voltage bins; 20 = 0.25 V, 10 = 0.50 V
 voltageBins = 10;
+%voltageEdges = 0:0.25:5;
 
 %discover voltage peaks
 %voltage 0.4 --> 0.8 V (to avoid discovery of double tagged tex cue 0.6 mixed with 1.2V signal)
@@ -51,6 +52,9 @@ pks_final = pks(keep_peaks);
 
 %bin the voltage signals associated with textures
 [N_voltage_bins,~] = histcounts(pks_final,voltageBins);
+
+%bin voltage signals by defining edges as opposed to bins
+%[N_voltage_bins,~] = histcounts(pks_final,voltageEdges);
 
 %find unique bins (= # of textures for input into k means)
 uniqueTexBins = length(find(N_voltage_bins ~= 0));
@@ -81,7 +85,7 @@ end
 
 for kk=1:size(pks_final_pos,2)
     %first cue tag vs. sound tag
-    first_cue_idx = find(pks_final_pos{kk} > 17 & pks_final_pos{kk} < 26);
+    first_cue_idx = find(pks_final_pos{kk} > 15 & pks_final_pos{kk} < 26);
     %when discovered:
     if ~isempty(first_cue_idx)
         %within this texture set, which idxs correspond to first cue
