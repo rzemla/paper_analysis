@@ -205,10 +205,12 @@ if options.dispfig==1 % Display figure
     ord_STC=[(1:size(ST_curve,2))' I' ST_curve'];
     ROI_ord_STC=sortrows(ord_STC,2);
     STC_sorted=(ROI_ord_STC(:,3:end));
+    
     %Sort mean dF/F by max rate
     ord_STC_dF=[(1:size(ST_dF_curve,2))' I' ST_dF_curve'];
     ROI_ord_STC_dF=sortrows(ord_STC_dF,2);
     STC_dF_sorted=(ROI_ord_STC_dF(:,3:end));
+    
     %Remove Nan
     STC_sorted_nonan=STC_sorted(~any(isnan(STC_sorted),2),:);
     STC_dF_sorted_nonan=STC_dF_sorted(~any(isnan(STC_sorted),2),:);

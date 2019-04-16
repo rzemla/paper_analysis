@@ -1,5 +1,13 @@
 %% Load in data from each animal
 
+%session directories
+session_dirs = {'F:\I46_AB_d1_062018'};      
+
+%load in processed data for each session
+for ii=1:size(session_dirs)
+animal_data = load
+end
+
 
 %% Generate STCs neurons tuned in either session and plot side by side
 
