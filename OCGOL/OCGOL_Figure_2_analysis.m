@@ -19,11 +19,14 @@ end
 
 
 %% Generate STCs neurons tuned in either session and plot side by side
+%customize to add options
 %tuned in both sessions by SI score
 %sorted by A trials
 
 plotSTC_OCGOL(animal_data)
 
+
+%% Spiral plots of individual ROIs
 
 %% Pie chart of fraction of neurons tuned in each subset (A,B, both, neither)
 

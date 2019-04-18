@@ -43,10 +43,14 @@ isnan(A_STC_both_sorted)
 figure;
 subplot(1,2,1)
 imagesc(A_STC_both_sorted')
+hold on;
+title('A trials')
 colormap('jet');
 
 subplot(1,2,2)
 imagesc(B_STC_both_sorted')
+hold on;
+title('B trials')
 colormap('jet')
 colorbar
 
