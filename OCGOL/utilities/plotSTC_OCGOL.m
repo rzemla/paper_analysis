@@ -18,6 +18,7 @@ AandB_tuned =  Atuned & Btuned;
 %Gaussian smoothed onset rate map / spatial bin occupancy time (sec)
 %Normalization from (0-1) for each ROI (ROI-by-ROI)
 
+%these contain NaNs
 A_STC_both = animal_data{1}.Place_cell{1}.Spatial_tuning_curve(:,AandB_tuned);
 B_STC_both = animal_data{1}.Place_cell{2}.Spatial_tuning_curve(:,AandB_tuned);
 
@@ -36,7 +37,7 @@ B_STC_both_sorted = B_STC_both(:,sortIdx);
 % STC_sorted_nonan=STC_sorted(~any(isnan(STC_sorted),2),:);
 % STC_dF_sorted_nonan=STC_dF_sorted(~any(isnan(STC_sorted),2),:);
 
-isnan(A_STC_both_sorted)
+find(isnan(animal_data{1}.Place_cell{1}.Spatial_tuning_curve) ==1)
 
 %% Plot STCs side-by-side
 
@@ -44,6 +45,7 @@ figure;
 subplot(1,2,1)
 imagesc(A_STC_both_sorted')
 hold on;
+ylabel('Neuron #');
 title('A trials')
 colormap('jet');
 
