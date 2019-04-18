@@ -22,7 +22,7 @@ end
 %tuned in both sessions by SI score
 %sorted by A trials
 
-
+plotSTC_OCGOL(animal_data)
 
 
 %% Pie chart of fraction of neurons tuned in each subset (A,B, both, neither)
