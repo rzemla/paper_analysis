@@ -1,7 +1,10 @@
 %% Load in data from each animal
 
 %session directories
-session_dirs = {'F:\I46_AB_d1_062018'};
+%home
+%session_dirs = {'F:\I46_AB_d1_062018'};
+%workstation
+session_dirs = {'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018'};
 
 %mat filenames containing data
 %make sure only 1 mat file is present in output directory
@@ -16,8 +19,10 @@ end
 
 
 %% Generate STCs neurons tuned in either session and plot side by side
+%tuned in both sessions by SI score
+%sorted by A trials
 
-imagesc(animal_data{1}.Place_cell{1}.Spatial_tuning_curve)
+
 
 
 %% Pie chart of fraction of neurons tuned in each subset (A,B, both, neither)
