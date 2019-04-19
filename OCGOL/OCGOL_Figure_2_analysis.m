@@ -28,6 +28,23 @@ plotSTC_OCGOL(animal_data)
 
 %% Spiral plots of individual ROIs
 
+
+
 %% Pie chart of fraction of neurons tuned in each subset (A,B, both, neither)
 
-%% 
+
+%% Scatter plot of calcium properties of each neuron between A and B trials
+%AUC/min, event rate, 
+
+
+
+%% Remapping tuning specificity distance (like done in GOL)
+
+
+
+
+
+
+
+
+

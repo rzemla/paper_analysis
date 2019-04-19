@@ -19,11 +19,22 @@ end
 
 
 %% Generate STCs neurons tuned in either session and plot side by side
-%tuned 
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
 
-imagesc(animal_data{1}.Place_cell{1}.Spatial_tuning_curve)
+plotSTC_OCGOL(animal_data)
+
+
+%% Spiral plots of individual ROIs
+
 
 
 %% Pie chart of fraction of neurons tuned in each subset (A,B, both, neither)
 
-%% 
+
+%% Scatter plot of calcium properties of each neuron between A and B trials
+%AUC/min, event rate, 
+
+
+
