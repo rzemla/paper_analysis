@@ -2,9 +2,9 @@
 
 %session directories
 %home
-%session_dirs = {'F:\I46_AB_d1_062018'};
+session_dirs = {'F:\I46_AB_d1_062018'};
 %workstation
-session_dirs = {'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018'};
+%session_dirs = {'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018'};
 
 %mat filenames containing data
 %make sure only 1 mat file is present in output directory
@@ -88,14 +88,49 @@ for tt=1:2
     end
 end
 
+%% Plot the scatterplots
 figure;
+%all neurons
+subplot(1,4,1)
 hold on
+title('AUC/min')
 axis square
 xlim([0 6]);
 ylim([0 6]);
-scatter(AUC_min{1},AUC_min{2})
+scatter(AUC_min{1},AUC_min{2}, 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
 xlabel('A');
 ylabel('B');
+scatter(mean(AUC_min{1}),mean(AUC_min{2}),'MarkerFaceColor','r')
+%plot center line (slope =1)
+plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
+
+%A or B tuned
+subplot(1,4,2)
+hold on
+title('AUC/min - A and B tuned')
+axis square
+xlim([0 6]);
+ylim([0 6]);
+scatter(AUC_min{1}(AandB_tuned),AUC_min{2}(AandB_tuned), 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
+xlabel('A');
+ylabel('B');
+scatter(mean(AUC_min{1}(AandB_tuned)),mean(AUC_min{2}(AandB_tuned)),'MarkerFaceColor','r')
+%plot center line (slope =1)
+plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
+
+%A tuned
+subplot(1,4,3)
+hold on
+title('AUC/min - A tuned only')
+axis square
+xlim([0 6]);
+ylim([0 6]);
+scatter(AUC_min{1}(onlyA_tuned),AUC_min{2}(onlyA_tuned), 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
+xlabel('A');
+ylabel('B');
+scatter(mean(AUC_min{1}(onlyA_tuned)),mean(AUC_min{2}(onlyA_tuned)),'MarkerFaceColor','r')
+%plot center line (slope =1)
+plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
 
 
 %% Tuning specificity, fraction on cells in tuned in each trial by SI and TS scores
