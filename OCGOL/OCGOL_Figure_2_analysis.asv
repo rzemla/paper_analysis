@@ -28,6 +28,38 @@ plotSTC_OCGOL(animal_data)
 
 %% Spiral plots of individual ROIs
 
+%where to make avi video of selected plotd
+options.makeVideo = 0;
+options.videoName = 'cellEvents_all';
+
+%speed at which each event transitions to the next
+options.plotSpeed = 0.001;
+%plot all on top of one another vs each individually
+options.hold = 0;
+
+%add silence figure option to code
+options.suppressFigure = 1;
+
+%to manually move through the events
+options.manualAdvance = 0;
+
+Atuned = animal_data{1}.Place_cell{1}.Spatial_Info.significant_ROI == 1;
+Btuned = animal_data{1}.Place_cell{2}.Spatial_Info.significant_ROI == 1;
+
+AandB_tuned =  Atuned & Btuned;
+onlyA_tuned = Atuned & ~Btuned;
+% choose cells with sig tuning fields
+%sigPF = Place_cell{1}.placeField.sig_ROI  & Place_cell{2}.placeField.sig_ROI;
+%select single place fields
+%sigPF_1a = find(Place_cell{1}.placeField.nb ==1);
+%sigPF_1b = find(Place_cell{2}.placeField.nb ==1);
+
+%single place field (regardless of signifncance)
+%ROIrange = intersect(sigPF_1a,sigPF_1b);
+ROIrange = find(AandB_tuned == 1);
+ROIrange = find(onlyA_tuned == 1);
+
+spiralEvents = event_spiral(animal_data{1}, ROIrange,options);
 
 
 %% Pie chart of fraction of neurons tuned in each subset (A,B, both, neither)
@@ -35,6 +67,31 @@ plotSTC_OCGOL(animal_data)
 
 %% Scatter plot of calcium properties of each neuron between A and B trials
 %AUC/min, event rate, 
+
+%temporary AUC/min calculation during run epochs
+%move to this event properties script
+
+%A
+run_on_off{1} = animal_data{1}.Events_split{1}.Run.run_onset_offset;
+%B
+run_on_off{2} = animal_data{1}.Events_split{2}.Run.run_onset_offset;
+
+%for each  event
+for ee=1:
+
+end
+animal_data{1, 1}.Events_split{1, 1}.Run.run_onset_offset{1, 1}  
+
+
+
+
+%% Remapping tuning specificity distance (like done in GOL)
+
+
+
+
+
+
 
 
 

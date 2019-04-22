@@ -328,9 +328,6 @@ options.c2plot = 40;
 %[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_laps(Behavior,Imaging,CSV,Events);
 
 %% Split trials based on OCGOL performance
-
-%TODO - split also the updated dF/F traces
-
 switch options.BehaviorType
     case 'RF' %work on this
         %[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_laps(Behavior,Imaging,CSV,Events);
@@ -348,7 +345,7 @@ end
 %for each of 3 conditions = 1 - all, 2 - run, 3 = norun (inside function)
 %for each trial type (trial type)
 
-%TODO - update this using the updated dF/F imaging struct
+%TODO - update this 
 for ii=1:3
     Events_split{ii} = event_properties(updated_dff, Events_split{ii},options);
 end
