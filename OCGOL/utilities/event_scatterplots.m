@@ -1,8 +1,12 @@
-function [outputArg1,outputArg2] = event_scatterplots(inputArg1,inputArg2)
+function [] = event_scatterplots(AUC_min,tunedLogical)
 
 %% Assign variables
 
+onlyA_tuned = tunedLogical.si.onlyA_tuned;
+onlyB_tuned = tunedLogical.si.onlyB_tuned;
 
+AorB_tuned = tunedLogical.si.AorB_tuned;
+AandB_tuned = tunedLogical.si.AandB_tuned;
 
 %% Plot AUC/min scatterplots for different tuned neuron subclasses
 
@@ -10,7 +14,7 @@ figure;
 %all neurons
 subplot(1,4,1)
 hold on
-title('AUC/min')
+title('AUC/min - all neurons')
 axis square
 xlim([0 6]);
 ylim([0 6]);

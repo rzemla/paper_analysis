@@ -27,7 +27,7 @@ plotSTC_OCGOL(animal_data)
 
 %% Defined tuned logical vectors
 
-[tunedLogical] = defineTunedLogicals(animal_data)
+[tunedLogical] = defineTunedLogicals(animal_data);
 
 %% Spiral plots of individual ROIs
 
@@ -85,66 +85,10 @@ for tt=1:2
     end
 end
 
-%% Plot the scatterplots
+%% Plot the scatterplots - AUC/min between trial types
 
+event_scatterplots(AUC_min,tunedLogical);
 
-
-figure;
-%all neurons
-subplot(1,4,1)
-hold on
-title('AUC/min')
-axis square
-xlim([0 6]);
-ylim([0 6]);
-scatter(AUC_min{1},AUC_min{2}, 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
-xlabel('A');
-ylabel('B');
-scatter(mean(AUC_min{1}),mean(AUC_min{2}),'MarkerFaceColor','r')
-%plot center line (slope =1)
-plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
-
-%A or B tuned
-subplot(1,4,2)
-hold on
-title('AUC/min - A or B tuned')
-axis square
-xlim([0 6]);
-ylim([0 6]);
-scatter(AUC_min{1}(AorB_tuned),AUC_min{2}(AorB_tuned), 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
-xlabel('A');
-ylabel('B');
-scatter(mean(AUC_min{1}(AorB_tuned)),mean(AUC_min{2}(AorB_tuned)),'MarkerFaceColor','r')
-%plot center line (slope =1)
-plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
-
-%A tuned
-subplot(1,4,3)
-hold on
-title('AUC/min - A tuned only')
-axis square
-xlim([0 6]);
-ylim([0 6]);
-scatter(AUC_min{1}(onlyA_tuned),AUC_min{2}(onlyA_tuned), 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
-xlabel('A');
-ylabel('B');
-scatter(mean(AUC_min{1}(onlyA_tuned)),mean(AUC_min{2}(onlyA_tuned)),'MarkerFaceColor','r')
-%plot center line (slope =1)
-plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
-
-%B tuned
-subplot(1,4,4)
-hold on
-title('AUC/min - B tuned only')
-axis square
-xlim([0 6]);
-ylim([0 6]);
-scatter(AUC_min{1}(onlyB_tuned),AUC_min{2}(onlyB_tuned), 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
-xlabel('A');
-ylabel('B');
-scatter(mean(AUC_min{1}(onlyB_tuned)),mean(AUC_min{2}(onlyB_tuned)),'MarkerFaceColor','r')
-%plot center line (slope =1)
-plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
 
 %% Tuning specificity, fraction on cells in tuned in each trial by SI and TS scores
 
