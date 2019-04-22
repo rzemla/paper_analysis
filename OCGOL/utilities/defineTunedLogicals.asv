@@ -1,0 +1,18 @@
+function [outputArg1,outputArg2] = defineTunedLogicals(animal_data)
+%defines logical vectors for different classes of tuned neurons
+
+%update this in the future for each animial
+
+Atuned = animal_data{1}.Place_cell{1}.Spatial_Info.significant_ROI == 1;
+Btuned = animal_data{1}.Place_cell{2}.Spatial_Info.significant_ROI == 1;
+
+AandB_tuned = Atuned & Btuned;
+AorB_tuned = Atuned | Btuned;
+
+onlyA_tuned = Atuned & ~Btuned;
+onlyB_tuned = ~Atuned & Btuned;
+
+
+
+end
+

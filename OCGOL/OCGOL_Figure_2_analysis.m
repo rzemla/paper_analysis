@@ -25,6 +25,9 @@ end
 
 plotSTC_OCGOL(animal_data)
 
+%% Defined tuned logical vectors
+
+[tunedLogical] = defineTunedLogicals(animal_data)
 
 %% Spiral plots of individual ROIs
 
@@ -43,11 +46,6 @@ options.suppressFigure = 1;
 %to manually move through the events
 options.manualAdvance = 0;
 
-Atuned = animal_data{1}.Place_cell{1}.Spatial_Info.significant_ROI == 1;
-Btuned = animal_data{1}.Place_cell{2}.Spatial_Info.significant_ROI == 1;
-
-AandB_tuned =  Atuned & Btuned;
-onlyA_tuned = Atuned & ~Btuned;
 % choose cells with sig tuning fields
 %sigPF = Place_cell{1}.placeField.sig_ROI  & Place_cell{2}.placeField.sig_ROI;
 %select single place fields
@@ -60,7 +58,6 @@ ROIrange = find(AandB_tuned == 1);
 ROIrange = find(onlyA_tuned == 1);
 
 spiralEvents = event_spiral(animal_data{1}, ROIrange,options);
-
 
 %% Pie chart of fraction of neurons tuned in each subset (A,B, both, neither)
 
@@ -89,6 +86,9 @@ for tt=1:2
 end
 
 %% Plot the scatterplots
+
+
+
 figure;
 %all neurons
 subplot(1,4,1)
@@ -107,14 +107,14 @@ plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
 %A or B tuned
 subplot(1,4,2)
 hold on
-title('AUC/min - A and B tuned')
+title('AUC/min - A or B tuned')
 axis square
 xlim([0 6]);
 ylim([0 6]);
-scatter(AUC_min{1}(AandB_tuned),AUC_min{2}(AandB_tuned), 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
+scatter(AUC_min{1}(AorB_tuned),AUC_min{2}(AorB_tuned), 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
 xlabel('A');
 ylabel('B');
-scatter(mean(AUC_min{1}(AandB_tuned)),mean(AUC_min{2}(AandB_tuned)),'MarkerFaceColor','r')
+scatter(mean(AUC_min{1}(AorB_tuned)),mean(AUC_min{2}(AorB_tuned)),'MarkerFaceColor','r')
 %plot center line (slope =1)
 plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
 
@@ -132,6 +132,19 @@ scatter(mean(AUC_min{1}(onlyA_tuned)),mean(AUC_min{2}(onlyA_tuned)),'MarkerFaceC
 %plot center line (slope =1)
 plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
 
+%B tuned
+subplot(1,4,4)
+hold on
+title('AUC/min - B tuned only')
+axis square
+xlim([0 6]);
+ylim([0 6]);
+scatter(AUC_min{1}(onlyB_tuned),AUC_min{2}(onlyB_tuned), 'MarkerFaceColor', [0.7 0.7 0.7], 'MarkerEdgeColor', [0.7 0.7 0.7])
+xlabel('A');
+ylabel('B');
+scatter(mean(AUC_min{1}(onlyB_tuned)),mean(AUC_min{2}(onlyB_tuned)),'MarkerFaceColor','r')
+%plot center line (slope =1)
+plot([0 6],[0 6],'Color',[0.5 0.5 0.5], 'LineStyle','--');
 
 %% Tuning specificity, fraction on cells in tuned in each trial by SI and TS scores
 
