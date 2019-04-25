@@ -17,7 +17,8 @@ options.defineDir = 1;
 %setDir = 'G:\OCGOL_training\I57_RLTS_5AB_041019';
 
 %setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
-setDir = 'F:\OCGOL_training\I56_RLTS_041019\5A5B';
+%setDir = 'F:\OCGOL_training\I56_RLTS_041019\5A5B';
+setDir = 'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619';
 
 %performance/texture code works - backup this dataset!
 %check missed reward collection feature
@@ -348,6 +349,7 @@ end
 %for OCGOL data
 %for each of 3 conditions = 1 - all, 2 - run, 3 = norun (inside function)
 %for each trial type (trial type)
+
 
 %TODO - update this using the updated dF/F imaging struct
 for ii=1:5

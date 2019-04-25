@@ -158,7 +158,7 @@ for ii=1:size(path_dir,2)
 end
 
 %% Create config file for python to know cross session directory
-fileID = fopen(['D:\python_scripts\','crossSesParams.config'], 'w');
+fileID = fopen(['F:\python_scripts\','crossSesParams.config'], 'w');
 %split each absolute location directory into subpart delimited by /
 %splitName = strsplit(names{ii},'/');
 
@@ -173,7 +173,7 @@ fclose(fileID);
 
 %run bat script that load base/caiman environment and executes registration
 %script
-[stat,cmd_out] = system('D:\python_scripts\launch_python_script.bat','-echo');
+[stat,cmd_out] = system('F:\python_scripts\launch_python_script.bat','-echo');
 
 %% Read python caiman register function output variables
 
