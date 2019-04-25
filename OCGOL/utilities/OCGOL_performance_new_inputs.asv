@@ -212,17 +212,12 @@ for ii = 1:size(lap,2)
             reward_collected_check(ii) = 0;
         end
     elseif trialOrder(ii) == 20 || trialOrder(ii) == 30 %wrong A or B trial
-         if ~isempty(find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size) | ...
-                find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size))   
-            reward_collected_check(ii) = 1;
-        else
-            reward_collected_check(ii) = 0;
-         end
+            
     end
 end
 
 %check at least 1 reward collected on each lap
-if sum(reward_collected_check) == lap_nb
+if sum(and(trialCorrect,reward_collected_check)) == lap_nb
     disp('At least 1 reward collected on each lap/trial.');
 else
     disp('Missed reward collection on at least 1 lap/trial');

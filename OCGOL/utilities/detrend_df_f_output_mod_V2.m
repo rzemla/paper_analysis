@@ -21,6 +21,7 @@ function [F_dff,F0,F,Fd,F0_background, F0_baseline] = detrend_df_f_output_mod_V2
 defoptions = CNMFSetParms;
 if nargin < 5 || isempty(options)
     options = defoptions;
+    disp('Options assigned by default. Check code!');
 end
 
 if ~isfield(options,'df_prctile') || isempty(options.df_prctile)

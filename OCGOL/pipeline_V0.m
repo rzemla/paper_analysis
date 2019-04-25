@@ -16,7 +16,8 @@ options.defineDir = 1;
 %setDir = 'G:\OCGOL_training\I56_RTLS_ABrand_no_punish_041519';
 %setDir = 'G:\OCGOL_training\I57_RLTS_5AB_041019';
 
-setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
+%setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
+setDir = 'F:\OCGOL_training\I56_RLTS_041019\5A5B';
 
 %performance/texture code works - backup this dataset!
 %check missed reward collection feature
@@ -95,10 +96,10 @@ setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 1;
+options.loadBehaviorData = 0;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 1;
+options.loadImagingData = 0;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
