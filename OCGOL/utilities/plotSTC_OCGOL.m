@@ -1,35 +1,17 @@
-function [outputArg1,outputArg2] = plotSTC_OCGOL(animal_data)
+function [outputArg1,outputArg2] = plotSTC_OCGOL(animal_data, tunedLogical)
 
 %% Import variables
-
-
 
 %% Define tuned cells across trials
 
 %spatial information criterion
-Atuned = animal_data{1}.Place_cell{1}.Spatial_Info.significant_ROI == 1;
-Btuned = animal_data{1}.Place_cell{2}.Spatial_Info.significant_ROI == 1;
+Atuned = tunedLogical.si.Atuned;
+Btuned = tunedLogical.si.Btuned;
 
-AandB_tuned =  Atuned & Btuned;
-AorB_tuned = Atuned | Btuned;
-onlyA_tuned = Atuned & ~Btuned;
-onlyB_tuned = ~Atuned & Btuned;
-
-%% Extract STCs with tuned ROIs - in nontuned neurons will scale the weakest signal to 1 regardless of tuning
-
-%definition of spatial tuning curve
-%Gaussian smoothed onset rate map / spatial bin occupancy time (sec)
-%Normalization from (0-1) for each ROI (ROI-by-ROI)
-
-%these contain NaNs
-STC_A = animal_data{1}.Place_cell{1}.Spatial_tuning_curve;
-STC_B = animal_data{1}.Place_cell{2}.Spatial_tuning_curve;
-
-A_STC_both = STC_A(:,AandB_tuned);
-B_STC_both = STC_B(:,AandB_tuned);
-
-A_STC_onlyA = STC_A(:,onlyA_tuned);
-B_STC_onlyA = STC_B(:,onlyA_tuned);
+AandB_tuned =  tunedLogical.si.AandB_tuned;
+AorB_tuned = tunedLogical.si.AorB_tuned;
+onlyA_tuned = tunedLogical.si.onlyA_tuned;
+onlyB_tuned = tunedLogical.si.onlyB_tuned;
 
 %% Extract mean dF map in each spatial bin (not normalized and not occupancy divided) (100 bins)
 A_df = animal_data{1}.Place_cell{1, 1}.Spatial_Info.mean_dF_map{8}; 
@@ -42,7 +24,7 @@ A_df_onlyA = A_df(:,onlyA_tuned);
 B_df_onlyA = B_df(:,onlyA_tuned);
 
 
-%% Sort A STCs by maximum rate
+%% Sort A dF/F STCs by maximum rate
 
 %maxBin - spatial bin where activity is greatest for each ROI
 [~,maxBin] = max(A_df_both, [], 1);
@@ -130,6 +112,25 @@ title('B trials - only A tuned')
 caxis([0 2])
 colormap('jet')
 colorbar
+
+
+%% Extract STCs with tuned ROIs - in nontuned neurons will scale the weakest signal to 1 regardless of tuning
+
+%definition of spatial tuning curve
+%Gaussian smoothed onset rate map / spatial bin occupancy time (sec)
+%Normalization from (0-1) for each ROI (ROI-by-ROI)
+
+%these contain NaNs
+STC_A = animal_data{1}.Place_cell{1}.Spatial_tuning_curve;
+STC_B = animal_data{1}.Place_cell{2}.Spatial_tuning_curve;
+
+A_STC_both = STC_A(:,AandB_tuned);
+B_STC_both = STC_B(:,AandB_tuned);
+
+A_STC_onlyA = STC_A(:,onlyA_tuned);
+B_STC_onlyA = STC_B(:,onlyA_tuned);
+
+
 
 end
 

@@ -17,17 +17,17 @@ for ii=1:size(session_dirs,1)
     animal_data{ii} = load(fullfile(file_names{ii}.folder, file_names{ii}.name));
 end
 
+%% Defined tuned logical vectors
+
+[tunedLogical] = defineTunedLogicals(animal_data);
 
 %% Generate STCs neurons tuned in either session and plot side by side
 %customize to add options
 %tuned in both sessions by SI score
 %sorted by A trials
 
-plotSTC_OCGOL(animal_data)
+plotSTC_OCGOL(animal_data,tunedLogical)
 
-%% Defined tuned logical vectors
-
-[tunedLogical] = defineTunedLogicals(animal_data);
 
 %% Spiral plots of individual ROIs
 

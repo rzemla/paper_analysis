@@ -602,6 +602,9 @@ Place_cell.options=options;
 Place_cell.proba_per_bin=proba_bin;
 %spatial tuning curve - normalized and smoothed rate map
 Place_cell.Spatial_tuning_curve=ST_curve;
+%spatial tuning curve - non-normalized; only smoothed (smoothed event
+%map)/unsmoothed occupancy time
+Place_cell.Spatial_tuning_curve_no_norm=ST_curve_nonNorm;
 
 %normalized and smoothed average dF values per bin
 Place_cell.Spatial_tuning_dF=ST_dF_curve;
