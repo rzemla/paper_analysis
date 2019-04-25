@@ -179,13 +179,9 @@ end
 lapSelect{1} = find(lap_order == 2);
 %B trial laps (3 = correct, B trials)
 lapSelect{2} = find(lap_order == 3);
-%all laps (correct and incorrect)
+%all laps
 lapSelect{3} = (1:size(lap_order,1))';
-%all A trials regardless if correct (2 or 20)
-lapSelect{4} = find(lap_order == 2 | lap_order == 20);
-%all B trials regardless if correct (3 or 30)
-lapSelect{5} = find(lap_order == 3 | lap_order == 30);
-
+%all A trial
 
 %% Holder cells
 %holder cell for the combined traces/positions
