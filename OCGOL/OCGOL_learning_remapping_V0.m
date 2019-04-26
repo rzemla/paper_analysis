@@ -4,11 +4,11 @@
 options.register = 1;
 
 %input directories to matching function
-path_dir = {'F:\OCGOL_training\I56_RLTS_041019\5A5B',...
-    'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B',...
+    'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
 
 %cross session directory
-crossdir = 'F:\OCGOL_training\I56_RLTS_041019\crossSession';
+crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
 
 %load place cell variables for each session
 %get mat directories in each output folder
