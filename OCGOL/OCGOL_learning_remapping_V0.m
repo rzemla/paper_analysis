@@ -38,7 +38,24 @@ end
 
 %% Plot smoothed event rate across track (function)
 
-
+%% Plot dF/F rasters side by side by laps for matching ROIs
+%all correct laps
+figure;
+for ii=1:size(registered.multi.assigned_all,1)
+    
+    subplot(1,2,1)
+    imagesc(session_vars{1}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,1)})
+    hold on;
+    caxis([0 2])
+    hold off;
+    subplot(1,2,2)
+    imagesc(session_vars{2}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,2)})
+    hold on;
+    caxis([0 2])
+    hold off;
+    pause;
+    clf;
+end
 
 %% Calculate the distance from centroid to reward (function)
 

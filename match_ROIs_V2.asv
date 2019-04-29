@@ -352,7 +352,7 @@ end
 
 %number of ROIs (rows) by sessions (cols)
 rows = 20;
-cols = nbSes; %take # of sessions as input
+cols = 2; %take # of sessions as input
 
 %matrix corresponding to display
 display_matrix = reshape([1:(rows*cols)],cols,rows)';
