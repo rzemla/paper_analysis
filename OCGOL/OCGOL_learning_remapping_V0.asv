@@ -61,9 +61,7 @@ end
 %% Learning pre and post event spiral
 %display event spiral
 %dF/F across laps between unlearned and learned day
-%ROI outlines that show matching between days - need day from match ROI
-%script
-
+%ROI outlines that show matching between days - need day from 
 
 
 %% Calculate the distance from centroid to reward (function)
