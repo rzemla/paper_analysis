@@ -56,18 +56,49 @@ visualize_matches(rows,cols,ROI_zooms,ROI_outlines);
 figure;
 for ii=1:size(registered.multi.assigned_all,1)
     
-    subplot(1,2,1)
+    subplot(2,3,1)
     imagesc(session_vars{1}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,1)})
     hold on;
     caxis([0 2])
+    colormap(gca,'jet');
     hold off;
-    subplot(1,2,2)
+    
+    subplot(2,3,2)
+    
+    
+    subplot(2,3,3)
+    imagesc(ROI_zooms{ii,1})
+    hold on;
+    colormap(gca, 'gray')
+    xticks([])
+    yticks([])
+    b = bwboundaries(ROI_outlines{ii,1},'noholes');
+    plot(b{1}(:,2),b{1}(:,1),'r')
+    hold off
+    
+    
+    subplot(2,3,4)
     imagesc(session_vars{2}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,2)})
     hold on;
     caxis([0 2])
+    colormap(gca, 'jet');
     hold off;
+    
+    subplot(2,3,6)
+    imagesc(ROI_zooms{ii,2})
+    %imagesc(ROI_zooms{registered.multi.assigned_all(ii,2),2})
+    hold on;
+    colormap(gca, 'gray')
+    xticks([])
+    yticks([])
+    %b = bwboundaries(ROI_outlines{registered.multi.assigned_all(ii,2),2},'noholes');
+    b = bwboundaries(ROI_outlines{ii,2},'noholes');
+    plot(b{1}(:,2),b{1}(:,1),'r')
+    hold off
+    
     pause;
     clf;
+    
 end
 
 
