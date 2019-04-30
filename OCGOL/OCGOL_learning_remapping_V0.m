@@ -18,7 +18,8 @@ for ii=1:size(path_dir,2)
 end
 %load in place cell variables (and others later)
 for ii = 1:size(path_dir,2)
-    session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior');
+    session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
+        );
 end
 
 %% Match ROIs from across GOL days
