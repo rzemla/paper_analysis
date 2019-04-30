@@ -25,16 +25,29 @@ end
 
 if options.register == 1
     %run cross registration
+    disp('Running registration of components');
     [registered] = match_ROIs_V2(path_dir,crossdir);
     
     %save registration variable in crosssession
+    disp('Saving registered component matchings');
     save(fullfile(crossdir,'registered.mat'),'registered');
     
 elseif options.register == 0
     %load the registered struct
+    disp('Loading registered component matchings');
     load(fullfile(crossdir,'registered.mat'),'registered');
     
 end
+
+%% Visualize the matching ROIs that were matched above
+%number of ROIs (rows) by sessions (cols)
+rows = 20;
+cols = 2; %take # of sessions as input
+ROI_zooms = registered.multi.ROI_zooms;
+ROI_outlines = registered.multi.ROI_outlines;
+
+visualize_matches(rows,cols,ROI_zooms,ROI_outlines);
+
 
 %% Plot smoothed event rate across track (function)
 

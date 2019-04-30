@@ -25,9 +25,10 @@ end
 
 if options.register == 1
     %run cross registration
+    disp('Running registration of components');
     [registered] = match_ROIs_V2(path_dir,crossdir);
-    
     %save registration variable in crosssession
+    
     save(fullfile(crossdir,'registered.mat'),'registered');
     
 elseif options.register == 0
@@ -35,6 +36,14 @@ elseif options.register == 0
     load(fullfile(crossdir,'registered.mat'),'registered');
     
 end
+
+%% Visualize the matching ROIs that were matched above
+%number of ROIs (rows) by sessions (cols)
+rows = 20;
+cols = nbSes; %take # of sessions as input
+
+visualize_matches(row,cols,ROI_zooms,ROI_outlines);
+
 
 %% Plot smoothed event rate across track (function)
 
@@ -61,7 +70,9 @@ end
 %% Learning pre and post event spiral
 %display event spiral
 %dF/F across laps between unlearned and learned day
-%ROI outlines that show matching between days - need day from 
+%ROI outlines that show matching between days - need day from match ROI
+%script
+
 
 
 %% Calculate the distance from centroid to reward (function)

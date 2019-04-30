@@ -190,12 +190,11 @@ assignments_adj = assignments + 1;
 all_match_sum = sum(assignments_adj,2);
 assign_all_matching = assignments_adj(~isnan(all_match_sum),:);
 
-
-%% Try plotting the matching A component - just visuakliation
-
 %from all matching indices across sessions
 %number of sessions
 nbSes = size(assign_all_matching,2); 
+
+%% Try plotting the matching A component - just visualization
 
 %skip comparison of spatial components (temp)
 if 0
@@ -214,51 +213,6 @@ end
 %% Define the outlines and x,y zoom-in limits for matched ROIs
 
 [ROI_zooms,ROI_outlines] = defineOutlines(assign_all_matching,nbSes,session_vars);
-
-%% Plot as one large group of subplots of ROI across sessions
-
-%number of ROIs (rows) by sessions (cols)
-rows = 20;
-cols = nbSes; %take # of sessions as input
-
-%matrix corresponding to display
-display_matrix = reshape([1:(rows*cols)],cols,rows)';
-
-%total number of matched ROIs to display
-displayROInb = size(ROI_zooms,1);
-
-%ROI input list (in chunks of 20 start to finish
-start_end_ROI = [(1:20:20*floor(displayROInb/20))',(20:20:20*floor(displayROInb/20))'];
-start_end_ROI = [start_end_ROI; [start_end_ROI(end)+1, displayROInb]];
-
-%iterate through each range
-for iter=1:size(start_end_ROI,1)
-    figure('renderer','painters','Position', [2200 100 200 900]) %scale the width by 300 for each ses
-    %assign the roi range for display
-ROI = start_end_ROI(iter,1):start_end_ROI(iter,2);
-
-%for each sessions
-for rr=1:size(display_matrix,1)
-    for ss=1:size(display_matrix,2)
-        subplot(rows,cols,display_matrix(rr,ss))
-        subaxis(rows, cols, display_matrix(rr,ss), 'SpacingHorizontal', 0.01,...
-            'SpacingVertical',0.01,...
-            'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0,'MarginBottom',0.1);
-        %prevent out of bounds error
-        if ~(rr> size(ROI,2))
-            imagesc(ROI_zooms{ROI(rr) ,ss})
-            hold on;
-            colormap('gray')
-            xticks([])
-            yticks([])
-            b= bwboundaries(ROI_outlines{ROI(rr),ss},'noholes');
-            plot(b{1}(:,2),b{1}(:,1),'r')
-            hold off
-        end
-    end
-end
-
-end
 
 %% Create a matching matrix for session by session registration equivalent to  
 %matched ROIs - use lookup_match matrix
@@ -318,10 +272,17 @@ end
 
 %% Output data (struct)
 
+%using register_multi script
 registered.multi.assigned = multiSessionAlign;
 registered.multi.assigned_all = multiSessionAlign_all;
 registered.multi.assign_cell = allSesMatchROIs;
+%ROI zooms and outlines for subsequent visualization %ROI_zooms,ROI_outlines
+registered.multi.ROI_zooms = ROI_zooms;
+registered.multi.ROI_outlines = ROI_outlines; 
+
+%session-by-session matching
 registered.session.assign_cell = sesBySesMatchROIs;
+
 
 
 
