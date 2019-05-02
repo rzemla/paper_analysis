@@ -49,31 +49,37 @@ for ss = 1:size(session_vars,2)
 end
 
 %% Define the spiral parameters according to the number of laps
-%equivalent to number of laps for each session
-turns = size(trialOrder,1); %The number of turns the spiral will have (how many laps)
-
-%x is the angle
-x=[-1*pi*turns : 0.01 : pi*turns];
-%r is that radius of the point
-r=[0:1/(length(x)-1):1];
-
-%scale to lap length
-r_scaled = r.*turns;
+%equivalent to number of laps for each session (turns = laps)
+for ss = 1:size(session_vars,2)
+    turns(ss) = size(trialOrder{ss},1); %The number of turns the spiral will have (how many laps)
+    
+    %x is the angle
+    x{ss} = [-1*pi*turns(ss) : 0.01 : pi*turns(ss)];
+    
+    %r is that radius of the point
+    r{ss} = [0:1/(length(x{ss})-1):1];
+    
+    %scale to lap length
+    r_scaled{ss} = r{ss}.*turns(ss);
+end
 
 %all parameters in the run frame domain
 %find the frames index of event and position
-%for trial type
-for ii=1:size(trialTypeIdx,2)
-    %for each lap belonging to that trial
-    for ll= 1:size(trialTypeIdx{ii},1)
-        %for each ROI
-        for rr=1:size(events{trialTypeIdx{ii}(ll)},2)
-            %event indices in run domain
-            event_idx{ii}{ll}{rr} = find(events{trialTypeIdx{ii}(ll)}(:,rr) == 1);
-            %position that corresponds to indices
-            pos{ii}{ll}{rr} = position{trialTypeIdx{ii}(ll)}(event_idx{ii}{ll}{rr});
-            %position vectors that will be used as input to spiral
-            posVectors{ii}{ll}{rr} = trialTypeIdx{ii}(ll).*exp(1i.*((pos{ii}{ll}{rr}/200)*2*pi)).';
+%for each session
+for ss=1:size(session_vars,2)
+    %for trial type (A or B)
+    for ii=1:size(trialTypeIdx{ss},2)
+        %for each lap belonging to that trial
+        for ll= 1:size(trialTypeIdx{ss}{ii},1)
+            %for each ROI
+            for rr=1:size(events{ss}{trialTypeIdx{ss}{ii}(ll)},2)
+                %event indices in run domain
+                event_idx{ss}{ii}{ll}{rr} = find(events{ss}{trialTypeIdx{ss}{ii}(ll)}(:,rr) == 1);
+                %position that corresponds to indices
+                pos{ss}{ii}{ll}{rr} = position{ss}{trialTypeIdx{ss}{ii}(ll)}(event_idx{ss}{ii}{ll}{rr});
+                %position vectors that will be used as input to spiral
+                posVectors{ss}{ii}{ll}{rr} = trialTypeIdx{ss}{ii}(ll).*exp(1i.*((pos{ss}{ii}{ll}{rr}/200)*2*pi)).';
+            end
         end
     end
 end
@@ -83,18 +89,21 @@ end
 valMin = posVectors;
 idxMin = posVectors;
 posVectorApprox = posVectors;
-%for each ROI
-%for each trial type
-for kk = 1:size(trialTypeIdx,2)
-    %for each lap belonging to that trial
-    for ll = 1:size(pos{kk},2)
-        %for each ROI
-        for rr = 1:size(events{1},2)
-            %for each event
-            for ee=1:size(pos{kk}{ll}{rr},1)
-                %fix empty cell clipping at endpoints
-                [valMin{kk}{ll}{rr}(ee),idxMin{kk}{ll}{rr}(ee)] = min(abs( (r_scaled - ( (trialTypeIdx{kk}(ll)-1) + (pos{kk}{ll}{rr}(ee)/200) ) ) ));
-                posVectorApprox{kk}{ll}{rr}(ee) = r_scaled(idxMin{kk}{ll}{rr}(ee))*exp(1i.*(pos{kk}{ll}{rr}(ee)/200)*2*pi);
+
+%foreach session
+for ss =1:size(session_vars,2)
+    %for each trial type
+    for kk = 1:size(trialTypeIdx{ss},2)
+        %for each lap belonging to that trial
+        for ll = 1:size(pos{ss}{kk},2)
+            %for each ROI
+            for rr = 1:size(events{ss}{1},2)
+                %for each event
+                for ee=1:size(pos{ss}{kk}{ll}{rr},1)
+                    %fix empty cell clipping at endpoints
+                    [valMin{ss}{kk}{ll}{rr}(ee),idxMin{ss}{kk}{ll}{rr}(ee)] = min(abs( (r_scaled{ss} - ( (trialTypeIdx{ss}{kk}(ll)-1) + (pos{ss}{kk}{ll}{rr}(ee)/200) ) ) ));
+                    posVectorApprox{ss}{kk}{ll}{rr}(ee) = r_scaled{ss}(idxMin{ss}{kk}{ll}{rr}(ee))*exp(1i.*(pos{ss}{kk}{ll}{rr}(ee)/200)*2*pi);
+                end
             end
         end
     end
@@ -114,9 +123,27 @@ for ii=1:size(registered.multi.assigned_all,1)
     colormap(gca,'jet');
     hold off;
     
+    ROI = registered.multi.assigned_all(ii,1);
+    
     %spiral plot early in learning
     subplot(2,3,2)
+    polarplot(x{1},r_scaled{1},'k','Linewidth',1.5)
+    hold on
     
+    %plot A (2) trial events
+    for ll=1:size(idxMin{1}{1},2)
+        polarscatter(angle(posVectorApprox{1}{1}{ll}{ROI}),r_scaled{1}(idxMin{1}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')
+        %place field center
+        %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
+    end
+    
+    %plot B (3) trial events
+    for ll=1:size(idxMin{1}{2},2)
+        polarscatter(angle(posVectorApprox{1}{2}{ll}{ROI}),r_scaled{1}(idxMin{1}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
+        %place field center
+        %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
+    end
+    hold off
     
     subplot(2,3,3)
     imagesc(ROI_zooms{ii,1})
@@ -137,6 +164,26 @@ for ii=1:size(registered.multi.assigned_all,1)
     caxis([0 2])
     colormap(gca, 'jet');
     hold off;
+    
+    ROI = registered.multi.assigned_all(ii,2);
+    
+    subplot(2,3,5)
+    polarplot(x{2},r_scaled{2},'k','Linewidth',1.5)
+    hold on
+    %plot A (2) trial events
+    for ll=1:size(idxMin{2}{1},2)
+        polarscatter(angle(posVectorApprox{2}{1}{ll}{ROI}),r_scaled{2}(idxMin{2}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')
+        %place field center
+        %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
+    end
+    
+    %plot B (3) trial events
+    for ll=1:size(idxMin{2}{2},2)
+        polarscatter(angle(posVectorApprox{2}{2}{ll}{ROI}),r_scaled{2}(idxMin{2}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
+        %place field center
+        %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
+    end
+    hold off
     
     subplot(2,3,6)
     imagesc(ROI_zooms{ii,2})
