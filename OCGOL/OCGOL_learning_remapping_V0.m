@@ -1,14 +1,14 @@
 %% Import variables and define options
 
 %run componenet registration across sessions
-options.register = 1;
+options.register = 0;
 
 %input directories to matching function
-path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B',...
-    'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+path_dir = {'F:\OCGOL_training\I56_RLTS_041019\5A5B',...
+    'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
 
 %cross session directory
-crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
+crossdir = 'F:\OCGOL_training\I56_RLTS_041019\crossSession';
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -18,8 +18,8 @@ for ii=1:size(path_dir,2)
 end
 %load in place cell variables (and others later)
 for ii = 1:size(path_dir,2)
-    session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
-        );
+    %add event variables
+    session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior');
 end
 
 %% Match ROIs from across GOL days
