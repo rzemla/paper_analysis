@@ -4,11 +4,11 @@
 options.register = 0;
 
 %input directories to matching function
-path_dir = {'F:\OCGOL_training\I56_RLTS_041019\5A5B',...
-    'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B',...
+    'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
 
 %cross session directory
-crossdir = 'F:\OCGOL_training\I56_RLTS_041019\crossSession';
+crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -20,16 +20,8 @@ end
 for ii = 1:size(path_dir,2)
     %add event variables
     session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
-        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap');
+        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split');
 end
-
-% Behavior_split_lap = animal_data.Behavior_split_lap;
-% Events_split_lap = animal_data.Events_split_lap;
-% Behavior_split =  animal_data.Behavior_split;
-% Event_split = animal_data.Events_split;
-% Imaging_split = animal_data.Imaging_split;
-% Place_cell =animal_data.Place_cell;
-% Behavior_full =animal_data.Behavior;
 
 %% Match ROIs from across GOL days
 
@@ -62,55 +54,8 @@ visualize_matches(rows,cols,ROI_zooms,ROI_outlines);
 %% Plot smoothed event rate across track (function)
 
 %% Plot dF/F rasters side by side by laps for matching ROIs
-%all correct laps
-figure;
-for ii=1:size(registered.multi.assigned_all,1)
-    
-    subplot(2,3,1)
-    imagesc(session_vars{1}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,1)})
-    hold on;
-    caxis([0 2])
-    colormap(gca,'jet');
-    hold off;
-    
-    %spiral plot early in learning
-    subplot(2,3,2)
-    
-    
-    subplot(2,3,3)
-    imagesc(ROI_zooms{ii,1})
-    hold on;
-    colormap(gca, 'gray')
-    xticks([])
-    yticks([])
-    b = bwboundaries(ROI_outlines{ii,1},'noholes');
-    plot(b{1}(:,2),b{1}(:,1),'r')
-    hold off
-    
-    
-    subplot(2,3,4)
-    imagesc(session_vars{2}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,2)})
-    hold on;
-    caxis([0 2])
-    colormap(gca, 'jet');
-    hold off;
-    
-    subplot(2,3,6)
-    imagesc(ROI_zooms{ii,2})
-    %imagesc(ROI_zooms{registered.multi.assigned_all(ii,2),2})
-    hold on;
-    colormap(gca, 'gray')
-    xticks([])
-    yticks([])
-    %b = bwboundaries(ROI_outlines{registered.multi.assigned_all(ii,2),2},'noholes');
-    b = bwboundaries(ROI_outlines{ii,2},'noholes');
-    plot(b{1}(:,2),b{1}(:,1),'r')
-    hold off
-    
-    pause;
-    clf;
-    
-end
+
+compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
 
 
 %% Learning pre and post event spiral
