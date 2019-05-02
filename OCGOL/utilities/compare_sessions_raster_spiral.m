@@ -49,7 +49,7 @@ for ss = 1:size(session_vars,2)
 end
 
 %% Define the spiral parameters according to the number of laps
-%equivalenet to number of laps shown
+%equivalent to number of laps for each session
 turns = size(trialOrder,1); %The number of turns the spiral will have (how many laps)
 
 %x is the angle
