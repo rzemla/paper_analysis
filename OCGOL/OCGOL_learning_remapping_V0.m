@@ -19,8 +19,17 @@ end
 %load in place cell variables (and others later)
 for ii = 1:size(path_dir,2)
     %add event variables
-    session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior');
+    session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
+        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap');
 end
+
+% Behavior_split_lap = animal_data.Behavior_split_lap;
+% Events_split_lap = animal_data.Events_split_lap;
+% Behavior_split =  animal_data.Behavior_split;
+% Event_split = animal_data.Events_split;
+% Imaging_split = animal_data.Imaging_split;
+% Place_cell =animal_data.Place_cell;
+% Behavior_full =animal_data.Behavior;
 
 %% Match ROIs from across GOL days
 
@@ -64,6 +73,7 @@ for ii=1:size(registered.multi.assigned_all,1)
     colormap(gca,'jet');
     hold off;
     
+    %spiral plot early in learning
     subplot(2,3,2)
     
     
