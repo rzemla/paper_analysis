@@ -55,6 +55,7 @@ visualize_matches(rows,cols,ROI_zooms,ROI_outlines);
 
 %% Plot dF/F rasters side by side by laps for matching ROIs
 
+%break down in simpler code in the future;
 compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
 
 
