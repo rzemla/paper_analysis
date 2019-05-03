@@ -114,16 +114,20 @@ end
 figure;
 for ii=1:size(registered.multi.assigned_all,1)
     
+    %ROI from session 1
+    ROI = registered.multi.assigned_all(ii,1);
+    
     subplot(2,3,1)
     imagesc(session_vars{1}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,1)})
     hold on;
+    title(num2str(ROI));
     ylabel('Lap #'); 
     xlabel('Spatial bin');
     caxis([0 2])
     colormap(gca,'jet');
     hold off;
     
-    ROI = registered.multi.assigned_all(ii,1);
+    
     
     %spiral plot early in learning
     subplot(2,3,2)
@@ -137,12 +141,21 @@ for ii=1:size(registered.multi.assigned_all,1)
         %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
     end
     
+    %plot tuning specificity vector for all A trials
+    polarplot([0+0i,15*session_vars{1, 1}.Place_cell{1, 4}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
+
+
     %plot B (3) trial events
     for ll=1:size(idxMin{1}{2},2)
         polarscatter(angle(posVectorApprox{1}{2}{ll}{ROI}),r_scaled{1}(idxMin{1}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
         %place field center
         %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
     end
+    
+    %plot tuning specificity vector for all B trials
+    polarplot([0+0i,15*session_vars{1, 1}.Place_cell{1, 5}.Tuning_Specificity.tuning_vector_specificity(ROI)],'r-','LineWidth',2)
+
+
     hold off
     
     subplot(2,3,3)
@@ -155,17 +168,20 @@ for ii=1:size(registered.multi.assigned_all,1)
     plot(b{1}(:,2),b{1}(:,1),'r')
     hold off
     
-    
+    %ROI from session 2
+    ROI = registered.multi.assigned_all(ii,2);
+     
     subplot(2,3,4)
     imagesc(session_vars{2}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,2)})
     hold on;
+    title(num2str(ROI));
     ylabel('Lap #'); 
     xlabel('Spatial bin');
     caxis([0 2])
     colormap(gca, 'jet');
     hold off;
     
-    ROI = registered.multi.assigned_all(ii,2);
+   
     
     subplot(2,3,5)
     polarplot(x{2},r_scaled{2},'k','Linewidth',1.5)
@@ -176,6 +192,9 @@ for ii=1:size(registered.multi.assigned_all,1)
         %place field center
         %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
     end
+    %plot tuning specificity vector for all A trials
+    polarplot([0+0i,15*session_vars{2}.Place_cell{4}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
+
     
     %plot B (3) trial events
     for ll=1:size(idxMin{2}{2},2)
@@ -183,6 +202,10 @@ for ii=1:size(registered.multi.assigned_all,1)
         %place field center
         %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
     end
+    
+    %plot tuning specificity vector for all A trials
+    polarplot([0+0i,15*session_vars{2}.Place_cell{5}.Tuning_Specificity.tuning_vector_specificity(ROI)],'r-','LineWidth',2)
+
     hold off
     
     subplot(2,3,6)

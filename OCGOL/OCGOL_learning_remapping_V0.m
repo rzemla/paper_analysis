@@ -36,8 +36,9 @@ if options.register == 1
     
 elseif options.register == 0
     %load the registered struct
-    disp('Loading registered component matchings');
+    disp('Loading registered component matchings...');
     load(fullfile(crossdir,'registered.mat'),'registered');
+    disp('Loaded.');
     
 end
 
