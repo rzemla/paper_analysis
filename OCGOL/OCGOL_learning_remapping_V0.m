@@ -80,7 +80,7 @@ options.rewardBlock = 1;
 %Danielson
 %(for cells with multiple fields
 %the field with the highest in-field transient rate was used to calculate the centroid)
-% The place field sensitivity (defined as the fraction of complete forward passes through the
+% The place f e fraction of complete forward passes through the
 % place field associated with a significant Ca2+ transient) was significantly higher in deep than in superficial (n = 14
 % mice, p = 0.001, paired T-Test), but the (ii) place cell specificity (defined as the fraction of running-related transients
 % occurring within the place field)
