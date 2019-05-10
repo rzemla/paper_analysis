@@ -72,7 +72,15 @@ for rr=1:size(ex_rate_map,2)
     w{rr}(discard_pks) =[];
 end
 
-    
+%% Exclude peaks that are beyond the boundaries of the complete laps (not in extention zone)
+for rr=1:size(ex_rate_map,2)
+    discard_pks = lc{rr} < 51 | lc{rr} > 150;
+    lc{rr}(discard_pks) =[];
+    pks{rr}(discard_pks) =[];
+    w{rr}(discard_pks) =[];
+end
+
+
 %% Plot to visualize maxima - skip; move advanced plotting beloq
 if 0
     figure;
@@ -103,7 +111,7 @@ SI_tuned_ROIs = find(Place_cell{1, 1}.Spatial_Info.significant_ROI == 1);
 %number of bins to extend plotting of fit gauss beyond the intial width
 %from findpeaks
 gauss_extend = 10;
-
+tic;
 for rr = SI_tuned_ROIs
 
     if ~isempty(pks{rr})
@@ -124,10 +132,13 @@ for rr = SI_tuned_ROIs
 
     end
 end
+toc;
 
 %% Plot - split into 2 subplots with smoothed rate and non-smoothed rate
 figure;
+
 for rr =SI_tuned_ROIs%1:100
+ subplot(2,1,1)   
     if ~isempty(pks{rr})
         %for each id'd peak
         for peak_nb =1:size(pks{rr})
@@ -137,6 +148,41 @@ for rr =SI_tuned_ROIs%1:100
             ylim([0 0.8])
             %plot extended rate map (smoothed)
             plot(ex_rate_map_sm(:,rr),'k')
+            
+            %plot extended rate map (non-smoothed)
+            %plot(ex_rate_map(:,rr),'k-');
+            %plot peak and width ends
+            %plot peak center
+            stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
+            %plot width around peak
+            %start
+            stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+            %end
+            stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+            %plot gaussian fit to ROI peaks
+            plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
+        end
+    end
+    
+    %plot start and end point of bin
+    stem([51,150],[1 1],'b');
+    %cutoff transient rate refline
+    cutoff_line = refline(0,0.1);
+    cutoff_line.Color = [0.5 0.5 0.5];
+    cutoff_line.LineStyle = '--';
+
+subplot(2,1,2)
+    
+    hold on
+    if ~isempty(pks{rr})
+        %for each id'd peak
+        for peak_nb =1:size(pks{rr})
+            %plot range
+            hold on
+            title(num2str(rr));
+            ylim([0 0.8])
+            %plot extended rate map (smoothed)
+            %plot(ex_rate_map_sm(:,rr),'k')
             
             %plot extended rate map (non-smoothed)
             plot(ex_rate_map(:,rr),'k-');
