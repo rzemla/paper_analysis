@@ -55,24 +55,48 @@ for rr=1:size(ex_rate_map,2)
         'MinPeakHeight',0.1,'Threshold',0);
 end
 
-%% Plot to visualize maxima
-figure;
+
+%% Discard peaks that are within (<=) 15 bins of edge of extended rate map
 for rr=1:size(ex_rate_map,2)
-    hold on;
-    %plot smoothed rate map
-    plot(ex_rate_map_sm(:,rr),'k');
-    %plot start and end point of bin
-    stem([51,150],[1 1],'b');
-    %plot peaks
-    stem(lc{rr},pks{rr},'r')
-    %plot edges based on width return
-    %start
-    stem(lc{rr}-(w{rr}./2),ones(size(lc{rr},1),1),'g');
-    %end
-    stem(lc{rr}+(w{rr}./2),ones(size(lc{rr},1),1),'g');
-    pause;
-    clf;
+    discard_pks = lc{rr} <= 15;
+    lc{rr}(discard_pks) =[];
+    pks{rr}(discard_pks) =[];
+    w{rr}(discard_pks) =[];
 end
+
+%% Remove pks with width < 1.5 (~3 bins)
+for rr=1:size(ex_rate_map,2)
+    discard_pks = w{rr} <= 1.5;
+    lc{rr}(discard_pks) =[];
+    pks{rr}(discard_pks) =[];
+    w{rr}(discard_pks) =[];
+end
+
+    
+%% Plot to visualize maxima - skip; move advanced plotting beloq
+if 0
+    figure;
+    for rr=299%1:size(ex_rate_map,2)
+        hold on;
+        %plot smoothed rate map
+        plot(ex_rate_map_sm(:,rr),'k');
+        %plot start and end point of bin
+        stem([51,150],[1 1],'b');
+        %plot peaks
+        stem(lc{rr},pks{rr},'r')
+        %plot edges based on width return
+        %start
+        stem(lc{rr}-(w{rr}./2),ones(size(lc{rr},1),1),'g');
+        %end
+        stem(lc{rr}+(w{rr}./2),ones(size(lc{rr},1),1),'g');
+        pause;
+        clf;
+    end
+end
+
+%% Select ROIS signficant tuned by SI score
+
+SI_tuned_ROIs = find(Place_cell{1, 1}.Spatial_Info.significant_ROI == 1);
 
 %% Fit single term gaussian to id'd local maxima
 
@@ -80,10 +104,8 @@ end
 %from findpeaks
 gauss_extend = 10;
 
-figure;
-for rr =1:100
-    %rr=;
-    %peak_nb = 2;
+for rr = SI_tuned_ROIs
+
     if ~isempty(pks{rr})
         
         %for each id'd peak
@@ -97,7 +119,18 @@ for rr =1:100
             [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', ex_rate_map_sm(loc_range{rr}{peak_nb},rr),'gauss1');
             gauss_fit{rr}{peak_nb} = f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
             gauss_fit{rr}{peak_nb} =f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
-            
+
+        end
+
+    end
+end
+
+%% Plot - split into 2 subplots with smoothed rate and non-smoothed rate
+figure;
+for rr =SI_tuned_ROIs%1:100
+    if ~isempty(pks{rr})
+        %for each id'd peak
+        for peak_nb =1:size(pks{rr})
             %plot range
             hold on
             title(num2str(rr));
@@ -118,17 +151,17 @@ for rr =1:100
             %plot gaussian fit to ROI peaks
             plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
         end
-        %plot start and end point of bin
-        stem([51,150],[1 1],'b');
-        %cutoff transient rate refline
-        cutoff_line = refline(0,0.1);
-       	cutoff_line.Color = [0.5 0.5 0.5];
-        cutoff_line.LineStyle = '--';
-        pause
-        clf
     end
+    
+    %plot start and end point of bin
+    stem([51,150],[1 1],'b');
+    %cutoff transient rate refline
+    cutoff_line = refline(0,0.1);
+    cutoff_line.Color = [0.5 0.5 0.5];
+    cutoff_line.LineStyle = '--';
+    pause
+    clf
 end
-
 
 
 %%
