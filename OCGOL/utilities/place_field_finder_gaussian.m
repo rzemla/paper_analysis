@@ -1,7 +1,5 @@
 function [Place_cell] = place_field_finder_gaussian(Place_cell,options)
 
-%V6 - works with extended onset rate maps
-
 %find place fields based on Zaremba et al. 2017
 %gaussian kernel with sigma = 3 spatial bins
 
@@ -36,9 +34,123 @@ offset =50;
 %size of window
 gaussFilter = define_Gaussian_kernel(options);
 
-
 %% Smooth extended_rate_map
 
+ex_rate_map = Place_cell{1}.Spatial_Info.extended_rate_map;
+
+%smooth extended rate map for each ROI
+for rr = 1:size(ex_rate_map,2)
+    ex_rate_map_sm(:,rr) = conv(ex_rate_map(:,rr),gaussFilter, 'same');
+end
+
+%% Find local maxima - (maxima must be between bin 51 and 150)
+
+%[pks,lc] = findpeaks(ex_rate_map_sm(:,1),'MinPeakDistance', peakDistance);
+%without min separation
+%[pks,lc] = findpeaks(ex_rate_map_sm(:,1));
+
+%find local maxima for each ROI
+for rr=1:size(ex_rate_map,2)
+    [pks{rr},lc{rr},w{rr}] = findpeaks(ex_rate_map_sm(:,rr),'WidthReference','halfprom',...
+        'MinPeakHeight',0.1,'Threshold',0);
+end
+
+%% Plot to visualize maxima
+figure;
+for rr=1:size(ex_rate_map,2)
+    hold on;
+    %plot smoothed rate map
+    plot(ex_rate_map_sm(:,rr),'k');
+    %plot start and end point of bin
+    stem([51,150],[1 1],'b');
+    %plot peaks
+    stem(lc{rr},pks{rr},'r')
+    %plot edges based on width return
+    %start
+    stem(lc{rr}-(w{rr}./2),ones(size(lc{rr},1),1),'g');
+    %end
+    stem(lc{rr}+(w{rr}./2),ones(size(lc{rr},1),1),'g');
+    pause;
+    clf;
+end
+
+%% Fit single term gaussian to id'd local maxima
+
+%number of bins to extend plotting of fit gauss beyond the intial width
+%from findpeaks
+gauss_extend = 10;
+
+figure;
+for rr =1:100
+    %rr=;
+    %peak_nb = 2;
+    if ~isempty(pks{rr})
+        
+        %for each id'd peak
+        for peak_nb =1:size(pks{rr})
+            %x, y input
+            %for each local maximum
+            loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2)):round(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2))];
+            curve_range{rr}{peak_nb} = ex_rate_map_sm(loc_range{rr}{peak_nb},rr);
+            
+            %fit gaussian to peak
+            [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', ex_rate_map_sm(loc_range{rr}{peak_nb},rr),'gauss1');
+            gauss_fit{rr}{peak_nb} = f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
+            gauss_fit{rr}{peak_nb} =f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
+            
+            %plot range
+            hold on
+            title(num2str(rr));
+            ylim([0 0.8])
+            %plot extended rate map (smoothed)
+            plot(ex_rate_map_sm(:,rr),'k')
+            
+            %plot extended rate map (non-smoothed)
+            plot(ex_rate_map(:,rr),'k-');
+            %plot peak and width ends
+            %plot peak center
+            stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
+            %plot width around peak
+            %start
+            stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+            %end
+            stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+            %plot gaussian fit to ROI peaks
+            plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
+        end
+        %plot start and end point of bin
+        stem([51,150],[1 1],'b');
+        %cutoff transient rate refline
+        cutoff_line = refline(0,0.1);
+       	cutoff_line.Color = [0.5 0.5 0.5];
+        cutoff_line.LineStyle = '--';
+        pause
+        clf
+    end
+end
+
+
+
+%%
+for ii=1:size(lc,1)
+    %make sure that the peak is not nan
+    if ~isnan(pks(ii))
+        %fit Gaussian into each peak
+        [f{ii},gof{ii},output{ii} ] = fit([edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)]', convG(edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)),'gauss1');
+        %gaussian curve from fit (need x inputs)
+        gauss_fit{ii} = f{ii}.a1*exp(-(([edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)]-f{ii}.b1)./f{ii}.c1).^2);
+        %get area (bins)
+        gauss_area(ii) = trapz(gauss_fit{ii});
+    else
+        f{ii} = nan;
+        gof{ii} = nan;
+        output{ii} = nan;
+        gauss_fit{ii} = nan;
+        gauss_area(ii) = nan;
+        
+    end
+    
+end
 
 
 %% Debugging info

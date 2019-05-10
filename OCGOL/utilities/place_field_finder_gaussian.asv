@@ -76,6 +76,10 @@ end
 
 %% Fit single term gaussian to id'd local maxima
 
+%number of bins to extend plotting of fit gauss beyond the intial width
+%from findpeaks
+gauss_fit_bin_extend = 10;
+
 figure;
 for rr =1:100
     %rr=;
@@ -92,7 +96,7 @@ for rr =1:100
             %fit gaussian to peak
             [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', ex_rate_map_sm(loc_range{rr}{peak_nb},rr),'gauss1');
             gauss_fit{rr}{peak_nb} = f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
-            gauss_fit{rr}{peak_nb} =f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}(1)-10:loc_range{rr}{peak_nb}(end)+10]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
+            gauss_fit{rr}{peak_nb} =f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}(1)-gauss_fit_bin_extend:loc_range{rr}{peak_nb}(end)+10]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
             
             %plot range
             hold on
