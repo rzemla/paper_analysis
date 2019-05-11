@@ -127,7 +127,7 @@ for rr = SI_tuned_ROIs
             [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', ex_rate_map_sm(loc_range{rr}{peak_nb},rr),'gauss1');
             gauss_fit{rr}{peak_nb} = f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
             gauss_fit{rr}{peak_nb} =f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
-
+            gauss_fit_bin_range{rr}{peak_nb} = [loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend];
         end
 
     end
@@ -170,6 +170,10 @@ for rr =SI_tuned_ROIs%1:100
     cutoff_line = refline(0,0.1);
     cutoff_line.Color = [0.5 0.5 0.5];
     cutoff_line.LineStyle = '--';
+    %second cut off line
+    cutoff_line2 = refline(0,0.05);
+    cutoff_line2.Color = [0.5 0.5 0.5];
+    cutoff_line2.LineStyle = '--';
 
 subplot(2,1,2)
     
@@ -209,6 +213,10 @@ subplot(2,1,2)
     clf
 end
 
+%% Check intersecting gaussian fit curves and merge
+
+gauss_fit{rr}{peak_nb}
+gauss_fit_bin_range{rr}{peak_nb}
 
 %%
 for ii=1:size(lc,1)

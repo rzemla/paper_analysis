@@ -45,7 +45,7 @@ options.plotFields = 0;
 [Place_cell] = place_field_finder_gaussian(Place_cell,options);
 
 
-%% 2 Dombeck/Barthos
+%% 2 Dombeck/Barthos - don't use unless working in dF/F space
 %Place field finder - Dombeck/Harvey 2010
 tic;
 %imaging period
