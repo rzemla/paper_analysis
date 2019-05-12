@@ -214,7 +214,7 @@ if 0
         clf
     end
 end
-end
+
 
 %% Check intersecting gaussian fit curves and merge
 
@@ -244,10 +244,21 @@ if size(gauss_fit{rr},2) > 1
     for pp=1:size(gauss_fit{rr},2)-1
         int_pt{pp} = InterX([gauss_fit_bin_range{rr}{pp};gauss_fit{rr}{pp}],[gauss_fit_bin_range{rr}{pp+1};gauss_fit{rr}{pp+1}]);
     end
+    
+    %create logical with intersection
+    
     %check if first or last peak crosses edge of lap bin (<51 or >150)
-    
-    
+    %first peak
+    if sum(gauss_fit_bin_range{rr}{1} < 51) | sum(gauss_fit_bin_range{rr}{1} > 150)
+        %check intersection
+        
+        %if intersects,merge (update logical with intersection
+        %last peak
+    elseif (gauss_fit_bin_range{rr}{end} < 51) | sum(gauss_fit_bin_range{rr}{end} > 150)
+        
+    end
 end
+%do final merge here based on intersection
 
 %both work well - use InterX for now
 %one function

@@ -137,7 +137,7 @@ toc;
 %% Plot - split into 2 subplots with smoothed rate and non-smoothed rate
 figure;
 %skip for now - add as option later for display
-if 1
+if 0
     for rr =SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
@@ -214,7 +214,7 @@ if 1
         clf
     end
 end
-end
+
 
 %% Check intersecting gaussian fit curves and merge
 
@@ -237,9 +237,26 @@ minCurveCross = 0;
 %then look for anyone with curve extending beyong start or end, if so shift
 %and compare to peak next to it
 rr=17;
-%for each peak comparison
-for pp=1:size(gauss_fit{rr},2)-1
-    int_pt{pp} = InterX([gauss_fit_bin_range{rr}{pp};gauss_fit{rr}{pp}],[gauss_fit_bin_range{rr}{pp+1};gauss_fit{rr}{pp+1}]);
+
+%if more than 1 peak
+if size(gauss_fit{rr},2) > 1
+    %for each peak comparison
+    for pp=1:size(gauss_fit{rr},2)-1
+        int_pt{pp} = InterX([gauss_fit_bin_range{rr}{pp};gauss_fit{rr}{pp}],[gauss_fit_bin_range{rr}{pp+1};gauss_fit{rr}{pp+1}]);
+    end
+    
+    %create logical with intersection
+    
+    %check if first or last peak crosses edge of lap bin (<51 or >150)
+    %first peak
+    if sum(gauss_fit_bin_range{rr}{1} < 51) | sum(gauss_fit_bin_range{rr}{1} > 150)
+        %check intersection
+        
+        %if intersects,merge
+        %last peak
+    elseif (gauss_fit_bin_range{rr}{end} < 51) | sum(gauss_fit_bin_range{rr}{end} > 150)
+        
+    end
 end
 
 %both work well - use InterX for now
