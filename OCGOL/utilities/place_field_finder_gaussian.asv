@@ -218,6 +218,51 @@ end
 gauss_fit{rr}{peak_nb}
 gauss_fit_bin_range{rr}{peak_nb}
 
+inter_point = InterX([gauss_fit_bin_range{17}{2};gauss_fit{17}{2}],[gauss_fit_bin_range{17}{3};gauss_fit{17}{3}])
+
+rr =17;
+figure;
+if 1
+%plot intersection point
+    if ~isempty(pks{rr})
+        %for each id'd peak
+        for peak_nb =1:size(pks{rr})
+            %plot range
+            hold on
+            title(num2str(rr));
+            ylim([0 0.8])
+            %plot extended rate map (smoothed)
+            plot(ex_rate_map_sm(:,rr),'k')
+            
+            %plot extended rate map (non-smoothed)
+            %plot(ex_rate_map(:,rr),'k-');
+            %plot peak and width ends
+            %plot peak center
+            stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
+            %plot width around peak
+            %start
+            stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+            %end
+            stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+            %plot gaussian fit to ROI peaks
+            plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
+        end
+    end
+    
+    %plot start and end point of bin
+    stem([51,150],[1 1],'b');
+    %cutoff transient rate refline
+    cutoff_line = refline(0,0.1);
+    cutoff_line.Color = [0.5 0.5 0.5];
+    cutoff_line.LineStyle = '--';
+    %plot test intersection point
+    stem(inter_point(1),inter_point(2),'r--','LineWidth', 1)
+end
+
+%want to know at what value the curves intersect - try function
+%deal with merging of curves that 'go around' track
+%
+
 %%
 for ii=1:size(lc,1)
     %make sure that the peak is not nan
