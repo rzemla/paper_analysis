@@ -84,7 +84,7 @@ end
 %% Plot to visualize maxima - skip; move advanced plotting beloq
 if 0
     figure;
-    for rr=299%1:size(ex_rate_map,2)
+    for rr=36%1:size(ex_rate_map,2)
         hold on;
         %plot smoothed rate map
         plot(ex_rate_map_sm(:,rr),'k');
@@ -141,7 +141,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =38%SI_tuned_ROIs%1:100
+    for rr =127%SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -213,8 +213,8 @@ if 0
         cutoff_line = refline(0,0.1);
         cutoff_line.Color = [0.5 0.5 0.5];
         cutoff_line.LineStyle = '--';
-        pause
-        clf
+        %pause
+        %clf
     end
 end
 
@@ -245,6 +245,9 @@ rr=36; %edge merger test (forward shift peak)
 %for all spatially tuned ROIs
 %for rr =SI_tuned_ROIs
 %for all ROIs
+%preallocate merge_end to 0
+merge_end = zeros(1,size(gauss_fit,2));
+
 for rr=1:size(gauss_fit,2)
     %if more than 1 peak
     if size(gauss_fit{rr},2) > 1
@@ -264,6 +267,8 @@ for rr=1:size(gauss_fit,2)
                 %if above minimuj threshold for crossing
                 if int_pt{rr}{cc}(2) > minCurveCross
                     merge_middle{rr}(cc) = 1;
+                else %if does not exceed threshold - no merge flag
+                    merge_middle{rr}(cc) = 0;
                 end
             end
             
@@ -305,9 +310,7 @@ for rr=1:size(gauss_fit,2)
                     merge_end(rr) = -1;
                 end
             end
-            
         end
-        
     end
 end
 
@@ -329,6 +332,8 @@ for rr=1:size(gauss_fit,2)
 end
 %% Set merge input such into groups of which #'ed peaks to merge
 
+%for middle peaks
+
 %flag for whether previous peak was merged
 prevMerge = 0;
 
@@ -344,11 +349,29 @@ for rr=1:size(merge_middle,2)
             elseif merge_middle{rr}(mm) == 1 && prevMerge == 0
                 merge_peak_nb{rr}{mm} = [mm,mm+1];
                 prevMerge = 1;
-            elseif prevMerge == 1
-                merge_peak_nb{rr}{mm} = [];
+                %remove previous single peak if current merge
+                if mm >1
+                     if size(merge_peak_nb{rr}{mm-1},1) ==1 & merge_peak_nb{rr}{mm-1} == mm
+                         %delete
+                         merge_peak_nb{rr}{mm-1} = [];
+                     end
+                end
+            elseif merge_middle{rr}(mm) == 1 && prevMerge == 1
+                merge_peak_nb{rr}{end} = [merge_peak_nb{rr}{end},mm+1];
+                prevMerge = 1;
+           elseif merge_middle{rr}(mm) == 0 && prevMerge == 1 
+                merge_peak_nb{rr}{mm} = mm+1;
                 prevMerge = 0;
             end
-        end  
+        end
+        %outside check - if last was no merge, add single peak to end
+        if merge_middle{rr}(mm) == 0 && prevMerge == 0
+            %if not already added
+            if merge_peak_nb{rr}{end} ~= size(merge_middle{rr},2)+1
+            merge_peak_nb{rr}{end+1} = size(merge_middle{rr},2)+1;
+            end
+        end
+        %add last peak if standalone
     %if 1 peak
     elseif size(gauss_fit{rr},2) == 1
         merge_peak_nb{rr} = 1;
@@ -359,6 +382,55 @@ for rr=1:size(merge_middle,2)
     %reset prevMerge flag for next ROI
     prevMerge = 0;
 end
+
+%for edges
+for rr=1:size(merge_end,2)
+    if merge_end(rr) == 1 || merge_end(rr) == -1 %forward shift and integrate with end
+        %designate mere peaks
+        merge_peak_nb_edge{rr} = [size(gauss_fit{rr},2),1];
+    else
+        merge_peak_nb_edge{rr} = [];
+    end
+end
+
+%make combined merging of middle and edge points into 1 cell
+
+for rr =1:size(merge_peak_nb_edge,2)
+    %if there are peaks to merge
+    if ~isempty(merge_peak_nb_edge{rr})
+        if size(merge_peak_nb{rr}{end},2)==1 & size(merge_peak_nb{rr}{1},2)==1
+            %set first index to merge
+            merge_peak_nb{rr}{1} = merge_peak_nb_edge{rr};
+            %delete last
+            merge_peak_nb{rr}{end} = [];
+        
+        elseif size(merge_peak_nb{rr}{end},2)>1 & size(merge_peak_nb{rr}{1},2)>1
+            %merge into first position
+            merge_peak_nb{rr}{1} = [merge_peak_nb{rr}{end}, merge_peak_nb{rr}{1}];
+            %delete last
+            merge_peak_nb{rr}{end} = [];
+        else %if either end contains standalone peak
+            %first has multiple, take last and end to first, delete last
+            if size(merge_peak_nb{rr}{1},2)>1
+               merge_peak_nb{rr}{1} = [merge_peak_nb{rr}{end}, merge_peak_nb{rr}{1}];
+               %delete last
+               merge_peak_nb{rr}{end} = [];
+            else size(merge_peak_nb{rr}{end},2)>1
+               merge_peak_nb{rr}{end} = [merge_peak_nb{rr}{end},merge_peak_nb{rr}{1}];
+               %delete first
+               merge_peak_nb{rr}{1} = [];
+            end
+        end
+    end
+end
+
+%take first and end point (1) (end)
+%see if there are single or combined vectors
+%if both single, delete, both, add shared
+%if either 1 has more than 1 element; add to bigger 1, delete smaller
+%if both more than one elements, merge into 1
+
+%% Set place field centers, edges
 
 %% Merge (take endpoints of fitting Gaussians) and set place field endpoints
 %alternative is to re-fit a single term gaussian into the smoothed space
