@@ -246,17 +246,44 @@ if size(gauss_fit{rr},2) > 1
     end
     
     %create logical with intersection
-    
-    %check if first or last peak crosses edge of lap bin (<51 or >150)
-    %first peak
-    if sum(gauss_fit_bin_range{rr}{1} < 51) | sum(gauss_fit_bin_range{rr}{1} > 150)
-        %check intersection
-        
-        %if intersects,merge (update logical with intersection
-        %last peak
-    elseif (gauss_fit_bin_range{rr}{end} < 51) | sum(gauss_fit_bin_range{rr}{end} > 150)
+    %for each comparison, check if there is an intersection and is above
+    %minimum value
+    for cc=1:size(int_pt,2)
+        if isempty(int_pt{cc})
+            %no crossing of curves
+            crossed(cc) = 0;
+        else 
+            %if above minimuj threshold for crossing
+            if int_pt{cc}(2) > minCurveCross
+                crossed(cc) = 1;
+            end
+        end
         
     end
+    
+    %check if first or last peak crosses edge of lap bin (<51 or >150) -
+    %only 1 test should be true when tested
+    %first peak
+    if sum(gauss_fit_bin_range{rr}{1} < 51) || sum(gauss_fit_bin_range{rr}{1} > 150)
+        %shift forward by 100 bins and check intersection with last peak
+        int_edge = InterX([gauss_fit_bin_range{rr}{1}+100;gauss_fit{rr}{1}],[gauss_fit_bin_range{rr}{end};gauss_fit{rr}{end}]);
+        %assign 1 flag
+        crossed_edge = 1;
+        %if intersects,merge (update logical with intersection
+        %last peak
+    elseif (gauss_fit_bin_range{rr}{end} < 51) || sum(gauss_fit_bin_range{rr}{end} > 150)
+        %shift backward by 100 bins and check intersection with first peak
+        int_edge = InterX([gauss_fit_bin_range{rr}{end}-100;gauss_fit{rr}{end}],[gauss_fit_bin_range{rr}{1};gauss_fit{rr}{1}]);
+        %assign -1 flag
+        crossed_edge = -1;
+    end
+    
+    %check if there is intersection at edges and if yes, then set merge
+    %flag
+    if ~isempty(int_edge)
+        
+    end
+    
 end
 %do final merge here based on intersection
 
@@ -314,6 +341,7 @@ end
 %%%%% DELETE ONCE DONE WITH NEW CODE ABOVE %%%%%
 
 %%
+%{
 for ii=1:size(lc,1)
     %make sure that the peak is not nan
     if ~isnan(pks(ii))
@@ -879,5 +907,6 @@ end
 %windowSize = 2*ceil(2*gSigma)+1;
 %yImGf = imgaussfilt(rate_map,gSigma);d
 
+%}
 
 end
