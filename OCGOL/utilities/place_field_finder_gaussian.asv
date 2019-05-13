@@ -141,7 +141,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =86%SI_tuned_ROIs%1:100
+    for rr =262%SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -221,11 +221,10 @@ end
 
 %% Check intersecting gaussian fit curves and merge
 
-gauss_fit{rr}{peak_nb}
-gauss_fit_bin_range{rr}{peak_nb}
-
 %add minimum smoothed transient rate for cross (set 0 for now adjust later)
-minCurveCross = 0;
+%may change this on percentage of highest/lowest curve or decide this value
+%empirically
+minCurveCross = 0.05;
 
 %check sequential peaks
 
@@ -285,15 +284,14 @@ for rr=1:size(gauss_fit,2)
             int_edge{rr} = InterX([gauss_fit_bin_range{rr}{end}-100;gauss_fit{rr}{end}],[gauss_fit_bin_range{rr}{1};gauss_fit{rr}{1}]);
             %assign -1 flag
             crossed_edge(rr) = -1;
-        else 
-            %set to 0 for conditional comparison below if no edge peaks
-            %found
-            crossed_edge(rr) = 0;
+        else
+            %set to empty for conditional check below
+            int_edge{rr} = [];
         end
         
         %check if there is intersection at edges and if yes, then set merge
         %flag
-        if crossed_edge(rr)~=0
+        if ~isempty(int_edge{rr})
             %check flag for which end curve is shifted
             if crossed_edge(rr) == 1
                 %check if minimum for curve crossing is met
@@ -313,7 +311,6 @@ for rr=1:size(gauss_fit,2)
     end
 end
 
-
 %% Get endpoints of each gaussian based on either fraction of peak or set threshold 
 %use fraction of peak for now; implement fixed threshold later
 
@@ -331,17 +328,47 @@ for rr=1:size(gauss_fit,2)
     end
 end
 
-
-
-%% Merge and set place field endpoints
+%% Merge (take endpoints of fitting Gaussians) and set place field endpoints
+%alternative is to re-fit a single term gaussian into the smoothed space
+%now defined by the new endpoints - likely to be broader and overestimate
+%field
 
 %first merge non end pointed matched
-
+gauss_fit_edges
 merge_middle
 merge_end
 
-%last merge with end curve
+placeField.edges{rr}
 
+gauss_fit_edges{3}{1}(1,:)
+
+for rr=1:size(gauss_fit_edges,2)
+    %check if there is more than 1 peak
+    if size(gauss_fit{rr},2) > 1
+        
+        %if only 1 peak
+    elseif size(gauss_fit{rr},2) == 1
+        %set the original id'd edges for that peak
+        placeField.edges{rr} = gauss_fit_edges{rr}{1}(1,:);
+        %is no peaks
+    elseif isempty(gauss_fit{rr})
+        %set place field edges to empty
+        placeField.edges{rr} = [];
+    end
+end
+
+%flag for whether previous peak was merged
+prevMerge = 0;
+
+% 
+% first position - merge 1st and 2nd
+% second posotion - merge 2nd and 3rd
+% third position - merge 3rd and 4th
+
+
+%last merge with end curve
+%merge end +1 - merge first with last
+           %-1 - merge last with first
 
 %% Save to output struct
 
