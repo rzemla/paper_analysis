@@ -327,6 +327,25 @@ for rr=1:size(gauss_fit,2)
         end
     end
 end
+%% Set merge input such into groups of which #'ed peaks to merge
+
+merge_peak_nb
+rr=38;
+%only going forward
+0 1
+1
+23
+1 0 1
+12
+2 [] %not2 b/c previous one was a merge, set empty
+34 %if previous not merged otherwise empty
+
+
+for rr=1:size(merge_middle
+
+
+
+12334
 
 %% Merge (take endpoints of fitting Gaussians) and set place field endpoints
 %alternative is to re-fit a single term gaussian into the smoothed space
@@ -338,17 +357,28 @@ gauss_fit_edges
 merge_middle
 merge_end
 
-placeField.edges{rr}
-
-gauss_fit_edges{3}{1}(1,:)
+%flag for whether previous peak was merged
+prevMerge = 0;
 
 for rr=1:size(gauss_fit_edges,2)
     %check if there is more than 1 peak
     if size(gauss_fit{rr},2) > 1
-        
+        %predicted largest number of peaks will be 5 (4 merge values max)
+        %for each merge consideration
+        for mm=1:size(merge_middle{rr},2)
+            %if merge indicated
+            if merge_middle{rr}(mm) == 1
+                if prevMerge == 0
+                    placeField.edges{rr}
+                end
+                
+            end
+            
+        end
         %if only 1 peak
     elseif size(gauss_fit{rr},2) == 1
         %set the original id'd edges for that peak
+        %consider rounding the bins here
         placeField.edges{rr} = gauss_fit_edges{rr}{1}(1,:);
         %is no peaks
     elseif isempty(gauss_fit{rr})
@@ -357,8 +387,7 @@ for rr=1:size(gauss_fit_edges,2)
     end
 end
 
-%flag for whether previous peak was merged
-prevMerge = 0;
+
 
 % 
 % first position - merge 1st and 2nd
