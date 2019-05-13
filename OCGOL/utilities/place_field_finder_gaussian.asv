@@ -141,7 +141,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =127%SI_tuned_ROIs%1:100
+    for rr =542%SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -394,6 +394,11 @@ for rr=1:size(merge_end,2)
 end
 
 %make combined merging of middle and edge points into 1 cell
+%take first and end point (1) (end)
+%see if there are single or combined vectors
+%if both single, delete, both, add shared
+%if either 1 has more than 1 element; add to bigger 1, delete smaller
+%if both more than one elements, merge into 1
 
 for rr =1:size(merge_peak_nb_edge,2)
     %if there are peaks to merge
@@ -424,13 +429,16 @@ for rr =1:size(merge_peak_nb_edge,2)
     end
 end
 
-%take first and end point (1) (end)
-%see if there are single or combined vectors
-%if both single, delete, both, add shared
-%if either 1 has more than 1 element; add to bigger 1, delete smaller
-%if both more than one elements, merge into 1
-
 %% Set place field centers, edges
+
+%check for peaks
+
+merge_peak_nb
+
+
+iscell(merge_peak_nb{6})
+isempty(merge_peak_nb{4})
+
 
 %% Merge (take endpoints of fitting Gaussians) and set place field endpoints
 %alternative is to re-fit a single term gaussian into the smoothed space

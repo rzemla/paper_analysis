@@ -331,9 +331,11 @@ for rr=1:size(gauss_fit,2)
     end
 end
 %% Set merge input such into groups of which #'ed peaks to merge
+%alternative is to re-fit a single term gaussian into the smoothed space
+%now defined by the new endpoints - likely to be broader and overestimate
+%field
 
 %for middle peaks
-
 %flag for whether previous peak was merged
 prevMerge = 0;
 
@@ -394,6 +396,11 @@ for rr=1:size(merge_end,2)
 end
 
 %make combined merging of middle and edge points into 1 cell
+%take first and end point (1) (end)
+%see if there are single or combined vectors
+%if both single, delete, both, add shared
+%if either 1 has more than 1 element; add to bigger 1, delete smaller
+%if both more than one elements, merge into 1
 
 for rr =1:size(merge_peak_nb_edge,2)
     %if there are peaks to merge
@@ -424,68 +431,31 @@ for rr =1:size(merge_peak_nb_edge,2)
     end
 end
 
-%take first and end point (1) (end)
-%see if there are single or combined vectors
-%if both single, delete, both, add shared
-%if either 1 has more than 1 element; add to bigger 1, delete smaller
-%if both more than one elements, merge into 1
-
 %% Set place field centers, edges
 
-%% Merge (take endpoints of fitting Gaussians) and set place field endpoints
-%alternative is to re-fit a single term gaussian into the smoothed space
-%now defined by the new endpoints - likely to be broader and overestimate
-%field
-
-%first merge non end pointed matched
-gauss_fit_edges
-merge_middle
-merge_end
-
-%flag for whether previous peak was merged
-prevMerge = 0;
-
-for rr=1:size(gauss_fit_edges,2)
-    %check if there is more than 1 peak
-    if size(gauss_fit{rr},2) > 1
-        %predicted largest number of peaks will be 5 (4 merge values max)
-        %for each merge consideration
-        for mm=1:size(merge_middle{rr},2)
-            %if merge indicated
-            if merge_middle{rr}(mm) == 1
-                if prevMerge == 0
-                    placeField.edges{rr}
-                end
-                
-            end
+%check for peaks
+for rr =1:size(merge_peak_nb_edge,2)
+    if ~isempty(merge_peak_nb{4})
+        %check if cell (more than 1 intial peaks)
+        if iscell(merge_peak_nb)
+        %single peak
+        else
             
         end
-        %if only 1 peak
-    elseif size(gauss_fit{rr},2) == 1
-        %set the original id'd edges for that peak
-        %consider rounding the bins here
-        placeField.edges{rr} = gauss_fit_edges{rr}{1}(1,:);
-        %is no peaks
-    elseif isempty(gauss_fit{rr})
-        %set place field edges to empty
-        placeField.edges{rr} = [];
+    else
+        placeField.edge{rr} = [];
+        placeField.width{rr} = [];
+        placeField.centers{rr} = [];
     end
+    
 end
 
+iscell(merge_peak_nb{6})
 
+%% Merge (take endpoints of fitting Gaussians) and set place field endpoints
 
-% 
-% first position - merge 1st and 2nd
-% second posotion - merge 2nd and 3rd
-% third position - merge 3rd and 4th
-
-
-%last merge with end curve
-%merge end +1 - merge first with last
-           %-1 - merge last with first
 
 %% Save to output struct
-
 
 
 
