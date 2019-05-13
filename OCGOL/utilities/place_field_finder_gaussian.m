@@ -141,7 +141,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =262%SI_tuned_ROIs%1:100
+    for rr =432%SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -329,23 +329,36 @@ for rr=1:size(gauss_fit,2)
 end
 %% Set merge input such into groups of which #'ed peaks to merge
 
-merge_peak_nb
-rr=38;
-%only going forward
-0 1
-1
-23
-1 0 1
-12
-2 [] %not2 b/c previous one was a merge, set empty
-34 %if previous not merged otherwise empty
+%flag for whether previous peak was merged
+prevMerge = 0;
 
-
-for rr=1:size(merge_middle
-
-
-
-12334
+for rr=1:size(merge_middle,2)
+    
+    %if more than 1 peak
+    if size(gauss_fit{rr},2) > 1
+        %for each merge comparison
+        for mm=1:size(merge_middle{rr},2)
+            if merge_middle{rr}(mm) == 0 && prevMerge == 0
+                merge_peak_nb{rr}{mm} = mm;
+                prevMerge = 0;
+            elseif merge_middle{rr}(mm) == 1 && prevMerge == 0
+                merge_peak_nb{rr}{mm} = [mm,mm+1];
+                prevMerge = 1;
+            elseif prevMerge == 1
+                merge_peak_nb{rr}{mm} = [];
+                prevMerge = 0;
+            end
+        end  
+    %if 1 peak
+    elseif size(gauss_fit{rr},2) == 1
+        merge_peak_nb{rr} = 1;
+        %if no peaks
+    elseif isempty(gauss_fit{rr})
+        merge_peak_nb{rr} = [];
+    end
+    %reset prevMerge flag for next ROI
+    prevMerge = 0;
+end
 
 %% Merge (take endpoints of fitting Gaussians) and set place field endpoints
 %alternative is to re-fit a single term gaussian into the smoothed space
