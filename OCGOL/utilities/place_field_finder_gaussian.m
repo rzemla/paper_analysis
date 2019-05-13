@@ -105,6 +105,7 @@ end
 %% Select ROIS signficant tuned by SI score
 
 SI_tuned_ROIs = find(Place_cell{1, 1}.Spatial_Info.significant_ROI == 1);
+%do for all and then select tuned ones at the end
 
 %% Fit single term gaussian to id'd local maxima
 
@@ -112,7 +113,9 @@ SI_tuned_ROIs = find(Place_cell{1, 1}.Spatial_Info.significant_ROI == 1);
 %from findpeaks
 gauss_extend = 10;
 tic;
-for rr = SI_tuned_ROIs
+%for rr = SI_tuned_ROIs
+%for all ROIs
+for rr=1:size(pks,2)
 
     if ~isempty(pks{rr})
         
@@ -135,10 +138,10 @@ end
 toc;
 
 %% Plot - split into 2 subplots with smoothed rate and non-smoothed rate
-figure;
 %skip for now - add as option later for display
 if 0
-    for rr =SI_tuned_ROIs%1:100
+    figure;
+    for rr =86%SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -218,9 +221,6 @@ end
 
 %% Check intersecting gaussian fit curves and merge
 
-gauss_fit{rr}{peak_nb}
-gauss_fit_bin_range{rr}{peak_nb}
-
 %add minimum smoothed transient rate for cross (set 0 for now adjust later)
 minCurveCross = 0;
 
@@ -236,62 +236,119 @@ minCurveCross = 0;
 %check all neighboring peaks first
 %then look for anyone with curve extending beyong start or end, if so shift
 %and compare to peak next to it
-rr=17;
+rr=17; %single peak merger test
+rr=36; %edge merger test (forward shift peak)
+%rr = ;%(rearward shift peak)
 
-%if more than 1 peak
-if size(gauss_fit{rr},2) > 1
-    %for each peak comparison
-    for pp=1:size(gauss_fit{rr},2)-1
-        int_pt{pp} = InterX([gauss_fit_bin_range{rr}{pp};gauss_fit{rr}{pp}],[gauss_fit_bin_range{rr}{pp+1};gauss_fit{rr}{pp+1}]);
-    end
-    
-    %create logical with intersection
-    %for each comparison, check if there is an intersection and is above
-    %minimum value
-    for cc=1:size(int_pt,2)
-        if isempty(int_pt{cc})
-            %no crossing of curves
-            crossed(cc) = 0;
-        else 
-            %if above minimuj threshold for crossing
-            if int_pt{cc}(2) > minCurveCross
-                crossed(cc) = 1;
+%for all spatially tuned ROIs
+%for rr =SI_tuned_ROIs
+%for all ROIs
+for rr=1:size(gauss_fit,2)
+    %if more than 1 peak
+    if size(gauss_fit{rr},2) > 1
+        %for each peak comparison
+        for pp=1:size(gauss_fit{rr},2)-1
+            int_pt{rr}{pp} = InterX([gauss_fit_bin_range{rr}{pp};gauss_fit{rr}{pp}],[gauss_fit_bin_range{rr}{pp+1};gauss_fit{rr}{pp+1}]);
+        end
+        
+        %create logical with intersection
+        %for each comparison, check if there is an intersection and is above
+        %minimum value
+        for cc=1:size(int_pt{rr},2)
+            if isempty(int_pt{rr}{cc})
+                %no crossing of curves
+                merge_middle{rr}(cc) = 0;
+            else
+                %if above minimuj threshold for crossing
+                if int_pt{rr}{cc}(2) > minCurveCross
+                    merge_middle{rr}(cc) = 1;
+                end
             end
+            
+        end
+        
+        %check if first or last peak crosses edge of lap bin (<51 or >150) -
+        %only 1 test should be true when tested
+        %first peak
+        if sum(gauss_fit_bin_range{rr}{1} < 51) | sum(gauss_fit_bin_range{rr}{1} > 150)
+            %shift forward by 100 bins and check intersection with last peak
+            int_edge{rr} = InterX([gauss_fit_bin_range{rr}{1}+100;gauss_fit{rr}{1}],[gauss_fit_bin_range{rr}{end};gauss_fit{rr}{end}]);
+            %assign 1 flag
+            crossed_edge(rr) = 1;
+            %if intersects,merge (update logical with intersection
+            %last peak
+        elseif (gauss_fit_bin_range{rr}{end} < 51) | sum(gauss_fit_bin_range{rr}{end} > 150)
+            %shift backward by 100 bins and check intersection with first peak
+            int_edge{rr} = InterX([gauss_fit_bin_range{rr}{end}-100;gauss_fit{rr}{end}],[gauss_fit_bin_range{rr}{1};gauss_fit{rr}{1}]);
+            %assign -1 flag
+            crossed_edge(rr) = -1;
+        else
+            %set to empty for conditional check below
+            int_edge{rr} = [];
+        end
+        
+        %check if there is intersection at edges and if yes, then set merge
+        %flag
+        if ~isempty(int_edge{rr})
+            %check flag for which end curve is shifted
+            if crossed_edge(rr) == 1
+                %check if minimum for curve crossing is met
+                if int_edge{rr}(2) > minCurveCross
+                    %set merge to +1
+                    merge_end(rr) = 1;
+                end
+            elseif crossed_edge(rr) == -1
+                if int_edge{rr}(2) > minCurveCross
+                    %set merge to -1
+                    merge_end(rr) = -1;
+                end
+            end
+            
         end
         
     end
-    
-    %check if first or last peak crosses edge of lap bin (<51 or >150) -
-    %only 1 test should be true when tested
-    %first peak
-    if sum(gauss_fit_bin_range{rr}{1} < 51) || sum(gauss_fit_bin_range{rr}{1} > 150)
-        %shift forward by 100 bins and check intersection with last peak
-        int_edge = InterX([gauss_fit_bin_range{rr}{1}+100;gauss_fit{rr}{1}],[gauss_fit_bin_range{rr}{end};gauss_fit{rr}{end}]);
-        %assign 1 flag
-        crossed_edge = 1;
-        %if intersects,merge (update logical with intersection
-        %last peak
-    elseif (gauss_fit_bin_range{rr}{end} < 51) || sum(gauss_fit_bin_range{rr}{end} > 150)
-        %shift backward by 100 bins and check intersection with first peak
-        int_edge = InterX([gauss_fit_bin_range{rr}{end}-100;gauss_fit{rr}{end}],[gauss_fit_bin_range{rr}{1};gauss_fit{rr}{1}]);
-        %assign -1 flag
-        crossed_edge = -1;
-    end
-    
-    %check if there is intersection at edges and if yes, then set merge
-    %flag
-    if ~isempty(int_edge)
-        
-    end
-    
 end
-%do final merge here based on intersection
+
+
+%% Get endpoints of each gaussian based on either fraction of peak or set threshold 
+%use fraction of peak for now; implement fixed threshold later
+
+%fraction of peak to use as endpoint
+fracPeak = 0.2;
+
+for rr=1:size(gauss_fit,2)
+    %for each peak if not empty
+    if ~isempty(gauss_fit{rr})
+        for pp=1:size(gauss_fit{rr},2)
+        %gives the bin edge and value at thresgold
+        gauss_fit_edges{rr}{pp} = InterX([gauss_fit_bin_range{rr}{pp}; ones(1,size(gauss_fit_bin_range{rr}{pp},2))*fracPeak*max(gauss_fit{rr}{pp})],...
+            [gauss_fit_bin_range{rr}{pp};gauss_fit{rr}{pp}]);
+        end
+    end
+end
+
+
+
+%% Merge and set place field endpoints
+
+%first merge non end pointed matched
+
+merge_middle
+merge_end
+
+%last merge with end curve
+
+
+%% Save to output struct
+
+
+
 
 %both work well - use InterX for now
 %one function
 inter_point = InterX([gauss_fit_bin_range{17}{2};gauss_fit{17}{2}],[gauss_fit_bin_range{17}{3};gauss_fit{17}{3}])
 %another intersection function
-[inter_point_2(1),inter_point_2(2)] = intersections(gauss_fit_bin_range{17}{2},gauss_fit{17}{2},gauss_fit_bin_range{17}{3},gauss_fit{17}{3})
+%[inter_point_2(1),inter_point_2(2)] = intersections(gauss_fit_bin_range{17}{2},gauss_fit{17}{2},gauss_fit_bin_range{17}{3},gauss_fit{17}{3})
 
 rr =17;
 figure;
