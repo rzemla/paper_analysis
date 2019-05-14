@@ -51,6 +51,18 @@ ROI_outlines = registered.multi.ROI_outlines;
 
 visualize_matches(rows,cols,ROI_zooms,ROI_outlines);
 
+%% Calculate relevant place fields
+%use rate map - number of event onsets/ occupancy across all laps
+options.gSigma = 3;
+%which place cell struct to do placefield extraction on
+%iterate through place_cell cells of interest
+%4 - all A regardless if correct
+%5 - all B regardless if correct
+for ii =[4,5]
+    options.place_struct_nb = ii;
+    [Place_cell] = place_field_finder_gaussian(Place_cell,options);
+end
+
 
 %% Plot smoothed event rate across track (function)
 

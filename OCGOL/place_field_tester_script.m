@@ -17,27 +17,28 @@
 %find maxima 
 %only run on spatially tuned ROIS by TS for jow
 
+
+
+% %if to exclude based on center of the located peak
+% options.centerExclude = 0;
+% 
+% %peak distance separation (in bins)
+% %not used if centerExclude is set to 0
+% options.peakDistance = 9;
+% 
+% %fraction of each peak to define as left and right edge of each Gaussian
+% %fit
+% options.peakFraction = 0.2;
+% 
+% %how large the area has to be of other fields in comparison to the the
+% %place field with the largest area;
+% options.gaussAreaThreshold = 0.3;
+% 
+% %whether to plot the individual place fields
+% options.plotFields = 0;
+
 %use rate map - number of event onsets/ occupancy across all laps
 options.gSigma = 3;
-
-%if to exclude based on center of the located peak
-options.centerExclude = 0;
-
-%peak distance separation (in bins)
-%not used if centerExclude is set to 0
-options.peakDistance = 9;
-
-%fraction of each peak to define as left and right edge of each Gaussian
-%fit
-options.peakFraction = 0.2;
-
-%how large the area has to be of other fields in comparison to the the
-%place field with the largest area;
-options.gaussAreaThreshold = 0.3;
-
-%whether to plot the individual place fields
-options.plotFields = 0;
-
 %which place cell struct to do placefield extraction on
 %iterate through place_cell cells of interest
 %4 - all A regardless if correct
