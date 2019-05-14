@@ -34,9 +34,12 @@ offset =50;
 %size of window
 gaussFilter = define_Gaussian_kernel(options);
 
+%cycle through every place cell cell 
+place_struct_nb = 4;
+
 %% Smooth extended_rate_map
 
-ex_rate_map = Place_cell{1}.Spatial_Info.extended_rate_map;
+ex_rate_map = Place_cell{place_struct_nb}.Spatial_Info.extended_rate_map;
 
 %smooth extended rate map for each ROI
 for rr = 1:size(ex_rate_map,2)
@@ -52,7 +55,7 @@ end
 %find local maxima for each ROI
 for rr=1:size(ex_rate_map,2)
     [pks{rr},lc{rr},w{rr}] = findpeaks(ex_rate_map_sm(:,rr),'WidthReference','halfprom',...
-        'MinPeakHeight',0.1,'Threshold',0,'MinPeakWidth',4);
+        'MinPeakHeight',0.15,'Threshold',0,'MinPeakWidth',4);
 end
 
 
@@ -104,13 +107,16 @@ end
 
 %% Select ROIS signficant tuned by SI score
 
-SI_tuned_ROIs = find(Place_cell{1, 1}.Spatial_Info.significant_ROI == 1);
+SI_tuned_ROIs = find(Place_cell{place_struct_nb}.Spatial_Info.significant_ROI == 1);
 %do for all and then select tuned ones at the end
 
 %% Fit single term gaussian to id'd local maxima
 
 %number of bins to extend plotting of fit gauss beyond the intial width
 %from findpeaks
+%need to make this as some sort of fraction of peak
+%try as FWHM of each gaussian
+%c parame
 gauss_extend = 15;
 tic;
 %for rr = SI_tuned_ROIs
@@ -123,13 +129,17 @@ for rr=1:size(pks,2)
         for peak_nb =1:size(pks{rr})
             %x, y input
             %for each local maximum
+            %original width for input to fit
             loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2)):round(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2))];
+            %loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-(w{rr}(peak_nb)):round(lc{rr}(peak_nb)+(w{rr}(peak_nb))))];
             curve_range{rr}{peak_nb} = ex_rate_map_sm(loc_range{rr}{peak_nb},rr);
             
             %fit gaussian to peak
             [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', ex_rate_map_sm(loc_range{rr}{peak_nb},rr),'gauss1');
             gauss_fit{rr}{peak_nb} = f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
             gauss_fit{rr}{peak_nb} =f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
+            %full width at half maximum for each peak
+            gauss_fwhm{rr}(peak_nb) = round(2*sqrt(2*log(2))*f{rr}{peak_nb}.c1);
             gauss_fit_bin_range{rr}{peak_nb} = [loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend];
         end
 
@@ -141,7 +151,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =13%SI_tuned_ROIs%1:100
+    for rr =455%SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
