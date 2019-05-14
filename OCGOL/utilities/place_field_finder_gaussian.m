@@ -432,27 +432,64 @@ for rr =1:size(merge_peak_nb_edge,2)
 end
 
 %% Set place field centers, edges
+%(take endpoints of fitting Gaussians)
+
+%correct edges for track offset for border analysis
+
+%adjust bin in the end by shifting to by 50 bins less or equal to 150
+%adjust by 100 those greater than 150
+
+%delete empty merge cells inside inside final merge cell
+for rr=1:size(merge_peak_nb,2)
+    if iscell(merge_peak_nb{rr})
+    merge_peak_nb{rr}(cellfun(@isempty,merge_peak_nb{rr})) = [];
+    end
+end
 
 %check for peaks
-for rr =1:size(merge_peak_nb_edge,2)
+for rr =1:size(merge_peak_nb,2)
     if ~isempty(merge_peak_nb{4})
         %check if cell (more than 1 intial peaks)
+        
         if iscell(merge_peak_nb)
-        %single peak
-        else
-            
+            %if only 1 peak
+            %may need checking or simple make a corrected edge cell above
+            if size(merge_peak_nb{rr},2) ==1
+                placeField.edge{rr} = round(gauss_fit_edges{rr}{1}(1,:));
+                %take difference
+                placeField.width{rr} = diff(placeField.edge{rr});
+                placeField.center{rr} = round(placeField.width{rr}/2);
+                
+            else %for multiple peaks; for each merge decision
+                for mm=1:size(merge_peak_nb{rr},2)
+                    %if single peak, do as above
+                     if size(merge_peak_nb{rr}{mm},2) ==1
+                    %if more than 1 peak, merge first and last peak of that
+                    %merge
+                     else
+                         merge_peak_nb{rr}{mm}(1)
+                         merge_peak_nb{rr}{mm}(end)
+                         
+                     end
+                end
+            end
         end
+            
     else
         placeField.edge{rr} = [];
         placeField.width{rr} = [];
-        placeField.centers{rr} = [];
+        placeField.center{rr} = [];
     end
     
-end
+    end
 
-iscell(merge_peak_nb{6})
 
-%% Merge (take endpoints of fitting Gaussians) and set place field endpoints
+    %remove any empty cells 
+%% Area under curve of gaussians for comparison - skip for now; come back later
+
+
+
+%% Extract place field info for those that are SI tuned or TS tuned
 
 
 %% Save to output struct
