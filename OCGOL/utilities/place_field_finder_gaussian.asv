@@ -645,18 +645,32 @@ for rr=1:size(placeField.edge,2)
             end
         end
         
+                %for a for each place field here
+%         if placeField.width_adj{rr} <= 0
+%             placeField.width_adj{rr} = placeField.width_adj{rr} + 100;
+%             placeField.center_adj{rr} = placeField.edge_adj{rr}(:,1) + round(placeField.width_adj{rr}./2)';
+%         end
+        %if negative, add 100 bins
+        %placeField.width_adj{rr} = placeField.width_adj{rr}
+        
         %recalculate the center and width
         placeField.width_adj{rr} = diff(placeField.edge_adj{rr}',1);
-        
-        %for a for each place field here
-        %if negative, add 100 bins
-        placeField.width_adj{rr} = placeField.width_adj{rr}
-        if placeField.width_adj{rr} <= 0
-            placeField.width_adj{rr} = placeField.width_adj{rr} + 100;
-            placeField.center_adj{rr} = placeField.edge_adj{rr}(:,1) + round(placeField.width_adj{rr}./2)';
-        end
-        
         placeField.center_adj{rr} = placeField.edge_adj{rr}(:,1) + round(placeField.width_adj{rr}./2)';
+        
+        %adjust if negative (crosses past lap border)
+        for pp=1:size(placeField.width_adj{rr},2)
+            if placeField.width_adj{rr}(pp) <= 0
+                %adjust width
+                placeField.width_adj{rr}(pp) = placeField.width_adj{rr}(pp) + 100;
+                %adjust center; if center beyond 100, subtract 100
+                if (placeField.edge_adj{rr}(pp,1) + round(placeField.width_adj{rr}(pp)./2)) > 100
+                    placeField.center_adj{rr}(pp) = placeField.edge_adj{rr}(pp,1) + round(placeField.width_adj{rr}(pp)./2)-100;
+                else
+                     placeField.center_adj{rr}(pp) = placeField.edge_adj{rr}(pp,1) + round(placeField.width_adj{rr}(pp)./2);
+                end
+                %placeField.center_adj{rr} = placeField.edge_adj{rr}(:,1) + round(placeField.width_adj{rr}./2)';
+            end
+        end
         
     else %set to empty
         placeField.edge_adj{rr} = placeField.edge{rr};
@@ -666,8 +680,24 @@ for rr=1:size(placeField.edge,2)
     
 end
 
-%% Plot final values
+%% Extract place field info for those that are SI tuned or TS tuned and save to struct
+SI_tuned = Place_cell{place_struct_nb}.Spatial_Info.significant_ROI;
+TS_tuned = Place_cell{place_struct_nb}.Tuning_Specificity.significant_ROI;
 
+%all field
+Place_cell{place_struct_nb}.placeField.edge = placeField.edge_adj;
+Place_cell{place_struct_nb}.placeField.center = placeField.center_adj;
+Place_cell{place_struct_nb}.placeField.width = placeField.width_adj;
+%spatial info tuned
+Place_cell{place_struct_nb}.placeField.edge = placeField.edge_adj(SI_tuned);
+Place_cell{place_struct_nb}.placeField.center = placeField.center_adj(SI_tuned);
+Place_cell{place_struct_nb}.placeField.width = placeField.width_adj(SI_tuned);
+%tuning spec. tuned
+
+placeField.edge_adj(SI_tuned)
+
+%% Plot final values
+if 0
 figure;
 for rr =SI_tuned_ROIs%1:100
     
@@ -730,13 +760,7 @@ for rr =SI_tuned_ROIs%1:100
     pause;
     clf;
 end
-
-%% Extract place field info for those that are SI tuned or TS tuned
-
-x =1;
-%placeField.
-
-%% Save to output struct
+end
 
 
 

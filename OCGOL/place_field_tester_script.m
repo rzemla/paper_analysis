@@ -39,10 +39,13 @@ options.gaussAreaThreshold = 0.3;
 options.plotFields = 0;
 
 %which place cell struct to do placefield extraction on
-
-options.place_struct_nb = 4;
-[Place_cell] = place_field_finder_gaussian(Place_cell,options);
-
+%iterate through place_cell cells of interest
+%4 - all A regardless if correct
+%5 - all B regardless if correct
+for ii =[4,5]
+    options.place_struct_nb = ii;
+    [Place_cell] = place_field_finder_gaussian(Place_cell,options);
+end
 
 %% 2 Dombeck/Barthos - don't use unless working in dF/F space
 %Place field finder - Dombeck/Harvey 2010
