@@ -52,7 +52,7 @@ end
 %find local maxima for each ROI
 for rr=1:size(ex_rate_map,2)
     [pks{rr},lc{rr},w{rr}] = findpeaks(ex_rate_map_sm(:,rr),'WidthReference','halfprom',...
-        'MinPeakHeight',0.1,'Threshold',0);
+        'MinPeakHeight',0.1,'Threshold',0,'MinPeakWidth',4);
 end
 
 
@@ -111,7 +111,7 @@ SI_tuned_ROIs = find(Place_cell{1, 1}.Spatial_Info.significant_ROI == 1);
 
 %number of bins to extend plotting of fit gauss beyond the intial width
 %from findpeaks
-gauss_extend = 10;
+gauss_extend = 15;
 tic;
 %for rr = SI_tuned_ROIs
 %for all ROIs
@@ -141,7 +141,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =542%SI_tuned_ROIs%1:100
+    for rr =13%SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -435,55 +435,160 @@ end
 %(take endpoints of fitting Gaussians)
 
 %correct edges for track offset for border analysis
-
+gauss_fit_edges;
 %adjust bin in the end by shifting to by 50 bins less or equal to 150
 %adjust by 100 those greater than 150
 
 %delete empty merge cells inside inside final merge cell
 for rr=1:size(merge_peak_nb,2)
     if iscell(merge_peak_nb{rr})
-    merge_peak_nb{rr}(cellfun(@isempty,merge_peak_nb{rr})) = [];
+        merge_peak_nb{rr}(cellfun(@isempty,merge_peak_nb{rr})) = [];
     end
 end
 
 %check for peaks
 for rr =1:size(merge_peak_nb,2)
-    if ~isempty(merge_peak_nb{4})
+    if ~isempty(merge_peak_nb{rr})
         %check if cell (more than 1 intial peaks)
         
-        if iscell(merge_peak_nb)
+        if iscell(merge_peak_nb{rr})
             %if only 1 peak
             %may need checking or simple make a corrected edge cell above
-            if size(merge_peak_nb{rr},2) ==1
-                placeField.edge{rr} = round(gauss_fit_edges{rr}{1}(1,:));
-                %take difference
-                placeField.width{rr} = diff(placeField.edge{rr});
-                placeField.center{rr} = round(placeField.width{rr}/2);
+%             if size(merge_peak_nb{rr},2) == 1
+%                 placeField.edge{rr} = round(gauss_fit_edges{rr}{1}(1,:));
+%                 %take difference
+%                 placeField.width{rr} = diff(placeField.edge{rr});
+%                 placeField.center{rr} = round(placeField.width{rr}/2);
                 
-            else %for multiple peaks; for each merge decision
+            %else %for multiple peaks; for each merge decision
                 for mm=1:size(merge_peak_nb{rr},2)
                     %if single peak, do as above
-                     if size(merge_peak_nb{rr}{mm},2) ==1
-                    %if more than 1 peak, merge first and last peak
-                     else
-                         merge_peak_nb{rr}{mm}(1)
-                         
-                     end
+                    if size(merge_peak_nb{rr}{mm},2) == 1
+                        placeField.edge{rr}(mm,:) = round(gauss_fit_edges{rr}{merge_peak_nb{rr}{mm}}(1,:));
+                        %take difference
+                        placeField.width{rr}(mm) = diff(placeField.edge{rr}(mm,:));
+                        placeField.center{rr}(mm) = round(placeField.width{rr}(mm)/2);
+                        %if more than 1 peak, merge first and last peak of that
+                        %merge
+                    else
+                        %edges of place field
+                        placeField.edge{rr}(mm,1) = round(gauss_fit_edges{rr}{merge_peak_nb{rr}{mm}(1)}(1,1));
+                        placeField.edge{rr}(mm,2) = round(gauss_fit_edges{rr}{merge_peak_nb{rr}{mm}(end)}(1,2));
+                        
+                        placeField.width{rr}(mm) = diff(placeField.edge{rr}(mm,:));
+                        placeField.center{rr}(mm) = round(placeField.width{rr}(mm)/2);
+                        
+                    end
                 end
-            end
+            %end
+        else
+            %need this conditional for single peaks w/0 merging
+            placeField.edge{rr} = round(gauss_fit_edges{rr}{1}(1,:));
+            %take difference
+            placeField.width{rr} = diff(placeField.edge{rr});
+            placeField.center{rr} = round(placeField.width{rr}/2);
         end
-            
+        
     else
         placeField.edge{rr} = [];
         placeField.width{rr} = [];
         placeField.center{rr} = [];
     end
     
+end
+
+
+
+%% Plot putative place fields for each ROI
+    figure;
+    for rr =SI_tuned_ROIs%1:100
+        subplot(2,1,1)
+        if ~isempty(pks{rr})
+            %for each id'd peak
+            for peak_nb =1:size(pks{rr})
+                %plot range
+                hold on
+                title(num2str(rr));
+                ylim([0 0.8])
+                %plot extended rate map (smoothed)
+                plot(ex_rate_map_sm(:,rr),'k')
+                
+                %plot extended rate map (non-smoothed)
+                %plot(ex_rate_map(:,rr),'k-');
+                %plot peak and width ends
+                %plot peak center
+                stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
+                %plot width around peak
+                %start
+                stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+                %end
+                stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+                %plot gaussian fit to ROI peaks
+                plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
+            end
+        end
+        
+        %plot start and end point of bin
+        stem([51,150],[1 1],'b');
+        %cutoff transient rate refline
+        cutoff_line = refline(0,0.1);
+        cutoff_line.Color = [0.5 0.5 0.5];
+        cutoff_line.LineStyle = '--';
+        %second cut off line
+        cutoff_line2 = refline(0,0.05);
+        cutoff_line2.Color = [0.5 0.5 0.5];
+        cutoff_line2.LineStyle = '--';
+        
+        %plot place field edges
+        for pl=1:size(placeField.edge{rr},1)
+            stem(placeField.edge{rr}(pl,:),[0.5 0.5],'*c')
+        end
+        
+        subplot(2,1,2)
+        
+        hold on
+        if ~isempty(pks{rr})
+            %for each id'd peak
+            for peak_nb =1:size(pks{rr})
+                %plot range
+                hold on
+                title(num2str(rr));
+                ylim([0 0.8])
+                %plot extended rate map (smoothed)
+                %plot(ex_rate_map_sm(:,rr),'k')
+                
+                %plot extended rate map (non-smoothed)
+                plot(ex_rate_map(:,rr),'k-');
+                %plot peak and width ends
+                %plot peak center
+                stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
+                %plot width around peak
+                %start
+                stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+                %end
+                stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+                %plot gaussian fit to ROI peaks
+                plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
+            end
+        end
+        
+        %plot start and end point of bin
+        stem([51,150],[1 1],'b');
+        %cutoff transient rate refline
+        cutoff_line = refline(0,0.1);
+        cutoff_line.Color = [0.5 0.5 0.5];
+        cutoff_line.LineStyle = '--';
+        
+                %plot place field edges
+        for pl=1:size(placeField.edge{rr},1)
+            stem(placeField.edge{rr}(pl,:),[0.5 0.5],'*c')
+        end
+        pause
+        clf
     end
 
 
-    %remove any empty cells 
-%% Area under curve of gaussians for comparison
+%% Area under curve of gaussians for comparison - skip for now; come back later
 
 
 
@@ -494,50 +599,52 @@ for rr =1:size(merge_peak_nb,2)
 
 
 
+
+end
 %both work well - use InterX for now
 %one function
-inter_point = InterX([gauss_fit_bin_range{17}{2};gauss_fit{17}{2}],[gauss_fit_bin_range{17}{3};gauss_fit{17}{3}])
-%another intersection function
-%[inter_point_2(1),inter_point_2(2)] = intersections(gauss_fit_bin_range{17}{2},gauss_fit{17}{2},gauss_fit_bin_range{17}{3},gauss_fit{17}{3})
-
-rr =17;
-figure;
-if 1
-%plot intersection point
-    if ~isempty(pks{rr})
-        %for each id'd peak
-        for peak_nb =1:size(pks{rr})
-            %plot range
-            hold on
-            title(num2str(rr));
-            ylim([0 0.8])
-            %plot extended rate map (smoothed)
-            plot(ex_rate_map_sm(:,rr),'k')
-            
-            %plot extended rate map (non-smoothed)
-            %plot(ex_rate_map(:,rr),'k-');
-            %plot peak and width ends
-            %plot peak center
-            stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
-            %plot width around peak
-            %start
-            stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
-            %end
-            stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
-            %plot gaussian fit to ROI peaks
-            plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
-        end
-    end
-    
-    %plot start and end point of bin
-    stem([51,150],[1 1],'b');
-    %cutoff transient rate refline
-    cutoff_line = refline(0,0.1);
-    cutoff_line.Color = [0.5 0.5 0.5];
-    cutoff_line.LineStyle = '--';
-    %plot test intersection point
-    stem(inter_point(1),inter_point(2),'r--','LineWidth', 2)
-end
+% inter_point = InterX([gauss_fit_bin_range{17}{2};gauss_fit{17}{2}],[gauss_fit_bin_range{17}{3};gauss_fit{17}{3}])
+% %another intersection function
+% %[inter_point_2(1),inter_point_2(2)] = intersections(gauss_fit_bin_range{17}{2},gauss_fit{17}{2},gauss_fit_bin_range{17}{3},gauss_fit{17}{3})
+% 
+% rr =17;
+% figure;
+% if 1
+% %plot intersection point
+%     if ~isempty(pks{rr})
+%         %for each id'd peak
+%         for peak_nb =1:size(pks{rr})
+%             %plot range
+%             hold on
+%             title(num2str(rr));
+%             ylim([0 0.8])
+%             %plot extended rate map (smoothed)
+%             plot(ex_rate_map_sm(:,rr),'k')
+%             
+%             %plot extended rate map (non-smoothed)
+%             %plot(ex_rate_map(:,rr),'k-');
+%             %plot peak and width ends
+%             %plot peak center
+%             stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
+%             %plot width around peak
+%             %start
+%             stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+%             %end
+%             stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+%             %plot gaussian fit to ROI peaks
+%             plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
+%         end
+%     end
+%     
+%     %plot start and end point of bin
+%     stem([51,150],[1 1],'b');
+%     %cutoff transient rate refline
+%     cutoff_line = refline(0,0.1);
+%     cutoff_line.Color = [0.5 0.5 0.5];
+%     cutoff_line.LineStyle = '--';
+%     %plot test intersection point
+%     stem(inter_point(1),inter_point(2),'r--','LineWidth', 2)
+% end
 
 %want to know at what value the curves intersect - try function
 %deal with merging of curves that 'go around' track
@@ -1116,4 +1223,4 @@ end
 
 %}
 
-end
+
