@@ -29,13 +29,15 @@ plotFields = options.plotFields;
 %offset necessary from using extended rate map
 offset =50;
 
+%which place cell cell to run extraction on
+place_struct_nb = options.place_struct_nb;
+
+%% Non-extended Gaussian smoothed map
+
 %% Gaussian kernel smoothing filter
 %using convolution with custom window
 %size of window
 gaussFilter = define_Gaussian_kernel(options);
-
-%cycle through every place cell cell 
-place_struct_nb = 4;
 
 %% Smooth extended_rate_map
 
@@ -45,6 +47,10 @@ ex_rate_map = Place_cell{place_struct_nb}.Spatial_Info.extended_rate_map;
 for rr = 1:size(ex_rate_map,2)
     ex_rate_map_sm(:,rr) = conv(ex_rate_map(:,rr),gaussFilter, 'same');
 end
+
+%clip the extended map to get regular length map for visualization after
+%processing
+rate_map_sm = ex_rate_map_sm(51:150,:);
 
 %% Find local maxima - (maxima must be between bin 51 and 150)
 
@@ -496,6 +502,8 @@ for rr =1:size(merge_peak_nb,2)
             placeField.edge{rr} = round(gauss_fit_edges{rr}{1}(1,:));
             %take difference
             placeField.width{rr} = diff(placeField.edge{rr});
+            %this is wrong! - CHANGE, but in consequential b/c doing
+            %adjusted of bin values below
             placeField.center{rr} = round(placeField.width{rr}/2);
         end
         
@@ -510,6 +518,7 @@ end
 
 
 %% Plot putative place fields for each ROI
+if 0 %skip - make option
     figure;
     for rr =SI_tuned_ROIs%1:100
         subplot(2,1,1)
@@ -593,17 +602,139 @@ end
         for pl=1:size(placeField.edge{rr},1)
             stem(placeField.edge{rr}(pl,:),[0.5 0.5],'*c')
         end
-        pause
-        clf
+        %pause
+        %clf
     end
 
+end
 
 %% Area under curve of gaussians for comparison - skip for now; come back later
 
 
 
+%% Adjust the values to fit with the 1-100 bin range
+
+%bins between 51 -150 --> subtract 50
+%bins less than 51 --> 100 - (50 -x) = 50+x
+%bin greater than 150 --> x-150
+
+%make copy for adjusted values
+placeField.edge_adj = placeField.edge;
+placeField.center_adj = placeField.center;
+placeField.width_adj = placeField.width;
+
+for rr=1:size(placeField.edge,2)
+    %if not empty
+    if ~isempty(placeField.edge{rr})
+        %for each edge of place field
+        %find each class and make adjustment
+        field_log{1} = placeField.edge{rr} >= 51 & placeField.edge{rr} <=150;
+        field_log{2} = placeField.edge{rr} < 51;
+        field_log{3} = placeField.edge{rr} > 150;
+        
+        %check if any fit class, and adjust the bins
+        for cc=1:3
+            if any(field_log{cc}(:))
+                if cc==1
+                    placeField.edge_adj{rr}(field_log{cc}) = placeField.edge{rr}(field_log{cc}) - 50;
+                elseif cc==2
+                    placeField.edge_adj{rr}(field_log{cc}) = placeField.edge{rr}(field_log{cc}) + 50;
+                elseif cc==3
+                    placeField.edge_adj{rr}(field_log{cc}) = placeField.edge{rr}(field_log{cc}) - 150;
+                end
+            end
+        end
+        
+        %recalculate the center and width
+        placeField.width_adj{rr} = diff(placeField.edge_adj{rr}',1);
+        
+        %for a for each place field here
+        %if negative, add 100 bins
+        placeField.width_adj{rr} = placeField.width_adj{rr}
+        if placeField.width_adj{rr} <= 0
+            placeField.width_adj{rr} = placeField.width_adj{rr} + 100;
+            placeField.center_adj{rr} = placeField.edge_adj{rr}(:,1) + round(placeField.width_adj{rr}./2)';
+        end
+        
+        placeField.center_adj{rr} = placeField.edge_adj{rr}(:,1) + round(placeField.width_adj{rr}./2)';
+        
+    else %set to empty
+        placeField.edge_adj{rr} = placeField.edge{rr};
+        placeField.center_adj{rr} = placeField.center{rr};
+        placeField.width_adj{rr} = placeField.width{rr};
+    end
+    
+end
+
+%% Plot final values
+
+figure;
+for rr =SI_tuned_ROIs%1:100
+    
+    %adjusted values
+    subplot(2,1,1)
+    hold on
+    title(num2str(rr));
+    ylim([0 0.8])
+    %plot extended rate map (smoothed)
+    plot(rate_map_sm(:,rr),'k')
+    for pl=1:size(placeField.edge_adj{rr},1)
+        %place field edges
+        stem(placeField.edge_adj{rr}(pl,:),[0.5 0.5],'*c')
+        %place centers
+        stem(placeField.center_adj{rr}(pl),[0.5],'*r')
+    end
+    
+    subplot(2,1,2)
+    if ~isempty(pks{rr})
+        %for each id'd peak
+        for peak_nb =1:size(pks{rr})
+            %plot range
+            hold on
+            title(num2str(rr));
+            ylim([0 0.8])
+            %plot extended rate map (smoothed)
+            plot(ex_rate_map_sm(:,rr),'k')
+            
+            %plot extended rate map (non-smoothed)
+            %plot(ex_rate_map(:,rr),'k-');
+            %plot peak and width ends
+            %plot peak center
+            stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
+            %plot width around peak
+            %start
+            stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+            %end
+            stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
+            %plot gaussian fit to ROI peaks
+            plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
+        end
+    end
+    
+    %plot start and end point of bin
+    stem([51,150],[1 1],'b');
+    %cutoff transient rate refline
+    cutoff_line = refline(0,0.1);
+    cutoff_line.Color = [0.5 0.5 0.5];
+    cutoff_line.LineStyle = '--';
+    %second cut off line
+    cutoff_line2 = refline(0,0.05);
+    cutoff_line2.Color = [0.5 0.5 0.5];
+    cutoff_line2.LineStyle = '--';
+    
+    %plot place field edges
+    for pl=1:size(placeField.edge{rr},1)
+        stem(placeField.edge{rr}(pl,:),[0.5 0.5],'*c')
+    end
+    
+    pause;
+    clf;
+end
+
 %% Extract place field info for those that are SI tuned or TS tuned
 
+x =1;
+%placeField.
 
 %% Save to output struct
 
@@ -611,626 +742,5 @@ end
 
 
 end
-%both work well - use InterX for now
-%one function
-% inter_point = InterX([gauss_fit_bin_range{17}{2};gauss_fit{17}{2}],[gauss_fit_bin_range{17}{3};gauss_fit{17}{3}])
-% %another intersection function
-% %[inter_point_2(1),inter_point_2(2)] = intersections(gauss_fit_bin_range{17}{2},gauss_fit{17}{2},gauss_fit_bin_range{17}{3},gauss_fit{17}{3})
-% 
-% rr =17;
-% figure;
-% if 1
-% %plot intersection point
-%     if ~isempty(pks{rr})
-%         %for each id'd peak
-%         for peak_nb =1:size(pks{rr})
-%             %plot range
-%             hold on
-%             title(num2str(rr));
-%             ylim([0 0.8])
-%             %plot extended rate map (smoothed)
-%             plot(ex_rate_map_sm(:,rr),'k')
-%             
-%             %plot extended rate map (non-smoothed)
-%             %plot(ex_rate_map(:,rr),'k-');
-%             %plot peak and width ends
-%             %plot peak center
-%             stem(lc{rr}(peak_nb),pks{rr}(peak_nb),'r')
-%             %plot width around peak
-%             %start
-%             stem(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
-%             %end
-%             stem(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2),pks{rr}(peak_nb)*ones(size(lc{rr}(peak_nb),1),1),'g');
-%             %plot gaussian fit to ROI peaks
-%             plot([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend],gauss_fit{rr}{peak_nb},'m')
-%         end
-%     end
-%     
-%     %plot start and end point of bin
-%     stem([51,150],[1 1],'b');
-%     %cutoff transient rate refline
-%     cutoff_line = refline(0,0.1);
-%     cutoff_line.Color = [0.5 0.5 0.5];
-%     cutoff_line.LineStyle = '--';
-%     %plot test intersection point
-%     stem(inter_point(1),inter_point(2),'r--','LineWidth', 2)
-% end
-
-%want to know at what value the curves intersect - try function
-%deal with merging of curves that 'go around' track
-%
-
-
-%%% OLD CODE BELOW HERE %%% 
-%%%%% DELETE ONCE DONE WITH NEW CODE ABOVE %%%%%
-
-%%
-%{
-for ii=1:size(lc,1)
-    %make sure that the peak is not nan
-    if ~isnan(pks(ii))
-        %fit Gaussian into each peak
-        [f{ii},gof{ii},output{ii} ] = fit([edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)]', convG(edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)),'gauss1');
-        %gaussian curve from fit (need x inputs)
-        gauss_fit{ii} = f{ii}.a1*exp(-(([edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)]-f{ii}.b1)./f{ii}.c1).^2);
-        %get area (bins)
-        gauss_area(ii) = trapz(gauss_fit{ii});
-    else
-        f{ii} = nan;
-        gof{ii} = nan;
-        output{ii} = nan;
-        gauss_fit{ii} = nan;
-        gauss_area(ii) = nan;
-        
-    end
-    
-end
-
-
-%% Debugging info
-%work on 101
-%where merging is performed [36 55 94 101 144, 161, 217 233]
-
-%problems - 233, 217, 208, 199, 182, 174, 161, 144, 137, 101, 94, 89, 55,
-% 69, 99 -merge example
-% 78 - mult peak example
-% 69 - merge and multi
-%  64, 59, 299, 298, 294, 285, 281, 269, 215 - multi
-
-%TODO - DONE
-%make center of Gaussian fit, the center of the PF
-%not necessary as the peak points towards the higher inital value after
-%smoothing
-%%
-%vector for holding number of PFs for given ROI
-placeFieldNb = zeros(size(Place_cell{1}.Tuned_ROI_mask,2),size(Place_cell,2));
-
-%for each trial type
-for tt=1:size(Place_cell,2)
-
-    %find all spatially tuned ROI (by spatial info criterion)
-    sigROI = find(Place_cell{tt}.Spatial_Info.significant_ROI==1);
-    
-    %number of ROIS
-    ROInb = size(Place_cell{tt}.Spatial_Info.significant_ROI,2);
-    %make blank cell container for fieldWidths and centerLoc (prevent skipped cells)
-    fieldWidth{tt} = cell(1,ROInb);
-    centerLoc{tt} = cell(1,ROInb);
-    
-    %for each neuron selected according to spatial info criterion
-    for rr=1:size(sigROI,2)
-        
-        ROI = sigROI(rr);
-        
-        disp('ROI: ')
-        disp(ROI)
-        %normalized map
-        %rate_map_norm_smooth = Place_cell{1}.Spatial_tuning_curve(:,ROI);
-        
-        %non-normalized map (from 100 bins)
-        %rate_map = Place_cell{tt}.Spatial_Info.rate_map{8}(:,ROI);
-        
-        %extended map
-        rate_map = Place_cell{tt}.Spatial_Info.extended_rate_map(:,ROI);
-        
-        %convolve the rate map with a Gaussian filter
-        convG = conv(rate_map,gaussFilter, 'same');
-        
-        %both filters match each other around window size 27 since imgaussfilt
-        %using window size on each side defined by the equation above
-        
-        clear pks lc
-        %find local maxima
-        %restrict the search to between the start and end bin
-        
-        [pks,lc] = findpeaks(convG(51:150),'MinPeakDistance', peakDistance);
-        
-        %conditional for when the peak lies at the very edge of lap
-        %add 10 to the edge
-        if isempty(pks)
-            [pks,lc] = findpeaks(convG(41:160),'MinPeakDistance', peakDistance);
-            pks = pks(1);
-            lc = lc(1) - 10;
-        end
-        
-        %add offset to the peak location value given the search
-        %restriction
-        lc = lc + 50;
-        
-        %make a copy of the original peaks and locations
-        pks_original = pks;
-        lc_original  = lc;
-        
-        %% Exclude ROIs that are location within start or end 10 bins - NOT used with extended map
-        %bypass exclusion and exclude ROIs with edges that are not defined
-        %make sure that centerExclude is set to 0
-%         
-%         if centerExclude ==1
-%             nearEdgeIdx = find(lc < 10 | lc > 90);
-%             %set them to nan
-%             if ~isempty(nearEdgeIdx)
-%                 pks(1:size(pks,1)) = nan;
-%                 lc(1:size(pks,1)) = nan;
-%             end
-%         end
-        
-        %% find edge threshold of each peak
-        %calculate the threshold for the onset/offset of each field on each side
-        peakThres = pks*peakFraction;
-        
-        clear edgeIdx
-        %edgeIdx = [];
-        %find left and right edge for each peak - works
-        for ii=1:size(lc,1)
-            %each row is id'd peak
-            %check that peak is not at the edge of the track
-            if ~isnan(pks(ii))
-                %left edge
-                if ~isempty(find(convG(fliplr(1:lc(ii))) < peakThres(ii),1))
-                    edgeIdx(ii,1) = lc(ii) - find(convG(fliplr(1:lc(ii))) < peakThres(ii),1) +1 ;
-                else
-                    edgeIdx(ii,1) = nan;
-                    pks(ii) = nan;
-                    %lc(ii) = nan;
-                end
-                %right edge
-                if ~isempty(find(convG(lc(ii):end) < peakThres(ii),1))
-                    edgeIdx(ii,2) = lc(ii) + find(convG(lc(ii):end) < peakThres(ii),1) -1 ;
-                else
-                    edgeIdx(ii,2) = nan;
-                    pks(ii) = nan;
-                    %lc(ii) = nan;
-                end
-            else
-                edgeIdx(ii,1) = nan;
-                edgeIdx(ii,2) = nan;
-            end
-
-        end
-        
-        %% Merge peaks that overlap
-        %look at the edges and check if neighboring edges run past each other
-        
-        %turn this into iterative process - while
-        %flag for merging 
-        merging = 1;
-        mergeEdge = 0;
-        mergePks = [];
-        
-        %while merging ==1 
-        %if more than one peak (PF)
-        if size(edgeIdx,1) > 1
-            
-            %for all peaks
-            for ii =1:size(edgeIdx,1)
-                %check that edges are not nan
-                if ~isnan(edgeIdx(ii,1))
-                    
-                    %if first peak - check if right edge exceeds center of next peak
-                    if ii == 1
-                        if (edgeIdx(ii,2) > lc(ii+1))
-                            %marker that right edge of first peak exceeds
-                            %center of next peak
-                            mergePks(ii,:) = [0 1];
-                            merging = 1;
-                            
-                        else
-                            mergePks(ii,:) = [0 0];
-                            merging = 0;
-                        end
-                        
-                        %if last peak - check if left edge is below center of peak before
-                    elseif ii == size(edgeIdx,1)
-                        if edgeIdx(ii,1) < lc(ii-1)
-                            mergePks(ii,:) = [1 0];
-                            merging = 1;
-                        else
-                            mergePks(ii,:) = [0 0];
-                            merging = 0;
-                        end
-                        
-                    else %- check if left edge falls below previous peak or right edge
-                        %falls above next  peak
-                        %left edge below previous peak
-                        if edgeIdx(ii,1) < lc(ii-1)
-                            mergePks(ii,:) = [1 0];
-                            merging = 1;
-                            %right edge above next peak
-                        elseif  (edgeIdx(ii,2) > lc(ii+1))
-                            mergePks(ii,:) = [0 1];
-                            merging = 1;
-                        else
-                            mergePks(ii,:) = [0 0];
-                            merging = 0;
-                        end
-                    end
-                end
-                
-            end
-            
-        end
-        %end of merge process
-        
-        %end of while loop
-        %end
-        
-        %save merge matrix
-        mergeRR{rr} = mergePks;
-        
-        %set merge flag to 0
-        merged = 0;
-        
-        %find if any row (corresponding to peak) has a value of 1
-        for ii=1:size(mergePks,1)
-            [~,cTemp] = find(mergePks(ii,:) == 1);
-            if ~isempty(cTemp)
-                %if right edge flagged
-                if cTemp == 2
-                    %check if left edge of next peak is flagged
-                    if mergePks(ii+1,1) ~= 1
-                        %remove the peak if neighbor not flagged
-                        pks(ii) = nan;
-                        lc(ii) = nan;
-                        mergeEdge = 1;
-                    elseif mergePks(ii+1,1) == 1
-                        %merge with previous one depending on which one is
-                        %larger
-                        %set merge flag
-                        merged = 1;
-                        if pks(ii+1) > pks(ii)
-                            %remove (set to nan) location and associated peak
-                            lc(ii) = nan;
-                            pks(ii) = nan;
-                            %change the right edge of the next peak
-                            edgeIdx(ii+1,1) = edgeIdx(ii,1);
-                        else
-                            %remove (set to nan) location and associated peak
-                            lc(ii+1) = nan;
-                            pks(ii+1) = nan;
-                            %change the left edge of the next peak
-                            edgeIdx(ii,2) = edgeIdx(ii+1,2);
-                        end
-                    end
-                    
-                elseif cTemp == 1 && merged ==0
-                    %check if left edge of next peak is flagged
-                    if mergePks(ii-1,2) ~= 1
-                        %remove the peak if neighbor not flagged
-                        pks(ii) = nan;
-                        lc(ii) = nan;
-                        %set merge edge flag
-                        
-                    elseif mergePks(ii-1,2) == 1
-                        %merge with previous one depending on which one is
-                        %larger
-                        %set merge flag
-                        merged = 1;
-                        if pks(ii-1) > pks(ii)
-                            %remove (set to nan) location and associated peak
-                            lc(ii) = nan;
-                            pks(ii) = nan;
-                            %change the right edge of the next peak
-                            edgeIdx(ii-1,2) = edgeIdx(ii,2);
-                        else
-                            %remove (set to nan) location and associated peak
-                            lc(ii-1) = nan;
-                            pks(ii-1) = nan;
-                            %change the left edge of the previous peak
-                            edgeIdx(ii,2) = edgeIdx(ii-1,1);
-                        end
-                    end
-                end
-            end
-        end
-        
-        %reshape(mergeRR{1, 55},1,[])
-        clear mergePks
-        
-        %check if either end lap peaks have been merged together
-        
-        %make copy of edges for curveFit
-        edgeIdx_curvefit = edgeIdx;
-        
-        %subtract offset to the edges
-        edgeIdx_offset = edgeIdx - offset;
-        
-        %check if both end edge is less than 1 or greater than 100
-        [r_edge,~] = find(edgeIdx_offset(1,1) < 1 && edgeIdx_offset(end,2) > 100);
-        
-        %if overlapping, use the widest peak and remove the less wide
-        edgeIdx_diff = abs(edgeIdx(:,2)- edgeIdx(:,1));
-        
-        %perform merging if both sides overlap
-        if ~isempty(r_edge)
-            if edgeIdx_diff(1)> edgeIdx_diff(end)
-                lc(end) = nan;
-                pks(end) = nan;
-                edgeIdx(1,1) = edgeIdx(end,1);
-                %edges for Gaussian fitting
-                edgeIdx_curvefit(1,1) = edgeIdx(end,1);
-                edgeIdx_curvefit(1,2) = edgeIdx(1,2) + 100;
-                
-            elseif edgeIdx_diff(1)< edgeIdx_diff(end)
-                lc(1) = nan;
-                pks(1) = nan;
-                edgeIdx(end,2) = edgeIdx(1,2);
-                %edges for Gaussian fitting
-                edgeIdx_curvefit(end,2) = edgeIdx(1,2) + 100;
-            end
-            %check to see if any side if hanging over and addjust edge to
-            %minimum
-        elseif (edgeIdx_offset(1,1) < 1) || (edgeIdx_offset(end,2) > 100)
-            %check which edge peak is out of range
-            if (edgeIdx_offset(1,1) < 1)
-                %find the lowest value from max of previous peak until max
-                %of current peak
-                %[~, minIdx ] = min(convG(lc(end):(lc(1)+100)));
-                [~, minIdx ] = find(fliplr(convG(lc_original(end):150)') < peakThres(1),1);
-                %if can't find the min below threshold, take the lowest
-                %value on that interval
-                if isempty(minIdx)
-                    [~, minIdx ] = min(fliplr(convG(lc_original(end):150)'));
-                end          
-                
-                edgeIdx(1,1) = 150 - minIdx;
-                edgeIdx_curvefit(1,1) = edgeIdx(1,1);
-                edgeIdx_curvefit(1,2) = edgeIdx(1,2)+100;
-                
-            elseif (edgeIdx_offset(end,2) > 100) 
-                [~, minIdx ] = find(convG(51:lc_original(1)) < peakThres(end),1);
-                if isempty(minIdx)
-                    [~, minIdx ] = min(convG(51:lc_original(1)));
-                end
-                
-                edgeIdx(end,2) = minIdx + 50;
-                edgeIdx_curvefit(end,2) = edgeIdx(end,2)+100;
-            end
-        end
-
-        %% fit local maximum in rate map with a Gaussian and get area of Gaussian
-        %iterate this and fit over every peak of neuron
-        
-        clear f gof output gauss_fit gauss_area
-        
-        for ii=1:size(lc,1)
-            %make sure that the peak is not nan
-            if ~isnan(pks(ii))
-                %fit Gaussian into each peak
-                [f{ii},gof{ii},output{ii} ] = fit([edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)]', convG(edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)),'gauss1');
-                %gaussian curve from fit (need x inputs)
-                gauss_fit{ii} = f{ii}.a1*exp(-(([edgeIdx_curvefit(ii,1):edgeIdx_curvefit(ii,2)]-f{ii}.b1)./f{ii}.c1).^2);
-                %get area (bins)
-                gauss_area(ii) = trapz(gauss_fit{ii});
-            else
-                f{ii} = nan;
-                gof{ii} = nan;
-                output{ii} = nan;
-                gauss_fit{ii} = nan;
-                gauss_area(ii) = nan;
-                
-            end
-            
-        end
-        
-        %% find the peak of each id'd gaussian and make that the place field center
-        clear lc_max lc_corr
-        %make copy for output
-        lc_corr = lc_original;
-                
-        for gg=1:size(gauss_fit,2)
-            if ~isnan(gauss_fit{gg})
-                [~,lc_max(gg)] = max(gauss_fit{gg});
-                %add offset
-                lc_max(gg) = lc_max(gg)+edgeIdx_curvefit(gg,1) -1;
-%                 disp('max')
-%                 disp(lc_max);
-%                 disp('orig')
-%                 disp(lc_original);
-                %add offset to original detected peak
-                %add additional offset that is introduced for Gaussian
-                %fitting
-                if lc_max(gg) < 151
-                    lc_corr(gg) = lc_max(gg);
-                else
-                    lc_corr(gg) = lc_max(gg) - 100;
-                end
-            else
-                lc_max(gg) = nan;
-            end
-        end
-
-        %% discard any peaks with area less than 50% of largest Gaussian/peak by area
-        
-        %find max area peak for given ROI
-        %do not search if all gaussian areas are nan
-        if ~(sum(isnan(gauss_area)) == size(gauss_area,2))
-            [maxArea,idxMaxArea] = max(gauss_area);
-        end
-        
-        %divide all areas by max area
-        gaussAreaNorm = gauss_area/maxArea;
-        
-        %find indices of fields which are less than the area of the max - threshold
-        %defined in gaussAreaThreshold
-        belowCriteriaPeaks = find(gaussAreaNorm < gaussAreaThreshold);
-        
-        lc_filtered = [];
-        %if peaks found
-        if ~isempty(belowCriteriaPeaks)
-            %set them to NaN
-            lc_filtered = lc;
-            lc_filtered(belowCriteriaPeaks) = nan;
-            %shifted centers
-            lc_max(belowCriteriaPeaks) = nan;
-        else
-            lc_filtered = lc;
-        end
-        
-        %exclude peaks that have undefined edges
-        noEdgePeaks = logical(sum(isnan(edgeIdx),2));
-        lc_filtered(noEdgePeaks) = nan;
-        
-        %exclude peaks if one of the edge peaks with undefined edge is greater
-        %(avoid bias by exclusion due to lack of edge detection
-        
-        %for each accepted peak, remove if another exists that is larger
-        maxPeak = max(pks_original);
-        
-        %TEMPORARY SKIP
-%         for ii=1:size(lc_filtered,1)
-%             if ~isnan(lc_filtered(ii))
-%                 %make the peak is at least 2x the size either of the excluded
-%                 if  (sum(noEdgePeaks) ~=0) %( pks_original(ii) < maxPeak)  ((pks_original(ii) < maxPeak) &&
-%                     
-%                     if (pks_original(ii) < 2*max(pks_original(noEdgePeaks)))
-%                         lc_filtered(ii) = nan;
-%                     end
-%                 end
-%             end
-%         end
-        
-
-        %% Plot edges of id'd place fields - check for code optimization
-        
-        if plotFields == 1
-            
-        figure;
-        hold on;
-        
-        %display ROI #:
-        title(['ROI #: ', num2str(ROI)]);
-        
-        %rate map
-        rm = plot(rate_map(51:150),'b');
-        
-        %edges of each peak
-        for ee=1:size(lc_max,2)
-            if ~isnan(lc_max(ee))
-                plot([edgeIdx(ee,1)-offset, edgeIdx(ee,1)-offset], [0 1], 'r');
-                plot([edgeIdx(ee,2)-offset, edgeIdx(ee,2)-offset], [0 1], 'r');
-            end
-        end
-        
-        %rate map convolved with gaussian smoothing kernel
-        conG = plot(convG(51:150), 'k');
-        
-        %plot the identified local maxima
-        stem(lc_max-offset, ones(size(lc,1)),'k', 'LineWidth', 1.5)
-        
-        %add stars over those that are significant (meet the area criteria)
-        
-        for ii=1:size(lc_max,2)
-            %if filter peaks locations are not empty
-            if ~isempty(lc_max)
-                if ~isnan(lc_max(ii))
-                    scatter(lc_max(ii)-offset, 1, 'r*');
-                end
-            end
-        end
-        
-        %fitted Gaussian curve
-        %fit curve - plot each fitted gaussian
-        for ii=1:size(edgeIdx,1)
-            %
-            plot(edgeIdx_curvefit(ii,1)-offset:edgeIdx_curvefit(ii,2)-offset,gauss_fit{ii}, 'LineWidth',2)
-        end
-        
-        hold off
-        legend([rm conG], 'Rate map', 'Convolved gaussian smoothing filter');
-
-        end
-        
-        
-        %% save 
-        %number of place fields per neuron
-        placeFieldNb(ROI,tt) = size(lc_max,2) - sum(isnan(lc_max));
-        
-        %field width 
-        fieldWidth{tt}{ROI} = edgeIdx_diff(~isnan(lc_max))*2;
-        
-        %center location of each PF
-        centerLoc{tt}{ROI} = lc_corr(~isnan(lc_max))-offset;
-        
-        %% clear variables
-        
-        clear edgeIdx edgeIdx_curvefit edgeIdx_diff edgeIdx_offset
-        %% Plot results
-%         
-%         if plotFields == 1
-%             %plot different filters with raw data
-%             figure;
-%             hold on;
-%             
-%             %display ROI #:
-%             title(['ROI #: ', num2str(ROI)]);
-%             
-%             %rate map
-%             rm = plot(rate_map(51:150),'b');
-%             
-%             %rate map convolved with gaussian smoothing kernel
-%             conG = plot(convG(51:150), 'k');
-%             
-%             %plot the identified local maxima
-%             stem(lc-50, ones(size(lc,1)),'k', 'LineWidth', 1.5)
-%             
-%             %add stars over those that are significant (meet the area criteria)
-%             
-%             for ii=1:size(lc,1)
-%                 %if filter peaks locations are not empty
-%                 if ~isempty(lc_filtered)
-%                     if ~isnan(lc_filtered(ii))
-%                         scatter(lc_filtered(ii)-50, 1, 'r*');
-%                     end
-%                 end
-%             end
-%             
-%             %fitted Gaussian curve
-%             %fit curve - plot each fitted gaussian
-%             for ii=1:size(edgeIdx,1)
-%                 %
-%                 plot(edgeIdx(ii,1)-50:edgeIdx(ii,2)-50,gauss_fit{ii}, 'LineWidth',2)
-%             end
-%             
-%             hold off
-%             legend([rm conG], 'Rate map', 'Convolved gaussian smoothing filter');
-%             
-%         end
-        
-    end
-    
-    %% save to Place_cell structure
-    Place_cell{tt}.Field.placeFieldNb = placeFieldNb(:,tt);
-    Place_cell{tt}.Field.centerLoc = centerLoc{tt};
-    Place_cell{tt}.Field.width = fieldWidth{tt};
-end
-
-%%old code
-%define the Gaussian filter to convolve with
-%using 2D gauss imaging filter
-%default window size = 2*ceil(2*sigma)+1 --> 13 for sigma = 3;
-%windowSize = 2*ceil(2*gSigma)+1;
-%yImGf = imgaussfilt(rate_map,gSigma);d
-
-%}
 
 

@@ -38,10 +38,9 @@ options.gaussAreaThreshold = 0.3;
 %whether to plot the individual place fields
 options.plotFields = 0;
 
-%Problem ROIs:
-%B: 26, 42, 57, 69, 71, 101, 159,161,167
-%A: 42, 132, 160
-%dbstop if error
+%which place cell struct to do placefield extraction on
+
+options.place_struct_nb = 4;
 [Place_cell] = place_field_finder_gaussian(Place_cell,options);
 
 
