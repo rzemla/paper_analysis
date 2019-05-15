@@ -25,17 +25,39 @@ occupancy = session_vars{1}.Place_cell{4}.Spatial_Info.occupancy_map{8};
 %session_vars{1}.Place_cell.
 %end
 
-%should equal event rate (it does_
+%should equal event rate (it does)
 rate_map = event_map./occupancy';
 %isequal(rate_map,event_rate)
 
-%% Assign transient rate for each place field
+%% Find and store transient rate in each place field
 
+%for each ROI
+for rr=1:size(event_rate,2)
+    %for each place field
+    if ~isempty(placeField_edges{rr})
+        for pp=1:size(placeField_edges{rr},1)
+            %if place bins split at lap edge
+            if placeField_edges{rr}(pp,1) < placeField_edges{rr}(pp,2)
+                place_bins{rr}{pp} = placeField_edges{rr}(pp,1):placeField_edges{rr}(pp,2);
+            else
+                place_bins{rr}{pp} = [placeField_edges{rr}(pp,1):100,1:placeField_edges{rr}(pp,2)];
+            end            
+            
+            field_event_rates{rr}(pp) = sum(event_map(place_bins{rr}{pp},rr))./sum(occupancy(place_bins{rr}{pp}));
+        end
+    else
+        
+    end
+end
+
+%histogram of rates in id'd fields
+figure;
+histogram(cell2mat(field_event_rates))
 
 %% Plot rate map, place field edges
 
 figure;
-for rr=1:20
+for rr=21:22
     hold on;
     %plot unsmoothed/non-normalized event rate
     plot(event_rate(:,rr), 'k');
