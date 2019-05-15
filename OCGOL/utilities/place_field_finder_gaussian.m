@@ -8,26 +8,26 @@ gSigma = options.gSigma;
 %rename option variable to use for input for define_Gaussian_kernel fxn
 options.sigma_filter = options.gSigma;
 
-%if to exclude based on center of the located peak
-centerExclude = options.centerExclude;
-
-%peak distance separation (in bins)
-%not used if centerExclude is set to 0
-peakDistance = options.peakDistance;
-
-%fraction of each peak to define as left and right edge of each Gaussian
-%fit
-peakFraction = options.peakFraction;
-
-%how large the area has to be of other fields in comparison to the the
-%place field with the largest area;
-gaussAreaThreshold = options.gaussAreaThreshold;
-
-%whether to plot the individual place fields
-plotFields = options.plotFields;
-
-%offset necessary from using extended rate map
-offset =50;
+% %if to exclude based on center of the located peak
+% centerExclude = options.centerExclude;
+% 
+% %peak distance separation (in bins)
+% %not used if centerExclude is set to 0
+% peakDistance = options.peakDistance;
+% 
+% %fraction of each peak to define as left and right edge of each Gaussian
+% %fit
+% peakFraction = options.peakFraction;
+% 
+% %how large the area has to be of other fields in comparison to the the
+% %place field with the largest area;
+% gaussAreaThreshold = options.gaussAreaThreshold;
+% 
+% %whether to plot the individual place fields
+% plotFields = options.plotFields;
+% 
+% %offset necessary from using extended rate map
+% offset =50;
 
 %which place cell cell to run extraction on
 place_struct_nb = options.place_struct_nb;

@@ -124,33 +124,10 @@ end
 %297/310 - multi-peaked place cells narrowing
 %298/435 - flip cell (from B to A)
 %300/344 - nice narrowing and remapping of A cell
-%303/450 - tuning
-%306/308 - reward cell tuning
-%309/463 - tuning
-%314/493 - reward tuning
-%320/312 - tuning to A - scattered in B
-%322/353 - flip from reward tuning to place cell tuned in A
-%327/361 - dispering/broadening of activity
-%330/392 - nice narrowing example 
-%336/368 - narrowing
-%337/206 - nice non-specific narrowing
-%339/420 - nice convergence from separate to common activity 
-%346/383 - nice narrowing of activity
-%348/365 - nice split
-%350/92 - nice development of place fields
-%356/480 - split
-%357/429 - nice A and B convergence
-%359/379 - nice development of A field separate from B
-%360/443 - remapping and divergence
-%362/401 - convergence in 1 field; split in another
-%374/371 - nice split
-%412/452 - nice split
-%413/511 - nice example
-%421/484 - nice cleanup and split
-%426/21 - non-selective peri-reward to selective perireward
-%452/504 - nice split and remap
-%465/303 - dual field non split
-%474/534 - convergence
+
+
+
+
 
 
 
