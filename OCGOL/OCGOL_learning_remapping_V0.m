@@ -173,12 +173,23 @@ options.allCorrect = 0;
 %returns struct of structs
 [tunedLogical] = defineTunedLogicals(session_vars,options);
 
-%% Generate STCs neurons tuned in either session and plot side by side
+%% Generate dF/F maps of neurons tuned in either session and plot side by side
 %customize to add options
 %tuned in both sessions by SI score
 %sorted by A trials
 
-plotSTC_OCGOL_training(session_vars,tunedLogical,registered)
+%set option as to how to select neurons for plots
+
+plot_dFF_OCGOL_training(session_vars,tunedLogical,registered)
+
+%% Generate STC maps of neurons tuned in either session and plot side by side
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
+
+%set option as to how to select neurons for plots
+
+plot_STC_OCGOL_training(session_vars,tunedLogical,registered)
 
 %% Measure PV and TC correlation between A/B trial on first training day and once learned
 %expect greater dissimilarity once learned
