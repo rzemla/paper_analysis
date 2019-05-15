@@ -3,12 +3,19 @@
 %run componenet registration across sessions
 options.register = 0;
 
+%lab workstation
 %input directories to matching function
-path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B',...
-    'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+% path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B',...
+%     'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+%cross session directory
+%crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
+
+%home
+path_dir = {'F:\OCGOL_training\I56_RLTS_041019\5A5B',...
+    'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
 
 %cross session directory
-crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
+crossdir = 'F:\OCGOL_training\I56_RLTS_041019\crossSession';
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -152,10 +159,35 @@ end
 %465/303 - dual field non split
 %474/534 - convergence
 
-
-
 %break down in simpler code in the future;
 compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
+
+
+%% Calculate the transient rates in each of the place fields (integrate later)
+
+
+%% Define tuned logical vectors
+
+%flag to all A or B trial or only correct A or B trials
+options.allCorrect = 0;
+%returns struct of structs
+[tunedLogical] = defineTunedLogicals(session_vars,options);
+
+%% Generate STCs neurons tuned in either session and plot side by side
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
+
+plotSTC_OCGOL_training(session_vars,tunedLogical,registered)
+
+%% Measure PV and TC correlation between A/B trial on first training day and once learned
+%expect greater dissimilarity once learned
+
+%% Centroid distance between A and B trials on early vs. late training for matching ROIs
+
+%% Event property difference (duration of sig events in fields vs
+
+%% Place field width for A or B trials early vs late (all neurons vs matching neurons)
 
 
 %% Learning pre and post event spiral
