@@ -165,6 +165,9 @@ compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
 
 %% Calculate the transient rates in each of the place fields (integrate later)
 
+%funtion to calculate transient rate in field
+%take raw event rate and divide by occupancy (s) transients/s
+transient_rate_in_field(session_vars)
 
 %% Define tuned logical vectors
 
@@ -179,8 +182,9 @@ options.allCorrect = 0;
 %sorted by A trials
 
 %set option as to how to select neurons for plots
-
-plot_dFF_OCGOL_training(session_vars,tunedLogical,registered)
+%use SI or TS
+options.tuning_criterion = 'ts'; %si or ts
+plot_dFF_OCGOL_training(session_vars,tunedLogical,registered,options)
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options
@@ -188,8 +192,8 @@ plot_dFF_OCGOL_training(session_vars,tunedLogical,registered)
 %sorted by A trials
 
 %set option as to how to select neurons for plots
-
-plot_STC_OCGOL_training(session_vars,tunedLogical,registered)
+options.tuning_criterion = 'ts'; %si or ts
+plot_STC_OCGOL_training(session_vars,tunedLogical,registered,options)
 
 %% Measure PV and TC correlation between A/B trial on first training day and once learned
 %expect greater dissimilarity once learned

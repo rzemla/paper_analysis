@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_STC_OCGOL_training(animal_data, tunedLogical,registered)
+function [outputArg1,outputArg2] = plot_STC_OCGOL_training(animal_data, tunedLogical,registered,options)
 
 %% Import variables
 
@@ -10,17 +10,31 @@ matching_list = registered.multi.assigned_all;
 %% Define tuned cell combinations across trials
 
 %make conditional here for si or ts tuned neurons
-
-%for each session
-for ss =1:size(animal_data,2)
-    %spatial information criterion
-    Atuned{ss} = tunedLogical(ss).si.Atuned;
-    Btuned{ss} = tunedLogical(ss).si.Btuned;
-    
-    AandB_tuned{ss} =  tunedLogical(ss).si.AandB_tuned;
-    AorB_tuned{ss} = tunedLogical(ss).si.AorB_tuned;
-    onlyA_tuned{ss} = tunedLogical(ss).si.onlyA_tuned;
-    onlyB_tuned{ss} = tunedLogical(ss).si.onlyB_tuned;
+switch options.tuning_criterion
+    case 'si' %spatial information
+        %for each session
+        for ss =1:size(animal_data,2)
+            %spatial information criterion
+            Atuned{ss} = tunedLogical(ss).si.Atuned;
+            Btuned{ss} = tunedLogical(ss).si.Btuned;
+            
+            AandB_tuned{ss} =  tunedLogical(ss).si.AandB_tuned;
+            AorB_tuned{ss} = tunedLogical(ss).si.AorB_tuned;
+            onlyA_tuned{ss} = tunedLogical(ss).si.onlyA_tuned;
+            onlyB_tuned{ss} = tunedLogical(ss).si.onlyB_tuned;
+        end
+   case 'ts' %spatial information 
+        for ss =1:size(animal_data,2)
+            %spatial information criterion
+            Atuned{ss} = tunedLogical(ss).ts.Atuned;
+            Btuned{ss} = tunedLogical(ss).ts.Btuned;
+            
+            AandB_tuned{ss} =  tunedLogical(ss).ts.AandB_tuned;
+            AorB_tuned{ss} = tunedLogical(ss).ts.AorB_tuned;
+            onlyA_tuned{ss} = tunedLogical(ss).ts.onlyA_tuned;
+            onlyB_tuned{ss} = tunedLogical(ss).ts.onlyB_tuned;
+        end
+        
 end
 
 %% Extract mean STC map in each spatial bin (not normalized and not occupancy divided) (100 bins)
@@ -156,98 +170,6 @@ caxis([0 1]);
 % plot([100 100],[1,size(session_matched_tuned_dF_maps{1,1},1)*2], 'k','LineWidth', 1.5);
 % plot([100 100],[1,size(dF_maps_all_AB_early_late{1},1)], 'k','LineWidth', 1.5);
 % 
-
-
-
-%% Sort A dF/F STCs by maximum rate
-
-%maxBin - spatial bin where activity is greatest for each ROI
-[~,maxBin] = max(A_df_both, [], 1);
-
-%sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
-[~,sortOrderBoth] = sort(maxBin,'ascend');
-
-clear maxBin
-
-[~,maxBin] = max(A_df_onlyA, [], 1);
-[~,sortOrderA_only] = sort(maxBin,'ascend');
-
-A_df_both_sorted = A_df_both(:,sortOrderBoth);
-B_df_both_sorted = B_df_both(:,sortOrderBoth);
-
-A_df_onlyA_sorted = A_df_onlyA(:,sortOrderA_only);
-B_df_onlyA_sorted = B_df_onlyA(:,sortOrderA_only);
-
-%sort activity from both trials
-% A_STC_both_sorted = A_STC_both(:,sortOrder);
-% B_STC_both_sorted = B_STC_both(:,sortOrder);
-% 
-% A_STC_onlyA_sorted = A_STC_onlyA(:,sortOrder);
-% B_STC_onlyA_sorted = B_STC_onlyA(:,sortOrder);
-
-% STC_sorted_nonan=STC_sorted(~any(isnan(STC_sorted),2),:);
-% STC_dF_sorted_nonan=STC_dF_sorted(~any(isnan(STC_sorted),2),:);
-
-%find(isnan(animal_data{1}.Place_cell{1}.Spatial_tuning_curve) ==1)
-
-%% Plot STCs side-by-side
-
-% figure;
-% subplot(1,2,1)
-% imagesc(A_STC_onlyA_sorted')
-% hold on;
-% ylabel('Neuron #');
-% title('A trials')
-% colormap('jet');
-% 
-% subplot(1,2,2)
-% imagesc(B_STC_onlyA_sorted')
-% hold on;
-% title('B trials')
-% colormap('jet')
-% %colorbar
-
-%% Plot dF/F maps side-by-side
-
-figure;
-subplot(1,2,1)
-imagesc(A_df_both_sorted')
-hold on;
-ylabel('Neuron #');
-title('A trials')
-caxis([0 2])
-colormap('jet');
-colorbar
-
-subplot(1,2,2)
-imagesc(B_df_both_sorted')
-hold on;
-title('B trials')
-caxis([0 2])
-colormap('jet')
-colorbar
-
-
-%% Plot dF/F maps side-by-side
-
-figure;
-subplot(1,2,1)
-imagesc(A_df_onlyA_sorted')
-hold on;
-ylabel('Neuron #');
-title('A trials - only A tuned')
-caxis([0 2])
-colormap('jet');
-colorbar
-
-subplot(1,2,2)
-imagesc(B_df_onlyA_sorted')
-hold on;
-title('B trials - only A tuned')
-caxis([0 2])
-colormap('jet')
-colorbar
-
 
 %% Extract STCs with tuned ROIs - in nontuned neurons will scale the weakest signal to 1 regardless of tuning
 

@@ -165,23 +165,44 @@ compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
 
 %% Calculate the transient rates in each of the place fields (integrate later)
 
+%funtion to calculate transient rate in field
+%take raw event rate and divide by occup
 
 %% Define tuned logical vectors
-%for each session
-for ss=1:size(session_vars,2)
-    [tunedLogical{ss}] = defineTunedLogicals(session_vars{ss});
-end
 
-[tunedLogical] = defineTunedLogicals(session_vars);
+%flag to all A or B trial or only correct A or B trials
+options.allCorrect = 0;
+%returns struct of structs
+[tunedLogical] = defineTunedLogicals(session_vars,options);
 
-%% Generate STCs neurons tuned in either session and plot side by side
+%% Generate dF/F maps of neurons tuned in either session and plot side by side
 %customize to add options
 %tuned in both sessions by SI score
 %sorted by A trials
 
-plotSTC_OCGOL_training(animal_data,tunedLogical)
+%set option as to how to select neurons for plots
+%use SI or TS
+options.tuning_criterion = 'ts'; %si or ts
+plot_dFF_OCGOL_training(session_vars,tunedLogical,registered,options)
+
+%% Generate STC maps of neurons tuned in either session and plot side by side
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'ts'; %si or ts
+plot_STC_OCGOL_training(session_vars,tunedLogical,registered,options)
 
 %% Measure PV and TC correlation between A/B trial on first training day and once learned
+%expect greater dissimilarity once learned
+
+%% Centroid distance between A and B trials on early vs. late training for matching ROIs
+
+%% Event property difference (duration of sig events in fields vs
+
+%% Place field width for A or B trials early vs late (all neurons vs matching neurons)
+
 
 %% Learning pre and post event spiral
 %display event spiral
