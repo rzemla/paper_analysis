@@ -163,7 +163,7 @@ end
 compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
 
 
-%% Calculate the transient rates in each of the place fields (integrate later)
+%% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
 %funtion to calculate transient rate in field
 %take raw event rate and divide by occupancy (s) transients/s

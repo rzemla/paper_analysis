@@ -16,14 +16,10 @@ placeField_edges = session_vars{1}.Place_cell{4}.placeField.edge;
 event_rate = session_vars{1}.Place_cell{4}.Spatial_Info.rate_map{8};
 
 %event map (not rate)% 100 bins
-event_map = session_vars{1}.Place_cell{1, 4}.Spatial_Info.event_map{8}; 
+event_map = session_vars{1}.Place_cell{4}.Spatial_Info.event_map{8}; 
 
 %Occupancy for 100 bins
 occupancy = session_vars{1}.Place_cell{4}.Spatial_Info.occupancy_map{8};
-
-%all A and all B (regardless if correct)
-%session_vars{1}.Place_cell.
-%end
 
 %should equal event rate (it does)
 rate_map = event_map./occupancy';
@@ -52,7 +48,29 @@ end
 
 %histogram of rates in id'd fields
 figure;
+hold on;
+title('In-field transient rates for all neurons');
 histogram(cell2mat(field_event_rates))
+
+%% Recalculate centroid based on peak with highest transient rate
+rr=3;
+%tuning vectors for each ROI
+tun_vectors{rr} = session_vars{1}.Place_cell{4}.Tuning_Specificity.tuning_vector{rr};
+%convert to tuning vector to bin value for each roi
+rad_angles = angle(tun_vectors{rr});
+%convert to degrees
+deg_angles = rad2deg(rad_angles);
+%convert to degree range from 0-360
+neg_angles_logical = deg_angles < 0;
+%add 360 to negative angles
+deg_angles(neg_angles_logical) = 360+deg_angles(neg_angles_logical);
+%convert angles to bin position
+bins = discretize(deg_angles,1:360/100:360);
+
+%convert angle of vectors to bin position
+figure;
+compass(tun_vectors{rr})
+
 
 %% Plot rate map, place field edges
 
