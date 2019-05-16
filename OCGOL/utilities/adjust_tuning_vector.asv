@@ -1,4 +1,4 @@
-function [pf_vector] = adjust_tuning_vector(tun_vectors,tun_vector,placeField_edges,options)
+function [outputArg1,outputArg2] = adjust_tuning_vector(tun_vectors,tun_vector,placeField_edges)
 
 %% Set variables
 
@@ -47,9 +47,7 @@ for rr=1:size(placeField_edges,2)
     end
 end
 
-%% Plot example - checked and works as expected
-
-if options.pf.skipDisplay == 1
+%% Plot example
 figure;
 for rr=1:size(pf_vector,2)
     %tuning vectors with multiple fields
@@ -59,8 +57,7 @@ for rr=1:size(pf_vector,2)
     compass(tun_vector(rr),'k');
     %tuning vector based on place field with highest transient rate
     compass(pf_vector{rr},'r');
-    pause(0.2)
+    pause
     clf
-end
 end
 
