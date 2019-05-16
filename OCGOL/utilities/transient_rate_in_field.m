@@ -67,10 +67,22 @@ deg_angles(neg_angles_logical) = 360+deg_angles(neg_angles_logical);
 %convert angles to bin position
 bins = discretize(deg_angles,1:360/100:360);
 
+%check which vectors fall into the place field bin range
+pf_event_keep =  bins >= placeField_edges{rr}(1,1) &   bins <=placeField_edges{rr}(1,2);
+
+%get updated vectors sum (centroid) from events in place field
+pf_vector_sum = sum(tun_vectors{rr}(pf_event_keep));
+
 %convert angle of vectors to bin position
 figure;
 compass(tun_vectors{rr})
+hold on
+%tuning vectors with multiple fields
+compass(sum(tun_vectors{rr})/abs(sum(tun_vectors{rr})),'k')
+%tuning vector based on place field with highest transient rate
+compass(pf_vector_sum)
 
+abs(sum(tun_vectors{rr})/abs(sum(tun_vectors{rr})))
 
 %% Plot rate map, place field edges
 
