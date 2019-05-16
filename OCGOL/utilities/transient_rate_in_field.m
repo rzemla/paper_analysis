@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = transient_rate_in_field(session_vars)
+function [field_event_rates,pf_vector] = transient_rate_in_field(session_vars)
 %input - cell of structs with animal data
 
 
@@ -7,82 +7,93 @@ function [outputArg1,outputArg2] = transient_rate_in_field(session_vars)
 %try for 1 session first
 
 %for each session
-%for ss=1:size(session_vars,2)
-
-%Place field edge data
-placeField_edges = session_vars{1}.Place_cell{4}.placeField.edge;
-
-%Event rate for 100 bins
-event_rate = session_vars{1}.Place_cell{4}.Spatial_Info.rate_map{8};
-
-%event map (not rate)% 100 bins
-event_map = session_vars{1}.Place_cell{4}.Spatial_Info.event_map{8}; 
-
-%Occupancy for 100 bins
-occupancy = session_vars{1}.Place_cell{4}.Spatial_Info.occupancy_map{8};
+for ss=1:size(session_vars,2)
+    %for each trial (A or B) regardless if correct
+    for tt=4:5
+        %Place field edge data
+        placeField_edges{ss}{tt} = session_vars{ss}.Place_cell{tt}.placeField.edge;
+        
+        %Event rate for 100 bins
+        event_rate{ss}{tt} = session_vars{ss}.Place_cell{tt}.Spatial_Info.rate_map{8};
+        
+        %event map (not rate)% 100 bins
+        event_map{ss}{tt} = session_vars{ss}.Place_cell{tt}.Spatial_Info.event_map{8};
+        
+        %Occupancy for 100 bins
+        occupancy{ss}{tt} = session_vars{ss}.Place_cell{tt}.Spatial_Info.occupancy_map{8};
+    end
+end
 
 %should equal event rate (it does)
-rate_map = event_map./occupancy';
+%rate_map = event_map./occupancy';
 %isequal(rate_map,event_rate)
 
 %% Find and store transient rate in each place field
 
-%for each ROI
-for rr=1:size(event_rate,2)
-    %for each place field
-    if ~isempty(placeField_edges{rr})
-        for pp=1:size(placeField_edges{rr},1)
-            %if place bins split at lap edge
-            if placeField_edges{rr}(pp,1) < placeField_edges{rr}(pp,2)
-                place_bins{rr}{pp} = placeField_edges{rr}(pp,1):placeField_edges{rr}(pp,2);
-            else
-                place_bins{rr}{pp} = [placeField_edges{rr}(pp,1):100,1:placeField_edges{rr}(pp,2)];
-            end            
-            
-            field_event_rates{rr}(pp) = sum(event_map(place_bins{rr}{pp},rr))./sum(occupancy(place_bins{rr}{pp}));
-        end
-    else
-        
+for ss=1:size(session_vars,2)
+    %for each trial (A or B) regardless if correct
+    for tt=4:5
+        %find field event rate for each session and trial types
+        field_event_rates{ss}{tt} = field_rate(event_map{ss}{tt},occupancy{ss}{tt},placeField_edges{ss}{tt});
     end
 end
 
+%which session
+session_nb = 1;
+
 %histogram of rates in id'd fields
 figure;
+subplot(2,1,1)
 hold on;
-title('In-field transient rates for all neurons');
-histogram(cell2mat(field_event_rates))
+xlim([0 1])
+title('In-field transient rates for all neurons - A trials');
+histogram(cell2mat(field_event_rates{session_nb}{4}))
+subplot(2,1,2)
+hold on
+xlim([0 1])
+title('In-field transient rates for all neurons - B trials');
+histogram(cell2mat(field_event_rates{session_nb}{5}))
 
 %% Recalculate centroid based on peak with highest transient rate
 
-%tuning vectors for each ROI
-tun_vectors = session_vars{1}.Place_cell{4}.Tuning_Specificity.tuning_vector;
-%original sum vector
-tun_vector = session_vars{1}.Place_cell{4}.Tuning_Specificity.tuning_vector_specificity;
+for ss=1:size(session_vars,2)
+    %for each trial (A or B) regardless if correct
+    for tt=4:5
+        %tuning vectors for each ROI
+        tun_vectors{ss}{tt} = session_vars{ss}.Place_cell{tt}.Tuning_Specificity.tuning_vector;
+        %original sum vector
+        tun_vector{ss}{tt} = session_vars{ss}.Place_cell{tt}.Tuning_Specificity.tuning_vector_specificity;
+    end
+end
 
 %% Turn into function
 %input edges and tuning vector
 %output - adjusted tuning vector
 
 options.pf.skipDisplay = 0;
-[pf_vector] = adjust_tuning_vector(tun_vectors,tun_vector,placeField_edges,options);
 
-
-
-%% Plot rate map, place field edges
-
-figure;
-for rr=21:22
-    hold on;
-    %plot unsmoothed/non-normalized event rate
-    plot(event_rate(:,rr), 'k');
-    %plot identified place fields
-    for pp=1:size(placeField_edges{rr},1)
-        stem(placeField_edges{rr}(pp,:), [1,1], 'r')
+for ss=1:size(session_vars,2)
+    %for each trial (A or B) regardless if correct
+    for tt=4:5
+        [pf_vector{ss}{tt}] = adjust_tuning_vector(tun_vectors{ss}{tt},tun_vector{ss}{tt},placeField_edges{ss}{tt},options);
     end
-    
-    pause
-    clf
 end
+
+%% Plot rate map, place field edges - use for debug, final check
+
+% figure;
+% for rr=21:22
+%     hold on;
+%     %plot unsmoothed/non-normalized event rate
+%     plot(event_rate(:,rr), 'k');
+%     %plot identified place fields
+%     for pp=1:size(placeField_edges{rr},1)
+%         stem(placeField_edges{rr}(pp,:), [1,1], 'r')
+%     end
+%     
+%     pause
+%     clf
+% end
 
 
 
