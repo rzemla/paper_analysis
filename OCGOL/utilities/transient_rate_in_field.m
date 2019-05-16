@@ -56,6 +56,15 @@ histogram(cell2mat(field_event_rates))
 rr=3;
 %tuning vectors for each ROI
 tun_vectors{rr} = session_vars{1}.Place_cell{4}.Tuning_Specificity.tuning_vector{rr};
+%original sum vector
+tun_vector{rr} = session_vars{1}.Place_cell{4}.Tuning_Specificity.tuning_vector_specificity(rr);
+
+%% Turn into function
+%input edges and tuning vector
+%output - adjusted tuning vector
+
+adjust_tuning_vector()
+
 %convert to tuning vector to bin value for each roi
 rad_angles = angle(tun_vectors{rr});
 %convert to degrees
@@ -70,19 +79,21 @@ bins = discretize(deg_angles,1:360/100:360);
 %check which vectors fall into the place field bin range
 pf_event_keep =  bins >= placeField_edges{rr}(1,1) &   bins <=placeField_edges{rr}(1,2);
 
-%get updated vectors sum (centroid) from events in place field
-pf_vector_sum = sum(tun_vectors{rr}(pf_event_keep));
+%updated vector with adjusted magnitude
+pf_unit_vector_kp = sum(tun_vectors{rr}(pf_event_keep))/abs(sum(tun_vectors{rr}(pf_event_keep)));
+pf_mag_factor_kp = abs(sum(tun_vectors{rr}(pf_event_keep)))/sum(abs(tun_vectors{rr}(pf_event_keep)));
+%update vector
+pf_vector = pf_unit_vector_kp*pf_mag_factor_kp;
 
 %convert angle of vectors to bin position
 figure;
 compass(tun_vectors{rr})
 hold on
 %tuning vectors with multiple fields
-compass(sum(tun_vectors{rr})/abs(sum(tun_vectors{rr})),'k')
+compass(tun_vector{rr},'k');
 %tuning vector based on place field with highest transient rate
-compass(pf_vector_sum)
+compass(pf_vector,'r');
 
-abs(sum(tun_vectors{rr})/abs(sum(tun_vectors{rr})))
 
 %% Plot rate map, place field edges
 
