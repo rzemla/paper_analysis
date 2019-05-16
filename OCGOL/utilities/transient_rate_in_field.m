@@ -19,7 +19,7 @@ for ss=1:size(session_vars,2)
         %event map (not rate)% 100 bins
         event_map{ss}{tt} = session_vars{ss}.Place_cell{tt}.Spatial_Info.event_map{8};
         
-        %Occupancy for 100 bins
+        %Occupancy for 100 bins (seconds, not normalized (0-1))
         occupancy{ss}{tt} = session_vars{ss}.Place_cell{tt}.Spatial_Info.occupancy_map{8};
     end
 end

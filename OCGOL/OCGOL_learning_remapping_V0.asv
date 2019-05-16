@@ -167,14 +167,9 @@ compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
 
 %funtion to calculate transient rate in field
 %take raw event rate and divide by occupancy (s) transients/s
-% TODO: see ifrecalculate to see if dividing by normalized occupancy (fractional 0-1)
-%yields different result
-[field_event_rates,pf_vector] = transient_rate_in_field(session_vars);
-
-%% Plot spatial tuning curves according to transient rate 
-
-options.tuning_criterion = 'si'; %si or ts
-plot_STC_transient_rate(session_vars,tunedLogical,registered,field_event_rates, pf_vector,options)
+transient_rate_in_field(session_vars)
+%% Plot spatial tuning curves acc
+plotSTC_transient_rate
 
 %% Define tuned logical vectors
 
