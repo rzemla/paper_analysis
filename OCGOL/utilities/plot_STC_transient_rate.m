@@ -22,6 +22,8 @@ switch options.tuning_criterion
             AorB_tuned{ss} = tunedLogical(ss).si.AorB_tuned;
             onlyA_tuned{ss} = tunedLogical(ss).si.onlyA_tuned;
             onlyB_tuned{ss} = tunedLogical(ss).si.onlyB_tuned;
+            
+            all_neurons{ss} = true(size(Atuned{ss}));
         end
    case 'ts' %spatial information 
         for ss =1:size(animal_data,2)
@@ -33,9 +35,11 @@ switch options.tuning_criterion
             AorB_tuned{ss} = tunedLogical(ss).ts.AorB_tuned;
             onlyA_tuned{ss} = tunedLogical(ss).ts.onlyA_tuned;
             onlyB_tuned{ss} = tunedLogical(ss).ts.onlyB_tuned;
+            
+            all_neurons{ss} = true(size(Atuned{ss}));
         end
-        
 end
+
 
 %% Extract mean STC map in each spatial bin
 %for each session
@@ -162,7 +166,6 @@ trial_sort = 4;
 %Get list of A tuned and non-tuned neurons by SI
 A_tuned_select = A_STC_tn{session_nb}(:,tuning_selection{session_nb});
 B_tuned_select = B_STC_tn{session_nb}(:,tuning_selection{session_nb});
-  
 
 %yield index arrangement - sort by A
 [centroid_vals,centroid_sortOrder] = sort(bins{session_nb}{trial_sort}(tuning_selection{session_nb}),'ascend');
@@ -187,8 +190,9 @@ colormap('jet')
 
 %% Generate match list combined with tuning criteria
 %global indices to use based on trial tuning criteria
-tuning_selection = AorB_tuned;
+%tuning_selection = onlyA_tuned;
 
+tuning_selection = AorB_tuned;
 %tuned to A or B on either sessions
 select_match_idx{1} = find(tuning_selection{1} ==1);
 select_match_idx{2} = find(tuning_selection{2} ==1);
@@ -229,15 +233,23 @@ session_matched_tuned_STC_tn_maps{2,2} = B_STC_tn{2}(:,tuned_matching_ROI_list(:
 
 %sort by centroid
 tuned_matching_ROI_list(:,1)
+tuned_matching_ROI_list(:,2)
 
 %get centroids of tuned/matching neurons
 %A
-centroids_matching{1}{4} = bins{1{4}  
+centroids_matching{1}{4} = bins{1}{4}(tuned_matching_ROI_list(:,1)); 
 %B
-centroids_matching{1}{5} 
+centroids_matching{1}{5} = bins{1}{5}(tuned_matching_ROI_list(:,1));
+%A
+centroids_matching{2}{4} = bins{2}{4}(tuned_matching_ROI_list(:,2)); 
+%B
+centroids_matching{2}{5} = bins{2}{5}(tuned_matching_ROI_list(:,2));
+
+session_nb = 1;
+trial_sort = 4;
 
 %yield index arrangement - sort by A
-[centroid_vals,centroid_sortOrder] = sort(bins{session_nb}{trial_sort}(tuning_selection{session_nb}),'ascend');
+[centroid_vals,centroid_sortOrder] = sort(centroids_matching{session_nb}{trial_sort},'ascend');
 
 %remove indices with nans
 centroid_sortOrder(isnan(centroid_vals)) = [];
@@ -250,33 +262,47 @@ combined_maps_2x2 = cell2mat(session_matched_tuned_STC_tn_maps);
 combined_maps_row = cell2mat(reshape(session_matched_tuned_STC_tn_maps,1,4));
 
 %sort by A trials on session 1
-[~,matched_maxBin_1] = max(session_matched_tuned_STC_tn_maps{1,1}(:,1:100)', [], 1);
-%sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
-[~,matched_sortOrder_1] = sort(matched_maxBin_1,'ascend');
+% [~,matched_maxBin_1] = max(session_matched_tuned_STC_tn_maps{1,1}(:,1:100)', [], 1);
+% %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+% [~,matched_sortOrder_1] = sort(matched_maxBin_1,'ascend');
+% 
+% %sort by A trials on session 2
+% [~,matched_maxBin_2] = max(session_matched_tuned_STC_tn_maps{2,1}(:,1:100)', [], 1);
+% %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+% [~,matched_sortOrder_2] = sort(matched_maxBin_2,'ascend');
 
-%sort by A trials on session 2
-[~,matched_maxBin_2] = max(session_matched_tuned_STC_tn_maps{2,1}(:,1:100)', [], 1);
-%sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
-[~,matched_sortOrder_2] = sort(matched_maxBin_2,'ascend');
-
-%session 1 above and session 2 below
+%session 1 above and session 2 below 
 figure;
 subplot(2,2,1)
-imagesc(session_matched_tuned_STC_tn_maps{1,1}(matched_sortOrder_1,:))
+imagesc(session_matched_tuned_STC_tn_maps{1,1}(centroid_sortOrder,:))
 colormap('jet')
 caxis([0 1]);
 subplot(2,2,2)
-imagesc(session_matched_tuned_STC_tn_maps{1,2}(matched_sortOrder_1,:))
+imagesc(session_matched_tuned_STC_tn_maps{1,2}(centroid_sortOrder,:))
 colormap('jet')
 caxis([0 1]);
 subplot(2,2,3)
-imagesc(session_matched_tuned_STC_tn_maps{2,1}(matched_sortOrder_1,:))
+imagesc(session_matched_tuned_STC_tn_maps{2,1}(centroid_sortOrder,:))
 colormap('jet')
 caxis([0 1]);
 subplot(2,2,4)
-imagesc(session_matched_tuned_STC_tn_maps{2,2}(matched_sortOrder_1,:))
+imagesc(session_matched_tuned_STC_tn_maps{2,2}(centroid_sortOrder,:))
 colormap('jet')
 caxis([0 1]);
+
+
+%% PV and TC correlations - export this later
+PVcorr =corr(session_matched_tuned_STC_tn_maps{1,1}(centroid_sortOrder,:), session_matched_tuned_STC_tn_maps{2,2}(centroid_sortOrder,:));
+
+mean(diag(PVcorr),'omitnan')
+
+PVcorr =corr(session_matched_tuned_STC_tn_maps{2,1}(centroid_sortOrder,:), session_matched_tuned_STC_tn_maps{2,2}(centroid_sortOrder,:));
+
+mean(diag(PVcorr),'omitnan')
+
+
+figure;
+imagesc(PVcorr)
 
 
 
