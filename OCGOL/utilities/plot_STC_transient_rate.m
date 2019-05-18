@@ -22,6 +22,7 @@ switch options.tuning_criterion
             AorB_tuned{ss} = tunedLogical(ss).si.AorB_tuned;
             onlyA_tuned{ss} = tunedLogical(ss).si.onlyA_tuned;
             onlyB_tuned{ss} = tunedLogical(ss).si.onlyB_tuned;
+            AxorB_tuned{ss} =  AorB_tuned{ss} & ~AandB_tuned{ss};
             
             all_neurons{ss} = true(size(Atuned{ss}));
         end
@@ -35,6 +36,7 @@ switch options.tuning_criterion
             AorB_tuned{ss} = tunedLogical(ss).ts.AorB_tuned;
             onlyA_tuned{ss} = tunedLogical(ss).ts.onlyA_tuned;
             onlyB_tuned{ss} = tunedLogical(ss).ts.onlyB_tuned;
+            AxorB_tuned{ss} =  AorB_tuned{ss} & ~AandB_tuned{ss};
             
             all_neurons{ss} = true(size(Atuned{ss}));
         end
@@ -192,7 +194,7 @@ colormap('jet')
 %global indices to use based on trial tuning criteria
 %tuning_selection = onlyA_tuned;
 
-tuning_selection = AorB_tuned;
+tuning_selection = AandB_tuned;
 %tuned to A or B on either sessions
 select_match_idx{1} = find(tuning_selection{1} ==1);
 select_match_idx{2} = find(tuning_selection{2} ==1);
@@ -231,6 +233,13 @@ session_matched_tuned_STC_tn_maps{1,2} = B_STC_tn{1}(:,tuned_matching_ROI_list(:
 session_matched_tuned_STC_tn_maps{2,1} = A_STC_tn{2}(:,tuned_matching_ROI_list(:,2))';
 session_matched_tuned_STC_tn_maps{2,2} = B_STC_tn{2}(:,tuned_matching_ROI_list(:,2))';
 
+%session 1
+session_matched_tuned_STC_nn_maps{1,1} = A_STC_nn{1}(:,tuned_matching_ROI_list(:,1))';
+session_matched_tuned_STC_nn_maps{1,2} = B_STC_nn{1}(:,tuned_matching_ROI_list(:,1))';
+%session 2
+session_matched_tuned_STC_nn_maps{2,1} = A_STC_nn{2}(:,tuned_matching_ROI_list(:,2))';
+session_matched_tuned_STC_nn_maps{2,2} = B_STC_nn{2}(:,tuned_matching_ROI_list(:,2))';
+
 %sort by centroid
 tuned_matching_ROI_list(:,1)
 tuned_matching_ROI_list(:,2)
@@ -245,8 +254,8 @@ centroids_matching{2}{4} = bins{2}{4}(tuned_matching_ROI_list(:,2));
 %B
 centroids_matching{2}{5} = bins{2}{5}(tuned_matching_ROI_list(:,2));
 
-session_nb = 1;
-trial_sort = 4;
+session_nb = 2;
+trial_sort = 5;
 
 %yield index arrangement - sort by A
 [centroid_vals,centroid_sortOrder] = sort(centroids_matching{session_nb}{trial_sort},'ascend');
@@ -292,14 +301,18 @@ caxis([0 1]);
 
 
 %% PV and TC correlations - export this later
-PVcorr =corr(session_matched_tuned_STC_tn_maps{1,1}(centroid_sortOrder,:), session_matched_tuned_STC_tn_maps{2,2}(centroid_sortOrder,:));
+PVcorr =corr(session_matched_tuned_STC_tn_maps{1,1}(centroid_sortOrder,:), session_matched_tuned_STC_tn_maps{1,2}(centroid_sortOrder,:));
 
+mean(diag(PVcorr),'omitnan')
+
+PVcorr =corr(session_matched_tuned_STC_tn_maps{2,1}(:,:), session_matched_tuned_STC_tn_maps{2,2}(:,:));
+mean(diag(PVcorr),'omitnan')
+
+PVcorr =corr(session_matched_tuned_STC_nn_maps{1,2}(centroid_sortOrder,:), session_matched_tuned_STC_nn_maps{2,2}(centroid_sortOrder,:));
 mean(diag(PVcorr),'omitnan')
 
 PVcorr =corr(session_matched_tuned_STC_tn_maps{2,1}(centroid_sortOrder,:), session_matched_tuned_STC_tn_maps{2,2}(centroid_sortOrder,:));
-
 mean(diag(PVcorr),'omitnan')
-
 
 figure;
 imagesc(PVcorr)

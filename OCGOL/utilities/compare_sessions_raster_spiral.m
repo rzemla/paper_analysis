@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms)
+function [outputArg1,outputArg2] = compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms,options)
 
 %% Define/load variables for each session
 
@@ -111,14 +111,14 @@ end
 
 %% Plot raster, event spiral and matching ROIs from FOV
 
-figure;
-for ii=1:size(registered.multi.assigned_all,1)
+figure('Position',[2600,300,1200,1000]);
+for ii=options.idx_show%1:size(registered.multi.assigned_all,1)
     
     %ROI from session 1
     ROI = registered.multi.assigned_all(ii,1);
     
     subplot(2,3,1)
-    imagesc(session_vars{1}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,1)})
+    imagesc(session_vars{1}.Place_cell{1, 3}.dF_lap_map_ROI{ROI})
     hold on;
     title(num2str(ROI));
     ylabel('Lap #'); 
@@ -170,9 +170,8 @@ for ii=1:size(registered.multi.assigned_all,1)
     
     %ROI from session 2
     ROI = registered.multi.assigned_all(ii,2);
-     
     subplot(2,3,4)
-    imagesc(session_vars{2}.Place_cell{1, 3}.dF_lap_map_ROI{registered.multi.assigned_all(ii,2)})
+    imagesc(session_vars{2}.Place_cell{1, 3}.dF_lap_map_ROI{ROI})
     hold on;
     title(num2str(ROI));
     ylabel('Lap #'); 
@@ -220,8 +219,8 @@ for ii=1:size(registered.multi.assigned_all,1)
     plot(b{1}(:,2),b{1}(:,1),'r')
     hold off
     
-    pause;
-    clf;
+    %pause;
+    %clf;
     
 end
 

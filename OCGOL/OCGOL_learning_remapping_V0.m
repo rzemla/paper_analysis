@@ -159,8 +159,13 @@ end
 %465/303 - dual field non split
 %474/534 - convergence
 
+%cells that split 374, 474, 412, 348
+%reward cell integration - 264
+%input indices that correspond to ROI # in first session
+options.idx_show = find(registered.multi.assigned_all(:,1) == 357);
+
 %break down in simpler code in the future;
-compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
+compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms, options);
 
 
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
@@ -170,6 +175,12 @@ compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms);
 % TODO: see ifrecalculate to see if dividing by normalized occupancy (fractional 0-1)
 %yields different result
 [field_event_rates,pf_vector] = transient_rate_in_field(session_vars);
+
+%% Centroid difference (max transient rate)
+
+%% Tuning specificity differences pre-learning vs. post-learning (matching neurons)
+
+TS_score_diff(session_vars,tunedLogical,registered)
 
 %% Plot spatial tuning curves according to transient rate 
 
