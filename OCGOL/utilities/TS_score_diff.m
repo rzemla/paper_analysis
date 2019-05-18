@@ -53,33 +53,97 @@ end
 
 %% Taking matching ROI scores for all ROIs (regardless of stat sig. tuning)
 
-%for A
+%for all A
 ts_scores_match = [ts_scores{1}{4}(matching_list(:,1))', ts_scores{2}{4}(matching_list(:,2))'];
 
+%tuned on day 1 to A
+Atuned_all_idx{1} = find(Atuned{1, 1} ==1);
 %tuned on day 2 to A
 Atuned_all_idx{2} = find(Atuned{1, 2} ==1);
 
-%find correspoinding indices in matching ROI list and get scores
+%find correspoinding indices in matching ROI list and get scores (day2 A)
 [intersects,match_idx_Ad2,~] = intersect(matching_list(:,2),Atuned_all_idx{2},'stable');
-%select corresponding TS scores
-ts_scores_match_tuned_A_ses2 = [ts_scores{1}{4}(matching_list(match_idxAd2,1))', ts_scores{2}{4}(matching_list(match_idxAd2,2))'];
+%turn to logical
+match_logi_Ad2 = false(1,size(matching_list,1));
+match_logi_Ad2(match_idx_Ad2) = true;
 
+%find correspoinding indices in matching ROI list and get scores (day1 A)
+[intersects,match_idx_Ad1,~] = intersect(matching_list(:,1),Atuned_all_idx{1},'stable');
+%turn to logical
+match_logi_Ad1 = false(1,size(matching_list,1));
+match_logi_Ad1(match_idx_Ad1) = true;
+
+
+%select corresponding TS scores (A tuned day1 only)
+ts_scores_match_tuned_A_ses1 = [ts_scores{1}{4}(matching_list(match_idx_Ad1,1))', ts_scores{2}{4}(matching_list(match_idx_Ad1,2))'];
+%select corresponding TS scores (A tuned day2 only)
+ts_scores_match_tuned_A_ses2 = [ts_scores{1}{4}(matching_list(match_idx_Ad2,1))', ts_scores{2}{4}(matching_list(match_idx_Ad2,2))'];
+
+%tuned to A on both days (logical)
+match_logi_Ad12 = match_logi_Ad1 & match_logi_Ad2;
+match_idx_Ad12 = find(match_logi_Ad12 ==1); 
+ts_scores_match_tuned_A_ses12 = [ts_scores{1}{4}(matching_list(match_idx_Ad12,1))', ts_scores{2}{4}(matching_list(match_idx_Ad12,2))'];
+
+%% B trials
+
+%tuned on day 1 to A
+Btuned_all_idx{1} = find(Btuned{1, 1} ==1);
+%tuned on day 2 to A
+Btuned_all_idx{2} = find(Btuned{1, 2} ==1);
+
+%find correspoinding indices in matching ROI list and get scores (day2 A)
+[intersects,match_idx_Bd2,~] = intersect(matching_list(:,2),Btuned_all_idx{2},'stable');
+%turn to logical
+match_logi_Bd2 = false(1,size(matching_list,1));
+match_logi_Bd2(match_idx_Bd2) = true;
+
+%find correspoinding indices in matching ROI list and get scores (day1 A)
+[intersects,match_idx_Bd1,~] = intersect(matching_list(:,1),Btuned_all_idx{1},'stable');
+%turn to logical
+match_logi_Bd1 = false(1,size(matching_list,1));
+match_logi_Bd1(match_idx_Bd1) = true;
+
+
+%select corresponding TS scores (A tuned day1 only)
+ts_scores_match_tuned_B_ses1 = [ts_scores{1}{5}(matching_list(match_idx_Bd1,1))', ts_scores{2}{5}(matching_list(match_idx_Bd1,2))'];
+%select corresponding TS scores (A tuned day2 only)
+ts_scores_match_tuned_B_ses2 = [ts_scores{1}{5}(matching_list(match_idx_Bd2,1))', ts_scores{2}{5}(matching_list(match_idx_Bd2,2))'];
+
+%tuned to A on both days (logical)
+match_logi_Bd12 = match_logi_Bd1 & match_logi_Bd2;
+match_idx_Bd12 = find(match_logi_Bd12 ==1); 
+ts_scores_match_tuned_B_ses12 = [ts_scores{1}{5}(matching_list(match_idx_Bd12,1))', ts_scores{2}{5}(matching_list(match_idx_Bd12,2))'];
 
 
 %plot scatter
 figure;
 hold on
-histogram(ts_scores_match_tuned_A_ses2(:,1),'DisplayStyle','stairs','Normalization','probability')
+histogram(ts_scores_match_tuned_B_ses2(:,1),'DisplayStyle','stairs','Normalization','probability')
 hold on
-histogram(ts_scores_match_tuned_A_ses2(:,2),'DisplayStyle','stairs','Normalization','probability')
+histogram(ts_scores_match_tuned_B_ses2(:,2),'DisplayStyle','stairs','Normalization','probability')
 
 figure; 
+subplot(2,2,1)
 hold on
 ecdf(ts_scores_match_tuned_A_ses2(:,1))
 ecdf(ts_scores_match_tuned_A_ses2(:,2))
 gca
 xlabel('Tuning specificity');
 ylabel('Cumulative fraction');
+
+subplot(2,2,2)
+hold on
+ecdf(ts_scores_match_tuned_B_ses2(:,1))
+ecdf(ts_scores_match_tuned_B_ses2(:,2))
+gca
+xlabel('Tuning specificity');
+ylabel('Cumulative fraction');
+
+figure;
+hold on
+ylim([0 2])
+xlim([0 3])
+plot(ts_scores_match_tuned_B_ses12', 'k')
 
 end
 

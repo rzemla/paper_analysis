@@ -178,6 +178,9 @@ compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms, o
 
 %% Centroid difference (max transient rate)
 
+options.tuning_criterion = 'ts';
+centroid_diff_learning(session_vars,tunedLogical, pf_vector,field_event_rates,registered,options)
+
 %% Tuning specificity differences pre-learning vs. post-learning (matching neurons)
 
 TS_score_diff(session_vars,tunedLogical,registered)
