@@ -178,6 +178,8 @@ compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms, o
 
 %% Centroid difference (max transient rate)
 
+options.tuning_criterion = 'ts';
+centroid_diff_learning(session_vars,tunedLogical, pf_vector,field_event_rates,registered,options)
 
 %% Tuning specificity differences pre-learning vs. post-learning (matching neurons)
 
@@ -185,9 +187,15 @@ TS_score_diff(session_vars,tunedLogical,registered)
 
 %% Plot spatial tuning curves according to transient rate 
 
-options.tuning_criterion = 'si'; %si or ts
+options.tuning_criterion = 'ts'; %si or ts
 plot_STC_transient_rate(session_vars,tunedLogical,registered,field_event_rates, pf_vector,options)
 
+%% Performance fractions
+
+all_perf(1) = length(find(session_vars{1}.Behavior.performance.trialCorrect ==1))/size(session_vars{1}.Behavior.performance.trialCorrect,1);
+all_perf(2) = length(find(session_vars{2}.Behavior.performance.trialCorrect ==1))/size(session_vars{2}.Behavior.performance.trialCorrect,1);
+
+A_per
 %% Define tuned logical vectors
 
 %flag to all A or B trial or only correct A or B trials

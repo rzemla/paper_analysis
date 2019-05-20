@@ -187,8 +187,23 @@ TS_score_diff(session_vars,tunedLogical,registered)
 
 %% Plot spatial tuning curves according to transient rate 
 
-options.tuning_criterion = 'si'; %si or ts
+options.tuning_criterion = 'ts'; %si or ts
 plot_STC_transient_rate(session_vars,tunedLogical,registered,field_event_rates, pf_vector,options)
+
+%% Performance fractions
+
+all_perf(1) = length(find(session_vars{1}.Behavior.performance.trialCorrect ==1))/size(session_vars{1}.Behavior.performance.trialCorrect,1);
+all_perf(2) = length(find(session_vars{2}.Behavior.performance.trialCorrect ==1))/size(session_vars{2}.Behavior.performance.trialCorrect,1);
+
+A_perf(1) = length(find(session_vars{1}.Behavior.performance.trialOrder == 2))/...
+    size(find(session_vars{1}.Behavior.performance.trialOrder == 2 | session_vars{1}.Behavior.performance.trialOrder == 20),1);
+A_perf(2) = length(find(session_vars{2}.Behavior.performance.trialOrder == 2))/...
+    size(find(session_vars{2}.Behavior.performance.trialOrder == 2 | session_vars{2}.Behavior.performance.trialOrder == 20),1);
+
+B_perf(1) = length(find(session_vars{1}.Behavior.performance.trialOrder == 3))/...
+    size(find(session_vars{1}.Behavior.performance.trialOrder == 3 | session_vars{1}.Behavior.performance.trialOrder == 30),1);
+B_perf(2) = length(find(session_vars{2}.Behavior.performance.trialOrder == 3))/...
+    size(find(session_vars{2}.Behavior.performance.trialOrder == 3 | session_vars{2}.Behavior.performance.trialOrder == 30),1);
 
 %% Define tuned logical vectors
 
