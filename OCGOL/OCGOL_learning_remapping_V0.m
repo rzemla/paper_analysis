@@ -5,17 +5,17 @@ options.register = 0;
 
 %lab workstation
 %input directories to matching function
-% path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B',...
-%     'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+ path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B',...
+     'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
 %cross session directory
-%crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
+crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
 
 %home
-path_dir = {'F:\OCGOL_training\I56_RLTS_041019\5A5B',...
-    'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
-
-%cross session directory
-crossdir = 'F:\OCGOL_training\I56_RLTS_041019\crossSession';
+% path_dir = {'F:\OCGOL_training\I56_RLTS_041019\5A5B',...
+%     'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+% 
+% %cross session directory
+% crossdir = 'F:\OCGOL_training\I56_RLTS_041019\crossSession';
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -168,6 +168,13 @@ options.idx_show = find(registered.multi.assigned_all(:,1) == 357);
 compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms, options);
 
 
+%% Define tuned logical vectors
+
+%flag to all A or B trial or only correct A or B trials
+options.allCorrect = 0;
+%returns struct of structs
+[tunedLogical] = defineTunedLogicals(session_vars,options);
+
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
 %funtion to calculate transient rate in field
@@ -205,12 +212,6 @@ B_perf(1) = length(find(session_vars{1}.Behavior.performance.trialOrder == 3))/.
 B_perf(2) = length(find(session_vars{2}.Behavior.performance.trialOrder == 3))/...
     size(find(session_vars{2}.Behavior.performance.trialOrder == 3 | session_vars{2}.Behavior.performance.trialOrder == 30),1);
 
-%% Define tuned logical vectors
-
-%flag to all A or B trial or only correct A or B trials
-options.allCorrect = 0;
-%returns struct of structs
-[tunedLogical] = defineTunedLogicals(session_vars,options);
 
 %% Generate dF/F maps of neurons tuned in either session and plot side by side
 %customize to add options
@@ -248,6 +249,7 @@ plot_STC_OCGOL_training(session_vars,tunedLogical,registered,options)
 %script
 
 
+%%% CODE FROM GOL TASK BELOW %%%%
 
 %% Calculate the distance from centroid to reward (function)
 

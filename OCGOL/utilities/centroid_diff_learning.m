@@ -239,9 +239,9 @@ hold off
 
 %% ROIs that significantly TS tuned in each session
 
-for ss=1:size(session_vars,2)
-    theta_ts_sig{ss} = theta{ss}(ts{ss}.significant_ROI);
-end
+% for ss=1:size(session_vars,2)
+%     theta_ts_sig{ss} = theta{ss}(ts{ss}.significant_ROI);
+% end
 
 
 %% OLD
