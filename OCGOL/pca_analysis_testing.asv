@@ -1,0 +1,23 @@
+
+
+%small set for testing
+%columns - ROIS
+%rows - frame time
+pca_input =traces(st_idx:end_idx,input_neuron_idxs_sorted);
+
+%% Smooth calcium traces with gaussian with sigma = 5
+
+%% Run basic PCA
+
+%pca
+[coef, score, latent,~,explained,mu] = pca(pca_input);
+
+%extract 1st component (highest explained variance)
+%principal component * loading
+compNb = 2;
+first_comp_recon = score(:,1:2)*coef(:,1:2)';
+
+%plot as colormap
+figure;
+imagesc(first_comp_recon')
+hold on;
