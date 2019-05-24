@@ -99,7 +99,7 @@ ylim([0 2]);
 xlim([1 3000]);
 plot(~run_binary_interval,'r')
 
-%% Select individual onsets separated at least 1s (make this para variable)
+%% Select individual onsets separated at least 1s - WORKS!
 
 %frames - 1s = 30 frames
 min_dur = 30;
@@ -110,8 +110,52 @@ diff_thres = diff(double(noRun_thres_traces),1,1);
 %only get onsets
 diff_thres = diff_thres == 1; 
 
-%filter out events with in 1s of one another
-movsum(diff_thres)
+%get index of each onset and check if event is within 
+%for each ROI
+for rr = 1:size(diff_thres,2)
+    event_idx{rr} = find(diff_thres(:,rr) == 1);
+end
+
+%run diff, if diff < min_dur, remove event
+%do this iteratively for each ROI
+%set iterative flag
+check_events = 1;
+
+for  rr = 1:size(diff_thres,2)
+    diff_events{rr} = diff(event_idx{rr});
+    
+    while check_events == 1
+        
+        %find first diff less than frame space duration, remove recalulate diff
+        temp_dur_flag = find(diff_events{rr} < min_dur,1);
+        
+        %if dur_flag not empty
+        if ~isempty(temp_dur_flag)
+            %remove that +1 event
+            event_idx{rr}(temp_dur_flag+1) = [];
+            %recalulate diff on updated event list
+            diff_events{rr} = diff(event_idx{rr});
+            %keep flag on
+            check_events = 1;
+        else
+            %reset flag
+            check_events = 0;
+        end
+    end
+    check_events = 1;
+end
+
+%reconstruct events
+%create blank 
+dur_filtered_events = zeros(size(diff_thres,1),size(diff_thres,2));
+%reconstruct filtered events for each ROI
+for rr=1:size(event_idx,2)
+    dur_filtered_event(event_idx{rr},rr) = 1;
+end
+
+%filter out events with in 1s of one another - lots of code when  more than
+%1 events that are clustered events
+%sum_dur_mat = movsum(diff_thres, [0 min_dur-1],1);
 
 %% Plot final filter
 figure;
@@ -131,8 +175,10 @@ stepSize = 2;
 step = 0;
 for ii=1:16%size(filtered_traces,2)
     plot(diff_thres(:,ii)-step, 'k', 'LineWidth', 1.5)
+    plot(dur_filtered_event(:,ii)-step, 'r', 'LineWidth', 1.5)
     step = step - stepSize;
 end
+
 
 %% Plot traces as line plot (vs imagesc)
 figure;
