@@ -1,9 +1,16 @@
 
 %% Input data
 %input data (time x ROI)
-input_data = traces;
+%input_data = traces;
 
-input_data = traces(st_idx:end_idx,input_neuron_idxs_sorted);
+% all A laps (calcium trace - time x ROI)
+input_data = session_vars{1}.Imaging_split{4}.trace_restricted;
+%normalized position
+position_norm = session_vars{1}.Behavior_split{4}.resampled.position_norm;
+%run epoch binary
+run_epoch = session_vars{1}.Behavior_split{4}.run_ones;
+
+%input_data = traces(st_idx:end_idx,input_neuron_idxs_sorted);
 
 %% 3rd order Savitzky-Golay filter frame size 500ms (~15 frames)
 
@@ -20,6 +27,34 @@ figure;
 hold on
 plot(input_data(:,ROI), 'k')
 plot(filtered_traces(:,ROI)-1,'r');
+
+%% Plot traces as line plot (vs imagesc)
+figure;
+subplot(1,2,1)
+hold on;
+%ylim([-0.5 1])
+title('Savitzky-Golay filtered calcium traces')
+stepSize = 2;
+step = 0;
+%first 30 ROIs
+for ii=1:30size(filtered_traces,2)
+    plot(filtered_traces(:,ii)-step, 'k', 'LineWidth', 1.5)
+    step = step - stepSize;
+end
+
+%ylabel('Normalized Position');
+%plot(norm_position(st_idx:end_idx)-step,'r');
+
+subplot(1,2,2)
+hold on;
+%ylim([-0.5 1])
+title('Non-filtered calcium traces')
+stepSize = 2;
+step = 0;
+for ii=1:30%size(filtered_traces,2)
+    plot(input_data(:,ii)-step, 'k', 'LineWidth', 1.5)
+    step = step - stepSize;
+end
 
 %% Detect events based on threshold
 %for each cell
@@ -52,7 +87,7 @@ figure
 hold on
 stepSize = 2;
 step = 0;
-for ii =1:8
+for ii =1:30
     ROI=ii;
     %plot all
     %trace
@@ -67,7 +102,7 @@ for ii =1:8
 end
 
 %position
-plot(norm_position(st_idx:end_idx)-step+2,'r');
+plot(position_norm-step+2,'r');
 
 %% Detect events above 3x IQR interval
 
@@ -77,26 +112,24 @@ thres_traces = filtered_traces > event_thres;
 figure;
 imagesc(thres_traces')
 
-
-
 %% Select only events in noRun intervals
 
 %select binary interval for select processing interval
-run_binary_interval = run_epoch_binary(st_idx:end_idx);
+run_binary_interval = run_epoch;
 
 %remove run events
-noRun_thres_traces = thres_traces & ~repmat(logical(run_binary_interval),1,16);
+noRun_thres_traces = thres_traces & ~repmat(logical(run_binary_interval),1,size(thres_traces,2));
 
 figure;
 subplot(3,1,1)
 imagesc(noRun_thres_traces')
 subplot(3,1,2)
-imagesc(~repmat(logical(run_binary_interval),1,16)')
+imagesc(~repmat(logical(run_binary_interval),1,size(thres_traces,2))')
 subplot(3,1,3)
 hold on
 title('No run interval')
 ylim([0 2]);
-xlim([1 3000]);
+xlim([1 size(thres_traces,1)]);
 plot(~run_binary_interval,'r')
 
 %% Select individual onsets separated at least 1s - WORKS!
@@ -142,12 +175,13 @@ for  rr = 1:size(diff_thres,2)
             check_events = 0;
         end
     end
+    %reset flag for next ROI
     check_events = 1;
 end
 
 %reconstruct events
 %create blank 
-dur_filtered_events = zeros(size(diff_thres,1),size(diff_thres,2));
+dur_filtered_event = zeros(size(diff_thres,1),size(diff_thres,2));
 %reconstruct filtered events for each ROI
 for rr=1:size(event_idx,2)
     dur_filtered_event(event_idx{rr},rr) = 1;
@@ -161,50 +195,62 @@ end
 figure;
 subplot(2,1,1)
 hold on
-xlim([1 3000])
+xlim([1 size(thres_traces,1)])
 stepSize = 2;
 step = 0;
-for ii=1:16%size(filtered_traces,2)
+for ii=1:30%size(filtered_traces,2)
     plot(noRun_thres_traces(:,ii)-step, 'k', 'LineWidth', 1.5)
     step = step - stepSize;
 end
+%check onset and duration separation filter
 subplot(2,1,2)
 hold on
-xlim([1 3000])
+xlim([1 size(thres_traces,1)])
 stepSize = 2;
 step = 0;
-for ii=1:16%size(filtered_traces,2)
+for ii=1:30%size(filtered_traces,2)
     plot(diff_thres(:,ii)-step, 'k', 'LineWidth', 1.5)
     plot(dur_filtered_event(:,ii)-step, 'r', 'LineWidth', 1.5)
     step = step - stepSize;
 end
 
+%% Separate plot to check sync events
+figure
+hold on
+xlim([1 size(thres_traces,1)])
+stepSize = 2;
+step = 0;
+for ii=1:100%size(filtered_traces,2) %first 100 ROIs to check
+    plot(diff_thres(:,ii)-step, 'k', 'LineWidth', 1.5)
+    plot(dur_filtered_event(:,ii)-step, 'r', 'LineWidth', 1.5)
+    step = step - stepSize;
+end
 
-%% Plot traces as line plot (vs imagesc)
+%% Detect SCE by running moving sum across the filtered traces and 
+
+%minimum cells that must particupate in SCE
+min_cell_nb = 5;
+
+%collapse all the no run SCE events 
+summed_events_SCE = sum(dur_filtered_event,2);
+
+%width of sync events - 200ms = 6 frames
+sync_window_width = 6;
+
+%count sync events within time window witdh
+sce_event_count = movsum(summed_events_SCE,sync_window_width);
+
+%plot
 figure;
-subplot(1,2,1)
-hold on;
-ylim([-0.5 1])
-title('Savitzky-Golay filtered calcium traces')
-stepSize = 2;
-step = 0;
-for ii=1:1%size(filtered_traces,2)
-    plot(filtered_traces(:,ii)-step, 'k', 'LineWidth', 1.5)
-    step = step - stepSize;
-end
+hold on
+ylabel('Synchronous event count')
+plot(sce_event_count)
+plot([1 size(thres_traces,1)],[min_cell_nb min_cell_nb],'r--')
 
-%ylabel('Normalized Position');
-%plot(norm_position(st_idx:end_idx)-step,'r');
+%% Extract sync intervals, neurons involved, and plot
 
-subplot(1,2,2)
-hold on;
-ylim([-0.5 1])
-title('Non-filtered calcium traces')
-stepSize = 2;
-step = 0;
-for ii=1:1%size(filtered_traces,2)
-    plot(input_data(:,ii)-step, 'k', 'LineWidth', 1.5)
-    step = step - stepSize;
-end
+%% Temporal shuffle
+
+
 
 
