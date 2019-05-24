@@ -226,16 +226,20 @@ for ii=1:100%size(filtered_traces,2) %first 100 ROIs to check
     step = step - stepSize;
 end
 
+%% Pad one index with 0 that's lost with derivative processing above
+
+final_events = [zeros(1,size(dur_filtered_event,2));dur_filtered_event];
+
 %% Detect SCE by running moving sum across the filtered traces and 
 
 %minimum cells that must particupate in SCE
 min_cell_nb = 5;
 
-%collapse all the no run SCE events 
-summed_events_SCE = sum(dur_filtered_event,2);
-
 %width of sync events - 200ms = 6 frames
 sync_window_width = 6;
+
+%collapse all the no run SCE events 
+summed_events_SCE = sum(final_events,2);
 
 %count sync events within time window witdh
 sce_event_count = movsum(summed_events_SCE,sync_window_width);
@@ -248,6 +252,127 @@ plot(sce_event_count)
 plot([1 size(thres_traces,1)],[min_cell_nb min_cell_nb],'r--')
 
 %% Extract sync intervals, neurons involved, and plot
+
+
+%find intervals where more than 10 sync neurons
+sync_idx = find(sce_event_count > 5);
+
+%% Same code as in early simple version search
+
+time_choice = session_vars{1}.Behavior_split{4}.resampled.time;
+time = session_vars{1, 1}.Behavior.resampled.time;
+
+[~,select_speed_idx,~] = intersect(time,time_choice,'stable');
+
+
+speed = session_vars{1, 1}.Behavior.speed;
+%overwrite
+speed = speed(select_speed_idx);
+
+run_onsets = session_vars{1}.Events_split{4}.Run;
+norun_onsets = session_vars{1}.Events_split{4}.NoRun;
+
+%binary onset logicals - using Dombeck search
+%run_binary = run_onsets.run_onset_binary;
+%norun_binary = norun_onsets.norun_onset_binary;
+norun_binary = final_events;
+
+%combine binary onsets:
+combined_binary = norun_binary;
+
+% onset_ROIs_log (override with all tuned ROI to both or either trial)
+onset_ROIs_log = AorB_tuned;
+%start and end points of sorted (10-15 frame range) - 500 ms = 15
+st_evt_sort = sync_idx(179);
+% st_evt_sort = 11511;
+ end_evt_sort = st_evt_sort+15;
+
+plot_range = [1000, 2000];
+
+%start idx (absolute)
+st_idx =st_evt_sort-plot_range(1);
+%end idx (absolute)
+end_idx = st_evt_sort+plot_range(2);
+
+%input_dFF_matrix = traces(2360+700:2900+700,onset_ROIs_log)';
+
+%get absolute idx's of neurons
+input_neuron_idxs = find(onset_ROIs_log ==1);
+
+%1500-2000 +700
+input_events_matrix = combined_binary(st_evt_sort:end_evt_sort,onset_ROIs_log)';
+
+%sort by event onset
+%for each ROI
+for rr=1:size(input_events_matrix,1)
+    if  ~isempty(find(input_events_matrix(rr,:) > 0,1))
+        loc_ROI(rr) = find(input_events_matrix(rr,:) > 0,1);
+    else
+        loc_ROI(rr) = 0;
+    end
+end
+
+%sort by index
+[M_sort,I] =sort(loc_ROI,'ascend');
+
+
+%remove neurons that do not have an event in region of interest
+I(M_sort == 0) = [];
+
+%neuron idx (global) sorted
+input_neuron_idxs_sorted = input_neuron_idxs(I);
+
+figure;
+imagesc(input_events_matrix(I,:))
+hold on
+
+
+% Plot speed, position and dF/F trace of neurons prior to SCE in no-run epoch
+
+%start_idx
+
+figure
+subplot(4,1,1)
+hold on;
+xlim([1,end_idx-st_idx])
+%speed
+plot(speed(st_idx:end_idx),'k');
+%plot(time(st_idx:end_idx),speed(st_idx:end_idx),'k');
+ylabel('Speed [cm/s]');
+xlabel('Time [s]');
+
+subplot(4,1,2)
+%position (norm)
+hold on
+xlim([1,end_idx-st_idx])
+%xlim([st_idx,end_idx])
+ylabel('Normalized Position');
+plot(position_norm(st_idx:end_idx),'k');
+%plot(time(st_idx:end_idx),norm_position(st_idx:end_idx),'k');
+hold off
+
+%dF/F
+subplot(4,1,[3 4])
+imagesc(input_data(st_idx:end_idx,input_neuron_idxs_sorted)')
+hold on
+axis normal;
+caxis([0 1]);
+ylabel('Neuron #');
+colormap(gca,'jet')
+hold off
+
+%% Plot traces as line plot (vs imagesc)
+figure;
+hold on;
+stepSize = 2;
+step = 0;
+for ii=1:size(input_neuron_idxs_sorted,2)
+    plot(input_data(st_idx:end_idx,input_neuron_idxs_sorted(ii))-step, 'k', 'LineWidth', 1.5)
+    step = step - stepSize;
+end
+
+ylabel('Normalized Position');
+plot(norm_position(st_idx:end_idx)-step,'r');
 
 %% Temporal shuffle
 
