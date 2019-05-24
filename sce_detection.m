@@ -37,6 +37,12 @@ iqr_range = zeros(size(filtered_traces,2),size(filtered_traces,1));
 for ii=1:size(filtered_traces,1)-2*win_width %(set range here and add edges detection in the future
     iqr_range(:,win_width+ii) = iqr(filtered_traces(ii:((2*win_width)+ii),:),1);
 end
+
+%set threshold for detection later on
+event_thres = 3*iqr_range + med_traces';
+%set to time x ROI format
+event_thres = event_thres';
+
 %%
 %try different ROIs:
 ROI = 4;
@@ -46,7 +52,7 @@ figure
 hold on
 stepSize = 2;
 step = 0;
-for ii =1:16
+for ii =1:8
     ROI=ii;
     %plot all
     %trace
@@ -63,7 +69,70 @@ end
 %position
 plot(norm_position(st_idx:end_idx)-step+2,'r');
 
-%% 
+%% Detect events above 3x IQR interval
+
+%get logical of all points where event exceeds threshold
+thres_traces = filtered_traces > event_thres;
+
+figure;
+imagesc(thres_traces')
+
+
+
+%% Select only events in noRun intervals
+
+%select binary interval for select processing interval
+run_binary_interval = run_epoch_binary(st_idx:end_idx);
+
+%remove run events
+noRun_thres_traces = thres_traces & ~repmat(logical(run_binary_interval),1,16);
+
+figure;
+subplot(3,1,1)
+imagesc(noRun_thres_traces')
+subplot(3,1,2)
+imagesc(~repmat(logical(run_binary_interval),1,16)')
+subplot(3,1,3)
+hold on
+title('No run interval')
+ylim([0 2]);
+xlim([1 3000]);
+plot(~run_binary_interval,'r')
+
+%% Select individual onsets separated at least 1s (make this para variable)
+
+%frames - 1s = 30 frames
+min_dur = 30;
+
+%get onsets and offsets
+diff_thres = diff(double(noRun_thres_traces),1,1);
+
+%only get onsets
+diff_thres = diff_thres == 1; 
+
+%filter out events with in 1s of one another
+movsum(diff_thres)
+
+%% Plot final filter
+figure;
+subplot(2,1,1)
+hold on
+xlim([1 3000])
+stepSize = 2;
+step = 0;
+for ii=1:16%size(filtered_traces,2)
+    plot(noRun_thres_traces(:,ii)-step, 'k', 'LineWidth', 1.5)
+    step = step - stepSize;
+end
+subplot(2,1,2)
+hold on
+xlim([1 3000])
+stepSize = 2;
+step = 0;
+for ii=1:16%size(filtered_traces,2)
+    plot(diff_thres(:,ii)-step, 'k', 'LineWidth', 1.5)
+    step = step - stepSize;
+end
 
 %% Plot traces as line plot (vs imagesc)
 figure;

@@ -3,7 +3,6 @@
 options.defineDir = 1;
 
 
-
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
 

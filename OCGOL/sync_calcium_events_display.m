@@ -168,9 +168,11 @@ onset_ROIs_log = AorB_tuned;
 %11511 - nice replay of B!
 %19175 - nice preplay in B!
 
-%start and end points of sorted
+%start and end points of sorted (10-15 frame range) - 500 ms = 15
 st_evt_sort = 19175;
-end_evt_sort = st_evt_sort+10;
+% st_evt_sort = 11511;
+ end_evt_sort = st_evt_sort+10;
+
 plot_range = [1000, 2000];
 
 %start idx (absolute)
@@ -190,7 +192,7 @@ input_events_matrix = combined_binary(st_evt_sort:end_evt_sort,onset_ROIs_log)';
 %for each ROI
 for rr=1:size(input_events_matrix,1)
     if  ~isempty(find(input_events_matrix(rr,:) > 0,1))
-        loc_ROI(rr) = find(input_events_matrix(rr,:) > 0,1)
+        loc_ROI(rr) = find(input_events_matrix(rr,:) > 0,1);
     else
         loc_ROI(rr) = 0;
     end
