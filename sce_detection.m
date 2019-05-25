@@ -236,6 +236,8 @@ final_events = [zeros(1,size(dur_filtered_event,2));dur_filtered_event];
 min_cell_nb = 5;
 
 %width of sync events - 200ms = 6 frames
+%5 will give 2 behind, center and 2 ahead
+%6 will gives 3 beind, cetner
 sync_window_width = 6;
 
 %collapse all the no run SCE events 
@@ -250,6 +252,35 @@ hold on
 ylabel('Synchronous event count')
 plot(sce_event_count)
 plot([1 size(thres_traces,1)],[min_cell_nb min_cell_nb],'r--')
+
+%% Find neurons involved in each SCE
+%within 200 ms (6 frames)
+
+%get of SCE frame indices; use 5 as a cutoff for now - use shuffle-based
+%threshold later
+sync_idx = find(sce_event_count >= 5);
+
+%use all the indices for now, reconsider later (i.e. exclude some/all of
+%the neighboring intervals (i.e. filter here in the future)
+%proposal: for each segment of frame neighboring ROIs, select 1 index which
+%has the most ROIs involved in SCE
+
+%for each SCE, identify the neurons involved (based on window width of 6
+%frames)
+%defined above
+
+%for each index, take frame range (3 idx before until 2 idx after)
+%take frame slide of processed activity, sum and include ROI idx
+for ss=1:size(sync_idx,1)
+    SCE_ROIs{ss} = find(sum(final_events(sync_idx(ss)-3:sync_idx(ss)+2,:),1) > 0);
+end
+
+%% Relevant variables for further replay detection script
+
+%ROIs associated with SCEs
+SCE_ROIs 
+%indices of SCEs
+sync_idx
 
 %% Extract sync intervals, neurons involved, and plot
 
@@ -282,8 +313,13 @@ combined_binary = norun_binary;
 
 % onset_ROIs_log (override with all tuned ROI to both or either trial)
 onset_ROIs_log = AorB_tuned;
+
+%input neurons from RUN sequence analysis
+%onset_ROIs_log = false(1,size(AorB_tuned,2));
+%onset_ROIs_log(thres_neuron_idx) = 1; 
+
 %start and end points of sorted (10-15 frame range) - 500 ms = 15
-st_evt_sort = sync_idx(179);
+st_evt_sort = sync_idx(2);
 % st_evt_sort = 11511;
  end_evt_sort = st_evt_sort+15;
 
@@ -375,6 +411,16 @@ ylabel('Normalized Position');
 plot(norm_position(st_idx:end_idx)-step,'r');
 
 %% Temporal shuffle
+%SCE corresponded to sync calcium events that involved more cells than
+%expected by chance within a 200ms time window (i.e. > 3 std after temporal
+%reshuffling of cell activity)...
+%and with a minimum 5 cells participation thresgold (this is already)
+
+%shuffle event onsets of all cells with the no run epochs (for each cell)
+
+%recalculate the SCE count - store - do 1000x times - get distribution and
+%find where threshold is at p=0.05;
+
 
 
 

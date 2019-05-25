@@ -20,6 +20,14 @@ pca_input_raw = pca_input;
 %all restricted time and traces
 %pca_input =traces;
 
+%get speed
+time_choice = session_vars{1}.Behavior_split{4}.resampled.time;
+time = session_vars{1, 1}.Behavior.resampled.time;
+[~,select_speed_idx,~] = intersect(time,time_choice,'stable');
+speed = session_vars{1, 1}.Behavior.speed;
+%overwrite
+speed = speed(select_speed_idx);
+
 %% Smooth calcium traces with gaussian with sigma = 5
 
 %5 sigma gaussian kernel
@@ -82,7 +90,24 @@ histogram(corr_values, 10)
 %calculate Otsu' threshold
 T = otsuthresh(corr_counts);
 
-find(corr_values >  T)
+%neurons above threshold
+recurring_neuron_idx = find(corr_values > T);
+
+%% Plot dF/F of neurons above threshold
+
+figure;
+subplot(2,1,1)
+imagesc(pca_input_raw(:,recurring_neuron_idx)')
+hold on
+title('RUN sequence identified neurons')
+caxis([0 1]);
+colormap('jet');
+subplot(2,1,2)
+hold on
+xlim([1 size(speed,1)])
+plot(speed,'r')
+
+
 
 %% For offset PCA - similar to PCA test - 
 %construct covariance matrix from original dF/F and 1 timeframes shifted
