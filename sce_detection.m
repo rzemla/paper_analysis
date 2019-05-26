@@ -319,11 +319,11 @@ onset_ROIs_log = AorB_tuned;
 %onset_ROIs_log(thres_neuron_idx) = 1; 
 
 %start and end points of sorted (10-15 frame range) - 500 ms = 15
-st_evt_sort = sync_idx(2);
+st_evt_sort = sync_idx(1);
 % st_evt_sort = 11511;
  end_evt_sort = st_evt_sort+15;
 
-plot_range = [1000, 2000];
+plot_range = [500, 2000];
 
 %start idx (absolute)
 st_idx =st_evt_sort-plot_range(1);

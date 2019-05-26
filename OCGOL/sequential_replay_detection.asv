@@ -64,31 +64,17 @@ time_lag = [0:dt:1.03];
 time_lag = [-1*fliplr(time_lag),time_lag(2:end)];
 
 %fit parabola to (2nd order polynomial to covariance within lag range)
-%insert x in second time domain
-p = polyfit(time_lag(25:37)',r,2);
-
-%insert a 100x expanded timebase for max extrapolation from parbola fit
-expanded_time =[0:dt/100:1.03];
-expanded_time = [-1*fliplr(expanded_time),expanded_time(2:end)];
+p = polyfit(lags',r,2);
 
 %generate parabola
-%x1 = time_lag(25:37);
-x1 = expanded_time;
+x1 = lags;
 y1 = polyval(p,x1);
-
-%find max time
-[~,idx_max] = max(y1);
-max_onset = x1(idx_max);
 
 %plot
 figure
 hold on
-%plot original fit range
-plot(time_lag(25:37),r,'k')
-%time extrapolated fit
+plot(lags,r,'k')
 plot(x1,y1,'r')
-%maximum point
-scatter(max_onset, y1(idx_max),'b');
 
 
 %% Plot example SCE
