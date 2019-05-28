@@ -181,7 +181,16 @@ st_idx =st_evt_sort-plot_range(1);
 end_idx = st_evt_sort+plot_range(2);
 
 %get overlap between run sequence neurons and SCE neurons
-[run_sce_idx, ] = intersect(SCE_ROIs{sce_nb},neurons_participating{sce_nb},'stable')
+[run_sce_neurons, run_sce_idx,~] = intersect(SCE_ROIs{sce_nb},neurons_participating{sce_nb},'stable');
+
+%only ROIs in SCE that are part of run sequence
+run_SCE_ROIs = SCE_ROIs{sce_nb}(run_sce_idx);
+
+%only SCE onsets of ROIS that are part of run sequence
+run_SCE_onsets = max_onset{sce_nb}(run_sce_idx);
+
+%sort only run sequence involved neurons
+[~,I_sce_run] = sort(max_onset{sce_nb}(run_sce_idx),'ascend');
 
 %sort SCE inputs by onset time
 [~,I_sce] = sort(max_onset{sce_nb},'ascend');
@@ -248,7 +257,7 @@ hold off
 
 %dF/F
 subplot(4,1,[3 4])
-imagesc(traces(st_idx:end_idx,SCE_ROIs{sce_nb}(I_sce))')
+imagesc(traces(st_idx:end_idx,run_SCE_ROIs(I_sce_run))')
 hold on
 title('RUN sequence neurons only');
 axis normal;
@@ -256,3 +265,24 @@ caxis([0 1]);
 ylabel('Neuron #');
 colormap(gca,'jet')
 hold off
+
+%% Correlate SCE activation onset time with median (try mean)
+
+%median normalized position onset across laps (run epochs)
+median_run_seq_onset
+%indices of RUN sequence neurons
+recurring_neuron_idx
+%neuron idxs of those involved in SCE and RUN sequence
+run_SCE_ROIs
+
+%relative onsets of neurons in SCEs (that are also in RUN sequence)
+run_SCE_onsets
+
+[~,~,recur_idx_pos] = intersect(run_SCE_ROIs,recurring_neuron_idx,'stable');
+
+%correlate SCE onsets with median position of firing
+run_SCE_onsets, median_run_seq_onset(recur_idx_pos)
+
+
+
+

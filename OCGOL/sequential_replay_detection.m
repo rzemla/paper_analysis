@@ -186,6 +186,9 @@ end_idx = st_evt_sort+plot_range(2);
 %only ROIs in SCE that are part of run sequence
 run_SCE_ROIs = SCE_ROIs{sce_nb}(run_sce_idx);
 
+%only SCE onsets of ROIS that are part of run sequence
+run_SCE_onsets = max_onset{sce_nb}(run_sce_idx);
+
 %sort only run sequence involved neurons
 [~,I_sce_run] = sort(max_onset{sce_nb}(run_sce_idx),'ascend');
 
@@ -262,3 +265,25 @@ caxis([0 1]);
 ylabel('Neuron #');
 colormap(gca,'jet')
 hold off
+
+%% Correlate SCE activation onset time with median (try mean)
+
+%median normalized position onset across laps (run epochs)
+median_run_seq_onset
+%indices of RUN sequence neurons
+recurring_neuron_idx
+%neuron idxs of those involved in SCE and RUN sequence
+run_SCE_ROIs
+
+%relative onsets of neurons in SCEs (that are also in RUN sequence)
+run_SCE_onsets
+
+[~,~,recur_idx_pos] = intersect(run_SCE_ROIs,recurring_neuron_idx,'stable');
+
+%correlate SCE onsets with median position of firing
+[rho,p] =  corr(run_SCE_onsets', median_run_seq_onset(recur_idx_pos)','Type','Spearman');
+%if p less than 0.05 and positive --> forward re
+
+
+
+
