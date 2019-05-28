@@ -83,7 +83,8 @@ median_run_seq_onset = median(max_pos_val,1);
 
 %% Plot original, smoothed, traces and first derivative below
 figure
-for rr=1:196
+%first 20
+for rr=1:20
     
     subplot(2,1,1)
     hold on
@@ -96,14 +97,18 @@ for rr=1:196
     title('first derivative');
     plot(deriv_traces(:,rr),'b');
     
-    pause
+    pause(0.05)
     clf
 end
 
 
-%% Plot
-figure;
-imagesc(run_seq_traces')
+%% Plot according to median activation sequence
+[val_temp,idx_med_onset] = sort(median_run_seq_onset,'ascend');
 
+figure;
+imagesc(traces(:,idx_med_onset)');
+hold on;
+colormap('jet')
+caxis([0 1.5])
 
 

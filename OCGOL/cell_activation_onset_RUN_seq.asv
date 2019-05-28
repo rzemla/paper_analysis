@@ -36,7 +36,7 @@ deriv_traces = [zeros(1, size(deriv_traces,2));deriv_traces];
 
 %% Discard onsets with maximal derivative less than 5% dF/F s-1 (s)
 %may need to translate the derivative to the raw input to evalulate this
-%con
+%condition
 
 
 %% Get indices of lap starts based on position diff
@@ -101,9 +101,11 @@ for rr=1:196
 end
 
 
-%% Plot
+%% Plot according to median activation sequence
+[~,idx_med_onset] = sort(median_run_seq_onset 
+
 figure;
 imagesc(run_seq_traces')
 
-
+run_seq_traces(:,
 

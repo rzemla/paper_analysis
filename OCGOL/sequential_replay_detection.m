@@ -157,7 +157,9 @@ SCE_ROIs;
 %neurons that are part of SCE and involved in RUN sequence
 neurons_participating{6};
 %number of the SCE
-sce_nb = 169;
+%nice preplay example: 169
+%nice replay example: 262
+sce_nb = 739;
 
 %temporary generate times and speed for select input inverval
 time_choice = session_vars{1}.Behavior_split{4}.resampled.time;
@@ -173,7 +175,7 @@ st_evt_sort = sync_idx(sce_nb);
 % st_evt_sort = 11511;
 end_evt_sort = st_evt_sort+15;
 
-plot_range = [1500, 1500];
+plot_range = [1500, 500];
 
 %start idx (absolute)
 st_idx =st_evt_sort-plot_range(1);
@@ -194,7 +196,6 @@ run_SCE_onsets = max_onset{sce_nb}(run_sce_idx);
 
 %sort SCE inputs by onset time
 [~,I_sce] = sort(max_onset{sce_nb},'ascend');
-
 
 
 figure;
@@ -266,7 +267,7 @@ ylabel('Neuron #');
 colormap(gca,'jet')
 hold off
 
-%% Correlate SCE activation onset time with median (try mean)
+% Correlate SCE activation onset time with median (try mean)
 
 %median normalized position onset across laps (run epochs)
 median_run_seq_onset
@@ -281,8 +282,9 @@ run_SCE_onsets
 [~,~,recur_idx_pos] = intersect(run_SCE_ROIs,recurring_neuron_idx,'stable');
 
 %correlate SCE onsets with median position of firing
-[rho,p] =  corr(run_SCE_onsets', median_run_seq_onset(recur_idx_pos)','Type','Spearman');
-%if p less than 0.05 and positive --> forward re
+[rho,p] =  corr(run_SCE_onsets', median_run_seq_onset(recur_idx_pos)','Type','Spearman')
+%if p less than 0.05 and positive --> forward replay; 
+%if spearman correlation negative --> reverse replay;
 
 
 
