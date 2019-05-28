@@ -285,9 +285,6 @@ sync_idx
 %% Extract sync intervals, neurons involved, and plot
 
 
-%find intervals where more than 10 sync neurons
-sync_idx = find(sce_event_count > 5);
-
 %% Same code as in early simple version search
 
 time_choice = session_vars{1}.Behavior_split{4}.resampled.time;
