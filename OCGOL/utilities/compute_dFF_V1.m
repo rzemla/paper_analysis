@@ -73,7 +73,7 @@ F_dff_exp = F_dff_exp';
 
 %% Plot check
 figure
-for ii =1:390
+for ii =1:20
     ROI =ii;
     %disp(ROI);
     

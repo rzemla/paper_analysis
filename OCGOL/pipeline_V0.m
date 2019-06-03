@@ -2,6 +2,15 @@
 
 options.defineDir = 1;
 
+%setDir = 'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1';
+
+%setDir = 'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1';
+
+%setDir = 'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1';
+
+%setDir = 'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1';
+setDir = 'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1';
+
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -18,7 +27,9 @@ options.defineDir = 1;
 
 %setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
 %setDir = 'F:\OCGOL_training\I56_RLTS_041019\5A5B';
-setDir = 'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619';
+%setDir = 'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619';
+
+
 
 %performance/texture code works - backup this dataset!
 %check missed reward collection feature
@@ -366,7 +377,7 @@ options.smooth_span=3; % span for moving average filter on dF/F (Dombeck 2010 = 
 options.minevents=3; % Min nb of events during session
 options.Nbin=[2;4;5;8;10;20;25;100]; % Number of bins to test ([2;4;5;8;10;20;25;100] Danielson et al. 2016)
 options.bin_spatial_tuning=100; % Number of bins to compute spatial tuning curve (rate map) -value must be in options.Nbin
-options.Nshuffle=50; % Nb of shuffle to perform
+options.Nshuffle=1000; % Nb of shuffle to perform
 options.pvalue=0.05; % Min p value to be considered as significant
 options.dispfig=1; % Display figure 
 
@@ -376,7 +387,7 @@ options.binPosition = 1;
 tic;
 %for all type of trials --> current: 1 -A trials; 2 -B trials; 3 - all
 %laps/trials
-for ii=1:5
+for ii=1:3
     %work on this part
     %spatial binning, rate maps, and spatial tuning score
     disp('Calculate bin space, events, rate maps, generate STCs, and SI score')
@@ -395,7 +406,7 @@ toc;
 %% Run place cell shuffle for spatial information
 %offload this to HPC for processing
 %check what the difference is between 
-for ii=1:5
+for ii=1:3
     [Place_cell{ii}] = shuffle_place_cell(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
 end
 %alternative way of calculating shuffle for SI and TS - not finalized
