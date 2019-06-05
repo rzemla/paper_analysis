@@ -9,8 +9,18 @@ options.defineDir = 1;
 %setDir = 'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1';
 
 %setDir = 'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1';
-setDir = 'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1';
+%setDir = 'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1';
 
+%setDir = 'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1';
+
+%setDir = 'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1';
+
+%setDir = 'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1';
+%setDir = 'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1';
+
+%setDir = 'G:\Figure_2_3_selective_remap\I57_LT_AB_prePost_sal_050619_1';
+
+setDir = 'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -104,6 +114,8 @@ setDir = 'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1';
 %setDir = 'G:\I56_RTLS_RF_bas_sal_792_031419\3';
 %setDir = 'G:\I56_RTLS_RF_bas_sal_792_031419\2';
 %setDir ='G:\I56_RT_RF_bas_sal_792_031519\3';
+%setDir ='G:\I56_RT_RF_bas_sal_792_031519\3';
+
 
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace

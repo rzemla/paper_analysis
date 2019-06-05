@@ -5,19 +5,38 @@
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %load place cell variables for each session
 %get mat directories in each output folder
 for ii=1:size(path_dir,2)
     %get matfile names for each session
     matfiles{ii} = dir([path_dir{ii},'\output','\*.mat']);
+    %input directories (.mat CNMF, .XML, .CSV)
+    inputfiles{ii} = dir([path_dir{ii},'\input','\*.mat']);
+    %removed ROI directory
+    removeROIfiles{ii} = dir([path_dir{ii},'\removedROI','\*.mat']);
 end
+
 %load in place cell variables (and others later)
 for ii = 1:size(path_dir,2)
     %add event variables
     session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
         'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split');
+    %load in relevant CNMF variables for visualization purposes
+    CNMF_vars{ii} = load(fullfile(inputfiles{ii}.folder,inputfiles{ii}.name),'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
+    %load in template (stack average)
+    templates{ii} = load(fullfile(path_dir{ii},'template_nr.mat'),'template');
+    %load in logical vector with selected and rejected ROIs
+    removeROI{ii} = load(fullfile(removeROIfiles{ii}.folder,removeROIfiles{ii}.name),'compSelect');
 end
 
 %% Define tuned logical vectors
@@ -72,6 +91,42 @@ trialCorrect = session_vars{1}.Behavior.performance.trialCorrect;
 fracA_corr = size(find(trialOrder == 2),1) / size(find(trialOrder == 2 | trialOrder == 20),1)
 
 fracB_corr = size(find(trialOrder == 3),1) / size(find(trialOrder == 3 | trialOrder == 30),1)
+
+
+%% Show outlines of selected and discarded neurons over FOV
+
+%get idx's of selected and rejected ROIs
+selectedROI_idx = find(removeROI{ii}.compSelect == 1)';
+rejectedROI_idx = find(removeROI{ii}.compSelect == 0)';
+
+%plot BW outline of the component
+figure
+imagesc(templates{ii}.template);
+hold on
+axes(gca);
+axis square
+xticks(gca,[])
+yticks(gca,[])
+grayMap = brighten(gray,0.6);
+colormap(gca,grayMap)
+
+%plot all selected ROIs as green
+for ROI = selectedROI_idx
+    %plot componenet outline
+    plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'g', 'LineWidth',1);
+    pause(0.01)
+end
+
+%plot all selected ROIs as green
+for ROI = rejectedROI_idx
+    %plot componenet outline
+    plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'r', 'LineWidth',1);
+    pause(0.01)
+end
+
+
+
+
 
 
 
