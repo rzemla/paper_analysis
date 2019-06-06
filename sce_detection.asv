@@ -158,9 +158,38 @@ plot(~run_binary_interval,'r')
 
 %% Create an onset matrix (not filtered by delay separation)
 
+diff_thres = diff(double(noRun_thres_traces),1,1);
 
-%% Run SCE shuffle - need to change input to onset binary only
-sce_detection_shuffle(noRun_thres_traces,run_binary_interval,thres_traces)
+%only get onsets
+diff_thres = diff_thres == 1; 
+
+%get index of each onset and check if event is within 
+%for each ROI
+for rr = 1:size(diff_thres,2)
+    event_idx{rr} = find(diff_thres(:,rr) == 1);
+end
+
+%reconstruct matrix with onsets alone
+%create blank 
+noRun_event_matrix = zeros(size(diff_thres,1),size(diff_thres,2));
+%reconstruct filtered events for each ROI
+for rr=1:size(event_idx,2)
+    noRun_event_matrix(event_idx{rr},rr) = 1;
+end
+
+%add zero to first frame to account for offset
+noRun_event_matrix = [zeros(1,size(noRun_event_matrix,2));noRun_event_matrix];
+
+%plot
+figure;
+imagesc(noRun_event_matrix')
+
+
+%% Run SCE shuffle - use event matrix above as input
+%make option to set # of shuffles
+
+[sce_threshold] = sce_detection_shuffle(noRun_event_matrix,run_binary_interval,thres_traces);
+
 
 %% Incorporate shuffle here based on detected events within run intervals
 %take detected events (binary in event space before delay filtering)

@@ -106,9 +106,30 @@ imagesc(shuffled_events{cc}')
 original_input = noRun_thres_traces;
 
 
-noRun_thres_traces = shuffled_events{10};
+noRun_thres_traces = shuffled_events{56};
 
-%noRun_thres_traces = original_input;
+%% Get SCE count for each shuffle
+
+for cc=1:100
+    [sce_event_count(cc,:)] = SCE_count_per_shuffle(shuffled_events{cc});
+end
+
+%linearize matrix with event counts and calculate mean/std and plot histogram
+%mean of distribution
+mean_dist = mean(sce_event_count(:));
+%std of distribution
+std_thres = std(sce_event_count(:));
+%threshold for stat significance SCE event (3*std)
+sce_threshold = mean_dist + 3*std_thres;
+
+figure;
+histogram(sce_event_count(:),'Normalization','probability');
+hold on
+title('Red- 3 std threshold for significant SCE event');
+%plot mean
+plot([mean_dist, mean_dist],[0 0.5],'k--')
+%plot threshold
+plot([sce_threshold, sce_threshold],[0 0.5],'r','LineWidth', 1.5)
 
 %% Select individual onsets separated at least 1s - WORKS!
 
@@ -170,27 +191,27 @@ end
 %sum_dur_mat = movsum(diff_thres, [0 min_dur-1],1);
 
 %% Plot final filter
-figure;
-subplot(2,1,1)
-hold on
-xlim([1 size(thres_traces,1)])
-stepSize = 2;
-step = 0;
-for ii=1:30%size(filtered_traces,2)
-    plot(noRun_thres_traces(:,ii)-step, 'k', 'LineWidth', 1.5)
-    step = step - stepSize;
-end
-%check onset and duration separation filter
-subplot(2,1,2)
-hold on
-xlim([1 size(thres_traces,1)])
-stepSize = 2;
-step = 0;
-for ii=1:30%size(filtered_traces,2)
-    plot(diff_thres(:,ii)-step, 'k', 'LineWidth', 1.5)
-    plot(dur_filtered_event(:,ii)-step, 'r', 'LineWidth', 1.5)
-    step = step - stepSize;
-end
+% figure;
+% subplot(2,1,1)
+% hold on
+% xlim([1 size(thres_traces,1)])
+% stepSize = 2;
+% step = 0;
+% for ii=1:30%size(filtered_traces,2)
+%     plot(noRun_thres_traces(:,ii)-step, 'k', 'LineWidth', 1.5)
+%     step = step - stepSize;
+% end
+% %check onset and duration separation filter
+% subplot(2,1,2)
+% hold on
+% xlim([1 size(thres_traces,1)])
+% stepSize = 2;
+% step = 0;
+% for ii=1:30%size(filtered_traces,2)
+%     plot(diff_thres(:,ii)-step, 'k', 'LineWidth', 1.5)
+%     plot(dur_filtered_event(:,ii)-step, 'r', 'LineWidth', 1.5)
+%     step = step - stepSize;
+% end
 
 %% Separate plot to check sync events
 figure
@@ -227,6 +248,7 @@ sce_event_count = movsum(summed_events_SCE,sync_window_width);
 %plot
 figure;
 hold on
+ylim([0 40])
 ylabel('Synchronous event count')
 plot(sce_event_count)
 plot([1 size(thres_traces,1)],[min_cell_nb min_cell_nb],'r--')

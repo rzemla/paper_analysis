@@ -169,32 +169,48 @@ for rr = 1:size(diff_thres,2)
     event_idx{rr} = find(diff_thres(:,rr) == 1);
 end
 
-%reconstruct
+%reconstruct matrix with onsets alone
+%create blank 
+noRun_event_matrix = zeros(size(diff_thres,1),size(diff_thres,2));
+%reconstruct filtered events for each ROI
+for rr=1:size(event_idx,2)
+    noRun_event_matrix(event_idx{rr},rr) = 1;
+end
+
+%add zero to first frame to account for offset
+noRun_event_matrix = [zeros(1,size(noRun_event_matrix,2));noRun_event_matrix];
+
+%plot
+figure;
+imagesc(noRun_event_matrix')
 
 
-%% Run SCE shuffle - need to change input to onset binary only
-sce_detection_shuffle(noRun_thres_traces,run_binary_interval,thres_traces)
+%% Run SCE shuffle - use event matrix above as input
+%make option to set # of shuffles
+%also return mean, std, and 
+[sce_threshold] = sce_detection_shuffle(noRun_event_matrix,run_binary_interval,thres_traces);
+%previous thres = 8.33 sync events on frame
 
 %% Incorporate shuffle here based on detected events within run intervals
 %take detected events (binary in event space before delay filtering)
 %randomly scramble across the entire no run interval 
 
-%indices where the animal is not running
-noRun_int_idx = find(run_binary_interval == 0);
-%indices where it is running
-run_int_idx = find(run_binary_interval == 1);
-
-%events only in no run interval that were selected
-noRun_thres_traces;
-
-%preallocate cells for N shuffles
-shuffle_nb = 100;
-shuffled_cell = cell(1,shuffle_nb);
-
-%preallocate each cell with 0 matrix to speed up
-for cc=1:shuffle_nb
-    shuffled_cell{cc} = zeros(size(noRun_thres_traces,2),size(noRun_int_idx,1));
-end
+% %indices where the animal is not running
+% noRun_int_idx = find(run_binary_interval == 0);
+% %indices where it is running
+% run_int_idx = find(run_binary_interval == 1);
+% 
+% %events only in no run interval that were selected
+% noRun_thres_traces;
+% 
+% %preallocate cells for N shuffles
+% shuffle_nb = 100;
+% shuffled_cell = cell(1,shuffle_nb);
+% 
+% %preallocate each cell with 0 matrix to speed up
+% for cc=1:shuffle_nb
+%     shuffled_cell{cc} = zeros(size(noRun_thres_traces,2),size(noRun_int_idx,1));
+% end
 
 % tic; %70 seconds for 100 shuffles
 % for cc=1:shuffle_nb
@@ -205,43 +221,43 @@ end
 %     disp(cc);
 % end
 % toc;
-
-tic; %23 seconds (>3 fold speed-up compared to above code)
-for cc=1:shuffle_nb
-    [~, shuffled_cell{cc}] = sort(rand(size(noRun_thres_traces,2),size(noRun_int_idx,1)),2);
-    disp(cc);
-end
-toc;
-
-%reconsitute a shuffled event matrix
-%preallocate using copy of original matrix
-shuffled_events = noRun_thres_traces';
-for rr=1:size(noRun_thres_traces,2)
-    shuffled_events(rr,noRun_int_idx) = noRun_thres_traces(shuffle_idx(rr,:),rr);
-end
-
-%preallocate cells for shuffle events
-shuffle_nb = 100;
-shuffled_events = cell(1,shuffle_nb);
-
-%assign the existing matrix to the matrix holders
-for cc=1:shuffle_nb
-    shuffled_events{cc} = noRun_thres_traces';
-end
-
-%permute the no run epochs based on the shuffle above
-for cc=1:shuffle_nb
-    shuffled_events{cc}(:,noRun_int_idx) = noRun_thres_traces(shuffled_cell{cc});
-    %shuffled_events{cc}(:,noRun_int_idx) = shuffled_events{cc}(shuffled_cell{cc});
-end
-
-%compare original vs shuffled events matrix in subplot
-figure;
-subplot(2,1,1)
-imagesc(noRun_thres_traces')
-
-subplot(2,1,2)
-imagesc(shuffled_events{cc})
+% 
+% tic; %23 seconds (>3 fold speed-up compared to above code)
+% for cc=1:shuffle_nb
+%     [~, shuffled_cell{cc}] = sort(rand(size(noRun_thres_traces,2),size(noRun_int_idx,1)),2);
+%     disp(cc);
+% end
+% toc;
+% 
+% %reconsitute a shuffled event matrix
+% %preallocate using copy of original matrix
+% shuffled_events = noRun_thres_traces';
+% for rr=1:size(noRun_thres_traces,2)
+%     shuffled_events(rr,noRun_int_idx) = noRun_thres_traces(shuffle_idx(rr,:),rr);
+% end
+% 
+% %preallocate cells for shuffle events
+% shuffle_nb = 100;
+% shuffled_events = cell(1,shuffle_nb);
+% 
+% %assign the existing matrix to the matrix holders
+% for cc=1:shuffle_nb
+%     shuffled_events{cc} = noRun_thres_traces';
+% end
+% 
+% %permute the no run epochs based on the shuffle above
+% for cc=1:shuffle_nb
+%     shuffled_events{cc}(:,noRun_int_idx) = noRun_thres_traces(shuffled_cell{cc});
+%     %shuffled_events{cc}(:,noRun_int_idx) = shuffled_events{cc}(shuffled_cell{cc});
+% end
+% 
+% %compare original vs shuffled events matrix in subplot
+% figure;
+% subplot(2,1,1)
+% imagesc(noRun_thres_traces')
+% 
+% subplot(2,1,2)
+% imagesc(shuffled_events{cc})
 
 
 %% Select individual onsets separated at least 1s - WORKS!
@@ -363,14 +379,17 @@ figure;
 hold on
 ylabel('Synchronous event count')
 plot(sce_event_count)
+%minimum cell involvement line
 plot([1 size(thres_traces,1)],[min_cell_nb min_cell_nb],'r--')
+%threshold determined by shuffle
+plot([1 size(thres_traces,1)],[sce_threshold sce_threshold],'b--')
 
 %% Find neurons involved in each SCE
 %within 200 ms (6 frames)
 
 %get of SCE frame indices; use 5 as a cutoff for now - use shuffle-based
 %threshold later
-sync_idx = find(sce_event_count >= 5);
+sync_idx = find(sce_event_count >= sce_threshold);
 
 %use all the indices for now, reconsider later (i.e. exclude some/all of
 %the neighboring intervals (i.e. filter here in the future)
