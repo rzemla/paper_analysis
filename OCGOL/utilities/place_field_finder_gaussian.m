@@ -157,7 +157,7 @@ toc;
 %skip for now - add as option later for display
 if 1
     figure;
-    for rr =646 %SI_tuned_ROIs%1:100
+    for rr =618 %SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -237,6 +237,7 @@ end
 %% Need a check here to a see if all curves have a proper fit; if not, narrow range of fit for that curve by 25%
 %check that gaussian curves fit - check that the maximum of the derivative
 %of the fitted curve is 
+%RESUME HERE
 count_nb = 0;
 for rr = 1:size(pks,2) %SI_tuned_ROIs%1:100
     if ~isempty(pks{rr})
@@ -246,22 +247,23 @@ for rr = 1:size(pks,2) %SI_tuned_ROIs%1:100
                 count_nb = count_nb+1;
                 disp(rr)
                 %re-fit Gaussian using narrowed range
-                gauss_extend = 12;
-                %same code as above with the width of git narrowed to 12
-            %x, y input
-            %for each local maximum
-            %original width for input to fit
-            loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-(w{rr}(peak_nb)./2)):round(lc{rr}(peak_nb)+(w{rr}(peak_nb)./2))];
-            %loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-(w{rr}(peak_nb)):round(lc{rr}(peak_nb)+(w{rr}(peak_nb))))];
-            curve_range{rr}{peak_nb} = ex_rate_map_sm(loc_range{rr}{peak_nb},rr);
-            
-            %fit gaussian to peak
-            [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', ex_rate_map_sm(loc_range{rr}{peak_nb},rr),'gauss1');
-            gauss_fit{rr}{peak_nb} = f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
-            gauss_fit{rr}{peak_nb} =f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
-            %full width at half maximum for each peak
-            gauss_fwhm{rr}(peak_nb) = round(2*sqrt(2*log(2))*f{rr}{peak_nb}.c1);
-            gauss_fit_bin_range{rr}{peak_nb} = [loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend];
+                gauss_extend = 3;
+                %same code as above with the width of peak narrow by 2 each end
+                adjust_width = 0;
+                %x, y input
+                %for each local maximum
+                %original width for input to fit
+                loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-((w{rr}(peak_nb)-adjust_width)./2)):round(lc{rr}(peak_nb)+((w{rr}(peak_nb)-adjust_width)./2))];
+                %loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-(w{rr}(peak_nb)):round(lc{rr}(peak_nb)+(w{rr}(peak_nb))))];
+                curve_range{rr}{peak_nb} = ex_rate_map_sm(loc_range{rr}{peak_nb},rr);
+                
+                %fit gaussian to peak
+                [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', ex_rate_map_sm(loc_range{rr}{peak_nb},rr),'gauss1');
+                gauss_fit{rr}{peak_nb} = f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
+                gauss_fit{rr}{peak_nb} =f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
+                %full width at half maximum for each peak
+                gauss_fwhm{rr}(peak_nb) = round(2*sqrt(2*log(2))*f{rr}{peak_nb}.c1);
+                gauss_fit_bin_range{rr}{peak_nb} = [loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend];
             end
         end
     end
@@ -489,7 +491,7 @@ end
 %(take endpoints of fitting Gaussians)
 
 %correct edges for track offset for border analysis
-gauss_fit_edges;
+%gauss_fit_edges;
 %adjust bin in the end by shifting to by 50 bins less or equal to 150
 %adjust by 100 those greater than 150
 

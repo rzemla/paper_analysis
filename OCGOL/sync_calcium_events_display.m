@@ -5,7 +5,7 @@ options.register = 0;
 %lab workstation
 %input directories to matching function
 %path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B'};
-path_dir = {'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+path_dir = {'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
 %cross session directory
 %crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
 
