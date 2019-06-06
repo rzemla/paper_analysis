@@ -65,6 +65,31 @@ options.tuning_criterion = 'ts'; %si or ts
 
 %% PV correlation matrix Aand B tuned neurons
 
+
+%% Find  place fields
+%use rate map - number of event onsets/ occupancy across all laps
+options.gSigma = 3;
+%which place cell struct to do placefield extraction on
+%iterate through place_cell cells of interest
+%4 - all A regardless if correct
+%5 - all B regardless if correct
+
+%for each session
+for ss=1:size(session_vars,2)
+    %for ii =[4,5] %all A or B 
+    for ii =[2 ] %only correct A or B
+        %works for 1 (A) laps
+        %373 A trial not merged
+        %449 - third field seems not caught
+        %error with 2 (B) laps
+        options.place_struct_nb = ii;
+        [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
+    end
+end
+
+%for overlapping area merge (calculate number of place fields)
+%https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
+
 %% Plot fraction of each neuron tuned 
 
 tuned_si(1) = size(find(tunedLogical.si.onlyA_tuned ==1),2);
