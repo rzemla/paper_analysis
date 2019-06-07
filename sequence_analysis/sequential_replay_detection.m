@@ -3,12 +3,12 @@
 %% Import/define variables
 
 %calcium traces
-traces =session_vars{1, 1}.Imaging_split{1, 4}.trace_restricted;
+traces =session_vars{1}.Imaging_split{4}.trace_restricted;
 
-%ROIs associated with SCEs
-SCE_ROIs 
-%indices of SCEs
-sync_idx
+% %ROIs associated with SCEs
+% SCE_ROIs 
+% %indices of SCEs
+% sync_idx
 
 sce_nb=6;
 %sync_idx(sce_nb) %--> nice replay
@@ -159,7 +159,7 @@ neurons_participating{6};
 %number of the SCE
 %nice preplay example: 169
 %nice replay example: 262
-sce_nb = 739;
+sce_nb = 18;
 
 %temporary generate times and speed for select input inverval
 time_choice = session_vars{1}.Behavior_split{4}.resampled.time;
@@ -175,7 +175,7 @@ st_evt_sort = sync_idx(sce_nb);
 % st_evt_sort = 11511;
 end_evt_sort = st_evt_sort+15;
 
-plot_range = [1500, 500];
+plot_range = [500, 1500];
 
 %start idx (absolute)
 st_idx =st_evt_sort-plot_range(1);
@@ -267,7 +267,7 @@ ylabel('Neuron #');
 colormap(gca,'jet')
 hold off
 
-% Correlate SCE activation onset time with median (try mean)
+%% Correlate SCE activation onset time with median (try mean)
 
 %median normalized position onset across laps (run epochs)
 median_run_seq_onset

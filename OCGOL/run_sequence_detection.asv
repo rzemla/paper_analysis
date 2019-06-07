@@ -1,5 +1,26 @@
 %% RUN sequence detection assembly
 
+%% Load in animal data
+%lab workstation
+%input directories to matching function
+%path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B'};
+path_dir = {'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+%cross session directory
+%crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
+
+%load place cell variables for each session
+%get mat directories in each output folder
+for ii=1:size(path_dir,2)
+    %get matfile names for each session
+    matfiles{ii} = dir([path_dir{ii},'\output','\*.mat']);
+end
+%load in place cell variables (and others later)
+for ii = 1:size(path_dir,2)
+    %add event variables
+    session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
+        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap',...
+        'Imaging_split', 'Imaging');
+end
 
 %% Input data
 %try this on a single lap for each trial and then aggregate
@@ -9,11 +30,7 @@
 %rows - frame time
 %pca_input =traces(st_idx:end_idx,input_neuron_idxs_sorted);
 
-%all active restricted neurons
-pca_input =traces;
-
 %A traces
-
 pca_input = session_vars{1, 1}.Imaging_split{1, 4}.trace_restricted;
 
 %make raw copy
@@ -28,6 +45,14 @@ time = session_vars{1, 1}.Behavior.resampled.time;
 speed = session_vars{1, 1}.Behavior.speed;
 %overwrite
 speed = speed(select_speed_idx);
+
+%% Load SCE detection data
+
+sce_detection = load(fullfile(path_dir{1},'sequence_analysis','SCE_detection_output.mat'));
+%name variables for local workspace
+SCE_ROIs = sce_detection.SCE_ROIs;
+sync_idx = sce_detection.sync_idx;
+sce_threshold = sce_detection.sce_threshold;
 
 %% Smooth calcium traces with gaussian with sigma = 5
 
@@ -79,12 +104,6 @@ diff_comp = diff(score(:,2));
 %same result if raw or smoothed
 corr_values = corr(pca_input, [0;diff_comp]);
 
-%plot histogram
-figure;
-hold on
-histogram(corr_values, 10)
-
-
 %% Otsu's method for correlation threshold calculation (done on entire population of active cells)
 
 %4 bins works well 10 - select only those with positive correlation?
@@ -94,6 +113,14 @@ T = otsuthresh(corr_counts);
 
 %neurons above threshold
 recurring_neuron_idx = find(corr_values > T);
+
+%% Plot histogram with labeled Otsu threshold
+figure;
+histogram(corr_values, 10,'Normalization','probability')
+hold on
+title('Red - otsu thresold')
+%plot otsu threshold
+plot([T T],[0 0.3],'r--')
 
 %% Plot dF/F of neurons above threshold
 
@@ -112,9 +139,6 @@ plot(speed,'r')
 
 %% See how many neurons in RUN sequence are present in given SCE
 
-sync_idx(1)
-SCE_ROIs{1}
-
 %for each sync event, find max
 for ss=1:size(SCE_ROIs,2)
 [neurons_participating{ss},~,~] = intersect(SCE_ROIs{ss},recurring_neuron_idx,'stable');
@@ -124,7 +148,9 @@ end
 seq_overlap = cell2mat(cellfun(@length,neurons_participating,'UniformOutput',false));
 
 %take the ones where there are at least 5 in RUN sequence
-SCE_run_seqs = find(seq_overlap >5);
+SCE_run_seqs = find(seq_overlap > sce_threshold);
+
+
 
 %% FOR LATER INTEGRATION - don't see much (any) difference with oPCA
 %{

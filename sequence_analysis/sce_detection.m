@@ -406,12 +406,22 @@ for ss=1:size(sync_idx,1)
     SCE_ROIs{ss} = find(sum(final_events(sync_idx(ss)-3:sync_idx(ss)+2,:),1) > 0);
 end
 
-%% Relevant variables for further replay detection script
+%% Save relevant variables in folder for future analysis
+%SCE_ROIs - ROIs associated with each frame SCE
+%sync_idx - indices of SCEs
+%sce_threshold - shuffle determined threshold for # of events needed to
+%sce_event_count - number of events within 200 ms window on each frame 
+%consider SCE statistically signifant
+%final_events - event onsets with filtered events according to criteria
+%above
 
-%ROIs associated with SCEs
-SCE_ROIs 
-%indices of SCEs
-sync_idx
+%make shared folder for sequence analysis
+cd(path_dir{1})
+mkdir('sequence_analysis')
+
+save(fullfile(path_dir{1},'sequence_analysis','SCE_detection_output.mat'),'SCE_ROIs','sync_idx',...
+    'sce_threshold','sce_event_count','final_events');
+
 
 %% Extract sync intervals, neurons involved, and plot
 
