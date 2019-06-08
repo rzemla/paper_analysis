@@ -3,7 +3,7 @@
 %indices of recurring neurons
 recurring_neuron_idx
 
-onset_input = session_vars{1, 1}.Imaging_split{1, 4}.trace_restricted;
+onset_input = session_vars{1}.Imaging_split{1, 4}.trace_restricted;
 
 %make raw copy
 pca_input_raw = onset_input;
