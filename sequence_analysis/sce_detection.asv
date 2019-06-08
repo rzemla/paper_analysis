@@ -27,16 +27,10 @@ end
 %input_data = traces;
 
 %run sequence neurons from run_sequence_detection_script
-%recurring_neuron_idx;
+recurring_neuron_idx;
 
 % all A laps (calcium trace - time x ROI)
 input_data = session_vars{1}.Imaging_split{4}.trace_restricted;
-%all id'd + selected neurons 
-input_data_all = input_data;
-
-%select only run sequence neurons in input data
-%input_data = input_data(:,recurring_neuron_idx);
-
 %normalized position
 position_norm = session_vars{1}.Behavior_split{4}.resampled.position_norm;
 %run epoch binary

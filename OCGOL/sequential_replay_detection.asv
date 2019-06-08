@@ -163,7 +163,7 @@ neurons_participating{6};
 %nice preplay example: 169
 %nice replay example: 262
 sce_nbs =[4 18 54 73 83 93 103 118 131 154 174 191 203];
-sce_nb = 203;
+sce_nb = 174;
 
 %temporary generate times and speed for select input inverval
 time_choice = session_vars{1}.Behavior_split{4}.resampled.time;
@@ -179,7 +179,7 @@ st_evt_sort = sync_idx(sce_nb);
 % st_evt_sort = 11511;
 end_evt_sort = st_evt_sort+15;
 
-plot_range = [1700, 700];
+plot_range = [700, 1500];
 
 %start idx (absolute)
 st_idx =st_evt_sort-plot_range(1);

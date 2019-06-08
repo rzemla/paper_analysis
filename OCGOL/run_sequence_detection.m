@@ -47,12 +47,13 @@ speed = session_vars{1, 1}.Behavior.speed;
 speed = speed(select_speed_idx);
 
 %% Load SCE detection data
-
+if 1
 sce_detection = load(fullfile(path_dir{1},'sequence_analysis','SCE_detection_output.mat'));
 %name variables for local workspace
 SCE_ROIs = sce_detection.SCE_ROIs;
 sync_idx = sce_detection.sync_idx;
 sce_threshold = sce_detection.sce_threshold;
+end
 
 %% Smooth calcium traces with gaussian with sigma = 5
 
@@ -135,6 +136,80 @@ subplot(2,1,2)
 hold on
 xlim([1 size(speed,1)])
 plot(speed,'r')
+
+%% Insert Run sequence detection script here - return order vector 
+
+%create sort vector
+recurring_neuron_idx_sort; %import from cell activate RUN sort
+remaining_neurons = setdiff(1:size(pca_input_raw,2),recurring_neuron_idx_sort');
+%sort vector
+sort_vector = [recurring_neuron_idx_sort', remaining_neurons];
+
+
+%% Plot dF/F of neurons above threshold and show SCE for all events
+
+figure;
+subplot(4,1,1)
+hold on
+xlim([1 size(speed,1)])
+title('Position')
+ylabel('Normalized position');
+plot(position_norm,'k')
+
+subplot(4,1,2)
+hold on
+xlim([1 size(speed,1)])
+ylim([-10 30])
+title('Speed')
+ylabel('[cm/s]');
+plot(speed,'k')
+
+%lap start
+%plot([lap_on_off(:,1), lap_on_off(:,1)] , [-10 ,30],'r','LineStyle','-')
+%lap end
+%plot([lap_on_off(:,2), lap_on_off(:,2)] , [-10 ,30],'r','LineStyle','-')
+
+subplot(4,1,3)
+%imagesc(pca_input_raw(:,sort_vector)')
+imagesc(pca_input_raw(:,recurring_neuron_idx_sort)')
+hold on
+ylabel('Neuron #');
+xlim([1 size(speed,1)])
+title('RUN sequence identified neurons')
+caxis([0 0.7]);
+colormap('hot');
+%start
+plot([lap_on_off(:,1), lap_on_off(:,1)] , [1 ,size(idx_med_onset,2)],'r','LineStyle','-')
+%end
+plot([lap_on_off(:,2), lap_on_off(:,2)] , [1 ,size(idx_med_onset,2)],'r','LineStyle','-')
+
+%select SCE indices
+sce_nbs =[4 18 54 73 83 93 103 118 131 154 174 191 203];
+
+for ss=1:size(sce_nbs,2)
+    sce_nb = sce_nbs(ss);
+    
+    %plot selected sync events - plot start of 200ms interval
+    plot([sync_idx(sce_nb )-3 sync_idx(sce_nb)-3],[1 size(idx_med_onset,2)],'w--');
+    %plot([sync_idx(sce_nb )+3 sync_idx(sce_nb)+3],[1 size(idx_med_onset,2)],'w--');
+end
+
+%colorbar
+subplot(4,1,4)
+hold on
+title('Calcium onsets')
+xlim([1 size(speed,1)])
+ylim([0 40])
+ylabel('Synchronous event count')
+area(sce_event_count,'FaceColor', 'k', 'EdgeColor','k')
+%minimum cell involvement line
+p1 = plot([1 size(thres_traces,1)],[min_cell_nb min_cell_nb],'r--');
+%threshold determined by shuffle
+p2 = plot([1 size(thres_traces,1)],[sce_threshold sce_threshold],'b--');
+legend([p1 p2],'5 cells','Temporal shuffle threshold')
+
+
+
 
 
 %% See how many neurons in RUN sequence are present in given SCE

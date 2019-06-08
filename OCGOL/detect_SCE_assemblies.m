@@ -68,7 +68,7 @@ boxplot(avg_sil_values)
 %sort SCEs according to clusters
 
 %sub-cluster order
-cluster_sizes = histcounts(cluster_assign{I_sil}{100},0.5:1:11.5);
+cluster_sizes = histcounts(cluster_assign{I_sil}{100},0.5:1:(I_sil+1+0.5));
 %sort in descending order
 [~,cluster_sort_idx] = sort(cluster_sizes,'descend');
 
@@ -82,6 +82,19 @@ for cc=cluster_sort_idx
 end
 figure;
 imagesc(assembly_mat(:,SCE_cluster_sort))
+
+%% Covariance matrix of cluster-sorted SCE
+
+cov_asm_clusSort = cov(assembly_mat(:,SCE_cluster_sort));
+cov_asm_clusSort = corrcoef(assembly_mat(:,SCE_cluster_sort));
+figure;
+imagesc(cov_asm_clusSort);
+hold on;
+xlabel('SCE');
+ylabel('SCE');
+colormap('jet')
+colorbar
+
 
 %% Now 
 

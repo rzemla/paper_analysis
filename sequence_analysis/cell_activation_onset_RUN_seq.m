@@ -1,7 +1,7 @@
 %% Cell activation onset for detected RUN sequences (Vilette Neuron 2015)
 
 %indices of recurring neurons
-recurring_neuron_idx
+recurring_neuron_idx;
 
 onset_input = session_vars{1}.Imaging_split{1, 4}.trace_restricted;
 
@@ -86,18 +86,26 @@ figure
 %first 20
 for rr=1:20
     
-    subplot(2,1,1)
+    subplot(3,1,1)
     hold on
     title('Original calcium trace and Gaussian smoothed');
     plot(traces(:,rr),'k');
     plot(run_seq_traces(:,rr),'r');
     hold off
-    subplot(2,1,2)
+    subplot(3,1,2)
     hold on
     title('first derivative');
     plot(deriv_traces(:,rr),'b');
     
-    pause(0.05)
+    %position and marker end
+    subplot(3,1,3)
+    %start
+    stem(lap_on_off(:,1), ones(1,size(lap_on_off,1)),'g')
+    %end
+    stem(lap_on_off(:,2), ones(1,size(lap_on_off,1)),'r')
+    
+    pause
+    %pause(0.05)
     clf
 end
 
@@ -105,10 +113,18 @@ end
 %% Plot according to median activation sequence
 [val_temp,idx_med_onset] = sort(median_run_seq_onset,'ascend');
 
+%translate to absolute ROI indiex
+recurring_neuron_idx_sort = recurring_neuron_idx(idx_med_onset);
+
 figure;
 imagesc(traces(:,idx_med_onset)');
 hold on;
 colormap('jet')
 caxis([0 1.5])
+%plot start and end of laps
+%start
+stem(lap_on_off(:,1), size(idx_med_onset,2)*ones(1,size(lap_on_off,1)),'r')
+%end
+stem(lap_on_off(:,2), size(idx_med_onset,2)*ones(1,size(lap_on_off,1)),'r')
 
 
