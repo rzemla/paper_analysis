@@ -153,6 +153,8 @@ for rr=1:size(pks,2)
 end
 toc;
 
+%[x{rr}{peak_nb},y{rr}{peak_nb},z{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}(2:end)', ex_rate_map_sm(loc_range{rr}{peak_nb}(2:end),rr),'gauss1');
+
 %% Plot - split into 2 subplots with smoothed rate and non-smoothed rate
 %skip for now - add as option later for display
 if 1
@@ -229,8 +231,8 @@ if 1
         cutoff_line = refline(0,0.1);
         cutoff_line.Color = [0.5 0.5 0.5];
         cutoff_line.LineStyle = '--';
-        pause
-        clf
+        %pause
+        %clf
     end
 end
 
@@ -239,6 +241,9 @@ end
 %of the fitted curve is 
 %RESUME HERE
 count_nb = 0;
+%how many bins to extend on each end when trying to re-adjust Gaussian fit
+adjust_width = 4;
+
 for rr = 1:size(pks,2) %SI_tuned_ROIs%1:100
     if ~isempty(pks{rr})
         %for each id'd peak
@@ -246,14 +251,15 @@ for rr = 1:size(pks,2) %SI_tuned_ROIs%1:100
             if max(diff(gauss_fit{rr}{peak_nb})) < 0.001
                 count_nb = count_nb+1;
                 disp(rr)
+                disp(peak_nb);
                 %re-fit Gaussian using narrowed range
-                gauss_extend = 3;
+                gauss_extend = 15;
                 %same code as above with the width of peak narrow by 2 each end
-                adjust_width = 0;
+                disp('extended')
                 %x, y input
                 %for each local maximum
                 %original width for input to fit
-                loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-((w{rr}(peak_nb)-adjust_width)./2)):round(lc{rr}(peak_nb)+((w{rr}(peak_nb)-adjust_width)./2))];
+                loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-((w{rr}(peak_nb))./2)+adjust_width):round(lc{rr}(peak_nb)+((w{rr}(peak_nb)+adjust_width)./2)+adjust_width)];
                 %loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-(w{rr}(peak_nb)):round(lc{rr}(peak_nb)+(w{rr}(peak_nb))))];
                 curve_range{rr}{peak_nb} = ex_rate_map_sm(loc_range{rr}{peak_nb},rr);
                 
@@ -799,8 +805,8 @@ for rr =SI_tuned_ROIs%1:100
         stem(placeField.edge{rr}(pl,:),[0.5 0.5],'*c')
     end
     
-    pause;
-    clf;
+    %pause;
+    %clf;
 end
 end
 

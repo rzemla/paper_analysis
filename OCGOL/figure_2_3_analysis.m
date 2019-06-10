@@ -77,11 +77,10 @@ options.gSigma = 3;
 %for each session
 for ss=1:size(session_vars,2)
     %for ii =[4,5] %all A or B 
-    for ii =[2 ] %only correct A or B
+    for ii =[1 2 ] %only correct A or B
         %works for 1 (A) laps
         %373 A trial not merged
         %449 - third field seems not caught
-        %error with 2 (B) laps
         options.place_struct_nb = ii;
         [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
     end
