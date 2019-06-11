@@ -92,19 +92,13 @@ options.selectSes = [1 2];
 %% Plot spatial tuning curves according to transient rate 
 %normalized to each neuron across 
 
-options.tuning_criterion = 'si'; %si or ts
-%AandB, AorB, onlyA, onlyB, neither all
-%all won't work b/c no defined fields to sort by
-options.trialTuning = 'onlyB';
+options.tuning_criterion = 'ts'; %si or ts
 options.selectSes = [1 2];
 %sort according to which trial 1 2 4 5
 options.sortTrial = 2;
 plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options)
 
 %% PV and TC correlation matrices for each class of tuned neurons
-
-
-%% Centroid distribution across lap for A tuned and B tuned neurons
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options

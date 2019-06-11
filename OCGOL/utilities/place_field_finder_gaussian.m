@@ -148,6 +148,13 @@ for rr=1:size(pks,2)
             gauss_fwhm{rr}(peak_nb) = round(2*sqrt(2*log(2))*f{rr}{peak_nb}.c1);
             gauss_fit_bin_range{rr}{peak_nb} = [loc_range{rr}{peak_nb}(1)-gauss_extend:loc_range{rr}{peak_nb}(end)+gauss_extend];
         end
+    else %fill with empty values
+        loc_range{rr} = [];
+        curve_range{rr} = [];
+        
+        f{rr} = []; gof{rr} = []; output{rr} = [];
+        gauss_fit{rr} = [];
+        gauss_fwhm{rr} = [];
 
     end
 end
@@ -157,7 +164,7 @@ toc;
 
 %% Plot - split into 2 subplots with smoothed rate and non-smoothed rate
 %skip for now - add as option later for display
-if 1
+if 0
     figure;
     for rr =618 %SI_tuned_ROIs%1:100
         subplot(2,1,1)
@@ -745,7 +752,7 @@ Place_cell{place_struct_nb}.Tuning_Specificity.placeField.width = placeField.wid
 
 
 %% Plot final values
-if 1
+if 0
 figure;
 for rr =SI_tuned_ROIs%1:100
     
