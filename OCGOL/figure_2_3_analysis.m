@@ -45,6 +45,25 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 %returns struct of structs
 [tunedLogical] = defineTunedLogicals(session_vars,options);
 
+%% Plot fraction of each neuron tuned 
+
+tuned_si(1) = size(find(tunedLogical.si.onlyA_tuned ==1),2);
+tuned_si(2) = size(find(tunedLogical.si.onlyB_tuned ==1),2);
+tuned_si(3) = size(find(tunedLogical.si.AandB_tuned ==1),2);
+tuned_si(4) = size(find(tunedLogical.si.neither ==1),2); 
+
+fracTuned_si = tuned_si/sum(tuned_si);
+
+figure
+p = pie(fracTuned_si,{['A ', num2str(round(100*fracTuned_si(1))), '%'],...
+                        ['B ', num2str(round(100*fracTuned_si(2))), '%'],...
+                        ['A&B ', num2str(round(100*fracTuned_si(3))), '%'],...
+                        ['     Neither ', num2str(round(100*fracTuned_si(4))), '%']});
+hold on
+title('Percentage of active neurons tuned');
+colormap([0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5])
+
+
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options
 %tuned in both sessions by SI score
@@ -89,23 +108,6 @@ end
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
 
-%% Plot fraction of each neuron tuned 
-
-tuned_si(1) = size(find(tunedLogical.si.onlyA_tuned ==1),2);
-tuned_si(2) = size(find(tunedLogical.si.onlyB_tuned ==1),2);
-tuned_si(3) = size(find(tunedLogical.si.AandB_tuned ==1),2);
-tuned_si(4) = size(find(tunedLogical.si.neither ==1),2); 
-
-fracTuned_si = tuned_si/sum(tuned_si);
-
-figure
-p = pie(fracTuned_si,{['A ', num2str(round(100*fracTuned_si(1))), '%'],...
-                        ['B ', num2str(round(100*fracTuned_si(2))), '%'],...
-                        ['A&B ', num2str(round(100*fracTuned_si(3))), '%'],...
-                        ['     Neither ', num2str(round(100*fracTuned_si(4))), '%']});
-hold on
-title('Percentage of active neurons tuned');
-colormap([0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5])
 
 %% Get percentage correct in each trial type and
 
