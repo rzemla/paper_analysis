@@ -17,7 +17,8 @@ for rr=1:size(event_map,2)
             field_event_rates{rr}(pp) = sum(event_map(place_bins{rr}{pp},rr))./sum(occupancy(place_bins{rr}{pp}));
         end
     else
-        
+        %set to empty to prevent clipping of vector
+        field_event_rates{rr} = [];
     end
 end
 

@@ -89,7 +89,7 @@ options.selectSes = [1 2];
 
 [field_event_rates,pf_vector] = transient_rate_in_field_single_ses(session_vars,options);
 
-%% Plot spatial tuning curves according to transient rate 
+%% Plot spatial tuning curves according to transient rate and return max bin position (split into 2 fxn later)
 %normalized to each neuron across 
 
 options.tuning_criterion = 'si'; %si or ts
@@ -99,12 +99,15 @@ options.trialTuning = 'onlyB';
 options.selectSes = [1 2];
 %sort according to which trial 1 2 4 5
 options.sortTrial = 2;
-plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options)
+[max_bin_rate] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
 
 %% PV and TC correlation matrices for each class of tuned neurons
 
 
 %% Centroid distribution across lap for A tuned and B tuned neurons
+
+centroid_dist(field_event_rates, max_bin_rate,options)
+
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options
@@ -119,8 +122,6 @@ options.tuning_criterion = 'si'; %si or ts
 plot_STC_OCGOL_singleSes(session_vars,tunedLogical,options)
 
 
-
-
 %% Get percentage correct in each trial type and
 
 trialOrder = session_vars{1}.Behavior.performance.trialOrder;
@@ -132,7 +133,8 @@ fracB_corr = size(find(trialOrder == 3),1) / size(find(trialOrder == 3 | trialOr
 
 
 %% Show outlines of selected and discarded neurons over FOV
-
+%only 1 session
+ii=1;
 %get idx's of selected and rejected ROIs
 selectedROI_idx = find(removeROI{ii}.compSelect == 1)';
 rejectedROI_idx = find(removeROI{ii}.compSelect == 0)';

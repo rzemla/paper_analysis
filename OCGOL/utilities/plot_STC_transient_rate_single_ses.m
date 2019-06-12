@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_STC_transient_rate_single_ses(animal_data, tunedLogical,field_event_rates, pf_vector,options)
+function [bins] = plot_STC_transient_rate_single_ses(animal_data, tunedLogical,field_event_rates, pf_vector,options)
 
 %% Import variables
 

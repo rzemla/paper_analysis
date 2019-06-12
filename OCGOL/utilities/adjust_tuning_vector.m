@@ -24,27 +24,35 @@ end
 %for each ROI
 for rr=1:size(placeField_edges,2)
     %for each place field
-    for pp=1:size(placeField_edges{rr},1)
-        if ~isempty(placeField_edges{rr}) %if not empty
-            %check which vectors fall into the place field bin range
-            %if place bins split at lap edge
-            if placeField_edges{rr}(pp,1) < placeField_edges{rr}(pp,2)
-                pf_event_keep{rr}{pp} =  bins{rr} >= placeField_edges{rr}(pp,1) & bins{rr} <=placeField_edges{rr}(pp,2);
-            else
-                %disp(rr)
-                pf_event_keep{rr}{pp} =  bins{rr} >= placeField_edges{rr}(pp,1) & bins{rr} <= 100 | ...
-                bins{rr} >= 1 & bins{rr} <= placeField_edges{rr}(pp,2);
+    %if at least 1 field detected
+    if size(placeField_edges{rr},1) ~= 0
+        
+        for pp=1:size(placeField_edges{rr},1)
+            if ~isempty(placeField_edges{rr}) %if not empty
+                %check which vectors fall into the place field bin range
+                %if place bins split at lap edge
+                if placeField_edges{rr}(pp,1) < placeField_edges{rr}(pp,2)
+                    pf_event_keep{rr}{pp} =  bins{rr} >= placeField_edges{rr}(pp,1) & bins{rr} <=placeField_edges{rr}(pp,2);
+                else
+                    %disp(rr)
+                    pf_event_keep{rr}{pp} =  bins{rr} >= placeField_edges{rr}(pp,1) & bins{rr} <= 100 | ...
+                        bins{rr} >= 1 & bins{rr} <= placeField_edges{rr}(pp,2);
+                    
+                end
+                
+                %updated vector with adjusted magnitude
+                pf_unit_vector_kp{rr}(pp) = sum(tun_vectors{rr}(pf_event_keep{rr}{pp}))/abs(sum(tun_vectors{rr}(pf_event_keep{rr}{pp})));
+                pf_mag_factor_kp{rr}(pp) = abs(sum(tun_vectors{rr}(pf_event_keep{rr}{pp})))/sum(abs(tun_vectors{rr}(pf_event_keep{rr}{pp})));
+                %update vector
+                pf_vector{rr}(pp) = pf_unit_vector_kp{rr}(pp)*pf_mag_factor_kp{rr}(pp);
                 
             end
-            
-            %updated vector with adjusted magnitude
-            pf_unit_vector_kp{rr}(pp) = sum(tun_vectors{rr}(pf_event_keep{rr}{pp}))/abs(sum(tun_vectors{rr}(pf_event_keep{rr}{pp})));
-            pf_mag_factor_kp{rr}(pp) = abs(sum(tun_vectors{rr}(pf_event_keep{rr}{pp})))/sum(abs(tun_vectors{rr}(pf_event_keep{rr}{pp})));
-            %update vector
-            pf_vector{rr}(pp) = pf_unit_vector_kp{rr}(pp)*pf_mag_factor_kp{rr}(pp);
         end
-        
+    else
+        %set empty to prevent cutting vector short on output
+        pf_vector{rr} = [];
     end
+    
 end
 
 %% Plot example - checked and works as expected
