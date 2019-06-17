@@ -45,6 +45,10 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 %returns struct of structs
 [tunedLogical] = defineTunedLogicals(session_vars,options);
 
+%% Add a filter for logical selection of A/B selective neurons here (Figure 2)
+
+%% Add a filter for logical selection of A&B remapping neurons here (Figure 3)
+
 %% Plot fraction of each neuron tuned 
 
 %plot pie chart for each and return counts
@@ -52,10 +56,9 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 
 %export for cumulative analysis
 %make cumul_analysis folder
-
 mkdir(path_dir{1},'cumul_analysis')
-
-save(fullfile(path_dir,'cumul_analysis','frac_tuned.mat'))
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','frac_tuned.mat'),'tuned_fractions');
 
 %% Find  place fields
 %use rate map - number of event onsets/ occupancy across all laps
@@ -81,6 +84,12 @@ end
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
 
+%% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
+ 
+session_vars{1, 1}.Events_split{1, 1}.Run.properties.AUC
+session_vars{1, 1}.Imaging_split{1, 1}.time_restricted
+
+%% Number of place fields for each sub-class o
 
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
@@ -116,7 +125,10 @@ PV_TC_correlation_single_ses(session_vars,tunedLogical,options)
 %% Centroid distribution across lap for A tuned and B tuned neurons
 %use tuning spec criterion for this
 options.tuning_criterion = 'ts'; %si or ts
-centroid_dist(tunedLogical, max_bin_rate,options)
+[centroid_ct] = centroid_dist(tunedLogical, max_bin_rate,options);
+
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
 
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
@@ -164,14 +176,14 @@ colormap(gca,grayMap)
 for ROI = selectedROI_idx
     %plot componenet outline
     plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'g', 'LineWidth',1);
-    pause(0.01)
+    %pause(0.01)
 end
 
 %plot all selected ROIs as green
 for ROI = rejectedROI_idx
     %plot componenet outline
     plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'r', 'LineWidth',1);
-    pause(0.01)
+    %pause(0.01)
 end
 
 

@@ -84,6 +84,15 @@ end
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
 
+%% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
+ 
+session_vars{1, 1}.Events_split{1, 1}.Run.properties.AUC
+session_vars{1, 1}.Imaging_split{1, 1}.time_restricted
+
+%% Number of place fields and widths for each sub-class of neurons
+
+options.tuning_criterion = 'si'; %si or ts
+placeField_properties(session_vars, tunedLogical,options)
 
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
