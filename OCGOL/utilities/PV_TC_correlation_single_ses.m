@@ -53,7 +53,7 @@ for ss =1:size(session_vars,2)
 end
 
 
-%% Normalize eahc STC ROI across both trials in non-norm STCs
+%% Normalize each STC ROI across both trials in non-norm STCs
 for ss =1:size(session_vars,2)
         %get max value for each ROIs between trials
         max_STC_across_trials{ss} = max([A_STC_nn{ss};B_STC_nn{ss}]);
@@ -104,6 +104,17 @@ figure;
 plot(diag(TCcorr.all(I_sort_tc,I_sort_tc)),'b')
 plot(diag(TCcorr_sort),'r')
 
+
+%{
+%% Do PV and TC correlation of these STCs - export this out of here
+
+PVcorr = corr(A_STC_nn{session_nb}(:,tuning_selection{session_nb})',B_STC_nn{session_nb}(:,tuning_selection{session_nb})');
+diagPV = diag(PVcorr);
+
+figure
+plot(diagPV);
+
+%}
 
 end
 

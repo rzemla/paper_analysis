@@ -218,16 +218,38 @@ c.Location = 'west';
 
 %% Create STCs for cells that are tuned in neither set of trials
 
+%STCs for non-tuned neurons in either trial
+%normalized for each trial for each cell
+A_neither_norm_select = A_STC_tn{session_nb}(:,neither_tuned{session_nb});
+B_neither_norm_select = B_STC_tn{session_nb}(:,neither_tuned{session_nb});
 
+%non-normalized across trials for each neuron
+A_neither_non_norm_select = A_STC_nn{session_nb}(:,neither_tuned{session_nb});
+B_neither_non_norm_select = B_STC_nn{session_nb}(:,neither_tuned{session_nb});
 
-%% Do PV and TC correlation of these STCs - export this out of here
+%plot neither tuned neurons in respective trials 
+figure('Position', [2030,330,740,420]);
+subplot(1,3,1)
+imagesc(A_neither_norm_select')
+hold on
+title(['A trials - not tuned'])
+caxis([0 1])
+colormap('jet')
 
-PVcorr = corr(A_STC_nn{session_nb}(:,tuning_selection{session_nb})',B_STC_nn{session_nb}(:,tuning_selection{session_nb})');
-diagPV = diag(PVcorr);
+subplot(1,3,2)
+imagesc(B_neither_norm_select')
+hold on
+title(['B trials - not tuned'])
+caxis([0 1])
+colormap('jet')
 
-figure
-plot(diagPV);
-
+subplot(1,3,3)
+axC = gca;
+axC.Visible = 'off';
+caxis(axC,[0 1])
+colormap(axC,'jet')
+c = colorbar(axC);
+c.Location = 'west';
 
 %% Generate match list combined with tuning criteria
 %global indices to use based on trial tuning criteria

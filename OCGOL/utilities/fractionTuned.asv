@@ -1,4 +1,4 @@
-function [tuned_fractions] = fractionTuned(tunedLogical)
+function [tuned_count, fracTuned_si, fracTuned_ts] = fractionTuned(tunedLogical)
 
 %% Define # of tuned neurons in each catergory
 
@@ -48,8 +48,8 @@ colormap([0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5])
 tuned_fractions.tuned_count = tuned_count;
 %fraction tuned by SI criterion
 tuned_fractions.fracTuned_si = fracTuned_si;
-%fraction tuned by TS criterion
-tuned_fractions.fracTuned_ts = fracTuned_ts;
+
+tuned_fractions.
 
 
 end
