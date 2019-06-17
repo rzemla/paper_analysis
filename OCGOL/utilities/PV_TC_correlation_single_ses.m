@@ -81,7 +81,7 @@ nanmean(diag(TCcorr.Bonly))
 nanmean(diag(TCcorr.AB))
 
 %sort TC correlation by ROI
-diagTC = diag(TCcorr);
+diagTC = diag(TCcorr.all);
 
 [sort_tc_val, I_sort_tc] = sort(diagTC,'ascend');
 
@@ -95,14 +95,15 @@ hold on
 title('PV correlation - all neurons')
 hold off
 subplot(2,1,2)
-imagesc(TCcorr(I_sort_tc,I_sort_tc))
+imagesc(TCcorr.all(I_sort_tc,I_sort_tc))
 hold on
 title('TC correlation - all neurons')
 
 figure;
 %check that sort worked as expected (same result)
-plot(diag(TCcorr(I_sort_tc,I_sort_tc)))
+plot(diag(TCcorr.all(I_sort_tc,I_sort_tc)),'b')
 plot(diag(TCcorr_sort),'r')
+
 
 end
 

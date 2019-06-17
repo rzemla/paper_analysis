@@ -95,7 +95,7 @@ options.selectSes = [1 2];
 options.tuning_criterion = 'si'; %si or ts
 %AandB, AorB, onlyA, onlyB, neither all
 %all won't work b/c no defined fields to sort by
-options.trialTuning = 'AandB';
+options.trialTuning = 'onlyB';
 options.selectSes = [1 2];
 %sort according to which trial 1 2 4 5
 options.sortTrial = 2;

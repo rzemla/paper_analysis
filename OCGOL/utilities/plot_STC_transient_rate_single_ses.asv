@@ -29,7 +29,7 @@ switch options.tuning_criterion
             neither_tuned{ss} = ~((onlyA_tuned{ss} | onlyB_tuned{ss}) | AandB_tuned{ss});
             
         end
-    case 'ts' %spatial information
+   case 'ts' %spatial information 
         for ss =1:size(animal_data,2)
             %spatial information criterion
             Atuned{ss} = tunedLogical(ss).ts.Atuned;
@@ -42,8 +42,6 @@ switch options.tuning_criterion
             AxorB_tuned{ss} =  AorB_tuned{ss} & ~AandB_tuned{ss};
             
             all_neurons{ss} = true(size(Atuned{ss}));
-            %tuned to neither environment - logical
-            neither_tuned{ss} = ~((onlyA_tuned{ss} | onlyB_tuned{ss}) | AandB_tuned{ss});
         end
 end
 
