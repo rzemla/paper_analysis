@@ -74,6 +74,67 @@ colormap([0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5])
 
 %% Centroid distribution
 
+%read relevant data
+for ee=1:size(path_dir,2)
+    load_data_path_cent{ee} = fullfile(path_dir{ee},'cumul_analysis','centroid.mat');
+    centroid_data{ee} = load(string(load_data_path_cent{ee}));
+end
+
+%create matrices with centroid counts for each subclass of tuned neuron
+for ee=1:size(path_dir,2)
+    centroid_mat_A(ee,:) = centroid_data{ee}.centroid_ct.A;
+    centroid_mat_B(ee,:) = centroid_data{ee}.centroid_ct.B;
+end
+
+%plot this an empirical distribution curve
+figure;
+subplot(2,1,1)
+hold on
+ylim([0 0.03])
+histogram('BinEdges',0.5:1:100.5,'BinCounts',sum(centroid_mat_A,1),'Normalization', 'probability')
+subplot(2,1,2)
+hold on
+ylim([0 0.03])
+histogram('BinEdges',0.5:1:100.5,'BinCounts',sum(centroid_mat_B,1),'Normalization', 'probability')
+
+%plot in polar space
+figure;
+pax1 = subplot(1,2,1,polaraxes);
+hold on
+title('A selective')
+pax1.ThetaAxisUnits = 'degrees';
+pax1.RAxisLocation = 45;
+pax1.RLim = [0 0.04];
+pax1.RColor = 'r';
+pax1.FontSize = 14;
+polarhistogram(pax1,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', sum(centroid_mat_A,1),'Normalization','probability',...
+    'FaceColor','blue')
+
+pax2 = subplot(1,2,2,polaraxes);
+hold on
+title('B selective')
+pax2.ThetaAxisUnits = 'degrees';
+pax2.RAxisLocation = 45;
+pax2.RLim = [0 0.04];
+pax2.RColor = 'r';
+pax2.FontSize = 14;
+polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', sum(centroid_mat_B,1),'Normalization', 'probability',...
+    'FaceColor','red')
+
+
+%empirical cdf
+figure;
+hold on
+ecdf((1:100),'Frequency',sum(centroid_mat_A,1)/sum(sum(centroid_mat_A,1)))
+ecdf((1:100),'Frequency',sum(centroid_mat_B,1)/sum(sum(centroid_mat_B,1)))
+
+% figure;
+% hold on
+% subplot(2,1,1)
+% plot(sum(centroid_mat_A,1),'b')
+% subplot(2,1,2)
+% plot(sum(centroid_mat_B,1),'r')
+
 
 %% PV/TC correlation
 

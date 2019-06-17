@@ -3,7 +3,7 @@
 %lab workstation
 %input directories to matching function
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'}; % field rate error
-path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
@@ -13,7 +13,7 @@ path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -44,6 +44,10 @@ end
 options.allCorrect = 1; %1  = A correct; 2 = B correct
 %returns struct of structs
 [tunedLogical] = defineTunedLogicals(session_vars,options);
+
+%% Add a filter for logical selection of A/B selective neurons here (Figure 2)
+
+%% Add a filter for logical selection of A&B remapping neurons here (Figure 3)
 
 %% Plot fraction of each neuron tuned 
 
@@ -115,7 +119,10 @@ PV_TC_correlation_single_ses(session_vars,tunedLogical,options)
 %% Centroid distribution across lap for A tuned and B tuned neurons
 %use tuning spec criterion for this
 options.tuning_criterion = 'ts'; %si or ts
-centroid_dist(tunedLogical, max_bin_rate,options)
+[centroid_ct] = centroid_dist(tunedLogical, max_bin_rate,options);
+
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
 
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
@@ -163,14 +170,14 @@ colormap(gca,grayMap)
 for ROI = selectedROI_idx
     %plot componenet outline
     plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'g', 'LineWidth',1);
-    pause(0.01)
+    %pause(0.01)
 end
 
 %plot all selected ROIs as green
 for ROI = rejectedROI_idx
     %plot componenet outline
     plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'r', 'LineWidth',1);
-    pause(0.01)
+    %pause(0.01)
 end
 
 

@@ -1,4 +1,4 @@
-function [centroid_ct] = centroid_dist(tunedLogical, max_bin_rate,options)
+function [outputArg1,outputArg2] = centroid_dist(tunedLogical, max_bin_rate,options)
 %distribution of max centroids across length of track (bin space)
 
 %was originally session cell with relevant variables - import from learning
