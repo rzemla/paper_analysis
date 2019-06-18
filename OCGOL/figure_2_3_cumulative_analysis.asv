@@ -41,26 +41,36 @@ total_neurons = sum(neuron_counts_si);
 total_neurons_ts = sum(neuron_counts_ts);
 
 %fractions of total for each animal
-frac_tuned_each = frac_mat_si./sum(frac_mat_si,2);
+frac_tuned_each.si = frac_mat_si./sum(frac_mat_si,2);
 %mean
-fract_tuned_each_mean = mean(frac_tuned_each,1);
+frac_tuned_each_mean.si = mean(frac_tuned_each.si,1);
 %std
-fract_tuned_each_std = std(frac_tuned_each,0,1);
+frac_tuned_each_std.si = std(frac_tuned_each.si,0,1);
 %sem
-fract_tuned_each_sem = fract_tuned_each_std./sqrt(size(frac_tuned_each,1));
- 
+frac_tuned_each_sem.si = frac_tuned_each_std.si./sqrt(size(frac_tuned_each.si,1));
 
-%fraction of all neurons tuned in each subgroup
+%fractions of total for each animal
+frac_tuned_each.ts = frac_mat_ts./sum(frac_mat_ts,2);
+%mean
+frac_tuned_each_mean.ts = mean(frac_tuned_each.ts,1);
+%std
+frac_tuned_each_std.ts = std(frac_tuned_each.ts,0,1);
+%sem
+frac_tuned_each_sem.ts = frac_tuned_each_std.ts./sqrt(size(frac_tuned_each.ts,1));
+
+%fraction of all neurons tuned in each subgroup (cumulative)
 frac_all_si = tuned_counts_si/total_neurons;
 frac_all_ts = tuned_counts_ts/total_neurons;
+
 %% Plot bar chart of fractions
 
 %plot bar
-figure;
+figure('Position',[2010 380 870 420]);
+subplot(1,2,1)
 hold on;
 title('Fraction tuned - S.I.');
 %bar the mean for each group
-b = bar(1:4,fract_tuned_each_mean,'FaceColor', 'flat');
+b = bar(1:4,frac_tuned_each_mean.si,'FaceColor', 'flat');
 pause(0.1)
 %plot the sem for each mean for each group
 for ib = 1:numel(b)
@@ -68,17 +78,39 @@ for ib = 1:numel(b)
     %of each distinct group
     xData = b(ib).XData + b(ib).XOffset;
     
-    errorbar(xData,grouped_norm_mean(:,ib)',grouped_norm_sem(:,ib),'k.')
+    errorbar(xData,frac_tuned_each_mean.si',frac_tuned_each_sem.si,'k.')
 end
 
-%set A group bars to blue
-b(1).CData(1:4,:) =  [0 0 1; [1 0 0]; [0 1 1]; [0.5 0.5 0.5];
-%set B group bars to red
-%b(2).CData(1:4,:) =  repmat([1 0 0],3,1);
+%set each bar to group color
+b(1).CData(1:4,:) =  [0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5];
 xticks([1 2 3 4]);
 xticklabels({'A','B','A&B', 'Neither'});
 ylabel('Fraction of neurons');
-%legend('A','B')
+ylim([0 0.5])
+yticks([0:0.1:0.5])
+
+subplot(1,2,2)
+hold on;
+title('Fraction tuned - T.S.');
+%bar the mean for each group
+b = bar(1:4,frac_tuned_each_mean.ts,'FaceColor', 'flat');
+pause(0.1)
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    xData = b(ib).XData + b(ib).XOffset;
+    
+    errorbar(xData,frac_tuned_each_mean.ts',frac_tuned_each_sem.ts,'k.')
+end
+
+%set each bar to group color
+b(1).CData(1:4,:) =  [0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5];
+xticks([1 2 3 4]);
+xticklabels({'A','B','A&B', 'Neither'});
+ylabel('Fraction of neurons');
+ylim([0 0.5])
+yticks([0:0.1:0.5])
 
 
 
@@ -125,6 +157,14 @@ for ee=1:size(path_dir,2)
     centroid_mat_B(ee,:) = centroid_data{ee}.centroid_ct.B;
 end
 
+%normalize to itself and get mean for A and B
+centroid_mat_A_norm = centroid_mat_A./sum(centroid_mat_A,2);
+centroid_mat_B_norm = centroid_mat_B./sum(centroid_mat_B,2);
+
+%take mean in each bin from each animal
+centroid_mat_A_norm_mean = mean(centroid_mat_A_norm,1);
+centroid_mat_B_norm_mean = mean(centroid_mat_B_norm,1);
+
 %plot this an empirical distribution curve
 figure;
 subplot(2,1,1)
@@ -136,7 +176,7 @@ hold on
 ylim([0 0.03])
 histogram('BinEdges',0.5:1:100.5,'BinCounts',sum(centroid_mat_B,1),'Normalization', 'probability')
 
-%plot in polar space
+%plot in polar space (cumulative)
 figure;
 pax1 = subplot(1,2,1,polaraxes);
 hold on
@@ -160,6 +200,30 @@ pax2.FontSize = 14;
 polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', sum(centroid_mat_B,1),'Normalization', 'probability',...
     'FaceColor','red')
 
+
+%% Polar plot mean
+figure;
+pax1 = subplot(1,2,1,polaraxes);
+hold on
+title('A selective')
+pax1.ThetaAxisUnits = 'degrees';
+pax1.RAxisLocation = 45;
+pax1.RLim = [0 0.04];
+pax1.RColor = 'r';
+pax1.FontSize = 14;
+polarhistogram(pax1,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', sum(centroid_mat_A,1),'Normalization','probability',...
+    'FaceColor','blue')
+
+pax2 = subplot(1,2,2,polaraxes);
+hold on
+title('B selective')
+pax2.ThetaAxisUnits = 'degrees';
+pax2.RAxisLocation = 45;
+pax2.RLim = [0 0.04];
+pax2.RColor = 'r';
+pax2.FontSize = 14;
+polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centro,'Normalization', 'probability',...
+    'FaceColor','red')
 
 %empirical cdf
 figure;

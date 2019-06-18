@@ -157,6 +157,14 @@ for ee=1:size(path_dir,2)
     centroid_mat_B(ee,:) = centroid_data{ee}.centroid_ct.B;
 end
 
+%normalize to itself and get mean for A and B
+centroid_mat_A_norm = centroid_mat_A./sum(centroid_mat_A,2);
+centroid_mat_B_norm = centroid_mat_B./sum(centroid_mat_B,2);
+
+%take mean in each bin from each animal
+centroid_mat_A_norm_mean = mean(centroid_mat_A_norm,1);
+centroid_mat_B_norm_mean = mean(centroid_mat_B_norm,1);
+
 %plot this an empirical distribution curve
 figure;
 subplot(2,1,1)
@@ -168,7 +176,7 @@ hold on
 ylim([0 0.03])
 histogram('BinEdges',0.5:1:100.5,'BinCounts',sum(centroid_mat_B,1),'Normalization', 'probability')
 
-%plot in polar space
+%plot in polar space (cumulative)
 figure;
 pax1 = subplot(1,2,1,polaraxes);
 hold on
@@ -192,6 +200,30 @@ pax2.FontSize = 14;
 polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', sum(centroid_mat_B,1),'Normalization', 'probability',...
     'FaceColor','red')
 
+
+%% Polar plot mean
+figure;
+pax1 = subplot(1,2,1,polaraxes);
+hold on
+title('A selective')
+pax1.ThetaAxisUnits = 'degrees';
+pax1.RAxisLocation = 45;
+pax1.RLim = [0 0.04];
+pax1.RColor = 'r';
+pax1.FontSize = 14;
+polarhistogram(pax1,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centroid_mat_A_norm_mean,'Normalization','probability',...
+    'FaceColor','blue')
+
+pax2 = subplot(1,2,2,polaraxes);
+hold on
+title('B selective')
+pax2.ThetaAxisUnits = 'degrees';
+pax2.RAxisLocation = 45;
+pax2.RLim = [0 0.04];
+pax2.RColor = 'r';
+pax2.FontSize = 14;
+polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centroid_mat_B_norm_mean,'Normalization', 'probability',...
+    'FaceColor','red')
 
 %empirical cdf
 figure;
