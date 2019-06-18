@@ -40,9 +40,80 @@ neuron_counts_ts = sum(frac_mat_ts,2);
 total_neurons = sum(neuron_counts_si);
 total_neurons_ts = sum(neuron_counts_ts);
 
-%fraction of all neurons tuned in each subgroup
+%fractions of total for each animal
+frac_tuned_each.si = frac_mat_si./sum(frac_mat_si,2);
+%mean
+frac_tuned_each_mean.si = mean(frac_tuned_each.si,1);
+%std
+frac_tuned_each_std.si = std(frac_tuned_each.si,0,1);
+%sem
+frac_tuned_each_sem.si = frac_tuned_each_std.si./sqrt(size(frac_tuned_each.si,1));
+
+%fractions of total for each animal
+frac_tuned_each.ts = frac_mat_ts./sum(frac_mat_ts,2);
+%mean
+frac_tuned_each_mean.ts = mean(frac_tuned_each.ts,1);
+%std
+frac_tuned_each_std.ts = std(frac_tuned_each.ts,0,1);
+%sem
+frac_tuned_each_sem.ts = frac_tuned_each_std.ts./sqrt(size(frac_tuned_each.ts,1));
+
+%fraction of all neurons tuned in each subgroup (cumulative)
 frac_all_si = tuned_counts_si/total_neurons;
 frac_all_ts = tuned_counts_ts/total_neurons;
+
+%% Plot bar chart of fractions
+
+%plot bar
+figure('Position',[2010 380 870 420]);
+subplot(1,2,1)
+hold on;
+title('Fraction tuned - S.I.');
+%bar the mean for each group
+b = bar(1:4,frac_tuned_each_mean.si,'FaceColor', 'flat');
+pause(0.1)
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    xData = b(ib).XData + b(ib).XOffset;
+    
+    errorbar(xData,frac_tuned_each_mean.si',frac_tuned_each_sem.si,'k.')
+end
+
+%set each bar to group color
+b(1).CData(1:4,:) =  [0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5];
+xticks([1 2 3 4]);
+xticklabels({'A','B','A&B', 'Neither'});
+ylabel('Fraction of neurons');
+ylim([0 0.5])
+yticks([0:0.1:0.5])
+
+subplot(1,2,2)
+hold on;
+title('Fraction tuned - T.S.');
+%bar the mean for each group
+b = bar(1:4,frac_tuned_each_mean.ts,'FaceColor', 'flat');
+pause(0.1)
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    xData = b(ib).XData + b(ib).XOffset;
+    
+    errorbar(xData,frac_tuned_each_mean.ts',frac_tuned_each_sem.ts,'k.')
+end
+
+%set each bar to group color
+b(1).CData(1:4,:) =  [0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5];
+xticks([1 2 3 4]);
+xticklabels({'A','B','A&B', 'Neither'});
+ylabel('Fraction of neurons');
+ylim([0 0.5])
+yticks([0:0.1:0.5])
+
+
+
 
 %% Plot pie chart for each type of tuning criterion
 
@@ -179,8 +250,7 @@ grouped_pf_counts = [sum(pf_count_mat_A,1)',sum(pf_count_mat_B,1)'];
 grouped_pf_counts_norm = [(sum(pf_count_mat_A,1)./sum(sum(pf_count_mat_A,1)))',...
             (sum(pf_count_mat_B,1)./sum(sum(pf_count_mat_B,1)))'];
         
-
-        
+      
 %Place field analysis plotting
 %plot bar
 figure;
