@@ -13,7 +13,7 @@
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -87,8 +87,8 @@ end
 %% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
 
 options.tuning_criterion = 'si'; %si or ts
-AUC_scatter(tunedLogical,session_vars,options)
-
+[total_AUC_min] = AUC_scatter(tunedLogical,session_vars,options);
+save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
 
 
 %% Number of place fields and widths for each sub-class of neurons

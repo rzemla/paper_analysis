@@ -139,9 +139,30 @@ colormap([0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5])
 
 
 %% AUC/min scatterplots of A vs B neurons for each animal 
+%read relevant data
+for ee=1:size(path_dir,2)
+    load_data_path_auc{ee} = fullfile(path_dir{ee},'cumul_analysis','auc.mat');
+    auc_data{ee} = load(string(load_data_path_auc{ee}));
+end
 
-
-
+%add colormap to this with cbrewer
+figure;
+hold on
+axis square
+xlim([0 10])
+ylim([0 10])
+xticks(0:2:10)
+yticks(0:2:10)
+%A selective
+for ee=1:size(path_dir,2)
+    scatter(mean(auc_data{ee}.total_AUC_min.A(1,:)),mean(auc_data{ee}.total_AUC_min.A(2,:)),'filled')
+end
+%B selective
+for ee=1:size(path_dir,2)
+    scatter(mean(auc_data{ee}.total_AUC_min.B(1,:)),mean(auc_data{ee}.total_AUC_min.B(2,:)),'filled')
+end
+%plot center line
+plot([0 10], [0 10],'Color',[0.5 0.5 0.5],'LineStyle', '--')
 
 %% Centroid distribution
 
