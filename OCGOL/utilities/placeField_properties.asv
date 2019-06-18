@@ -43,18 +43,52 @@ end
 %% Get counts of place field numbers for each sub-class
 
 %place centers of 
-centers_Aonly = session_vars{1}.Place_cell{1}.placeField.center(onlyA_tuned{1, 1});
+centers_Aonly = session_vars{1}.Place_cell{1}.placeField.center(onlyA_tuned{1});
+centers_Bonly = session_vars{1}.Place_cell{2}.placeField.center(onlyB_tuned{1});
 
 %get # of place fields for each neuron
 nb_fields_A = cellfun('size', centers_Aonly,1);
+nb_fields_B = cellfun('size', centers_Bonly,1);
 
 %count # of neurons with 1 2 or 3+ place fields
 for ii=1:3
-    field_count_A(ii) =find(nb_fields_A == ii) 
+    if ii < 3
+        field_count_A(ii) = size(find(nb_fields_A == ii),2);
+        field_count_B(ii) = size(find(nb_fields_B == ii),2);
+    elseif ii ==3
+        field_count_A(ii) = size(find(nb_fields_A >= ii),2);
+        field_count_B(ii) = size(find(nb_fields_B >= ii),2);
+    end
 end
 
 
-session_vars{1, 1}.Place_cell{1, 1}.placeField.width  
+%% Bar plot
+figure;
+hold on;
+title('Place field counts');
+xticks([1 2 3])
+xticklabels( {'1','2','3+'});
+bar([field_count_A',field_count_B'])
 
+%% Get width distributions here
+%conversion factor
+binToCm = 2;
+%100 bins -> each bin ~2 cm - get exact number in future
+width_Aonly = session_vars{1}.Place_cell{1}.placeField.width(onlyA_tuned{1});
+width_Bonly = session_vars{1}.Place_cell{2}.placeField.width(onlyB_tuned{1});
 
+%get cm widths cumulative and plot histogram
+width_cm_Aonly = cell2mat(width_Aonly)*binToCm;
+width_cm_Bonly = cell2mat(width_Bonly)*binToCm;
+
+%plot histograms
+figure;
+subplot(1,2,1)
+hold on
+histogram(width_cm_Aonly,0:5:70,'Normalization','pr)
+xlabel('Width [cm]')
+subplot(1,2,2)
+hold on
+histogram(width_cm_Bonly,0:5:70)
+xlabel('Width [cm]')
 end

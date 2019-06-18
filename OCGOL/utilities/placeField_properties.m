@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = placeField_properties(session_vars, tunedLogical,options)
+function [placeField_dist] = placeField_properties(session_vars, tunedLogical,options)
 
 %% Select trial tuned classes of neurons
 
@@ -62,9 +62,48 @@ for ii=1:3
 end
 
 
+%% Bar plot
+figure;
+hold on;
+title('Place field counts');
+xticks([1 2 3])
+xticklabels( {'1','2','3+'});
+bar([field_count_A',field_count_B'])
+
 %% Get width distributions here
+%conversion factor
+binToCm = 2;
+%100 bins -> each bin ~2 cm - get exact number in future
+width_Aonly = session_vars{1}.Place_cell{1}.placeField.width(onlyA_tuned{1});
+width_Bonly = session_vars{1}.Place_cell{2}.placeField.width(onlyB_tuned{1});
 
-session_vars{1, 1}.Place_cell{1, 1}.placeField.width  
+%get cm widths cumulative and plot histogram
+width_cm_Aonly = cell2mat(width_Aonly)*binToCm;
+width_cm_Bonly = cell2mat(width_Bonly)*binToCm;
 
+%plot histograms
+figure;
+subplot(1,2,1)
+hold on
+histogram(width_cm_Aonly,0:5:70,'Normalization','probability')
+xlabel('Width [cm]')
+ylabel('Normalized density')
+xlim([15 70]);
+ylim([0 0.4]);
+
+subplot(1,2,2)
+hold on
+histogram(width_cm_Bonly,0:5:70,'Normalization','probability')
+xlabel('Width [cm]')
+ylabel('Normalized density')
+xlim([15 70]);
+ylim([0 0.4]);
+
+%% Export stuct
+
+placeField_dist.width_cm_Aonly = width_cm_Aonly;
+placeField_dist.width_cm_Bonly = width_cm_Bonly;
+placeField_dist.field_count_A = field_count_A;
+placeField_dist.field_count_B = field_count_B;
 
 end

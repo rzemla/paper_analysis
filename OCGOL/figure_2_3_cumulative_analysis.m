@@ -138,5 +138,54 @@ ecdf((1:100),'Frequency',sum(centroid_mat_B,1)/sum(sum(centroid_mat_B,1)))
 
 %% PV/TC correlation
 
+%% Place field analysis (width and number for selective neurons
 
+%read relevant data
+for ee=1:size(path_dir,2)
+    load_data_path_pf{ee} = fullfile(path_dir{ee},'cumul_analysis','placeField_dist.mat');
+    placeField_data{ee} = load(string(load_data_path_pf{ee}));
+end
+
+%combine field counts for Asel and Bsel into 1 matrix
+%create matrices with centroid counts for each subclass of tuned neuron
+for ee=1:size(path_dir,2)
+    pf_count_mat_A(ee,:) = placeField_data{ee}.placeField_dist.field_count_A;
+    pf_count_mat_B(ee,:) = placeField_data{ee}.placeField_dist.field_count_B;
+end
+
+%normalize as fraction of neurons for each animal/exp for A-sel/B-sel
+pf_count_mat_A_norm = pf_count_mat_A./sum(pf_count_mat_A,2);
+pf_count_mat_B_norm = pf_count_mat_B./sum(pf_count_mat_B,2);
+
+%get means for each subclass
+mean_pf_norm_A = mean(pf_count_mat_A_norm,1);
+mean_pf_norm_B = mean(pf_count_mat_B_norm,1);
+
+%sum A and B
+grouped_pf_counts = [sum(pf_count_mat_A,1)',sum(pf_count_mat_B,1)'];
+%normalized for each group
+grouped_pf_counts_norm = [(sum(pf_count_mat_A,1)./sum(sum(pf_count_mat_A,1)))',...
+            (sum(pf_count_mat_B,1)./sum(sum(pf_count_mat_B,1)))'];
+        
+
+        
+%Place field analysis plotting
+
+
+
+
+
+%plot bar
+figure;
+hold on;
+title('Place fields per neuron - S.I. (Combined)');
+b = bar(grouped_pf_counts_norm,'FaceColor', 'flat');
+%set A group bars to blue
+b(1).CData(1:3,:) =  repmat([0 0 1],3,1);
+%set B group bars to red
+b(2).CData(1:3,:) =  repmat([1 0 0],3,1);
+xticks([1 2 3]);
+xticklabels({'1','2','3+'});
+ylabel('Fraction of neurons');
+legend('A','B')
 

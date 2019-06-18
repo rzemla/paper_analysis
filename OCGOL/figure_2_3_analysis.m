@@ -3,7 +3,7 @@
 %lab workstation
 %input directories to matching function
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'}; % field rate error
-%path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
@@ -13,7 +13,7 @@
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -92,7 +92,9 @@ session_vars{1, 1}.Imaging_split{1, 1}.time_restricted
 %% Number of place fields and widths for each sub-class of neurons
 
 options.tuning_criterion = 'si'; %si or ts
-placeField_properties(session_vars, tunedLogical,options)
+[placeField_dist] = placeField_properties(session_vars, tunedLogical,options);
+%save the place field distributions output data
+save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
