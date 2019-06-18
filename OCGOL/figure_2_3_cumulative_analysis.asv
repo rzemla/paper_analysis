@@ -139,9 +139,36 @@ colormap([0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5])
 
 
 %% AUC/min scatterplots of A vs B neurons for each animal 
+%read relevant data
+for ee=1:size(path_dir,2)
+    load_data_path_auc{ee} = fullfile(path_dir{ee},'cumul_analysis','auc.mat');
+    auc_data{ee} = load(string(load_data_path_auc{ee}));
+end
 
+%add colormap to this with cbrewer
+%blues (A trials)
+cmap_blue = cbrewer('seq','Blues',size(path_dir,2));
+%reds (B trials)
+cmap_red = cbrewer('seq','Reds',size(path_dir,2));
 
-
+figure;
+hold on
+axis square
+xlim([0 10])
+ylim([0 10])
+xticks(0:2:10)
+yticks(0:2:10)
+xlabel('')
+%A selective
+for ee=1:size(path_dir,2)
+    scatter(mean(auc_data{ee}.total_AUC_min.A(1,:)),mean(auc_data{ee}.total_AUC_min.A(2,:)),'filled','MarkerFaceColor',cmap_blue(ee,:))
+end
+%B selective
+for ee=1:size(path_dir,2)
+    scatter(mean(auc_data{ee}.total_AUC_min.B(1,:)),mean(auc_data{ee}.total_AUC_min.B(2,:)),'filled','MarkerFaceColor',cmap_red(ee,:))
+end
+%plot center line
+plot([0 10], [0 10],'Color',[0.5 0.5 0.5],'LineStyle', '--')
 
 %% Centroid distribution
 
@@ -211,7 +238,7 @@ pax1.RAxisLocation = 45;
 pax1.RLim = [0 0.04];
 pax1.RColor = 'r';
 pax1.FontSize = 14;
-polarhistogram(pax1,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', sum(centroid_mat_A,1),'Normalization','probability',...
+polarhistogram(pax1,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centroid_mat_A_norm_mean,'Normalization','probability',...
     'FaceColor','blue')
 
 pax2 = subplot(1,2,2,polaraxes);
@@ -222,7 +249,7 @@ pax2.RAxisLocation = 45;
 pax2.RLim = [0 0.04];
 pax2.RColor = 'r';
 pax2.FontSize = 14;
-polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centro,'Normalization', 'probability',...
+polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centroid_mat_B_norm_mean,'Normalization', 'probability',...
     'FaceColor','red')
 
 %empirical cdf

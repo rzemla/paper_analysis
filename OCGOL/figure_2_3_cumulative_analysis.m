@@ -146,6 +146,11 @@ for ee=1:size(path_dir,2)
 end
 
 %add colormap to this with cbrewer
+%blues (A trials)
+cmap_blue = cbrewer('seq','Blues',size(path_dir,2)+2);
+%reds (B trials)
+cmap_red = cbrewer('seq','Reds',size(path_dir,2)+2);
+
 figure;
 hold on
 axis square
@@ -153,13 +158,17 @@ xlim([0 10])
 ylim([0 10])
 xticks(0:2:10)
 yticks(0:2:10)
+set(gca,'FontSize',14)
+xlabel('AUC/min - A trials')
+ylabel('AUC/min - B trials')
+title('Average for all animals')
 %A selective
 for ee=1:size(path_dir,2)
-    scatter(mean(auc_data{ee}.total_AUC_min.A(1,:)),mean(auc_data{ee}.total_AUC_min.A(2,:)),'filled')
+    scatter(mean(auc_data{ee}.total_AUC_min.A(1,:)),mean(auc_data{ee}.total_AUC_min.A(2,:)),'filled','MarkerFaceColor',cmap_blue(ee+2,:))
 end
 %B selective
 for ee=1:size(path_dir,2)
-    scatter(mean(auc_data{ee}.total_AUC_min.B(1,:)),mean(auc_data{ee}.total_AUC_min.B(2,:)),'filled')
+    scatter(mean(auc_data{ee}.total_AUC_min.B(1,:)),mean(auc_data{ee}.total_AUC_min.B(2,:)),'filled','MarkerFaceColor',cmap_red(ee+2,:))
 end
 %plot center line
 plot([0 10], [0 10],'Color',[0.5 0.5 0.5],'LineStyle', '--')
