@@ -86,10 +86,10 @@ end
 
 %% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
 
-AUC_scatter
+options.tuning_criterion = 'si'; %si or ts
+AUC_scatter(tunedLogical,session_vars,options)
 
-session_vars{1, 1}.Events_split{1, 1}.Run.properties.AUC
-session_vars{1, 1}.Imaging_split{1, 1}.time_restricted
+
 
 %% Number of place fields and widths for each sub-class of neurons
 
