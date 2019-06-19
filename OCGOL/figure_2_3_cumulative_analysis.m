@@ -289,10 +289,12 @@ sem_diag_PVcorr = std_diag_PVcorr./sqrt(size(diag_PVcorr_mat,1));
 
 %plot the pv correlation (each animal) across track length and assn sem at
 %each bin (around mean)
-figure;
+figure('Position',[2050 530 1380 420]);
 hold on
-ylim([-0.2 1])
+ylim([-0.05 1])
 yticks(-0.2:0.2:1)
+xlim([1,100])
+xticks(0:10:100)
 ylabel('Correlation coef');
 xlabel('Spatial bin');
 set(gca,'FontSize',14);
@@ -302,16 +304,22 @@ for ee=1:size(path_dir,2)
     plot(diag_PVcorr_mat(ee,:),'Color',[0.7 0.7 0.7],'LineWidth',1','LineStyle','-');
 end
 %plot the mean PV correlation from each bin
-plot(mean_diag_PVcorr,'Color','k','LineWidth',1.5)
+%plot(mean_diag_PVcorr,'Color','k','LineWidth',1.5)
 %plot std around the PV correlation
 %use shaded plot for this
 %plot upper std line
-plot(1:100,mean_diag_PVcorr+std_diag_PVcorr);
-%plot lower std line
-plot(1:100,mean_diag_PVcorr-std_diag_PVcorr);
-
-%errorbar(1:100,mean_diag_PVcorr,std_diag_PVcorr);
-
+s = shadedErrorBar(1:100,diag_PVcorr_mat,{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
+set(s.edge,'LineWidth',1.5,'LineStyle','-','Color',[[0 153 0]/255, 0.2]) %last value add transparency value
+s.mainLine.LineWidth = 2;
+s.mainLine.Color = [0 153 0]/255;
+s.patch.FaceColor = [0 153 0]/255;
+%behaviorally relevant lines
+plot([30 30],[-0.05 1],'r--','LineWidth',1.5);
+text([31 31],[0.9 0.9],'Reward zone B','Color','r','FontSize',14)
+plot([70 70],[-0.05 1],'b--','LineWidth',1.5);
+text([71 71],[0.9 0.9],'Reward zone A','Color','b','FontSize',14)
+plot([10 10],[-0.05 1],'--','Color',[0 153 153]/255,'LineWidth',1.5);
+text([11 11],[0.9 0.9],'Odor zone end','Color',[0 153 153]/255,'FontSize',14)
 
 %% Place field analysis (width and number for selective neurons
 
