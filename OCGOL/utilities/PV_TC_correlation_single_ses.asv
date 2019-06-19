@@ -1,4 +1,4 @@
-function [correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,options)
+function [outputArg1,outputArg2] = PV_TC_correlation_single_ses(session_vars,tunedLogical,options)
 
 
 
@@ -106,11 +106,7 @@ plot(diag(TCcorr_sort),'r')
 
 %% Export correlation struct
 
-%PV correlation
-correlation.PVcorr = PVcorr;
-
-%TC correlation
-correlation.TCcorr = TCcorr;
+corr.
 
 end
 
