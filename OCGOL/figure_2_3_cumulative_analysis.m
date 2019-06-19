@@ -270,6 +270,48 @@ ecdf((1:100),'Frequency',sum(centroid_mat_B,1)/sum(sum(centroid_mat_B,1)))
 
 
 %% PV/TC correlation
+%read relevant data
+for ee=1:size(path_dir,2)
+    load_data_path_corr{ee} = fullfile(path_dir{ee},'cumul_analysis','corr.mat');
+    correlation_data{ee} = load(string(load_data_path_corr{ee}));
+end
+
+%get diagonal of each PV correlation matrix
+for ee=1:size(path_dir,2)
+    diag_PVcorr_mat(ee,:) = diag(correlation_data{ee}.correlation.PVcorr);
+end
+%get mean of PV correlation
+mean_diag_PVcorr = mean(diag_PVcorr_mat,1);
+%get std at each spatial bin
+std_diag_PVcorr = std(diag_PVcorr_mat,0,1);
+%get sem at each spatial bin
+sem_diag_PVcorr = std_diag_PVcorr./sqrt(size(diag_PVcorr_mat,1));
+
+%plot the pv correlation (each animal) across track length and assn sem at
+%each bin (around mean)
+figure;
+hold on
+ylim([-0.2 1])
+yticks(-0.2:0.2:1)
+ylabel('Correlation coef');
+xlabel('Spatial bin');
+set(gca,'FontSize',14);
+title('Population vector correlation')
+%plot each correlation traces from each animal
+for ee=1:size(path_dir,2)
+    plot(diag_PVcorr_mat(ee,:),'Color',[0.7 0.7 0.7],'LineWidth',1','LineStyle','-');
+end
+%plot the mean PV correlation from each bin
+plot(mean_diag_PVcorr,'Color','k','LineWidth',1.5)
+%plot std around the PV correlation
+%use shaded plot for this
+%plot upper std line
+plot(1:100,mean_diag_PVcorr+std_diag_PVcorr);
+%plot lower std line
+plot(1:100,mean_diag_PVcorr-std_diag_PVcorr);
+
+%errorbar(1:100,mean_diag_PVcorr,std_diag_PVcorr);
+
 
 %% Place field analysis (width and number for selective neurons
 

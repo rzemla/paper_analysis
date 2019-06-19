@@ -147,9 +147,9 @@ end
 
 %add colormap to this with cbrewer
 %blues (A trials)
-cmap_blue = cbrewer('seq','Blues',size(path_dir,2));
+cmap_blue = cbrewer('seq','Blues',size(path_dir,2)+2);
 %reds (B trials)
-cmap_red = cbrewer('seq','Reds',size(path_dir,2));
+cmap_red = cbrewer('seq','Reds',size(path_dir,2)+2);
 
 figure;
 hold on
@@ -158,14 +158,17 @@ xlim([0 10])
 ylim([0 10])
 xticks(0:2:10)
 yticks(0:2:10)
-xlabel('')
+set(gca,'FontSize',14)
+xlabel('AUC/min - A trials')
+ylabel('AUC/min - B trials')
+title('Average for all animals')
 %A selective
 for ee=1:size(path_dir,2)
-    scatter(mean(auc_data{ee}.total_AUC_min.A(1,:)),mean(auc_data{ee}.total_AUC_min.A(2,:)),'filled','MarkerFaceColor',cmap_blue(ee,:))
+    scatter(mean(auc_data{ee}.total_AUC_min.A(1,:)),mean(auc_data{ee}.total_AUC_min.A(2,:)),'filled','MarkerFaceColor',cmap_blue(ee+2,:))
 end
 %B selective
 for ee=1:size(path_dir,2)
-    scatter(mean(auc_data{ee}.total_AUC_min.B(1,:)),mean(auc_data{ee}.total_AUC_min.B(2,:)),'filled','MarkerFaceColor',cmap_red(ee,:))
+    scatter(mean(auc_data{ee}.total_AUC_min.B(1,:)),mean(auc_data{ee}.total_AUC_min.B(2,:)),'filled','MarkerFaceColor',cmap_red(ee+2,:))
 end
 %plot center line
 plot([0 10], [0 10],'Color',[0.5 0.5 0.5],'LineStyle', '--')
@@ -267,6 +270,48 @@ ecdf((1:100),'Frequency',sum(centroid_mat_B,1)/sum(sum(centroid_mat_B,1)))
 
 
 %% PV/TC correlation
+%read relevant data
+for ee=1:size(path_dir,2)
+    load_data_path_corr{ee} = fullfile(path_dir{ee},'cumul_analysis','corr.mat');
+    correlation_data{ee} = load(string(load_data_path_corr{ee}));
+end
+
+%get diagonal of each PV correlation matrix
+for ee=1:size(path_dir,2)
+    diag_PVcorr_mat(ee,:) = diag(correlation_data{ee}.correlation.PVcorr);
+end
+%get mean of PV correlation
+mean_diag_PVcorr = mean(diag_PVcorr_mat,1);
+%get std at each spatial bin
+std_diag_PVcorr = std(diag_PVcorr_mat,0,1);
+%get sem at each spatial bin
+sem_diag_PVcorr = std_diag_PVcorr./sqrt(size(diag_PVcorr_mat,1));
+
+%plot the pv correlation (each animal) across track length and assn sem at
+%each bin (around mean)
+figure;
+hold on
+ylim([-0.2 1])
+yticks(-0.2:0.2:1)
+ylabel('Correlation coef');
+xlabel('Spatial bin');
+set(gca,'FontSize',14);
+title('Population vector correlation')
+%plot each correlation traces from each animal
+for ee=1:size(path_dir,2)
+    plot(diag_PVcorr_mat(ee,:),'Color',[0.5 0.5 0.5],'LineWidth',1','LineStyle','--');
+end
+%plot the mean PV correlation from each bin
+plot(mean_diag_PVcorr,'Color','k','LineWidth',1.5)
+%plot std around the PV correlation
+%use shaded plot for this
+%plot upper std line
+plot(1:100,mean_diag_PVcorr+std_diag_PVcorr);
+%plot lower std line
+plot(1:100,mean_diag_PVcorr-std_diag_PVcorr);
+
+%errorbar(1:100,mean_diag_PVcorr,std_diag_PVcorr);
+
 
 %% Place field analysis (width and number for selective neurons
 
