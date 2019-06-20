@@ -30,7 +30,7 @@ end
 for ii = 1:size(path_dir,2)
     %add event variables
     session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
-        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split');
+        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split','updated_dff');
     %load in relevant CNMF variables for visualization purposes
     CNMF_vars{ii} = load(fullfile(inputfiles{ii}.folder,inputfiles{ii}.name),'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
     %load in template (stack average)

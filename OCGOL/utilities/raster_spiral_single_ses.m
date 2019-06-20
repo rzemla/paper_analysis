@@ -39,7 +39,7 @@ end
 %make this a condition for the type of trials that are compared
 %all correct; all regardless of correct
 
-%for each session
+%for each session (all A or B regardless of correct)
 for ss = 1:size(session_vars,2)
     %find times from trials related to specific trial type
     %A trials
@@ -55,7 +55,8 @@ A_keep_sel = CNMF_vars{1, 1}.A_keep(:,removeROI{1}.compSelect);
 A_keep_sel_com = com(A_keep_sel,512,512);
 
 %outline
-coor_keep_sel = CNMF_vars{1}.Coor_kp(removeROI{1}.compSelect)
+coor_keep_sel = CNMF_vars{1}.Coor_kp(removeROI{1}.compSelect);
+
 
 %% Define the spiral parameters according to the number of laps
 %equivalent to number of laps for each session (turns = laps)
@@ -118,10 +119,28 @@ for ss =1:size(session_vars,2)
     end
 end
 
+%% Split calcium traces into intervals to avoid joining by plot into continuous plot
+
+%breakpoints
+diff_A_trials_idx = find(diff(Imaging_split{1}{4}.time_restricted)> 1);
+diff_B_trials_idx = find(diff(Imaging_split{1}{5}.time_restricted)> 1);
+
+%construct start and end idx matrices - correct
+start_idx.A = [1; diff_A_trials_idx+1];
+end_idx.A = [diff_A_trials_idx; size(Imaging_split{1}{4}.time_restricted,1)];
+%combined start and end idx
+start_end_idx.A = [start_idx.A, end_idx.A]; 
+%for B trials
+start_idx.B = [1; diff_B_trials_idx+1];
+end_idx.B = [diff_B_trials_idx; size(Imaging_split{1}{5}.time_restricted,1)];
+%combined start and end idx
+start_end_idx.B = [start_idx.B, end_idx.B]; 
+
 %% Plot raster, event spiral and matching ROIs from FOV
 
-ROI = 23;
-
+ROI = 371;
+%split cells
+%365,371, 452, 371
 figure
 %Show spatial outline of the component
 subplot(3,5,1)
@@ -141,12 +160,43 @@ ylim([A_keep_sel_com(ROI,1)-30, A_keep_sel_com(ROI,1)+30])
 
 %show color-coded (by trial) calcium traces of the component
 subplot(3,5,[2 3])
+hold on
+ylim([-0.2 2.5])
+ylabel('dF/F');
+xlabel('Time [min]');
+%convert to minuntes and offset to start at 0 min (0s)
+%for each split (cell above) % for A trial traces
+for ii=1:size(start_end_idx.A,1) 
+plot(Imaging_split{1}{4}.time_restricted(start_end_idx.A(ii,1):start_end_idx.A(ii,2))/60,...
+    Imaging_split{1}{4}.trace_restricted(start_end_idx.A(ii,1):start_end_idx.A(ii,2),ROI),'b')
+end
+%for each split (cell above) % for B trial traces
+for ii=1:size(start_end_idx.B,1) 
+plot(Imaging_split{1}{5}.time_restricted(start_end_idx.B(ii,1):start_end_idx.B(ii,2))/60,...
+    Imaging_split{1}{5}.trace_restricted(start_end_idx.B(ii,1):start_end_idx.B(ii,2),ROI),'r')
+end
 
 %tuning vectors of the component
-subplot(3,5,4)
+subplot(3,5,4,polaraxes)
+polarplot(x{1},r_scaled{1},'k','Linewidth',1.5)
+hold on
 
+%plot A (2) trial events
+for ll=1:size(idxMin{1}{1},2)
+    polarscatter(angle(posVectorApprox{1}{1}{ll}{ROI}),r_scaled{1}(idxMin{1}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')
+    %place field center
+    %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
+end
+%plot B (3) trial events
+for ll=1:size(idxMin{1}{2},2)
+    polarscatter(angle(posVectorApprox{1}{2}{ll}{ROI}),r_scaled{1}(idxMin{1}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
+    %place field center
+    %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
+end
+    
 %spiral map of the componenet
 subplot(3,5,5)
+
 
 %%
 figure('Position',[2600,300,1200,1000]);
