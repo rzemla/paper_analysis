@@ -53,7 +53,7 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 %% Plot example neuron (for display/figure) - trace, position, event spiral, TS arrows, A vs. B
 
 %break down in simpler code in the future;
-raster_spiral_single_ses(session_vars,registered,ROI_outlines,ROI_zooms, options);
+raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 
 
 %% Plot fraction of each neuron tuned 

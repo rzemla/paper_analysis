@@ -119,12 +119,8 @@ for ss =1:size(session_vars,2)
 end
 
 %% Plot raster, event spiral and matching ROIs from FOV
-
-ROI = 23;
-
+for ii=1:30
 figure
-%Show spatial outline of the component
-subplot(3,5,1)
 imagesc(templates{1}.template);
 hold on
 axes(gca);
@@ -133,20 +129,15 @@ xticks(gca,[])
 yticks(gca,[])
 grayMap = brighten(gray,0.5);
 colormap(gca,grayMap)
+
+ROI = ii;
 %plot componenet outline
 plot(coor_keep_sel{ROI}(1,:),coor_keep_sel{ROI}(2,:),'b', 'LineWidth',1);
 %zoom into component based on center of mass calculation
 xlim([A_keep_sel_com(ROI,2)-30, A_keep_sel_com(ROI,2)+30])
 ylim([A_keep_sel_com(ROI,1)-30, A_keep_sel_com(ROI,1)+30])
-
-%show color-coded (by trial) calcium traces of the component
-subplot(3,5,[2 3])
-
-%tuning vectors of the component
-subplot(3,5,4)
-
-%spiral map of the componenet
-subplot(3,5,5)
+%scatter(A_keep_sel_com(ROI,2),A_keep_sel_com(ROI,1),'r')
+end
 
 %%
 figure('Position',[2600,300,1200,1000]);
