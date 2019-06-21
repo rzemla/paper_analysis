@@ -148,6 +148,10 @@ options.tuning_criterion = 'ts'; %si or ts
 save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
 
 
+%% Calculate centroid difference between A&B tuned neurons
+
+centroid_diff_single_ses
+
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options
 %tuned in both sessions by SI score
