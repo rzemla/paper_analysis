@@ -148,9 +148,10 @@ options.tuning_criterion = 'ts'; %si or ts
 save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
 
 
-%% Calculate centroid difference between A&B tuned neurons
+%% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
 
-centroid_diff_single_ses
+options.tuning_criterion = 'ts';
+centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options)
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options

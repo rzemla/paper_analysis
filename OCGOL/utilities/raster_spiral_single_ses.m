@@ -171,7 +171,7 @@ end
 %% Plot raster, event spiral and matching ROIs from FOV
 %21 partial remap
 %AB_list =[2	5	6	8	11	14	15	16	18	19	21	23	24	30	33	35	36	38	39	41	42	43	46	47	49	50	56	57	58	59	60	61	62	63	64	69	70	71	77	78	80	82	84	86	87	88	91	92	93	95	104	107	110	112	114	115	116	117	118	119	122	125	127	128	130	132	133	134	135	136	137	139	142	143	148	154	155	162	164	165	166	168	169	175	176	177	179	180	181	186	187	188	189	190	191	194	195	197	198	199	201	207	208	213	214	216	217	218	223	226	227	228	231	233	234	235	237	241	242	244	245	246	247	254	256	260	263	264	268	269	270	271	272	274	279	280	282	283	284	285	286	288	291	292	296	298	299	304	306	312	318	320	321	326	329	333	334	343	348	350	357	361	362	363	365	366	367	368	369	370	372	373	374	375	379	380	381	382	384	386	387	389	391	392	393	394	398	399	400	401	402	405	407	408	410	411	412	413	415	416	417	419	423	427	429	431	432	433	436	437	438	440	441	443	447	448	449	450	451	453	457	458	460	461	462	463	466	469	470	471	472	474	475	476	477	478	480	481	482	483	486	489	490	491	492	493	494	495	498	500	506	510	512	513	514	515	519	520	521	522	523	524	525	526	527	529	531	534	535	538	540	541	542	543	544	545	549	554	555	556	557	562	563	564	565	566	568	570	571	574	575	576	578	580	581	583	589	590	591	592	593	594	596	597	598	600	603	604	605	606	607	610	612	614	616	620	621	624	627	629	633	635	639	640	641	642	643	649	651	652	653	655	657	660	665	668	669	672	676	682	687	690	692	701];
-
+if 0
 %ROI = 38;
 %split cells
 %365,371, 452, 371
@@ -287,120 +287,121 @@ scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
 %B 
 scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
 end
-
-%%
-figure('Position',[2600,300,1200,1000]);
-for ii=options.idx_show%1:size(registered.multi.assigned_all,1)
-    
-    %ROI from session 1
-    ROI = registered.multi.assigned_all(ii,1);
-    
-    subplot(2,3,1)
-    imagesc(session_vars{1}.Place_cell{1, 3}.dF_lap_map_ROI{ROI})
-    hold on;
-    title(num2str(ROI));
-    ylabel('Lap #'); 
-    xlabel('Spatial bin');
-    caxis([0 2])
-    colormap(gca,'jet');
-    hold off;
-    
-    
-    
-    %spiral plot early in learning
-    subplot(2,3,2)
-    polarplot(x{1},r_scaled{1},'k','Linewidth',1.5)
-    hold on
-    
-    %plot A (2) trial events
-    for ll=1:size(idxMin{1}{1},2)
-        polarscatter(angle(posVectorApprox{1}{1}{ll}{ROI}),r_scaled{1}(idxMin{1}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')
-        %place field center
-        %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
-    end
-    
-    %plot tuning specificity vector for all A trials
-    polarplot([0+0i,15*session_vars{1, 1}.Place_cell{1, 4}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
-
-
-    %plot B (3) trial events
-    for ll=1:size(idxMin{1}{2},2)
-        polarscatter(angle(posVectorApprox{1}{2}{ll}{ROI}),r_scaled{1}(idxMin{1}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
-        %place field center
-        %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
-    end
-    
-    %plot tuning specificity vector for all B trials
-    polarplot([0+0i,15*session_vars{1, 1}.Place_cell{1, 5}.Tuning_Specificity.tuning_vector_specificity(ROI)],'r-','LineWidth',2)
-
-
-    hold off
-    
-    subplot(2,3,3)
-    imagesc(ROI_zooms{ii,1})
-    hold on;
-    colormap(gca, 'gray')
-    xticks([])
-    yticks([])
-    b = bwboundaries(ROI_outlines{ii,1},'noholes');
-    plot(b{1}(:,2),b{1}(:,1),'r')
-    hold off
-    
-    %ROI from session 2
-    ROI = registered.multi.assigned_all(ii,2);
-    subplot(2,3,4)
-    imagesc(session_vars{2}.Place_cell{1, 3}.dF_lap_map_ROI{ROI})
-    hold on;
-    title(num2str(ROI));
-    ylabel('Lap #'); 
-    xlabel('Spatial bin');
-    caxis([0 2])
-    colormap(gca, 'jet');
-    hold off;
-    
-   
-    
-    subplot(2,3,5)
-    polarplot(x{2},r_scaled{2},'k','Linewidth',1.5)
-    hold on
-    %plot A (2) trial events
-    for ll=1:size(idxMin{2}{1},2)
-        polarscatter(angle(posVectorApprox{2}{1}{ll}{ROI}),r_scaled{2}(idxMin{2}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')
-        %place field center
-        %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
-    end
-    %plot tuning specificity vector for all A trials
-    polarplot([0+0i,15*session_vars{2}.Place_cell{4}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
-
-    
-    %plot B (3) trial events
-    for ll=1:size(idxMin{2}{2},2)
-        polarscatter(angle(posVectorApprox{2}{2}{ll}{ROI}),r_scaled{2}(idxMin{2}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
-        %place field center
-        %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
-    end
-    
-    %plot tuning specificity vector for all A trials
-    polarplot([0+0i,15*session_vars{2}.Place_cell{5}.Tuning_Specificity.tuning_vector_specificity(ROI)],'r-','LineWidth',2)
-
-    hold off
-    
-    subplot(2,3,6)
-    imagesc(ROI_zooms{ii,2})
-    %imagesc(ROI_zooms{registered.multi.assigned_all(ii,2),2})
-    hold on;
-    colormap(gca, 'gray')
-    xticks([])
-    yticks([])
-    %b = bwboundaries(ROI_outlines{registered.multi.assigned_all(ii,2),2},'noholes');
-    b = bwboundaries(ROI_outlines{ii,2},'noholes');
-    plot(b{1}(:,2),b{1}(:,1),'r')
-    hold off
-    
-    %pause;
-    %clf;
-    
 end
+
+%% NOT USED IMPORTED CODE
+% figure('Position',[2600,300,1200,1000]);
+% for ii=options.idx_show%1:size(registered.multi.assigned_all,1)
+%     
+%     %ROI from session 1
+%     ROI = registered.multi.assigned_all(ii,1);
+%     
+%     subplot(2,3,1)
+%     imagesc(session_vars{1}.Place_cell{1, 3}.dF_lap_map_ROI{ROI})
+%     hold on;
+%     title(num2str(ROI));
+%     ylabel('Lap #'); 
+%     xlabel('Spatial bin');
+%     caxis([0 2])
+%     colormap(gca,'jet');
+%     hold off;
+%     
+%     
+%     
+%     %spiral plot early in learning
+%     subplot(2,3,2)
+%     polarplot(x{1},r_scaled{1},'k','Linewidth',1.5)
+%     hold on
+%     
+%     %plot A (2) trial events
+%     for ll=1:size(idxMin{1}{1},2)
+%         polarscatter(angle(posVectorApprox{1}{1}{ll}{ROI}),r_scaled{1}(idxMin{1}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')
+%         %place field center
+%         %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
+%     end
+%     
+%     %plot tuning specificity vector for all A trials
+%     polarplot([0+0i,15*session_vars{1, 1}.Place_cell{1, 4}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
+% 
+% 
+%     %plot B (3) trial events
+%     for ll=1:size(idxMin{1}{2},2)
+%         polarscatter(angle(posVectorApprox{1}{2}{ll}{ROI}),r_scaled{1}(idxMin{1}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
+%         %place field center
+%         %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
+%     end
+%     
+%     %plot tuning specificity vector for all B trials
+%     polarplot([0+0i,15*session_vars{1, 1}.Place_cell{1, 5}.Tuning_Specificity.tuning_vector_specificity(ROI)],'r-','LineWidth',2)
+% 
+% 
+%     hold off
+%     
+%     subplot(2,3,3)
+%     imagesc(ROI_zooms{ii,1})
+%     hold on;
+%     colormap(gca, 'gray')
+%     xticks([])
+%     yticks([])
+%     b = bwboundaries(ROI_outlines{ii,1},'noholes');
+%     plot(b{1}(:,2),b{1}(:,1),'r')
+%     hold off
+%     
+%     %ROI from session 2
+%     ROI = registered.multi.assigned_all(ii,2);
+%     subplot(2,3,4)
+%     imagesc(session_vars{2}.Place_cell{1, 3}.dF_lap_map_ROI{ROI})
+%     hold on;
+%     title(num2str(ROI));
+%     ylabel('Lap #'); 
+%     xlabel('Spatial bin');
+%     caxis([0 2])
+%     colormap(gca, 'jet');
+%     hold off;
+%     
+%    
+%     
+%     subplot(2,3,5)
+%     polarplot(x{2},r_scaled{2},'k','Linewidth',1.5)
+%     hold on
+%     %plot A (2) trial events
+%     for ll=1:size(idxMin{2}{1},2)
+%         polarscatter(angle(posVectorApprox{2}{1}{ll}{ROI}),r_scaled{2}(idxMin{2}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')
+%         %place field center
+%         %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
+%     end
+%     %plot tuning specificity vector for all A trials
+%     polarplot([0+0i,15*session_vars{2}.Place_cell{4}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
+% 
+%     
+%     %plot B (3) trial events
+%     for ll=1:size(idxMin{2}{2},2)
+%         polarscatter(angle(posVectorApprox{2}{2}{ll}{ROI}),r_scaled{2}(idxMin{2}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
+%         %place field center
+%         %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
+%     end
+%     
+%     %plot tuning specificity vector for all A trials
+%     polarplot([0+0i,15*session_vars{2}.Place_cell{5}.Tuning_Specificity.tuning_vector_specificity(ROI)],'r-','LineWidth',2)
+% 
+%     hold off
+%     
+%     subplot(2,3,6)
+%     imagesc(ROI_zooms{ii,2})
+%     %imagesc(ROI_zooms{registered.multi.assigned_all(ii,2),2})
+%     hold on;
+%     colormap(gca, 'gray')
+%     xticks([])
+%     yticks([])
+%     %b = bwboundaries(ROI_outlines{registered.multi.assigned_all(ii,2),2},'noholes');
+%     b = bwboundaries(ROI_outlines{ii,2},'noholes');
+%     plot(b{1}(:,2),b{1}(:,1),'r')
+%     hold off
+%     
+%     %pause;
+%     %clf;
+%     
+% end
 
 
 end
