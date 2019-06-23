@@ -30,7 +30,7 @@ end
 for ii = 1:size(path_dir,2)
     %add event variables
     session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
-        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split');
+        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split','updated_dff');
     %load in relevant CNMF variables for visualization purposes
     CNMF_vars{ii} = load(fullfile(inputfiles{ii}.folder,inputfiles{ii}.name),'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
     %load in template (stack average)
@@ -48,6 +48,13 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 %% Add a filter for logical selection of A/B selective neurons here (Figure 2)
 
 %% Add a filter for logical selection of A&B remapping neurons here (Figure 3)
+
+
+%% Plot example neuron (for display/figure) - trace, position, event spiral, TS arrows, A vs. B
+
+%break down in simpler code in the future;
+raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
+
 
 %% Plot fraction of each neuron tuned 
 
@@ -85,11 +92,18 @@ end
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
 
 %% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
- 
-session_vars{1, 1}.Events_split{1, 1}.Run.properties.AUC
-session_vars{1, 1}.Imaging_split{1, 1}.time_restricted
 
-%% Number of place fields for each sub-class o
+options.tuning_criterion = 'si'; %si or ts
+[total_AUC_min] = AUC_scatter(tunedLogical,session_vars,options);
+save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
+
+
+%% Number of place fields and widths for each sub-class of neurons
+
+options.tuning_criterion = 'si'; %si or ts
+[placeField_dist] = placeField_properties(session_vars, tunedLogical,options);
+%save the place field distributions output data
+save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
@@ -120,7 +134,10 @@ options.sortTrial = 2;
 %% PV and TC correlation matrices for each class of tuned neurons
 
 options.tuning_criterion = 'ts';
-PV_TC_correlation_single_ses(session_vars,tunedLogical,options)
+[correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,options);
+
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
 %% Centroid distribution across lap for A tuned and B tuned neurons
 %use tuning spec criterion for this
@@ -130,6 +147,14 @@ options.tuning_criterion = 'ts'; %si or ts
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
 
+
+%% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
+
+options.tuning_criterion = 'ts';
+[cent_diff_AandB] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options);
+
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'cent_diff_Aa');
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options

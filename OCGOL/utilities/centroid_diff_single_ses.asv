@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options)
+function [cent_diff_AandB] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options)
 
 %% Define tuned combinations
 
@@ -35,7 +35,7 @@ switch options.tuning_criterion
 end
 
 
-%% Extract tuning spec structs and assign reward location
+%% Extract tuning spec structs and assign reward location, place field bin centers
 %tuning specificities struct for each session
 for ss=1:size(session_vars,2)
     for tt=1:2
@@ -45,6 +45,8 @@ for ss=1:size(session_vars,2)
         %tun_vectors{ss}{tt} = session_vars{ss}.Place_cell{tt}.Tuning_Specificity.tuning_vector;
         %original sum vector
         tun_vector{ss}{tt} = session_vars{ss}.Place_cell{tt}.Tuning_Specificity.tuning_vector_specificity;
+        
+        place_field_centers{ss}{tt} = session_vars{1}.Place_cell{tt}.placeField.center;
         %cm
         %rewardLoc(ii) = session_vars{ii}.Behavior.performance.reward_loc;
     end
@@ -70,7 +72,7 @@ for ss=1:size(session_vars,2)
     end
 end
 
-%% Maximum transient intensity tuning vectors (select)
+%% Maximum transient intensity tuning vectors (select) and bin centers (100 bin space)
 
 %select the place field vectors based on the max intensity analysis
 for ss=1:size(session_vars,2)
@@ -83,11 +85,15 @@ for ss=1:size(session_vars,2)
                 %if single field, use original vector
                 if size(pf_vector{ss}{tt}{rr},2) == 1
                     pf_vector_max{ss}{tt}(rr) = tun_vector{ss}{tt}(rr);
+                    %place field bin center
+                    place_field_centers_max{ss}{tt}(rr) = place_field_centers{ss}{tt}{rr};
                 else %if more than 1
                     pf_vector_max{ss}{tt}(rr) = pf_vector{ss}{tt}{rr}(max_transient_peak{ss}{tt}(rr));
+                    place_field_centers_max{ss}{tt}(rr) = place_field_centers{ss}{tt}{rr}(max_transient_peak{ss}{tt}(rr));
                 end
             else
                 pf_vector_max{ss}{tt}(rr) = nan;
+                place_field_centers_max{ss}{tt}(rr) = nan;
             end
         end
     end
@@ -162,6 +168,17 @@ xticks([pi/4 pi/2 3*pi/4,pi])
 xticklabels({'\pi/4','\pi/2','3\pi/4','\pi'})
 ylabel('Cumulative fraction');
 hold off
+
+%% Export centroid diffs for mutually tuned neurons
+
+%get only mutually tuned ROIs (A), convert to matrix and combined into 1
+place_field_centers_max_AandB{1}{1} = place_field_centers_max{1}{1}(AandB_tuned{1}); 
+place_field_centers_max_AandB{1}{2} = place_field_centers_max{1}{2}(AandB_tuned{1});
+%combined into single matrix
+comb_place_field_max_AB = [cell2mat(place_field_centers_max_AandB{1}{1});place_field_centers_max_AandB{1}{2})];
+
+cent_diff_AandB.angle_diff = theta{1}(AandB_tuned{1});
+cent_diff_AandB.max_bin = 
 
 end
 
