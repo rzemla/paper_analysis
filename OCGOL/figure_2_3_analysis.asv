@@ -13,7 +13,7 @@
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -154,7 +154,7 @@ options.tuning_criterion = 'ts';
 [cent_diff_AandB] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options);
 
 %save the fractions output data
-save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'cent_diff_Aa');
+save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options

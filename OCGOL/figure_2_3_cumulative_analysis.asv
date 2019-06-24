@@ -260,9 +260,6 @@ title('Centroid difference')
 
 %find minimum bin for each neuron
 
-%couple each bin min with angular difference
-
-
 %plot scatter as a fxn of minimum bin location of max transient
 
 
