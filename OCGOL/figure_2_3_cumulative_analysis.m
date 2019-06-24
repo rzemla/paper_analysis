@@ -241,8 +241,8 @@ end
 %load radian difference for each neuron into 1 vector
 %load into cell and convert to vector
 for ee=1:size(path_dir,2)
-centroid_diffs{ee} = centroid_diff_data{ee}.cent_diff_AandB.angle_diff;
-centroid_bins{ee} = centroid_diff_data{ee}.cent_diff_AandB.max_bin;
+    centroid_diffs{ee} = centroid_diff_data{ee}.cent_diff_AandB.angle_diff;
+    centroid_bins{ee} = centroid_diff_data{ee}.cent_diff_AandB.max_bin;
 end
 
 %convert to vector
@@ -258,13 +258,25 @@ xticks([pi/4 pi/2 3*pi/4,pi])
 xticklabels({'\pi/4','\pi/2','3\pi/4','\pi'})
 title('Centroid difference')
 
-%find minimum bin for each neuron
+%find minimum bin for each neuron and combine with corresponding ang diff 
+for ee=1:size(path_dir,2)
+    min_bins_cent_diff{ee} = min(centroid_bins{ee},[],1);
+    min_bins_cent_diff{ee}(2,:) = centroid_diffs{ee};
+end
 
-%couple each bin min with angular difference
+%convert coupled min with cent diff into 1 matrix (from cells)
+combined_min_bins_cent_diff = cell2mat(min_bins_cent_diff);
 
-
-%plot scatter as a fxn of minimum bin location of max transient
-
+%plot (cumlative) scatter as a fxn of minimum bin location of max transient
+figure('Position', [2060 380 770 580]);
+hold on
+set(gca,'FontSize',16);
+title('Positional centroid difference')
+scatter(combined_min_bins_cent_diff(1,:),combined_min_bins_cent_diff(2,:),'filled','SizeData',10,'MarkerFaceColor',[139,0,139]/255)
+xlabel('Spatial bin')
+ylabel('Centroid difference [rad]');
+yticks([pi/4 pi/2 3*pi/4,pi])
+yticklabels({'\pi/4','\pi/2','3\pi/4','\pi'})
 
 %% Polar plot mean
 figure;
