@@ -1,4 +1,12 @@
-function [cent_diff_AandB] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options)
+function [cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options)
+
+%input
+
+
+%output:
+%cent_diff_A
+% pf_vector_max = tuning vector associated with max in-field transient rate
+
 
 %% Define tuned combinations
 
