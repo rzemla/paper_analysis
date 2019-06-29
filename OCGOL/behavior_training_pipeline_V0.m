@@ -3,7 +3,7 @@
 options.defineDir = 1;
 
 %I45_RT
-%setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
+setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418';
@@ -14,19 +14,29 @@ options.defineDir = 1;
 %setDir = 'G:\OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518';
 
 %I47_RS
-setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618';
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618';
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618_2';
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218';
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_3AB_d8_052418';
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_AB_061418';
 
+%I47_LP
+%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
+%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
+%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
+
+%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 0;
+options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
 %options.loadImagingData = 0;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
-options.BehaviorType = 'OCGOL';
+options.BehaviorType = 'RF';
 %options.BehaviorType = 'OCGOL';
 
 %type of calcium data
@@ -79,7 +89,8 @@ if options.textures == true
     %[Behavior] = extractTextures(CSV, Behavior, options);
     %all signals, not just texture related signals
     switch options.BehaviorType
-        
+        case 'RF'
+            [Behavior] = extractTextures_GOL_RF_training(CSV, Behavior, options);
         case 'GOL-RF' %special case for day 1 of GOL
             [Behavior] = extractTextures_GOL_RF(CSV, Behavior, options);
         case 'GOL'
@@ -97,7 +108,7 @@ end
 switch options.BehaviorType
     case 'RF' %same as GOL for now
         %[Behavior] = GOL_performance(Behavior, CSV);
-        [Behavior] = GOL_RF_performance_new_inputs(Behavior);
+        [Behavior] = GOL_RF_performance_new_inputs_training(Behavior);
     case 'GOL-RF'
         [Behavior] = GOL_RF_performance_new_inputs(Behavior);
     case 'GOL'
@@ -111,6 +122,32 @@ switch options.BehaviorType
         %for reward collected as well
         [Behavior] = OCGOL_performance_new_inputs(Behavior);
 end
+
+%% Read imaging times (XML) and generate Imaging struct
+
+% Restrict calcium data to selected lap -  restrict trace to only full laps
+options.restrict=1; 
+
+%Select from which starting lap
+options.startlap= 'first'; 
+
+%Select the end lap
+options.endlap='last';
+
+%display the calcium trace aligned to behavior figure
+options.dispfig=0; % Display figure
+
+%neurons to display
+options.ROI =40; 
+
+[Imaging, Behavior] = restrict_data_training(Behavior, XML, options);
+
+%% Determine speed of animal
+
+%averaging window for speed calculation
+options.moving_window=10; 
+
+[Behavior] = resample_behavioral_data_and_speed_training(Behavior, Imaging, options);
 
 %% Save Behavior struct temporarily here - later do at end
 
