@@ -156,6 +156,9 @@ time = Behavior.resampled.time;
 Behavior.resampled.normalizedposition
 position = Behavior.resampled.position;
 
+%idxs # corresponding to 10s
+idx_width = 3;
+
 %lap start and end times
 Behavior.lap
 %reward zone position for each lap
@@ -172,18 +175,41 @@ lap_idx.A = find(Behavior.lap_id.trial_based == 2);
 lap_idx.B = find(Behavior.lap_id.trial_based == 3);
 
 %get idxs correspoinding to each lap
+%for A laps
 for ll = 1:size(lap_idx.A,2)
     rewards.A.res_idx{ll} = find(lap_idx_resampled == lap_idx.A(ll));
     [~,rewards.A.Imin(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.A.position(ll)));
-    rewards.A.position{ll} = position(rewards.A.res_idx{ll};
-    rewards.A.speed{ll} = spee
-    %lap_idx.res_idx
+    rewards.A.lap_position{ll} = position(rewards.A.res_idx{ll});
+    rewards.A.speed{ll} = speed(rewards.A.res_idx{ll});
+    
 end
-
+%for B laps
 for ll = 1:size(lap_idx.B,2)
     rewards.B.res_idx{ll} = find(lap_idx_resampled == lap_idx.B(ll));
     [~,rewards.B.Imin(ll)] = min(abs(position(rewards.B.res_idx{ll}) - rewards.B.position(ll)));
-    %lap_idx.res_idx
+    rewards.B.lap_position{ll} = position(rewards.B.res_idx{ll});
+    rewards.B.speed{ll} = speed(rewards.B.res_idx{ll});
+end
+
+
+%plot speed within A range for A laps
+figure
+subplot(1,2,1)
+hold on
+for ll=1:size(lap_idx.A,2)
+    %plot line plot along range
+    plot(rewards.A.speed{ll}((rewards.A.Imin(ll)-idx_width):(rewards.A.Imin(ll)+idx_width)));
+    %plot line showing start of reward range
+    plot([300 300],[0 25],'k')
+end
+
+subplot(1,2,2)
+hold on
+for ll=1:size(lap_idx.B,2)
+    %plot line plot along range
+    plot(rewards.B.speed{ll}((rewards.B.Imin(ll)-idx_width):(rewards.B.Imin(ll)+idx_width)));
+    %plot line showing start of reward range
+    plot([300 300],[0 25],'k')
 end
 
 
@@ -214,8 +240,7 @@ lap_idx_resampled = Behavior.resampled.lapNb;
 %get corresponding time index in restricted and resampled space
 
 
-%idxs # corresponding to 10s
-idx_width = 300;
+
 
 %take time -10s and +10s in each reward zone
 

@@ -4,8 +4,8 @@ options.defineDir = 1;
 
 %I45_RT
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
-setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018';
-%setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
+%setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018';
+setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418';
 
 %I46
@@ -156,6 +156,9 @@ time = Behavior.resampled.time;
 Behavior.resampled.normalizedposition
 position = Behavior.resampled.position;
 
+%idxs # corresponding to 10s
+idx_width = 90;
+
 %lap start and end times
 Behavior.lap
 %reward zone position for each lap
@@ -167,25 +170,72 @@ speed = Behavior.speed;
 rewards.A.position = Behavior.rewards{2}.full_laps.position;
 rewards.B.position = Behavior.rewards{1}.full_laps.position;
 
+%mean positions for non-target reward zone speed calculation
+rewards.A.pos_mean = mean(rewards.A.position);
+rewards.B.pos_mean = mean(rewards.B.position);
+
 %lap idx by trial type 
 lap_idx.A = find(Behavior.lap_id.trial_based == 2);
 lap_idx.B = find(Behavior.lap_id.trial_based == 3);
 
 %get idxs correspoinding to each lap
+%for A laps
 for ll = 1:size(lap_idx.A,2)
+    %target A reward zones
     rewards.A.res_idx{ll} = find(lap_idx_resampled == lap_idx.A(ll));
     [~,rewards.A.Imin(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.A.position(ll)));
     rewards.A.lap_position{ll} = position(rewards.A.res_idx{ll});
     rewards.A.speed{ll} = speed(rewards.A.res_idx{ll});
-    %lap_idx.res_idx
+    %non-target B reward zones
+    [~,rewards.A.IminB(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.B.pos_mean));
 end
 
-%plot speed within A range for A laps
-
+%for B laps
 for ll = 1:size(lap_idx.B,2)
     rewards.B.res_idx{ll} = find(lap_idx_resampled == lap_idx.B(ll));
     [~,rewards.B.Imin(ll)] = min(abs(position(rewards.B.res_idx{ll}) - rewards.B.position(ll)));
-    %lap_idx.res_idx
+    rewards.B.lap_position{ll} = position(rewards.B.res_idx{ll});
+    rewards.B.speed{ll} = speed(rewards.B.res_idx{ll});
+    %non-target A reward zones
+    [~,rewards.B.IminA(ll)] = min(abs(position(rewards.B.res_idx{ll}) - rewards.A.pos_mean));
+end
+
+
+%plot speed within A range for A laps
+figure
+subplot(2,2,1)
+hold on
+for ll=1:size(lap_idx.A,2)
+    %plot line plot along range
+    plot(rewards.A.speed{ll}((rewards.A.Imin(ll)-idx_width):(rewards.A.Imin(ll)+idx_width)));
+    %plot line showing start of reward range
+    plot([idx_width idx_width],[0 25],'k')
+end
+subplot(2,2,2)
+hold on
+for ll=1:size(lap_idx.A,2)
+    %plot line plot along range
+    plot(rewards.A.speed{ll}((rewards.A.IminB(ll)-idx_width):(rewards.A.IminB(ll)+idx_width)));
+    %plot line showing start of reward range
+    plot([idx_width idx_width],[0 25],'k')
+end
+
+subplot(2,2,3)
+hold on
+for ll=1:size(lap_idx.B,2)
+    %plot line plot along range
+    plot(rewards.B.speed{ll}((rewards.B.IminA(ll)-idx_width):(rewards.B.IminA(ll)+idx_width)));
+    %plot line showing start of reward range
+    plot([idx_width idx_width],[0 25],'k')
+end
+
+subplot(2,2,4)
+hold on
+for ll=1:size(lap_idx.B,2)
+    %plot line plot along range
+    plot(rewards.B.speed{ll}((rewards.B.Imin(ll)-idx_width):(rewards.B.Imin(ll)+idx_width)));
+    %plot line showing start of reward range
+    plot([idx_width idx_width],[0 25],'k')
 end
 
 
@@ -206,28 +256,6 @@ for ll=1:size(lap_idx.B,2)
     plot(position(rewards.B.res_idx{ll}))
     plot([rewards.B.Imin(ll) rewards.B.Imin(ll)], [0 200])
 end
-
-
-%11 A; 10 B
-
-%resampled lap idx corrsponding to resampled and restricted time space
-lap_idx_resampled = Behavior.resampled.lapNb;
-
-%get corresponding time index in restricted and resampled space
-
-
-%idxs # corresponding to 10s
-idx_width = 300;
-
-%take time -10s and +10s in each reward zone
-
-%for each A reward 
-for rr=1:size(rewards.A.position,1)
-    rewards.A.position(rr)) 
-    
-end
-
-
 
 %bin data spatially and take peri 5 bin around reward zone
 
