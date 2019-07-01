@@ -175,12 +175,10 @@ lap_idx.B = find(Behavior.lap_id.trial_based == 3);
 for ll = 1:size(lap_idx.A,2)
     rewards.A.res_idx{ll} = find(lap_idx_resampled == lap_idx.A(ll));
     [~,rewards.A.Imin(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.A.position(ll)));
-    rewards.A.lap_position{ll} = position(rewards.A.res_idx{ll});
-    rewards.A.speed{ll} = speed(rewards.A.res_idx{ll});
+    rewards.A.position{ll} = position(rewards.A.res_idx{ll};
+    rewards.A.speed{ll} = spee
     %lap_idx.res_idx
 end
-
-%plot speed within A range for A laps
 
 for ll = 1:size(lap_idx.B,2)
     rewards.B.res_idx{ll} = find(lap_idx_resampled == lap_idx.B(ll));

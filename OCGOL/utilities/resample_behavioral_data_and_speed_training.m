@@ -26,7 +26,7 @@ if options.restrict==true
     
 elseif options.restrict==false
     %imaging traces
-    C_df = Imaging.trace;
+    %C_df = Imaging.trace;
     %imaging time
     Cdf_time = Imaging.time;
     %behavioral time
@@ -38,7 +38,7 @@ elseif options.restrict==false
     %position (cm) relative to start of each laps
     position = Behavior.position;
     %get non-restricted version of this!!
-    lapNb = Behavior.restricted.lapNb;
+    %lapNb = Behavior.restricted.lapNb;
 end
 
 %put behavioral time and position into 1 matrix together
@@ -160,6 +160,9 @@ Behavior.resampled.normalizedposition = res_norm_position;
 
 %position (cm) from lap start
 Behavior.resampled.position = res_position;
+
+%spatial binning - import from spatial info script
+%Behavior.spatialBins = 
 
 %speed
 Behavior.speed = speed;

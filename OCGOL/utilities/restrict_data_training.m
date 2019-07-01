@@ -5,7 +5,7 @@ if options.restrict == 0
     
     %assign the whole C_df matrix as the trace variable for the struct
     %output; frame x ROI
-    Imaging.trace = C_df;
+    %Imaging.trace = C_df;
     
     %get framelength of imaging session from XML - RZ
     %length should be 1 frames longer than C_df trace as the first frame is
