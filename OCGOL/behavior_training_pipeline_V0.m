@@ -178,6 +178,9 @@ rewards.B.pos_mean = mean(rewards.B.position);
 lap_idx.A = find(Behavior.lap_id.trial_based == 2);
 lap_idx.B = find(Behavior.lap_id.trial_based == 3);
 
+%resampled lap idx corrsponding to resampled and restricted time space
+lap_idx_resampled = Behavior.resampled.lapNb;
+
 %get idxs correspoinding to each lap
 %for A laps
 for ll = 1:size(lap_idx.A,2)
