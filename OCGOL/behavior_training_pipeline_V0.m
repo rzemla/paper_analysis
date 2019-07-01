@@ -5,7 +5,7 @@ options.defineDir = 1;
 %I45_RT
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018';
-setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
+%setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418';
 
 %I46
@@ -14,18 +14,19 @@ setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
 %setDir = 'G:\OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518';
 
 %I47_RS
-%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618';
-%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618_2';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_3AB_d8_052418';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_AB_061418';
+%%% don't use - not 5A5B, but random
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618';
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618_2';
+%%%
 
 %I47_LP
 %setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
 %setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
-%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
+setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
 
-%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
@@ -157,7 +158,7 @@ Behavior.resampled.normalizedposition
 position = Behavior.resampled.position;
 
 %idxs # corresponding to 10s
-idx_width = 90;
+idx_width = 75;
 
 %lap start and end times
 Behavior.lap
@@ -206,16 +207,18 @@ end
 
 %plot speed within A range for A laps
 figure
-subplot(2,2,1)
+subplot(2,2,2)
 hold on
+title('A zone speed')
 for ll=1:size(lap_idx.A,2)
     %plot line plot along range
     plot(rewards.A.speed{ll}((rewards.A.Imin(ll)-idx_width):(rewards.A.Imin(ll)+idx_width)));
     %plot line showing start of reward range
     plot([idx_width idx_width],[0 25],'k')
 end
-subplot(2,2,2)
+subplot(2,2,1)
 hold on
+title('B zone speed')
 for ll=1:size(lap_idx.A,2)
     %plot line plot along range
     plot(rewards.A.speed{ll}((rewards.A.IminB(ll)-idx_width):(rewards.A.IminB(ll)+idx_width)));
@@ -223,8 +226,9 @@ for ll=1:size(lap_idx.A,2)
     plot([idx_width idx_width],[0 25],'k')
 end
 
-subplot(2,2,3)
+subplot(2,2,4)
 hold on
+title('A zone speed')
 for ll=1:size(lap_idx.B,2)
     %plot line plot along range
     plot(rewards.B.speed{ll}((rewards.B.IminA(ll)-idx_width):(rewards.B.IminA(ll)+idx_width)));
@@ -232,8 +236,9 @@ for ll=1:size(lap_idx.B,2)
     plot([idx_width idx_width],[0 25],'k')
 end
 
-subplot(2,2,4)
+subplot(2,2,3)
 hold on
+title('B zone speed')
 for ll=1:size(lap_idx.B,2)
     %plot line plot along range
     plot(rewards.B.speed{ll}((rewards.B.Imin(ll)-idx_width):(rewards.B.Imin(ll)+idx_width)));
