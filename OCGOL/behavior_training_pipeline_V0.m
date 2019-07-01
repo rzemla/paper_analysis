@@ -150,21 +150,18 @@ options.moving_window = 10;
 
 [Behavior] = resample_behavioral_data_and_speed_training(Behavior, Imaging, options);
 
-%% Export speed data and reward positional data
+%% Export speed data and reward positional data; mean speed by spatial bin
 
 %global variables
 % time = Behavior.resampled.time;
 % Behavior.resampled.normalizedposition
 position = Behavior.resampled.position;
 
-%idxs # corresponding to 10s
-idx_width = 75;
-
-%lap start and end times
-% Behavior.lap
-
 %%speed of animal
 speed = Behavior.speed;
+
+%idxs # corresponding to 10s
+idx_width = 75;
 
 switch options.BehaviorType
     case 'RF'
@@ -183,15 +180,32 @@ switch options.BehaviorType
             %non-target B reward zones
             %[~,rewards.A.IminB(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.B.pos_mean));
         end
+        
+        %bin data by position (cm) into 100 bins
+        [pos_bins,pos_edges] = discretize(position,100);
+        
+        %find each bin and calculate mean velocity in that bin
+        for bb=1:100
+            %idx's of each bin
+            bin_idxs{bb} = find(pos_bins == bb);
+            %get velocities in each bin and calcualte mean velocity
+            bin_speed(bb) = mean(speed(bin_idxs{bb}));
+        end
+        
         %export relevant data for cumulative processing
         %export for cumulative analysis
         %make cumul_analysis folder
         mkdir(setDir,'cumul_analysis')
         %save the fractions output data
         save(fullfile(setDir,'cumul_analysis','speed_data.mat'),'split_lap',...
-            'Behavior','Imaging','position','speed','lap_idx_resampled');
+            'Behavior','Imaging','position','speed','lap_idx_resampled','bin_speed',...
+            'pos_bins','pos_edges');
         
     case 'OCGOL'
+        
+        %bin position
+        %bin data by position (cm) into 100 bins
+        [pos_bins,pos_edges] = discretize(position,100);
         
         %reward zone time onsets for each lap (from absolute Behavior)
         rewards.A.position = Behavior.rewards{2}.full_laps.position;
@@ -231,6 +245,8 @@ switch options.BehaviorType
             rewards.A.speed{ll} = speed(rewards.A.res_idx{ll});
             %non-target B reward zones
             [~,rewards.A.IminB(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.B.pos_mean));
+            %extract binned indices corresponding to A laps
+            rewards.A.pos_bins{ll} = pos_bins(rewards.A.res_idx{ll});
         end
         
         %for B laps
@@ -241,6 +257,30 @@ switch options.BehaviorType
             rewards.B.speed{ll} = speed(rewards.B.res_idx{ll});
             %non-target A reward zones
             [~,rewards.B.IminA(ll)] = min(abs(position(rewards.B.res_idx{ll}) - rewards.A.pos_mean));
+            %extract binned indices corresponding to A laps
+            rewards.B.pos_bins{ll} = pos_bins(rewards.B.res_idx{ll});
+        end
+        
+        %linearize A laps speed and bin cells
+        rewards.A.linear_pos_bins = cell2mat(rewards.A.pos_bins');
+        rewards.A.linear_speed = cell2mat(rewards.A.speed');
+        
+        %linearize B laps speed and bin cells
+        rewards.B.linear_pos_bins = cell2mat(rewards.B.pos_bins');
+        rewards.B.linear_speed = cell2mat(rewards.B.speed');
+                
+        %find each bin and calculate mean velocity in that bin
+        for bb=1:100
+            %A
+            %idx's of each bin
+            bin_idxs.A{bb} = find(rewards.A.linear_pos_bins == bb);
+            %get velocities in each bin and calcualte mean velocity
+            bin_speed.A(bb) = mean(rewards.A.linear_speed(bin_idxs.A{bb}));
+            %B
+            %idx's of each bin
+            bin_idxs.B{bb} = find(rewards.B.linear_pos_bins == bb);
+            %get velocities in each bin and calcualte mean velocity
+            bin_speed.B(bb) = mean(rewards.B.linear_speed(bin_idxs.B{bb}));
         end
         
                 %export relevant data for cumulative processing
@@ -249,8 +289,8 @@ switch options.BehaviorType
         mkdir(setDir,'cumul_analysis')
         %save the fractions output data
         save(fullfile(setDir,'cumul_analysis','speed_data.mat'),...
-            'Behavior','Imaging','position','speed','lap_idx_resampled','rewards');
-
+            'Behavior','Imaging','position','speed','lap_idx_resampled','rewards',...
+            'bin_speed','bin_idxs');
 end
 
 %7A and 9B
