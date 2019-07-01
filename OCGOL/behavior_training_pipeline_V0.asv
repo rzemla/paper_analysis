@@ -6,7 +6,7 @@ options.defineDir = 1;
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
-%setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418';
+setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418';
 
 %I46
 %setDir = 'G:\OCGOL_learning_long_term\I46\behavior_only\I46_5A5B_060118';
@@ -14,19 +14,19 @@ options.defineDir = 1;
 %setDir = 'G:\OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518';
 
 %I47_RS
-%%% do 
-%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618';
-%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618_2';
-setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218';
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_3AB_d8_052418';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_AB_061418';
+%%% don't use - not 5A5B, but random
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618';
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618_2';
+%%%
 
 %I47_LP
 %setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
 %setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
-%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
-
 %setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
+
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
@@ -37,8 +37,8 @@ options.loadBehaviorData = 1;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
+%options.BehaviorType = 'RF';
 options.BehaviorType = 'OCGOL';
-%options.BehaviorType = 'OCGOL';
 
 %type of calcium data
 options.calcium_data_input = 'CNMF';
@@ -150,61 +150,113 @@ options.moving_window = 10;
 
 [Behavior] = resample_behavioral_data_and_speed_training(Behavior, Imaging, options);
 
-%% Plot speed as a function of position (not lap restricted)
+%% Export speed data and reward positional data
 
 %global variables
-time = Behavior.resampled.time;
-Behavior.resampled.normalizedposition
+% time = Behavior.resampled.time;
+% Behavior.resampled.normalizedposition
 position = Behavior.resampled.position;
 
 %idxs # corresponding to 10s
 idx_width = 75;
 
 %lap start and end times
-Behavior.lap
-%reward zone position for each lap
-Behavior.rewards{1}.position
+% Behavior.lap
+
 %%speed of animal
 speed = Behavior.speed;
 
-%reward zone time onsets for each lap (from absolute Behavior)
-rewards.A.position = Behavior.rewards{2}.full_laps.position;
-rewards.B.position = Behavior.rewards{1}.full_laps.position;
+switch options.BehaviorType
+    case 'RF'
+        %lap idx corresponding to each imaging timepoint
+        lap_idx_resampled = Behavior.resampled.lapNb;
+        %get lap idx from 1 ... end
+        lap_idxs = unique(lap_idx_resampled);
+        %get idxs correspoinding to each lap
+        %for A laps
+        for ll = 1:size(lap_idxs,1)
+            %target A reward zones
+            split_lap.res_idx{ll} = find(lap_idx_resampled == lap_idxs(ll));
+            %[~,rewards.A.Imin(ll)] = min(abs(position(split_lap.res_idx{ll}) - rewards.A.position(ll)));
+            split_lap.lap_position{ll} = position(split_lap.res_idx{ll});
+            split_lap.speed{ll} = speed(split_lap.res_idx{ll});
+            %non-target B reward zones
+            %[~,rewards.A.IminB(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.B.pos_mean));
+        end
+        %export relevant data for cumulative processing
+        %export for cumulative analysis
+        %make cumul_analysis folder
+        mkdir(setDir,'cumul_analysis')
+        %save the fractions output data
+        save(fullfile(setDir,'cumul_analysis','speed_data.mat'),'split_lap',...
+            'Behavior','Imaging','position','speed','lap_idx_resampled');
+        
+    case 'OCGOL'
+        
+        %reward zone time onsets for each lap (from absolute Behavior)
+        rewards.A.position = Behavior.rewards{2}.full_laps.position;
+        rewards.B.position = Behavior.rewards{1}.full_laps.position;
+        
+        %filter A and B reward positions that are out-of-bounds (mis-id'd)
+        rem_A_idx = find(rewards.A.position <131 | rewards.A.position > 150);
+        rem_B_idx = find(rewards.B.position <50 | rewards.B.position > 68);
+        
+        %if mis-idx idx located, remove from list
+        if ~isempty(rem_A_idx)
+            rewards.A.position(rem_A_idx) = [];
+        end
+        %for B trials
+                if ~isempty(rem_B_idx)
+            rewards.A.position(rem_A_idx) = [];
+                end
+        
+        %mean positions for non-target reward zone speed calculation
+        rewards.A.pos_mean = mean(rewards.A.position);
+        rewards.B.pos_mean = mean(rewards.B.position);
+        
+        %lap idx by trial type
+        lap_idx.A = find(Behavior.lap_id.trial_based == 2);
+        lap_idx.B = find(Behavior.lap_id.trial_based == 3);
+        
+        %resampled lap idx corrsponding to resampled and restricted time space
+        lap_idx_resampled = Behavior.resampled.lapNb;
+        
+        %get idxs correspoinding to each lap
+        %for A laps
+        for ll = 1:size(lap_idx.A,2)
+            %target A reward zones
+            rewards.A.res_idx{ll} = find(lap_idx_resampled == lap_idx.A(ll));
+            [~,rewards.A.Imin(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.A.position(ll)));
+            rewards.A.lap_position{ll} = position(rewards.A.res_idx{ll});
+            rewards.A.speed{ll} = speed(rewards.A.res_idx{ll});
+            %non-target B reward zones
+            [~,rewards.A.IminB(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.B.pos_mean));
+        end
+        
+        %for B laps
+        for ll = 1:size(lap_idx.B,2)
+            rewards.B.res_idx{ll} = find(lap_idx_resampled == lap_idx.B(ll));
+            [~,rewards.B.Imin(ll)] = min(abs(position(rewards.B.res_idx{ll}) - rewards.B.position(ll)));
+            rewards.B.lap_position{ll} = position(rewards.B.res_idx{ll});
+            rewards.B.speed{ll} = speed(rewards.B.res_idx{ll});
+            %non-target A reward zones
+            [~,rewards.B.IminA(ll)] = min(abs(position(rewards.B.res_idx{ll}) - rewards.A.pos_mean));
+        end
+        
+                %export relevant data for cumulative processing
+        %export for cumulative analysis
+        %make cumul_analysis folder
+        mkdir(setDir,'cumul_analysis')
+        %save the fractions output data
+        save(fullfile(setDir,'cumul_analysis','speed_data.mat'),...
+            'Behavior','Imaging','position','speed','lap_idx_resampled','rewards');
 
-%mean positions for non-target reward zone speed calculation
-rewards.A.pos_mean = mean(rewards.A.position);
-rewards.B.pos_mean = mean(rewards.B.position);
-
-%lap idx by trial type 
-lap_idx.A = find(Behavior.lap_id.trial_based == 2);
-lap_idx.B = find(Behavior.lap_id.trial_based == 3);
-
-%resampled lap idx corrsponding to resampled and restricted time space
-lap_idx_resampled = Behavior.resampled.lapNb;
-
-%get idxs correspoinding to each lap
-%for A laps
-for ll = 1:size(lap_idx.A,2)
-    %target A reward zones
-    rewards.A.res_idx{ll} = find(lap_idx_resampled == lap_idx.A(ll));
-    [~,rewards.A.Imin(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.A.position(ll)));
-    rewards.A.lap_position{ll} = position(rewards.A.res_idx{ll});
-    rewards.A.speed{ll} = speed(rewards.A.res_idx{ll});
-    %non-target B reward zones
-    [~,rewards.A.IminB(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.B.pos_mean));
 end
 
-%for B laps
-for ll = 1:size(lap_idx.B,2)
-    rewards.B.res_idx{ll} = find(lap_idx_resampled == lap_idx.B(ll));
-    [~,rewards.B.Imin(ll)] = min(abs(position(rewards.B.res_idx{ll}) - rewards.B.position(ll)));
-    rewards.B.lap_position{ll} = position(rewards.B.res_idx{ll});
-    rewards.B.speed{ll} = speed(rewards.B.res_idx{ll});
-    %non-target A reward zones
-    [~,rewards.B.IminA(ll)] = min(abs(position(rewards.B.res_idx{ll}) - rewards.A.pos_mean));
-end
+%7A and 9B
 
 
+%% Move this to common plot
 %plot speed within A range for A laps
 figure
 subplot(2,2,2)
