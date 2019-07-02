@@ -52,8 +52,8 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 
 %% Plot example neuron (for display/figure) - trace, position, event spiral, TS arrows, A vs. B
 %I42L example plots ROIs
-%59, 66 (nice), 111(nice),162,180, 208,214 234 (nice),252,280  - A specific
-%22,34, 46 (one used previously),62,207,246 (nice),282 (nice) - B specific
+%59, 66 (nice), 111(nice),162,180, 208,214 234 (nice,2  - A specific
+%22,34, 46 (one used previously),62,207,246 (nice) - B specific
 %10,30, 49, 82, 89 (nice), 104 (nice),158,161 (nice), 167,171,182,197 (used before) -common
 %237
 %break down in simpler code in the future;

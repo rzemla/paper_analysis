@@ -175,7 +175,8 @@ if 1
 %ROI = 38;
 %split cells
 %365,371, 452, 371
-for ROI=AB_list
+%for ROI=AB_list
+    for ROI=45:size(session_vars{1}.Place_cell{1}.Spatial_tuning_curve,2)  
 figure('Position',[1920 40 1920 960])
 %Show spatial outline of the component
 subplot(3,5,1)
@@ -286,6 +287,8 @@ end
 scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
 %B 
 scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
+pause;
+clf;
 end
 end
 
