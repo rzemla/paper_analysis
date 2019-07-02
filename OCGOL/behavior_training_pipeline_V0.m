@@ -5,27 +5,32 @@ options.defineDir = 1;
 %I45_RT
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018';
-setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
+%setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
 %setDir = 'G:\OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418';
 
 %I46
+%setDir = 'G:\OCGOL_learning_long_term\I46\behavior_only\I46_rand_d1_052918';
 %setDir = 'G:\OCGOL_learning_long_term\I46\behavior_only\I46_5A5B_060118';
 %setDir = 'G:\OCGOL_learning_long_term\I46\behavior_only\I46_3A3B_060718';
 %setDir = 'G:\OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518';
 
 %I47_RS
+%setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_rand_d2_051518';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_3AB_d8_052418';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_AB_061418';
+
+
 %%% don't use - not 5A5B, but random
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618';
 %setDir = 'G:\OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d1_051618_2';
 %%%
 
 %I47_LP
+%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_rand_d2_051518';
 %setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
 %setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
-%setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
+setDir = 'G:\OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
 
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
@@ -231,6 +236,8 @@ switch options.BehaviorType
         %lap idx by trial type
         lap_idx.A = find(Behavior.lap_id.trial_based == 2);
         lap_idx.B = find(Behavior.lap_id.trial_based == 3);
+        
+        %load int
         
         %resampled lap idx corrsponding to resampled and restricted time space
         lap_idx_resampled = Behavior.resampled.lapNb;
