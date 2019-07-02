@@ -42,20 +42,168 @@ for aa=1:4
     end
 end
 
+%% Get mean velocity from each animal in peri-reward region on A and B trials
+
+%range over which to average velocity
+idx_width = [75,75];
+
+%for each animal
+for aa=1:4
+    %for each OCGOL session
+    for ss=2:4
+        %for each lap (A laps)
+        for ll=1:size(speed_data{aa}{ss}.lap_idx.A,2)
+            %plot line plot along range
+            A_speed{aa}{ss}(ll,:) = speed_data{aa}{ss}.rewards.A.speed{ll}((speed_data{aa}{ss}.rewards.A.Imin(ll)-idx_width(1)):(speed_data{aa}{ss}.rewards.A.Imin(ll)+idx_width(2)));
+            A_speed_relB{aa}{ss}(ll,:) = speed_data{aa}{ss}.rewards.A.speed{ll}((speed_data{aa}{ss}.rewards.A.IminB(ll)-idx_width(1)):(speed_data{aa}{ss}.rewards.A.IminB(ll)+idx_width(2)));
+        end
+        %for each lap (B laps)
+        for ll=1:size(speed_data{aa}{ss}.lap_idx.B,2)
+            %plot line plot along range
+            B_speed{aa}{ss}(ll,:) = speed_data{aa}{ss}.rewards.B.speed{ll}((speed_data{aa}{ss}.rewards.B.Imin(ll)-idx_width(1)):(speed_data{aa}{ss}.rewards.B.Imin(ll)+idx_width(2)));
+            B_speed_relA{aa}{ss}(ll,:) = speed_data{aa}{ss}.rewards.B.speed{ll}((speed_data{aa}{ss}.rewards.B.IminA(ll)-idx_width(1)):(speed_data{aa}{ss}.rewards.B.IminA(ll)+idx_width(2)));
+        end
+    end
+end
+
+%get mean velocities in per-reward area
+for aa=1:4
+    %for each OCGOL session
+    for ss=2:4
+        %get mean velocity at each timepoint for each animal
+        %A trials
+        %mean
+        mean_vel.A{ss}(aa,:) = mean(A_speed{aa}{ss},1);
+        mean_vel.ArelB{ss}(aa,:) = mean(A_speed_relB{aa}{ss},1);
+        %std
+        std_vel.A{ss}(aa,:) = std(A_speed{aa}{ss},0,1);
+        std_vel.ArelB{ss}(aa,:) = std(A_speed_relB{aa}{ss},0,1);
+        %B trials
+        mean_vel.B{ss}(aa,:) = mean(B_speed{aa}{ss},1);
+        mean_vel.BrelA{ss}(aa,:) = mean(B_speed_relA{aa}{ss},1);
+        %std
+        std_vel.B{ss}(aa,:) = std(B_speed{aa}{ss},0,1);
+        std_vel.BrelA{ss}(aa,:) = std(B_speed_relA{aa}{ss},0,1);
+    end
+end
+
+%% Calculate the mean velocities for the RF day relative to mean reward location on the 5A5B session for each animal
+
+%find the min index corresponding to each RF lap to mean A reward onset
+%position and mean B reward onset position
+for aa=1:4
+    for ss=1
+        for ll = 1:size(speed_data{aa}{ss}.Behavior.lap,2)
+            %target A reward zones
+            rf{aa}.A.res_idx{ll} = find(speed_data{aa}{ss}.lap_idx_resampled == ll);
+            
+            [~,rf{aa}.A.Imin(ll)] = min(abs(speed_data{aa}{ss}.position(rf{aa}.A.res_idx{ll}) - speed_data{aa}{2}.rewards.A.pos_mean));
+            
+            rf{aa}.A.lap_position{ll} = speed_data{aa}{ss}.position(rf{aa}.A.res_idx{ll});
+            
+            rf{aa}.A.speed{ll} = speed_data{aa}{ss}.speed(rf{aa}.A.res_idx{ll});
+            
+            
+            %non-target B reward zones
+            %[~,rewards.A.IminB(ll)] = min(abs(position(rewards.A.res_idx{ll}) - rewards.B.pos_mean));
+            %extract binned indices corresponding to A laps
+            %rewards.A.pos_bins{ll} = pos_bins(rewards.A.res_idx{ll});
+        end
+    end
+end
+
+
+%for each animal
+for aa=1:4
+    %for each OCGOL session
+    for ss=1
+        %for each lap
+        for ll = 1:size(speed_data{aa}{ss}.Behavior.lap,2)
+            A_speed{aa}{ss}(ll,:) = speed_data{aa}{ss}.split_lap.speed{ll}((speed_data{aa}{ss}.rewards.A.Imin(ll)-idx_width(1)):...
+                (speed_data{aa}{ss}.rewards.A.Imin(ll)+idx_width(2)));
+            
+        end
+    end
+end
+
 %% Plot
+figure('Position', [2220 270 730 420])
+%A trials
+for ii=2:4
+    subplot(2,4,ii)
+    hold on
+    ylabel('Mean Velocity [cm/s]')
+    %xlabel('Time [s]')
+    ylim([0 30])
+    xlim([0 151])
+    xticks([16 46 76 106 136]);
+    xticklabels({'-2','-1','0','1','2'})
+    %line plot with std at each spatial bin
+    %plot(mean(mean_vel.A{2}),'b')
+    %shaded std
+    s1 = shadedErrorBar(1:151,mean_vel.A{ii},{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
+    set(s1.edge,'LineWidth',1.5,'LineStyle','-','Color',[[65,105,225]/255, 0.2]) %last value add transparency value
+    s1.mainLine.LineWidth = 2;
+    s1.mainLine.Color = [65,105,225]/255;
+    s1.patch.FaceColor = [65,105,225]/255;
+    
+    %line plot with std at each spatial bin
+    %plot(mean(mean_vel.ArelB{2}),'r')
+    %shaded std
+    s2 = shadedErrorBar(1:151,mean_vel.ArelB{ii},{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
+    set(s2.edge,'LineWidth',1.5,'LineStyle','-','Color',[[220,20,60]/255, 0.2]) %last value add transparency value
+    s2.mainLine.LineWidth = 2;
+    s2.mainLine.Color = [220,20,60]/255;
+    s2.patch.FaceColor = [220,20,60]/255;
+end
+%B trials
+for ii=2:4
+    subplot(2,4,ii+4)
+    hold on
+    ylabel('Mean Velocity [cm/s]')
+    xlabel('Time [s]')
+    ylim([0 30])
+    xlim([0 151])
+    xticks([16 46 76 106 136]);
+    xticklabels({'-2','-1','0','1','2'})
+    %line plot with std at each spatial bin
+    %plot(mean(mean_vel.A{2}),'b')
+    %shaded std
+    s1 = shadedErrorBar(1:151,mean_vel.B{ii},{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
+    set(s1.edge,'LineWidth',1.5,'LineStyle','-','Color',[[220,20,60]/255, 0.2]) %last value add transparency value
+    s1.mainLine.LineWidth = 2;
+    s1.mainLine.Color = [220,20,60]/255;
+    s1.patch.FaceColor = [220,20,60]/255;
+    
+    %line plot with std at each spatial bin
+    %plot(mean(mean_vel.ArelB{2}),'r')
+    %shaded std
+    s2 = shadedErrorBar(1:151,mean_vel.BrelA{ii},{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
+    set(s2.edge,'LineWidth',1.5,'LineStyle','-','Color',[[65,105,225]/255, 0.2]) %last value add transparency value
+    s2.mainLine.LineWidth = 2;
+    s2.mainLine.Color = [65,105,225]/255;
+    s2.patch.FaceColor = [65,105,225]/255;
+end
 
-idx_width = [75,300];
+% 
+% 16 = -2s
+% 46 = -1s
+% 76 = 0s
+% 106 = 1s
+% 136 = 2s
 
+
+%%
 figure
 hold on
 title('A zone speed')
 for aa=1:4
-    for ss=2:4
+    for ss=2
         for ll=1:size(speed_data{aa}{ss}.lap_idx.A,2)
             %plot line plot along range
             plot(speed_data{aa}{ss}.rewards.A.speed{ll}((speed_data{aa}{ss}.rewards.A.Imin(ll)-idx_width(1)):(speed_data{aa}{ss}.rewards.A.Imin(ll)+idx_width(2))));
             %plot line showing start of reward range
-            plot([idx_width idx_width],[0 25],'k')
+            plot([idx_width(1) idx_width(1)],[0 25],'k')
         end
     end
 end
