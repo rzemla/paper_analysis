@@ -57,6 +57,8 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 %10,30, 49, 82, 89 (nice), 104 (nice),158,161 (nice), 167,171,182,197 (used before) -common
 %237
 %break down in simpler code in the future;
+%generate figure used in task selecitve figure
+options.plotFigure2 = 1;
 raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 
 
