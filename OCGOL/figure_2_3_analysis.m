@@ -47,6 +47,8 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 
 %% Add a filter for logical selection of A/B selective neurons here (Figure 2)
 
+
+
 %% Add a filter for logical selection of A&B remapping neurons here (Figure 3)
 
 
@@ -56,7 +58,10 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 %22,34, 46 (one used previously),62,207,246 (nice),282 (nice) - B specific
 %10,30, 49, 82, 89 (nice), 104 (nice),158,161 (nice), 167,171,182,197 (used before) -common
 %237
+%currently displaying in Figure 2
+%[234,246,197] 
 %break down in simpler code in the future;
+
 %generate figure used in task selecitve figure
 options.plotFigure2 = 1;
 raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
@@ -167,8 +172,8 @@ options.tuning_criterion = 'ts';
 save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
 
 %% Split A&B neurons by category - common, partial, global, rate remapping
-
-split_remapping_category(cent_diff_AandB, tunedLogical.ts.AandB_tuned, pf_vector_max, session_vars, max_transient_peak)
+options.tuning_criterion = 'ts';
+split_remapping_category(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options)
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options
