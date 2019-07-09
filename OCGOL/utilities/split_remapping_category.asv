@@ -111,90 +111,27 @@ end
 %TS tuning problems: 36 69 72 102 157 170 179 227
 %72 
 
-%plot normalized position
-figure('Position', [1930 130 1890 420])
-for rr=1:size(Bonly_field_filtered,2)%1:size(Aonly_notSIb_idx,2)
-    %ROI = rr%AandB_tuned_idx(rr);
-    ROI = Bonly_field_filtered(rr); %Aonly_notSIb_idx(rr);
-    hold on
-    title(num2str(ROI))
-    yticks([0 0.5 1])
-    ylabel('Normalized position')
-    xlabel('Time [min]');
-    xticks(0:3:12);
-    %ylim([0 1])
-    set(gca,'FontSize',14)
-    set(gca,'LineWidth',1)
-    %A laps
-    for ii=1:size(lap_idxs.A,1)
-        plot(Imaging_split{1}{1}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
-            Behavior_split{1}{1}.resampled.position(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
-            'Color',[0 0 1 0.6],'LineWidth',1.5)
-    end
-    %B laps
-    for ii=1:size(lap_idxs.B,1)
-        plot(Imaging_split{1}{2}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
-            Behavior_split{1}{2}.resampled.position(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
-            'Color',[1 0 0 0.6],'LineWidth',1.5)
-    end
-    %overlay significant calcium run events
-    %A
-    scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
-    %B
-    scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
-    
-    %generate run and non-run patched across track
-    if 0
-    xRange = {5:10; 20; 40:42; 50; 60:75; 90:95};
-    
-    for pr =1:size(Behavior_split{1, 1}{1, 1}.run_on_off_idx)
-    
-       xRange{pr,1} =  Imaging_split{1}{1}.time_restricted(Behavior_split{1}{1}.run_on_off_idx(pr,1): Behavior_split{1}{1}.run_on_off_idx(pr,2))./60;
-       
-    end
-    for k1 = 1:size(xRange,1)
-        q = xRange{k1};
-        %if very brief period
-        if length(q) == 1
-            q = [q q+0.1];
-        end
-        %start x end x; end x start x
-        qx = [min(q) max(q)  max(q)  min(q)];
-        yl = ylim;
-        %start y x2; end y x2
-        qy = [[1 1]*yl(1) [1 1]*yl(2)];
-        %plot the patches
-        %green
-        %patch(qx, qy, [0 1 0],'EdgeColor', 'none','FaceAlpha', 0.3)
-        %red
-        patch(qx, qy, [1 0 0],'EdgeColor', 'none','FaceAlpha', 0.3)
-    end
-    end
-    pause
-    clf
-end
-
 %overlay area of max place field bin
 
 %spatial bin assignment for each run-epoch frame (100 bins) 
 %A trials
-session_vars{1}.Place_cell{1}.Bin{8}
+session_vars{1}.Place_cell{1}.Bin{8};
 %B trials
-session_vars{1}.Place_cell{2}.Bin{8}
+session_vars{1}.Place_cell{2}.Bin{8};
 
 %get the run epoch binaries for each set of trials - A session - 5339 run
 %frames
 
 %plot the run epochs as patches
-session_vars{1}.Behavior_split{1}.run_ones  
+session_vars{1}.Behavior_split{1}.run_ones;
 
 %get the run epoch binaries for each set of trials - B session - 4547 run
 %frames
-session_vars{1}.Behavior_split{2}.run_ones 
+session_vars{1}.Behavior_split{2}.run_ones; 
 
 
 %run events - binary onset across entire run/no run interval
-Event_split{1}{1}.Run.run_onset_ones  
+Event_split{1}{1}.Run.run_onset_ones;
 
 %get bins
 
@@ -282,16 +219,45 @@ for tt=1:2
     end
 end
 
+
+%% Assign lap number and norm position for each event for correct A and B trials
+
+%lap # for for correct A laps
+Behavior_split{1, 1}{1, 1}.resampled.lapNb  
+
+%make lap number for only run epoch frames
+
+% cal
+event_norm_pos_run.A
+event_norm_time.A  
+
+
+%% Get normalized position distance converstion factor
+
+
+%% Filter out neurons that do not have at least 5 sig events in max place field
+
+%% Make sure that at least 1 event on 5 distinct laps
+
+
+
+%% Make sure the animal was in a run epoch within 4 cm of median position of events in max place field on 70% of laps
  
 
-%plot as shaded area to verify correct id of place field onto normalized
+
+%% Check that in running epoch within 3 bins to the left or right of each
+
+
+
+%% Plot as shaded area to verify correct id of place field onto normalized
 %position axis
+
 
 %plot normalized position
 figure('Position', [1930 130 1890 420])
-for rr=1:size(Bonly_field_filtered,2)%1:size(Aonly_notSIb_idx,2)
+for rr=1:size(Aonly_field_filtered,2)%1:size(Aonly_notSIb_idx,2)
     %ROI = rr%AandB_tuned_idx(rr);
-    ROI = Bonly_field_filtered(rr); %Aonly_notSIb_idx(rr);
+    ROI = Aonly_field_filtered(rr); %Aonly_notSIb_idx(rr);
     hold on
     title(num2str(ROI))
     yticks([0 0.5 1])
@@ -321,10 +287,10 @@ for rr=1:size(Bonly_field_filtered,2)%1:size(Aonly_notSIb_idx,2)
     
     %plot horz lines signifying start and end of place field
     %start
-    lineS = refline(0,placeField_filtered_max_posnorm{2}{rr}(1))
+    lineS = refline(0,placeField_filtered_max_posnorm{1}{rr}(1))
     lineS.Color = 'g';
     %end
-    lineE = refline(0,placeField_filtered_max_posnorm{2}{rr}(2))
+    lineE = refline(0,placeField_filtered_max_posnorm{1}{rr}(2))
     lineE.Color = 'g';
     
     pause
@@ -333,7 +299,7 @@ end
 
 
 
-
+%%
 
 Aonly_field_filtered
 
@@ -346,24 +312,14 @@ max_transient_peak
 
 %which of the id'd place field peak correspondto max trans rate in corr A/B
 %trials
-% 
-
-
-%remove ROIs which do not have any detected place fields
-
-
-
-
+%
 % max_placeField_edge
 % max_placeField_center
-
-%% Filter out neurons that do not have at least 5 sig events in max place field
-
-%% Make sure the animal was in a run epoch within 4 cm of median position of events in max place field on 70% of laps
 
 
 %% Patch generator for run epochs
 %creates x range of patches
+if 0
 figure;
 hold on
 xRange = {5:10; 20; 40:42; 50; 60:75; 90:95};
@@ -384,14 +340,71 @@ for k1 = 1:size(xRange,1)
     %red
     patch(qx, qy, [1 0 0],'EdgeColor', 'none','FaceAlpha', 0.3)
 end
+end
 
- 
- 
-%% Check that at least 5 calcium events (on distinct laps?) occured in field with max rate
-
-
-%% Check that in running epoch within 3 bins to the left or right of each
-
+%% OLD PLOTTING CODE
+% %plot normalized position
+% figure('Position', [1930 130 1890 420])
+% for rr=1:size(Bonly_field_filtered,2)%1:size(Aonly_notSIb_idx,2)
+%     %ROI = rr%AandB_tuned_idx(rr);
+%     ROI = Bonly_field_filtered(rr); %Aonly_notSIb_idx(rr);
+%     hold on
+%     title(num2str(ROI))
+%     yticks([0 0.5 1])
+%     ylabel('Normalized position')
+%     xlabel('Time [min]');
+%     xticks(0:3:12);
+%     %ylim([0 1])
+%     set(gca,'FontSize',14)
+%     set(gca,'LineWidth',1)
+%     %A laps
+%     for ii=1:size(lap_idxs.A,1)
+%         plot(Imaging_split{1}{1}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
+%             Behavior_split{1}{1}.resampled.position(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
+%             'Color',[0 0 1 0.6],'LineWidth',1.5)
+%     end
+%     %B laps
+%     for ii=1:size(lap_idxs.B,1)
+%         plot(Imaging_split{1}{2}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
+%             Behavior_split{1}{2}.resampled.position(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
+%             'Color',[1 0 0 0.6],'LineWidth',1.5)
+%     end
+%     %overlay significant calcium run events
+%     %A
+%     scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
+%     %B
+%     scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
+%     
+%     %generate run and non-run patched across track
+%     if 0
+%     xRange = {5:10; 20; 40:42; 50; 60:75; 90:95};
+%     
+%     for pr =1:size(Behavior_split{1, 1}{1, 1}.run_on_off_idx)
+%     
+%        xRange{pr,1} =  Imaging_split{1}{1}.time_restricted(Behavior_split{1}{1}.run_on_off_idx(pr,1): Behavior_split{1}{1}.run_on_off_idx(pr,2))./60;
+%        
+%     end
+%     for k1 = 1:size(xRange,1)
+%         q = xRange{k1};
+%         %if very brief period
+%         if length(q) == 1
+%             q = [q q+0.1];
+%         end
+%         %start x end x; end x start x
+%         qx = [min(q) max(q)  max(q)  min(q)];
+%         yl = ylim;
+%         %start y x2; end y x2
+%         qy = [[1 1]*yl(1) [1 1]*yl(2)];
+%         %plot the patches
+%         %green
+%         %patch(qx, qy, [0 1 0],'EdgeColor', 'none','FaceAlpha', 0.3)
+%         %red
+%         patch(qx, qy, [1 0 0],'EdgeColor', 'none','FaceAlpha', 0.3)
+%     end
+%     end
+%     pause
+%     clf
+% end
 
 end
 
