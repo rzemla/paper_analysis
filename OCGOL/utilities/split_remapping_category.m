@@ -230,25 +230,60 @@ end
 %get median lap length based on the registered length of each lap
 median_track_len = median(Behavior_full{1}.position_lap(:,2));
 
-%conversion factor (norm_pos/cm length) - for record
-norm_conv_factor = median_track_len/1;
+%conversion factor (norm_pos/cm length) - 100 bins
+norm_conv_factor = median_track_len/100;
+%median_track_len/1;
 
-%% Filter out neurons that do not have at least 5 sig events in max place field
+%% Filter out neurons that do not have at least 5 sig events in max place field in at least 5 distinct laps
 
-% calcium event position and absolute restrict time
-event_norm_pos_run.A
-event_norm_time.A  
-event_lap_idx.A
+%calcium event position and absolute restrict time
+%all neuron idx space
+event_norm_pos_run.A;
+event_norm_time.A;  
+event_lap_idx.A;
 
-%% Make sure that at least 1 event on 5 distinct laps
+Aonly_field_filtered;
+Bonly_field_filtered;
 
+%find events occuring within max place field for each ROI
+for tt=1:2
+    for rr=1:size(placeField_filtered_max_posnorm{tt},2)
+        %get idxs of events with max place field
+        if tt == 1 %correct A trials
+            events_in_field{tt}{rr} = find(event_norm_pos_run.A{Aonly_field_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                event_norm_pos_run.A{Aonly_field_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+            %register the corresponding lap of in-field filtered event
+            event_in_field_laps{tt}{rr} = event_lap_idx.A{Aonly_field_filtered(rr)}(events_in_field{tt}{rr});
+            %get number of unique events (those occuring on each lap)
+            event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
+            
+        elseif tt == 2 %correct B trials
+            events_in_field{tt}{rr} = find(event_norm_pos_run.B{Bonly_field_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                event_norm_pos_run.B{Bonly_field_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+            %register the corresponding lap of in-field filtered event
+            event_in_field_laps{tt}{rr} = event_lap_idx.B{Bonly_field_filtered(rr)}(events_in_field{tt}{rr});
+            %get number of unique events (those occuring on each lap)
+            event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
+        end
+    end
+end
 
+%check which task-selective ROIs have less than 5 events
+%correct A trials
+event_thres_exclude_log.A  = cell2mat(event_in_field_nb{1}) < 5;
+%correct B trials
+event_thres_exclude_log.B  = cell2mat(event_in_field_nb{2}) < 5;
+
+%update indices with event 
+ROI_field_filtered_event.A = Aonly_field_filtered(~event_thres_exclude_log.A);
+ROI_field_filtered_event.B = Bonly_field_filtered(~event_thres_exclude_log.B);
+
+%update assn place fields
+placeField_eventFilt{1} = placeField_filtered_max_posnorm{1}(~event_thres_exclude_log.A);
+placeField_eventFilt{2} = placeField_filtered_max_posnorm{2}(~event_thres_exclude_log.B);
 
 %% Make sure the animal was in a run epoch within 4 cm of median position of events in max place field on 70% of laps
- 
-
-
-%% Check that in running epoch within 3 bins to the left or right of each
+% Check that in running epoch within 3 bins to the left or right of each
 
 
 
@@ -258,9 +293,9 @@ event_lap_idx.A
 
 %plot normalized position
 figure('Position', [1930 130 1890 420])
-for rr=1:size(Aonly_field_filtered,2)%1:size(Aonly_notSIb_idx,2)
+for rr=1:size(ROI_field_filtered_event.B,2)%1:size(Aonly_notSIb_idx,2)
     %ROI = rr%AandB_tuned_idx(rr);
-    ROI = Aonly_field_filtered(rr); %Aonly_notSIb_idx(rr);
+    ROI = ROI_field_filtered_event.B(rr); %Aonly_notSIb_idx(rr);
     hold on
     title(num2str(ROI))
     yticks([0 0.5 1])
@@ -290,34 +325,16 @@ for rr=1:size(Aonly_field_filtered,2)%1:size(Aonly_notSIb_idx,2)
     
     %plot horz lines signifying start and end of place field
     %start
-    lineS = refline(0,placeField_filtered_max_posnorm{1}{rr}(1))
+    lineS = refline(0,placeField_eventFilt{2}{rr}(1))
     lineS.Color = 'g';
     %end
-    lineE = refline(0,placeField_filtered_max_posnorm{1}{rr}(2))
+    lineE = refline(0,placeField_eventFilt{2}{rr}(2))
     lineE.Color = 'g';
     
     pause
     clf
 end
 
-
-
-%%
-
-Aonly_field_filtered
-
-Bonly_field_filtered
-
-max_transient_peak
-
-
-
-
-%which of the id'd place field peak correspondto max trans rate in corr A/B
-%trials
-%
-% max_placeField_edge
-% max_placeField_center
 
 
 %% Patch generator for run epochs
