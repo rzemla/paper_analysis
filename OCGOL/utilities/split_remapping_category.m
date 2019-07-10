@@ -99,13 +99,15 @@ for rr=1:size(events{ss}{1},2)
     event_norm_time.A{rr} = Imaging_split{1}{1}.time_restricted(find(Event_split{1}{1}.Run.run_onset_binary(:,rr) == 1))/60;
     %normalizesd position of significant run events in A
     event_norm_pos_run.A{rr} = Behavior_split{1}{1}.resampled.position_norm(find(Event_split{1}{1}.Run.run_onset_binary(:,rr) == 1));
-    %add lap assignment here for A
-    
+    %lap assignment for A
+    event_lap_idx.A{rr} = Behavior_split{1}{1}.resampled.lapNb(logical(Event_split{1, 1}{1, 1}.Run.run_onset_binary(:,rr)));
     
     %time of significant run events in B
     event_norm_time.B{rr} = Imaging_split{1}{2}.time_restricted(find(Event_split{1}{2}.Run.run_onset_binary(:,rr) == 1))/60;
     %normalizesd position of significant run events in B
     event_norm_pos_run.B{rr} = Behavior_split{1}{2}.resampled.position_norm(find(Event_split{1}{2}.Run.run_onset_binary(:,rr) == 1));
+    %lap assignment for B
+    event_lap_idx.B{rr} = Behavior_split{1}{2}.resampled.lapNb(logical(Event_split{1}{2}.Run.run_onset_binary(:,rr)));
 end
 
 
@@ -223,22 +225,20 @@ for tt=1:2
 end
 
 
-%% Assign lap number and norm position for each event for correct A and B trials
+%% Get normalized position distance converstion factor
 
-%lap # for for correct A laps
-Behavior_split{1, 1}{1, 1}.resampled.lapNb  
+%get median lap length based on the registered length of each lap
+median_track_len = median(Behavior_full{1}.position_lap(:,2));
 
-%make lap number for only run epoch frames
+%conversion factor (norm_pos/cm length) - for record
+norm_conv_factor = median_track_len/1;
+
+%% Filter out neurons that do not have at least 5 sig events in max place field
 
 % calcium event position and absolute restrict time
 event_norm_pos_run.A
 event_norm_time.A  
-
-
-%% Get normalized position distance converstion factor
-
-
-%% Filter out neurons that do not have at least 5 sig events in max place field
+event_lap_idx.A
 
 %% Make sure that at least 1 event on 5 distinct laps
 
