@@ -256,6 +256,8 @@ for tt=1:2
             event_in_field_laps{tt}{rr} = event_lap_idx.A{Aonly_field_filtered(rr)}(events_in_field{tt}{rr});
             %get number of unique events (those occuring on each lap)
             event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
+            %get position of in-field events
+            events_in_field_pos{tt}{rr} = event_norm_pos_run.A{Aonly_field_filtered(rr)}(events_in_field{tt}{rr});
             
         elseif tt == 2 %correct B trials
             events_in_field{tt}{rr} = find(event_norm_pos_run.B{Bonly_field_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
@@ -264,6 +266,8 @@ for tt=1:2
             event_in_field_laps{tt}{rr} = event_lap_idx.B{Bonly_field_filtered(rr)}(events_in_field{tt}{rr});
             %get number of unique events (those occuring on each lap)
             event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
+            %get position of in-field events
+            events_in_field_pos{tt}{rr} = event_norm_pos_run.B{Bonly_field_filtered(rr)}(events_in_field{tt}{rr});
         end
     end
 end
@@ -282,8 +286,42 @@ ROI_field_filtered_event.B = Bonly_field_filtered(~event_thres_exclude_log.B);
 placeField_eventFilt{1} = placeField_filtered_max_posnorm{1}(~event_thres_exclude_log.A);
 placeField_eventFilt{2} = placeField_filtered_max_posnorm{2}(~event_thres_exclude_log.B);
 
+%update event position (normalized)
+event_pos_inField{1} = events_in_field_pos{1}(~event_thres_exclude_log.A);
+event_pos_inField{2} = events_in_field_pos{2}(~event_thres_exclude_log.B);
+
 %% Make sure the animal was in a run epoch within 4 cm of median position of events in max place field on 70% of laps
 % Check that in running epoch within 3 bins to the left or right of each
+ROI_field_filtered_event.A
+ROI_field_filtered_event.B
+
+%take the median position of the events in field and min/max position
+for tt=1:2 %for correct A and B trials
+    for rr=1:size(event_pos_inField{tt},2)
+        med_pos_event{tt}(rr) = median(event_pos_inField{tt}{rr}); 
+        %into one matrix min and max of each event
+        min_max_pos_event{tt}(rr,1) = min(event_pos_inField{tt}{rr}); 
+        min_max_pos_event{tt}(rr,2) = max(event_pos_inField{tt}{rr}); 
+    end
+end
+
+%get correct A and B laps idx
+corr_lap_idx{1} = unique(Behavior_split{1}{1}.resampled.lapNb);
+corr_lap_idx{2} = unique(Behavior_split{1}{2}.resampled.lapNb);
+
+%get indices across all laps of the ranges
+for tt=1:2 %for correct A and B trials
+    for rr=1:size(event_pos_inField{tt},2)
+        pos_range_indices{tt}{rr} = find( Behavior_full{1}.resampled.normalizedposition >= min_max_pos_event{tt}(rr,1) & ...
+            Behavior_full{1}.resampled.normalizedposition <= min_max_pos_event{tt}(rr,2) )
+    end
+end
+
+
+% +/- 3 cm around median on opposing lap in running epoch - maybe add later
+
+%70% of space in this region in run epoch
+
 
 
 
