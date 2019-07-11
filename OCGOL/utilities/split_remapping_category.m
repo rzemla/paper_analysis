@@ -312,18 +312,72 @@ corr_lap_idx{2} = unique(Behavior_split{1}{2}.resampled.lapNb);
 %get indices across all laps of the ranges
 for tt=1:2 %for correct A and B trials
     for rr=1:size(event_pos_inField{tt},2)
+        %get indices that match the position range (ALL LAPS)
         pos_range_indices{tt}{rr} = find( Behavior_full{1}.resampled.normalizedposition >= min_max_pos_event{tt}(rr,1) & ...
-            Behavior_full{1}.resampled.normalizedposition <= min_max_pos_event{tt}(rr,2) )
+            Behavior_full{1}.resampled.normalizedposition <= min_max_pos_event{tt}(rr,2));
+        %get lap idx of corresponding idxs
+        lap_idx_range{tt}{rr} = Behavior_full{1}.resampled.lapNb(pos_range_indices{tt}{rr});
     end
 end
 
 
-% +/- 3 cm around median on opposing lap in running epoch - maybe add later
+%extact logical with only laps correponding to opposing trial laps
+lap_opposed_idx = ismember(lap_idx_range{1}{1},corr_lap_idx{2});
+%get the lap number associated with each frame in the opposing trials
+lap_label_opposed = lap_idx_range{1}{1}(lap_opposed_idx);
+%the binary indicating in animal in run epoch with that range 
+lap_runEpoch_opposed = Behavior_full{1}.run_ones(pos_range_indices{1}{1}(lap_opposed_idx));
+
+%extract the associated positions
+lap_pos_opposed = Behavior_full{1}.resampled.normalizedposition(pos_range_indices{1}{1}(lap_opposed_idx)); 
+
+%split into individual laps for A events, look in B laps
+
+for ll=1:size(corr_lap_idx{2},1)
+    split_lap_idxs{ll} = find(lap_label_opposed == corr_lap_idx{2}(ll));
+    
+    
+end
+
+
+%unique each position for each lap
+
+%at each unique position, check if animal in run state
+
+%calculate fraction of run among all unique positions for each lap
+
+%make sure at  least 80% of of space in run state on at least 6 laps
+
+%fraction of space that is in no run epoch/state on each lap
+
+%space range = 
+
+space_range = min_max_pos_event{1}(1,2) - min_max_pos_event{1}(1,1);
+
+figure;
+hold on
+plot(lap_pos_opposed)
+plot(lap_runEpoch_opposed)
+plot(lap_label_opposed)
+
+
+%extract only opposing laps and break run intervals by lap,
+ %for A trial events, extract position for each ROI on B laps (within
+ %range)
+%  %for events
+%  for rr=1:size(pos_range_indices{tt},2)
+%      
+%      %for each lap
+%      for ll=1:size(corr_lap_idx{1})
+%          
+%      end
+%  end
+
 
 %70% of space in this region in run epoch
 
 
-
+% +/- 3 cm around median on opposing lap in running epoch - maybe add later
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 %position axis
