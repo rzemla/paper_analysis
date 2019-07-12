@@ -321,51 +321,85 @@ for tt=1:2 %for correct A and B trials
     end
 end
 
-%EXTRAPOLCA TO TOHER NEURONS AND FILNALIZE FILTER
-%do for A first, then extend to B trials
-
-%extact logical with only laps correponding to opposing trial laps
-lap_opposed_idx = ismember(lap_idx_range{1}{1},corr_lap_idx{2});
-%get the lap number associated with each frame in the opposing trials
-lap_label_opposed = lap_idx_range{1}{1}(lap_opposed_idx);
-%the binary indicating in animal in run epoch with that range 
-lap_runEpoch_opposed = Behavior_full{1}.run_ones(pos_range_indices{1}{1}(lap_opposed_idx));
-
-%extract the associated positions
-lap_pos_opposed = Behavior_full{1}.resampled.normalizedposition(pos_range_indices{1}{1}(lap_opposed_idx)); 
-
-%split into individual laps for A events, look in B laps
-
-for ll=1:size(corr_lap_idx{2},1)
-    split_lap_idxs{ll} = find(lap_label_opposed == corr_lap_idx{2}(ll));
-    split_lap_pos{ll} = lap_pos_opposed(split_lap_idxs{ll});
-    split_lap_runEpoch{ll} = lap_runEpoch_opposed(split_lap_idxs{ll});
+%for correct A or B trials
+for tt=1:2
+    %for each ROI in correct A trials 
+    for rr=1:size(lap_idx_range{tt},2)
+        %extact logical with only laps correponding to opposing trial laps- dependent on B parameter
+        if tt == 1 %if looking on run status in B trials for correct A trials
+            lap_opposed_idx{tt}{rr} = ismember(lap_idx_range{tt}{rr},corr_lap_idx{2});
+        elseif tt == 2 %if looking on run status in A trials for correct B trials
+            lap_opposed_idx{tt}{rr} = ismember(lap_idx_range{tt}{rr},corr_lap_idx{1});
+        end
+        %get the lap number associated with each frame in the opposing trials
+        lap_label_opposed{tt}{rr} = lap_idx_range{tt}{rr}(lap_opposed_idx{tt}{rr});
+        %the binary indicating in animal in run epoch with that range
+        lap_runEpoch_opposed{tt}{rr} = Behavior_full{1}.run_ones(pos_range_indices{tt}{rr}(lap_opposed_idx{tt}{rr}));
+        %extract the associated positions
+        lap_pos_opposed{tt}{rr} = Behavior_full{1}.resampled.normalizedposition(pos_range_indices{tt}{rr}(lap_opposed_idx{tt}{rr}));
+    end
 end
 
-%for each lap
-for ll=1:size(split_lap_pos,2)
-    unique_pos{ll} = unique(split_lap_pos{ll});
-    %for each unique position, check if entirety in run epoch
-    for pos_idx=1:size(unique_pos{ll},1)
-        %get idx associated with given unique pos in the lap
-        pos_idxs_each{ll}{pos_idx} = find(split_lap_pos{ll} == unique_pos{ll}(pos_idx));
-        run_Epoch_each{ll}{pos_idx} = split_lap_runEpoch{ll}(pos_idxs_each{ll}{pos_idx});
-        %check which position did animal spend all of it in run state
-        
+%split into individual laps for A events, look in B laps
+%for correct A or B trials
+for tt=1:2
+    %for each ROI in correct A trials
+    for rr=1:size(lap_idx_range{tt},2)
+        %for each opposing lap
+        for ll=1:size(corr_lap_idx{2},1)
+            % - depdendent on B parameter
+            if tt == 1 %if looking on run status in B trials for correct A trials
+                split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{2}(ll));
+            elseif tt == 2
+                split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{1}(ll));
+            end
+            
+            split_lap_pos{tt}{rr}{ll} = lap_pos_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
+            split_lap_runEpoch{tt}{rr}{ll} = lap_runEpoch_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
+        end
     end
-    %calculate logical of  run at each position and get fraction in run
-    %state for each lap
-    frac_run_lap(ll) = sum(cellfun(@prod,run_Epoch_each{ll}))/size(run_Epoch_each{ll},2);
+end
+
+%for correct A or B trials
+for tt=1:2
+    %for each ROI in correct A trials
+    for rr=1:size(lap_idx_range{tt},2)
+        %for each lap
+        for ll=1:size(split_lap_pos{tt}{rr},2)
+            unique_pos{tt}{rr}{ll} = unique(split_lap_pos{tt}{rr}{ll});
+            %for each unique position, check if entirety in run epoch
+            for pos_idx=1:size(unique_pos{tt}{rr}{ll},1)
+                %get idx associated with given unique pos in the lap
+                pos_idxs_each{tt}{rr}{ll}{pos_idx} = find(split_lap_pos{tt}{rr}{ll} == unique_pos{tt}{rr}{ll}(pos_idx));
+                run_Epoch_each{tt}{rr}{ll}{pos_idx} = split_lap_runEpoch{tt}{rr}{ll}(pos_idxs_each{tt}{rr}{ll}{pos_idx});
+                %check which position did animal spend all of it in run state
+                
+            end
+            %calculate logical of  run at each position and get fraction in run
+            %state for each lap
+            frac_run_lap{tt}{rr}(ll) = sum(cellfun(@prod,run_Epoch_each{tt}{rr}{ll}))/size(run_Epoch_each{tt}{rr}{ll},2);
+        end
+    end
 end
 
 %for all laps check how above 80% of space in run epoch and check if this
 %occurs in at least 6 laps
-if sum(frac_run_lap >= 0.8) >= 6
-    %include ROI
-else
-    %exclude ROI
+%for correct A or B trials
+for tt=1:2
+    %for each ROI in correct A trials
+    for rr=1:size(lap_idx_range{tt},2)
+        if sum(frac_run_lap{tt}{rr} >= 0.8) >= 6
+            %generate logical with 1's include ROI, and 0 exclude ROI
+            run_epoch_filt_include_log{tt}(rr) = 1;
+        else
+            run_epoch_filt_include_log{tt}(rr) = 0;
+        end
+    end
 end
-    
+
+%apply final filter to ROI indices
+
+
 %% Plot final selected ROIs
 figure;
 hold on
