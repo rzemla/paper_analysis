@@ -290,7 +290,8 @@ placeField_eventFilt{2} = placeField_filtered_max_posnorm{2}(~event_thres_exclud
 event_pos_inField{1} = events_in_field_pos{1}(~event_thres_exclude_log.A);
 event_pos_inField{2} = events_in_field_pos{2}(~event_thres_exclude_log.B);
 
-%% Make sure the animal was in a run epoch within 4 cm of median position of events in max place field on 70% of laps
+%% Make sure the animal was in a run epoch in the min/max range of space on opposing laps (al least 80%) of space on at least 6 laps
+
 % Check that in running epoch within 3 bins to the left or right of each
 ROI_field_filtered_event.A
 ROI_field_filtered_event.B
@@ -320,6 +321,8 @@ for tt=1:2 %for correct A and B trials
     end
 end
 
+%EXTRAPOLCA TO TOHER NEURONS AND FILNALIZE FILTER
+%do for A first, then extend to B trials
 
 %extact logical with only laps correponding to opposing trial laps
 lap_opposed_idx = ismember(lap_idx_range{1}{1},corr_lap_idx{2});
@@ -335,25 +338,35 @@ lap_pos_opposed = Behavior_full{1}.resampled.normalizedposition(pos_range_indice
 
 for ll=1:size(corr_lap_idx{2},1)
     split_lap_idxs{ll} = find(lap_label_opposed == corr_lap_idx{2}(ll));
-    
-    
+    split_lap_pos{ll} = lap_pos_opposed(split_lap_idxs{ll});
+    split_lap_runEpoch{ll} = lap_runEpoch_opposed(split_lap_idxs{ll});
 end
 
+%for each lap
+for ll=1:size(split_lap_pos,2)
+    unique_pos{ll} = unique(split_lap_pos{ll});
+    %for each unique position, check if entirety in run epoch
+    for pos_idx=1:size(unique_pos{ll},1)
+        %get idx associated with given unique pos in the lap
+        pos_idxs_each{ll}{pos_idx} = find(split_lap_pos{ll} == unique_pos{ll}(pos_idx));
+        run_Epoch_each{ll}{pos_idx} = split_lap_runEpoch{ll}(pos_idxs_each{ll}{pos_idx});
+        %check which position did animal spend all of it in run state
+        
+    end
+    %calculate logical of  run at each position and get fraction in run
+    %state for each lap
+    frac_run_lap(ll) = sum(cellfun(@prod,run_Epoch_each{ll}))/size(run_Epoch_each{ll},2);
+end
 
-%unique each position for each lap
-
-%at each unique position, check if animal in run state
-
-%calculate fraction of run among all unique positions for each lap
-
-%make sure at  least 80% of of space in run state on at least 6 laps
-
-%fraction of space that is in no run epoch/state on each lap
-
-%space range = 
-
-space_range = min_max_pos_event{1}(1,2) - min_max_pos_event{1}(1,1);
-
+%for all laps check how above 80% of space in run epoch and check if this
+%occurs in at least 6 laps
+if sum(frac_run_lap >= 0.8) >= 6
+    %include ROI
+else
+    %exclude ROI
+end
+    
+%% Plot final selected ROIs
 figure;
 hold on
 plot(lap_pos_opposed)

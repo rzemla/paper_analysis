@@ -331,26 +331,40 @@ lap_runEpoch_opposed = Behavior_full{1}.run_ones(pos_range_indices{1}{1}(lap_opp
 %extract the associated positions
 lap_pos_opposed = Behavior_full{1}.resampled.normalizedposition(pos_range_indices{1}{1}(lap_opposed_idx)); 
 
-%split into individual laps
-for ll=1:size(unique(lap_label_opposed),1)
-    
-    
+%split into individual laps for A events, look in B laps
+
+for ll=1:size(corr_lap_idx{2},1)
+    split_lap_idxs{ll} = find(lap_label_opposed == corr_lap_idx{2}(ll));
+    split_lap_pos{ll} = lap_pos_opposed(split_lap_idxs{ll});
+    split_lap_runEpoch{ll} = lap_runEpoch_opposed(split_lap_idxs{ll});
 end
 
+%EXTRAPOLCA TO TOHER NEURONS AND FILNALIZE FILTER
 
-%unique each position for each lap
+%for each lap
+for ll=1:size(split_lap_pos,2)
+    unique_pos{ll} = unique(split_lap_pos{ll});
+    %for each unique position, check if entirety in run epoch
+    for pos_idx=1:size(unique_pos{ll},1)
+        %get idx associated with given unique pos in the lap
+        pos_idxs_each{ll}{pos_idx} = find(split_lap_pos{ll} == unique_pos{ll}(pos_idx));
+        run_Epoch_each{ll}{pos_idx} = split_lap_runEpoch{ll}(pos_idxs_each{ll}{pos_idx});
+        %check which position did animal spend all of it in run state
+        
+    end
+    %calculate logical of  run at each position and get fraction in run
+    %state for each lap
+    frac_run_lap(ll) = sum(cellfun(@prod,run_Epoch_each{ll}))/size(run_Epoch_each{ll},2);
+end
 
-%at each unique position, check if animal in run state
-
-%calculate fraction of run among all unique positions for each lap
-
-%make sure at  least 80% of of space in run state on at least 6 laps
-
-%fraction of space that is in no run epoch/state on each lap
-
-%space range = 
-
-space_range = min_max_pos_event{1}(1,2) - min_max_pos_event{1}(1,1);
+%for all laps check how above 80% of space in run epoch and check if this
+%occurs in at least 6 laps
+if sum(frac_run_lap >= 0.8) >= 6
+    %include ROI
+else
+    %exclude ROI
+end
+    
 
 figure;
 hold on
