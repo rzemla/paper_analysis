@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = split_remapping_category(cent_diff_AandB, tuned_logical, pf_vector_max, session_vars,max_transient_peak, options)
+function [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tuned_logical, pf_vector_max, session_vars,max_transient_peak, options)
 %split mutually tuned neurons by remapping category: 
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
@@ -399,8 +399,6 @@ end
 
 %apply final filter to ROI indices
 
-
-
 %select ROI indices (from original)
 final_filtered_ROI.A = ROI_field_filtered_event.A(logical(run_epoch_filt_include_log{1}));
 final_filtered_ROI.B = ROI_field_filtered_event.B(logical(run_epoch_filt_include_log{2}));
@@ -415,101 +413,101 @@ event_pos_inField_final{2} = event_pos_inField{2}(logical(run_epoch_filt_include
 
 
 %% Plot as shaded area to verify correct id of place field onto normalized
-%position axis
 
-%plot normalized position
-%show A selective first
-figure('Position', [1930 130 1890 420])
-hold on
-title('A-selective filtered')
-for rr=1:size(final_filtered_ROI.A,2)%1:size(Aonly_notSIb_idx,2)
-    %ROI = rr%AandB_tuned_idx(rr);
-    ROI = final_filtered_ROI.A(rr); %Aonly_notSIb_idx(rr);
+if options.dispFigure ==1
+    %plot normalized position
+    %show A selective first
+    figure('Position', [1930 130 1890 420])
     hold on
-    title(num2str(ROI))
-    yticks([0 0.5 1])
-    ylabel('Normalized position')
-    xlabel('Time [min]');
-    xticks(0:3:12);
-    %ylim([0 1])
-    set(gca,'FontSize',14)
-    set(gca,'LineWidth',1)
-    %A laps
-    for ii=1:size(lap_idxs.A,1)
-        plot(Imaging_split{1}{1}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
-            Behavior_split{1}{1}.resampled.position_norm(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
-            'Color',[0 0 1 0.6],'LineWidth',1.5)
+    title('A-selective filtered')
+    for rr=1:size(final_filtered_ROI.A,2)%1:size(Aonly_notSIb_idx,2)
+        %ROI = rr%AandB_tuned_idx(rr);
+        ROI = final_filtered_ROI.A(rr); %Aonly_notSIb_idx(rr);
+        hold on
+        title(num2str(ROI))
+        yticks([0 0.5 1])
+        ylabel('Normalized position')
+        xlabel('Time [min]');
+        xticks(0:3:12);
+        %ylim([0 1])
+        set(gca,'FontSize',14)
+        set(gca,'LineWidth',1)
+        %A laps
+        for ii=1:size(lap_idxs.A,1)
+            plot(Imaging_split{1}{1}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
+                Behavior_split{1}{1}.resampled.position_norm(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
+                'Color',[0 0 1 0.6],'LineWidth',1.5)
+        end
+        %B laps
+        for ii=1:size(lap_idxs.B,1)
+            plot(Imaging_split{1}{2}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
+                Behavior_split{1}{2}.resampled.position_norm(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
+                'Color',[1 0 0 0.6],'LineWidth',1.5)
+        end
+        %overlay significant calcium run events
+        %A
+        scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
+        %B
+        scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
+        
+        %plot horz lines signifying start and end of place field
+        %start
+        lineS = refline(0,placeField_final{1}{rr}(1))
+        lineS.Color = 'g';
+        %end
+        lineE = refline(0,placeField_final{1}{rr}(2))
+        lineE.Color = 'g';
+        
+        pause
+        clf
     end
-    %B laps
-    for ii=1:size(lap_idxs.B,1)
-        plot(Imaging_split{1}{2}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
-            Behavior_split{1}{2}.resampled.position_norm(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
-            'Color',[1 0 0 0.6],'LineWidth',1.5)
-    end
-    %overlay significant calcium run events
-    %A
-    scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
-    %B
-    scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
     
-    %plot horz lines signifying start and end of place field
-    %start
-    lineS = refline(0,placeField_final{1}{rr}(1))
-    lineS.Color = 'g';
-    %end
-    lineE = refline(0,placeField_final{1}{rr}(2))
-    lineE.Color = 'g';
-    
-    pause
-    clf
-end
-
-%show B selective second
-figure('Position', [1930 130 1890 420])
-hold on
-title('B-selective filtered')
-for rr=1:size(final_filtered_ROI.B,2)%1:size(Aonly_notSIb_idx,2)
-    %ROI = rr%AandB_tuned_idx(rr);
-    ROI = final_filtered_ROI.B(rr); %Aonly_notSIb_idx(rr);
+    %show B selective second
+    figure('Position', [1930 130 1890 420])
     hold on
-    title(num2str(ROI))
-    yticks([0 0.5 1])
-    ylabel('Normalized position')
-    xlabel('Time [min]');
-    xticks(0:3:12);
-    %ylim([0 1])
-    set(gca,'FontSize',14)
-    set(gca,'LineWidth',1)
-    %A laps
-    for ii=1:size(lap_idxs.A,1)
-        plot(Imaging_split{1}{1}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
-            Behavior_split{1}{1}.resampled.position_norm(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
-            'Color',[0 0 1 0.6],'LineWidth',1.5)
+    title('B-selective filtered')
+    for rr=1:size(final_filtered_ROI.B,2)%1:size(Aonly_notSIb_idx,2)
+        %ROI = rr%AandB_tuned_idx(rr);
+        ROI = final_filtered_ROI.B(rr); %Aonly_notSIb_idx(rr);
+        hold on
+        title(num2str(ROI))
+        yticks([0 0.5 1])
+        ylabel('Normalized position')
+        xlabel('Time [min]');
+        xticks(0:3:12);
+        %ylim([0 1])
+        set(gca,'FontSize',14)
+        set(gca,'LineWidth',1)
+        %A laps
+        for ii=1:size(lap_idxs.A,1)
+            plot(Imaging_split{1}{1}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
+                Behavior_split{1}{1}.resampled.position_norm(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
+                'Color',[0 0 1 0.6],'LineWidth',1.5)
+        end
+        %B laps
+        for ii=1:size(lap_idxs.B,1)
+            plot(Imaging_split{1}{2}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
+                Behavior_split{1}{2}.resampled.position_norm(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
+                'Color',[1 0 0 0.6],'LineWidth',1.5)
+        end
+        %overlay significant calcium run events
+        %A
+        scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
+        %B
+        scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
+        
+        %plot horz lines signifying start and end of place field
+        %start
+        lineS = refline(0,placeField_final{2}{rr}(1))
+        lineS.Color = 'g';
+        %end
+        lineE = refline(0,placeField_final{2}{rr}(2))
+        lineE.Color = 'g';
+        
+        pause
+        clf
     end
-    %B laps
-    for ii=1:size(lap_idxs.B,1)
-        plot(Imaging_split{1}{2}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
-            Behavior_split{1}{2}.resampled.position_norm(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
-            'Color',[1 0 0 0.6],'LineWidth',1.5)
-    end
-    %overlay significant calcium run events
-    %A
-    scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
-    %B
-    scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
-    
-    %plot horz lines signifying start and end of place field
-    %start
-    lineS = refline(0,placeField_final{2}{rr}(1))
-    lineS.Color = 'g';
-    %end
-    lineE = refline(0,placeField_final{2}{rr}(2))
-    lineE.Color = 'g';
-    
-    pause
-    clf
 end
-
 
 %% Export task-selective ROIs in struct
 
@@ -517,8 +515,13 @@ end
 task_selective_ROIs.A.idx = final_filtered_ROI.A;
 task_selective_ROIs.B.idx = final_filtered_ROI.B;
 
-%
-placeField_final{1}
+%field margin for task selective neurons
+task_selective_ROIs.A.field_margin = placeField_final{1};
+task_selective_ROIs.B.field_margin = placeField_final{2};
+
+%event associated with selected place field
+task_selective_ROIs.A.fieldEvents = event_pos_inField_final{1};
+task_selective_ROIs.B.fieldEvents = event_pos_inField_final{2};
 
 %% Patch generator for run epochs
 %creates x range of patches
