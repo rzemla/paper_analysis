@@ -68,7 +68,7 @@ for ss=1:size(session_vars,2)
     end
 end
 
-%% Get lap indices for each lap in all B or B trials
+%% Get lap indices for each lap in all A or B trials
 
 %only correct
 
@@ -88,11 +88,6 @@ for ll=1:size(lapB_idxs,1)
     lap_idxs.B(ll,1) = find(Behavior_split{1}{2}.resampled.lapNb == lapB_idxs(ll),1,'first');
     lap_idxs.B(ll,2) = find(Behavior_split{1}{2}.resampled.lapNb == lapB_idxs(ll),1,'last');
 end
-
-
-%% Split run indices/intervals by lap
-%get run on/off binary for 
-
 
 %% Event onsets in run interval
 %only correct trials (1,2)
@@ -126,32 +121,23 @@ end
 session_vars{1}.Place_cell{1}.Bin{8};
 %B trials
 session_vars{1}.Place_cell{2}.Bin{8};
-
 %get the run epoch binaries for each set of trials - A session - 5339 run
 %frames
-
 %plot the run epochs as patches
 session_vars{1}.Behavior_split{1}.run_ones;
-
 %get the run epoch binaries for each set of trials - B session - 4547 run
 %frames
 session_vars{1}.Behavior_split{2}.run_ones; 
-
-
 %run events - binary onset across entire run/no run interval
 Event_split{1}{1}.Run.run_onset_ones;
-
 %get bins
-
 %get edges for corresponding bins!! - find place in spatial info where 
 %correct A trials
 run_position_norm{1} = Behavior_split{1}{1}.resampled.run_position_norm;
 %correct B trials
 run_position_norm{2} = Behavior_split{1}{2}.resampled.run_position_norm;
-
 %Bin running position in 100 bins and get edges for each set of laps:
 %for each number of bins, bin the normalized position during run epochs
-
 %for correct A trials
 [count_bin{1},edges{1},bin{1}] = histcounts(run_position_norm{1}, 100);
 %for correct B trials
@@ -160,34 +146,38 @@ run_position_norm{2} = Behavior_split{1}{2}.resampled.run_position_norm;
 
 %% Remove ROIs idx's without a id'd place field
 
-%edges of all identified
+%edges of all identified common TS neurons
 %correct A
-placeFieldEdges{1} = Place_cell{1}{1}.placeField.edge(Aonly_notSIb_idx);
+placeFieldEdges{1} = Place_cell{1}{1}.placeField.edge(rate_remap_idx_start);
 %correct B
-placeFieldEdges{2} = Place_cell{1}{2}.placeField.edge(Bonly_notSIa_idx);
+placeFieldEdges{2} = Place_cell{1}{2}.placeField.edge(rate_remap_idx_start);
 
 %in A trials
-idx_wo_placeFields{1} = Aonly_notSIb_idx(find(cellfun(@isempty,placeFieldEdges{1}) ==1));
+idx_wo_placeFields{1} = rate_remap_idx_start(find(cellfun(@isempty,placeFieldEdges{1}) ==1));
 %in B trials
-idx_wo_placeFields{2} = Bonly_notSIa_idx(find(cellfun(@isempty,placeFieldEdges{2}) ==1));
+idx_wo_placeFields{2} = rate_remap_idx_start(find(cellfun(@isempty,placeFieldEdges{2}) ==1));
+
+%merge empty field indices into 1 vector for removal from list
+rm_idx_no_pf = unique(cell2mat(idx_wo_placeFields));
 
 %remove ROIs for A and B that do not have place fields
-%for A trials
-if ~isempty(idx_wo_placeFields{1})
-    %copy
-    Aonly_field_filtered = setdiff(Aonly_notSIb_idx,idx_wo_placeFields{1});
+if ~isempty(rm_idx_no_pf)
+    rate_remap_idx_filtered = setdiff(rate_remap_idx_start,rm_idx_no_pf);
 
 else %keep the previous ROIs (copy only)
-    Aonly_field_filtered = Aonly_notSIb_idx;
+    rate_remap_idx_filtered = rate_remap_idx_start;
 end
-%for B trials
-if ~isempty(idx_wo_placeFields{2})
-    %copy
-    Bonly_field_filtered = setdiff(Bonly_notSIa_idx,idx_wo_placeFields{2});
 
-else %keep the previous ROIs (copy only)
-    Bonly_field_filtered = Bonly_notSIa_idx;
-end
+%filter out centroid difference data based on no-id'd neuron tuned by TS
+%find indices of removed neurons from list
+select_pf_filtered_log = ismember(rate_remap_idx_start,rate_remap_idx_filtered);
+%update centroid input data with pf filtered idxs
+cent_diff_AandB_pf_filt.angle_diff = cent_diff_AandB.angle_diff(select_pf_filtered_log);
+cent_diff_AandB_pf_filt.max_bin = cent_diff_AandB.max_bin(:,select_pf_filtered_log);
+
+%% Centroid difference filter (select those with cent diff less than 10cm ~ 18 deg)
+%RESUME HERE
+find((cent_diff_AandB_pf_filt.angle_diff <= deg2rad(18)) == 1)
 
 %% Determine the equivalent normalized position range of the max place field
 

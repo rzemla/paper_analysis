@@ -165,9 +165,19 @@ if ~isempty(rm_idx_no_pf)
     rate_remap_idx_filtered = setdiff(rate_remap_idx_start,rm_idx_no_pf);
 
 else %keep the previous ROIs (copy only)
-    rate_remap_idx_filtered = Aonly_notSIb_idx;
+    rate_remap_idx_filtered = rate_remap_idx_start;
 end
 
+%filter out centroid difference data based on no-id'd neuron tuned by TS
+%find indices of removed neurons from list
+select_pf_filtered_log = ismember(rate_remap_idx_start,rate_remap_idx_filtered);
+%update centroid input data with pf filtered idxs
+cent_diff_AandB_pf_filt.angle_diff = cent_diff_AandB.angle_diff(select_pf_filtered_log);
+cent_diff_AandB_pf_filt.max_bin = cent_diff_AandB.max_bin(:,select_pf_filtered_log);
+
+%% Centroid difference filter (select those with cent diff less than 10cm ~ 18 deg)
+
+find((cent_diff_AandB_pf_filt.angle_diff <= deg2rad(18)) == 1)
 
 %% Determine the equivalent normalized position range of the max place field
 
