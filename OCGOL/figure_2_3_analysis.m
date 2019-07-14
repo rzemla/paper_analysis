@@ -171,12 +171,20 @@ options.tuning_criterion = 'ts';
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
 
-%% Split A&B neurons by category - common, partial, global, rate remapping
+%% Split neurons by A or B task selective category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
 options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
 options.dispFigure = 1;
 [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
+
+%% Split A&B neurons by remapping category - common, partial, global, rate remapping
+%which criterion to use for task-selective ROIs
+options.tuning_criterion = 'ts';
+%display events vs position for each task selective neuron in A or B
+options.dispFigure = 1;
+[task_selective_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
+
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options
