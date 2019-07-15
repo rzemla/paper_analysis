@@ -288,15 +288,13 @@ event_thres_exclude_log.B  = cell2mat(event_in_field_nb{2}) < 5;
 %merge the excludes neurosn idx
 event_thres_excludeAB_log =  event_thres_exclude_log.A | event_thres_exclude_log.B;
 
-%update absolute idxs
-%RESUME HERE
-%
-
-%update respective 
-
-%update indices with event 
+%update indices with event - update absolute idxs
 ROI_field_filtered_event.A = rate_remap_idx_centroid(~event_thres_excludeAB_log);
 ROI_field_filtered_event.B = rate_remap_idx_centroid(~event_thres_excludeAB_log);
+
+%select the event indices for event/place filtered ROIs
+events_in_field_pf_filtered{1} = events_in_field{1}(~event_thres_excludeAB_log);
+events_in_field_pf_filtered{2} = events_in_field{2}(~event_thres_excludeAB_log);
 
 %update assn place fields
 placeField_eventFilt{1} = placeField_filtered_max_posnorm{1}(~event_thres_excludeAB_log);
@@ -413,20 +411,49 @@ for tt=1:2
     end
 end
 
+%combine filters for each epoch into 1 filter
+run_epoch_filt_both = logical(run_epoch_filt_include_log{1}) | logical(run_epoch_filt_include_log{1});
+
 %apply final filter to ROI indices
 
 %select ROI indices (from original)
-final_filtered_ROI.A = ROI_field_filtered_event.A(logical(run_epoch_filt_include_log{1}));
-final_filtered_ROI.B = ROI_field_filtered_event.B(logical(run_epoch_filt_include_log{2}));
+final_filtered_ROI.A = ROI_field_filtered_event.A(run_epoch_filt_both);
+final_filtered_ROI.B = ROI_field_filtered_event.B(run_epoch_filt_both);
 
 %place field width positions
-placeField_final{1} = placeField_eventFilt{1}(logical(run_epoch_filt_include_log{1}));
-placeField_final{2} = placeField_eventFilt{2}(logical(run_epoch_filt_include_log{2}));
+placeField_final{1} = placeField_eventFilt{1}(run_epoch_filt_both);
+placeField_final{2} = placeField_eventFilt{2}(run_epoch_filt_both);
 
 %event position (normalized)
-event_pos_inField_final{1} = event_pos_inField{1}(logical(run_epoch_filt_include_log{1}));
-event_pos_inField_final{2} = event_pos_inField{2}(logical(run_epoch_filt_include_log{2}));
+event_pos_inField_final{1} = event_pos_inField{1}(run_epoch_filt_both);
+event_pos_inField_final{2} = event_pos_inField{2}(run_epoch_filt_both);
 
+%select the event indices for event/place filtered ROIs
+events_in_field_final_filtered{1} = events_in_field_pf_filtered{1}(run_epoch_filt_both);
+events_in_field_final_filtered{2} = events_in_field_pf_filtered{2}(run_epoch_filt_both);
+
+
+%% Do Mann Whitney U test for AUC of events in nearby place field (rate remapping ROIs) 
+
+%extract AUC values for only filtered neurons
+event_AUC_filtered.A = event_AUC.A(final_filtered_ROI.A);
+event_AUC_filtered.B = event_AUC.B(final_filtered_ROI.B);
+
+%extract AUC values for in field events
+for rr =1:size(event_AUC_filtered.A,2)
+    %for A trials
+    event_AUC_event_filtered.A{rr} = event_AUC_filtered.A{rr}(events_in_field_final_filtered{1}{rr});
+    %for B trials
+    event_AUC_event_filtered.B{rr} = event_AUC_filtered.B{rr}(events_in_field_final_filtered{2}{rr});
+end
+
+%for each ROI, run Mann-Whitney U comparing in field AUC values
+for rr =1:size(event_AUC_filtered.A,2)
+    %return p value for each comparison
+    [p_AUC(rr),~] = ranksum(event_AUC_event_filtered.A{rr},event_AUC_event_filtered.B{rr});
+end
+
+find(p_AUC <0.05)
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 
