@@ -99,6 +99,8 @@ for rr=1:size(events{ss}{1},2)
     event_norm_pos_run.A{rr} = Behavior_split{1}{1}.resampled.position_norm(find(Event_split{1}{1}.Run.run_onset_binary(:,rr) == 1));
     %lap assignment for A
     event_lap_idx.A{rr} = Behavior_split{1}{1}.resampled.lapNb(logical(Event_split{1, 1}{1, 1}.Run.run_onset_binary(:,rr)));
+    %get respective AUC values
+    event_AUC.A{rr} = Event_split{1}{1}.Run.properties.AUC{rr};
     
     %time of significant run events in B
     event_norm_time.B{rr} = Imaging_split{1}{2}.time_restricted(find(Event_split{1}{2}.Run.run_onset_binary(:,rr) == 1))/60;
@@ -106,6 +108,9 @@ for rr=1:size(events{ss}{1},2)
     event_norm_pos_run.B{rr} = Behavior_split{1}{2}.resampled.position_norm(find(Event_split{1}{2}.Run.run_onset_binary(:,rr) == 1));
     %lap assignment for B
     event_lap_idx.B{rr} = Behavior_split{1}{2}.resampled.lapNb(logical(Event_split{1}{2}.Run.run_onset_binary(:,rr)));
+    %get respective AUC values
+    event_AUC.B{rr} = Event_split{1}{2}.Run.properties.AUC{rr};
+    
 end
 
 
@@ -176,22 +181,30 @@ cent_diff_AandB_pf_filt.angle_diff = cent_diff_AandB.angle_diff(select_pf_filter
 cent_diff_AandB_pf_filt.max_bin = cent_diff_AandB.max_bin(:,select_pf_filtered_log);
 
 %% Centroid difference filter (select those with cent diff less than 10cm ~ 18 deg)
+%centroid difference in degrees (18 deg ~ 10 cm)
+deg_thres = 18;
 
-find((cent_diff_AandB_pf_filt.angle_diff <= deg2rad(18)) == 1)
+%get the vector idx's of the neurons with near and far centroid differences
+near_field_idx = find((cent_diff_AandB_pf_filt.angle_diff <= deg2rad(18)) == 1);
+far_field_idx = find((cent_diff_AandB_pf_filt.angle_diff > deg2rad(18)) == 1);
+
+%translate the idxs to absolute ROIs idxs
+rate_remap_idx_centroid = rate_remap_idx_filtered(near_field_idx);
+
 
 %% Determine the equivalent normalized position range of the max place field
 
 %extract the max place field index for A and B trial using filtered A tuned
 %and B tuned ROIs
-max_field_idx{1} = max_transient_peak{1}{1}(Aonly_field_filtered);
-max_field_idx{2} = max_transient_peak{1}{2}(Bonly_field_filtered);
+max_field_idx{1} = max_transient_peak{1}{1}(rate_remap_idx_centroid);
+max_field_idx{2} = max_transient_peak{1}{2}(rate_remap_idx_centroid);
 
 %get the edges of the max transient place field for each set of idxs
 %edges of all identified
 %correct A
-placeField_filtered{1} = Place_cell{1}{1}.placeField.edge(Aonly_field_filtered);
+placeField_filtered{1} = Place_cell{1}{1}.placeField.edge(rate_remap_idx_centroid);
 %correct B
-placeField_filtered{2} = Place_cell{1}{2}.placeField.edge(Bonly_field_filtered);
+placeField_filtered{2} = Place_cell{1}{2}.placeField.edge(rate_remap_idx_centroid);
 
 %check which field has more than 1 field and select edges of the one with
 %higher transient rate
@@ -231,36 +244,37 @@ norm_conv_factor = median_track_len/100;
 
 %calcium event position and absolute restrict time
 %all neuron idx space
-event_norm_pos_run.A;
-event_norm_time.A;  
-event_lap_idx.A;
-
-Aonly_field_filtered;
-Bonly_field_filtered;
+%relevant variables
+% event_norm_pos_run.A;
+% event_norm_time.A;  
+% event_lap_idx.A;
+% 
+% Aonly_field_filtered;
+% Bonly_field_filtered;
 
 %find events occuring within max place field for each ROI
 for tt=1:2
     for rr=1:size(placeField_filtered_max_posnorm{tt},2)
         %get idxs of events with max place field
         if tt == 1 %correct A trials
-            events_in_field{tt}{rr} = find(event_norm_pos_run.A{Aonly_field_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                event_norm_pos_run.A{Aonly_field_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+            events_in_field{tt}{rr} = find(event_norm_pos_run.A{rate_remap_idx_centroid(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                event_norm_pos_run.A{rate_remap_idx_centroid(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
             %register the corresponding lap of in-field filtered event
-            event_in_field_laps{tt}{rr} = event_lap_idx.A{Aonly_field_filtered(rr)}(events_in_field{tt}{rr});
+            event_in_field_laps{tt}{rr} = event_lap_idx.A{rate_remap_idx_centroid(rr)}(events_in_field{tt}{rr});
             %get number of unique events (those occuring on each lap)
             event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
             %get position of in-field events
-            events_in_field_pos{tt}{rr} = event_norm_pos_run.A{Aonly_field_filtered(rr)}(events_in_field{tt}{rr});
+            events_in_field_pos{tt}{rr} = event_norm_pos_run.A{rate_remap_idx_centroid(rr)}(events_in_field{tt}{rr});
             
         elseif tt == 2 %correct B trials
-            events_in_field{tt}{rr} = find(event_norm_pos_run.B{Bonly_field_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                event_norm_pos_run.B{Bonly_field_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+            events_in_field{tt}{rr} = find(event_norm_pos_run.B{rate_remap_idx_centroid(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                event_norm_pos_run.B{rate_remap_idx_centroid(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
             %register the corresponding lap of in-field filtered event
-            event_in_field_laps{tt}{rr} = event_lap_idx.B{Bonly_field_filtered(rr)}(events_in_field{tt}{rr});
+            event_in_field_laps{tt}{rr} = event_lap_idx.B{rate_remap_idx_centroid(rr)}(events_in_field{tt}{rr});
             %get number of unique events (those occuring on each lap)
             event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
             %get position of in-field events
-            events_in_field_pos{tt}{rr} = event_norm_pos_run.B{Bonly_field_filtered(rr)}(events_in_field{tt}{rr});
+            events_in_field_pos{tt}{rr} = event_norm_pos_run.B{rate_remap_idx_centroid(rr)}(events_in_field{tt}{rr});
         end
     end
 end
@@ -271,17 +285,26 @@ event_thres_exclude_log.A  = cell2mat(event_in_field_nb{1}) < 5;
 %correct B trials
 event_thres_exclude_log.B  = cell2mat(event_in_field_nb{2}) < 5;
 
+%merge the excludes neurosn idx
+event_thres_excludeAB_log =  event_thres_exclude_log.A | event_thres_exclude_log.B;
+
+%update absolute idxs
+
+%
+
+%update respective 
+
 %update indices with event 
-ROI_field_filtered_event.A = Aonly_field_filtered(~event_thres_exclude_log.A);
-ROI_field_filtered_event.B = Bonly_field_filtered(~event_thres_exclude_log.B);
+ROI_field_filtered_event.A = rate_remap_idx_centroid(~event_thres_excludeAB_log);
+ROI_field_filtered_event.B = rate_remap_idx_centroid(~event_thres_excludeAB_log);
 
 %update assn place fields
-placeField_eventFilt{1} = placeField_filtered_max_posnorm{1}(~event_thres_exclude_log.A);
-placeField_eventFilt{2} = placeField_filtered_max_posnorm{2}(~event_thres_exclude_log.B);
+placeField_eventFilt{1} = placeField_filtered_max_posnorm{1}(~event_thres_excludeAB_log);
+placeField_eventFilt{2} = placeField_filtered_max_posnorm{2}(~event_thres_excludeAB_log);
 
 %update event position (normalized)
-event_pos_inField{1} = events_in_field_pos{1}(~event_thres_exclude_log.A);
-event_pos_inField{2} = events_in_field_pos{2}(~event_thres_exclude_log.B);
+event_pos_inField{1} = events_in_field_pos{1}(~event_thres_excludeAB_log);
+event_pos_inField{2} = events_in_field_pos{2}(~event_thres_excludeAB_log);
 
 %% Make sure the animal was in a run epoch in the min/max range of space on opposing laps (al least 80%) of space on at least 6 laps
 
