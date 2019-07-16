@@ -5,8 +5,12 @@ function [task_selective_ROIs] = remapping_categorize(cent_diff_AandB, tuned_log
 
 %% Get ROI indices of A selective, B selective, A&B selective neurons
 
-%rate map, common 
+%rate map, common, and global
 rate_remap_idx_start = find(tuned_logical.ts.AandB_tuned ==1);
+
+%partial remapping - both A and B tuned to SI
+partial_remap_idx_start = find(tuned_logical.si.AandB_tuned == 1);
+
 
 %choose if SI or TS tuned
 switch options.tuning_criterion
@@ -176,35 +180,27 @@ end
 %filter out centroid difference data based on no-id'd neuron tuned by TS
 %find indices of removed neurons from list
 select_pf_filtered_log = ismember(rate_remap_idx_start,rate_remap_idx_filtered);
+
 %update centroid input data with pf filtered idxs
 cent_diff_AandB_pf_filt.angle_diff = cent_diff_AandB.angle_diff(select_pf_filtered_log);
 cent_diff_AandB_pf_filt.max_bin = cent_diff_AandB.max_bin(:,select_pf_filtered_log);
 
-%% Centroid difference filter (select those with cent diff less than 10cm ~ 18 deg)
-%centroid difference in degrees (18 deg ~ 10 cm)
-deg_thres = 18;
-
-%get the vector idx's of the neurons with near and far centroid differences
-near_field_idx = find((cent_diff_AandB_pf_filt.angle_diff <= deg2rad(18)) == 1);
-far_field_idx = find((cent_diff_AandB_pf_filt.angle_diff > deg2rad(18)) == 1);
-
-%translate the idxs to absolute ROIs idxs
-rate_remap_idx_centroid = rate_remap_idx_filtered(near_field_idx);
-
+%get the ROI Idxs associated with place filtered ROIS
+remapping_pf_filtered = rate_remap_idx_start(select_pf_filtered_log);
 
 %% Determine the equivalent normalized position range of the max place field
 
 %extract the max place field index for A and B trial using filtered A tuned
 %and B tuned ROIs
-max_field_idx{1} = max_transient_peak{1}{1}(rate_remap_idx_centroid);
-max_field_idx{2} = max_transient_peak{1}{2}(rate_remap_idx_centroid);
+max_field_idx{1} = max_transient_peak{1}{1}(remapping_pf_filtered);
+max_field_idx{2} = max_transient_peak{1}{2}(remapping_pf_filtered);
 
 %get the edges of the max transient place field for each set of idxs
 %edges of all identified
 %correct A
-placeField_filtered{1} = Place_cell{1}{1}.placeField.edge(rate_remap_idx_centroid);
+placeField_filtered{1} = Place_cell{1}{1}.placeField.edge(remapping_pf_filtered);
 %correct B
-placeField_filtered{2} = Place_cell{1}{2}.placeField.edge(rate_remap_idx_centroid);
+placeField_filtered{2} = Place_cell{1}{2}.placeField.edge(remapping_pf_filtered);
 
 %check which field has more than 1 field and select edges of the one with
 %higher transient rate
@@ -257,24 +253,24 @@ for tt=1:2
     for rr=1:size(placeField_filtered_max_posnorm{tt},2)
         %get idxs of events with max place field
         if tt == 1 %correct A trials
-            events_in_field{tt}{rr} = find(event_norm_pos_run.A{rate_remap_idx_centroid(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                event_norm_pos_run.A{rate_remap_idx_centroid(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+            events_in_field{tt}{rr} = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                event_norm_pos_run.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
             %register the corresponding lap of in-field filtered event
-            event_in_field_laps{tt}{rr} = event_lap_idx.A{rate_remap_idx_centroid(rr)}(events_in_field{tt}{rr});
+            event_in_field_laps{tt}{rr} = event_lap_idx.A{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
             %get number of unique events (those occuring on each lap)
             event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
             %get position of in-field events
-            events_in_field_pos{tt}{rr} = event_norm_pos_run.A{rate_remap_idx_centroid(rr)}(events_in_field{tt}{rr});
+            events_in_field_pos{tt}{rr} = event_norm_pos_run.A{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
             
         elseif tt == 2 %correct B trials
-            events_in_field{tt}{rr} = find(event_norm_pos_run.B{rate_remap_idx_centroid(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                event_norm_pos_run.B{rate_remap_idx_centroid(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+            events_in_field{tt}{rr} = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
             %register the corresponding lap of in-field filtered event
-            event_in_field_laps{tt}{rr} = event_lap_idx.B{rate_remap_idx_centroid(rr)}(events_in_field{tt}{rr});
+            event_in_field_laps{tt}{rr} = event_lap_idx.B{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
             %get number of unique events (those occuring on each lap)
             event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
             %get position of in-field events
-            events_in_field_pos{tt}{rr} = event_norm_pos_run.B{rate_remap_idx_centroid(rr)}(events_in_field{tt}{rr});
+            events_in_field_pos{tt}{rr} = event_norm_pos_run.B{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
         end
     end
 end
@@ -289,8 +285,8 @@ event_thres_exclude_log.B  = cell2mat(event_in_field_nb{2}) < 5;
 event_thres_excludeAB_log =  event_thres_exclude_log.A | event_thres_exclude_log.B;
 
 %update indices with event - update absolute idxs
-ROI_field_filtered_event.A = rate_remap_idx_centroid(~event_thres_excludeAB_log);
-ROI_field_filtered_event.B = rate_remap_idx_centroid(~event_thres_excludeAB_log);
+ROI_field_filtered_event.A = remapping_pf_filtered(~event_thres_excludeAB_log);
+ROI_field_filtered_event.B = remapping_pf_filtered(~event_thres_excludeAB_log);
 
 %select the event indices for event/place filtered ROIs
 events_in_field_pf_filtered{1} = events_in_field{1}(~event_thres_excludeAB_log);
@@ -303,6 +299,10 @@ placeField_eventFilt{2} = placeField_filtered_max_posnorm{2}(~event_thres_exclud
 %update event position (normalized)
 event_pos_inField{1} = events_in_field_pos{1}(~event_thres_excludeAB_log);
 event_pos_inField{2} = events_in_field_pos{2}(~event_thres_excludeAB_log);
+
+%update centroid input data with pf filtered idxs
+cent_diff_AandB_eventCount.angle_diff = cent_diff_AandB_pf_filt.angle_diff(~event_thres_excludeAB_log);
+cent_diff_AandB_eventCount.max_bin = cent_diff_AandB_pf_filt.max_bin(:,~event_thres_excludeAB_log);
 
 %% Make sure the animal was in a run epoch in the min/max range of space on opposing laps (al least 80%) of space on at least 6 laps
 
@@ -432,19 +432,49 @@ event_pos_inField_final{2} = event_pos_inField{2}(run_epoch_filt_both);
 events_in_field_final_filtered{1} = events_in_field_pf_filtered{1}(run_epoch_filt_both);
 events_in_field_final_filtered{2} = events_in_field_pf_filtered{2}(run_epoch_filt_both);
 
+%update centroid input data with pf filtered idxs
+cent_diff_AandB_runFilt.angle_diff = cent_diff_AandB_eventCount.angle_diff(run_epoch_filt_both);
+cent_diff_AandB_runFilt.max_bin = cent_diff_AandB_eventCount.max_bin(:,run_epoch_filt_both);
+
+
+%% Centroid difference filter (select those with cent diff less than 10cm ~ 18 deg) - point of split between rate and global remap
+%centroid difference in degrees (18 deg ~ 10 cm)
+deg_thres = 18;
+
+%get the vector idx's of the neurons with near and far centroid differences
+near_field_idx = find((cent_diff_AandB_runFilt.angle_diff <= deg2rad(18)) == 1);
+far_field_idx = find((cent_diff_AandB_runFilt.angle_diff > deg2rad(18)) == 1);
+
+%translate the idxs to absolute ROIs idxs (A and B are the same)
+near_idx_centroid = final_filtered_ROI.A(near_field_idx);
+global_remap_idx_centroid = final_filtered_ROI.A(far_field_idx);
+
+%place field width positions
+%potential rate remapping
+placeField_near_centroid{1} = placeField_final{1}(near_field_idx);
+placeField_near_centroid{2} = placeField_final{2}(near_field_idx);
+
+%event position (normalized)
+%potential rate remapping
+event_pos_inField_near_centroid{1} = event_pos_inField_final{1}(near_field_idx);
+event_pos_inField_near_centroid{2} = event_pos_inField_final{2}(near_field_idx);
+
+%select the event indices for event/place filtered ROIs
+events_in_field_near_centroid{1} = events_in_field_final_filtered{1}(near_field_idx);
+events_in_field_near_centroid{2} = events_in_field_final_filtered{2}(near_field_idx);
 
 %% Do Mann Whitney U test for AUC of events in nearby place field (rate remapping ROIs) 
 
 %extract AUC values for only filtered neurons
-event_AUC_filtered.A = event_AUC.A(final_filtered_ROI.A);
-event_AUC_filtered.B = event_AUC.B(final_filtered_ROI.B);
+event_AUC_filtered.A = event_AUC.A(near_idx_centroid);
+event_AUC_filtered.B = event_AUC.B(near_idx_centroid);
 
 %extract AUC values for in field events
 for rr =1:size(event_AUC_filtered.A,2)
     %for A trials
-    event_AUC_event_filtered.A{rr} = event_AUC_filtered.A{rr}(events_in_field_final_filtered{1}{rr});
+    event_AUC_event_filtered.A{rr} = event_AUC_filtered.A{rr}(events_in_field_near_centroid{1}{rr});
     %for B trials
-    event_AUC_event_filtered.B{rr} = event_AUC_filtered.B{rr}(events_in_field_final_filtered{2}{rr});
+    event_AUC_event_filtered.B{rr} = event_AUC_filtered.B{rr}(events_in_field_near_centroid{2}{rr});
 end
 
 %for each ROI, run Mann-Whitney U comparing in field AUC values
@@ -459,26 +489,26 @@ common_log = p_AUC >= 0.05;
 
 %rate remapping ROIs + filtered out params
 %select ROI indices (from original)
-rate_remapping_ROI = final_filtered_ROI.A(rate_remap_pos_log);
-common_ROI = final_filtered_ROI.A(common_log);
+rate_remapping_ROI = near_idx_centroid(rate_remap_pos_log);
+common_ROI = near_idx_centroid(common_log);
 
 %place field width positions
 %rate remapping neurons
-placeField_rate_remap{1} = placeField_final{1}(rate_remap_pos_log);
-placeField_rate_remap{2} = placeField_final{2}(rate_remap_pos_log);
+placeField_rate_remap{1} = placeField_near_centroid{1}(rate_remap_pos_log);
+placeField_rate_remap{2} = placeField_near_centroid{2}(rate_remap_pos_log);
 
 %common neurons
-placeField_common{1} = placeField_final{1}(common_log);
-placeField_common{2} = placeField_final{2}(common_log);
+placeField_common{1} = placeField_near_centroid{1}(common_log);
+placeField_common{2} = placeField_near_centroid{2}(common_log);
 
 %event position (normalized)
 %rate remapping
-event_pos_inField_rate_remap{1} = event_pos_inField_final{1}(rate_remap_pos_log);
-event_pos_inField_rate_remap{2} = event_pos_inField_final{2}(rate_remap_pos_log);
+event_pos_inField_rate_remap{1} = event_pos_inField_near_centroid{1}(rate_remap_pos_log);
+event_pos_inField_rate_remap{2} = event_pos_inField_near_centroid{2}(rate_remap_pos_log);
 
 %common
-event_pos_inField_common{1} = event_pos_inField_final{1}(common_log);
-event_pos_inField_common{2} = event_pos_inField_final{2}(common_log);
+event_pos_inField_common{1} = event_pos_inField_near_centroid{1}(common_log);
+event_pos_inField_common{2} = event_pos_inField_near_centroid{2}(common_log);
 
 %select the event indices for event/place filtered ROIs
 %events_in_field_final_filtered{1} = events_in_field_pf_filtered{1}(run_epoch_filt_both);
