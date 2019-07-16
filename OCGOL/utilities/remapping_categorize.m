@@ -438,30 +438,42 @@ cent_diff_AandB_runFilt.max_bin = cent_diff_AandB_eventCount.max_bin(:,run_epoch
 
 
 %% Centroid difference filter (select those with cent diff less than 10cm ~ 18 deg) - point of split between rate and global remap
-%centroid difference in degrees (18 deg ~ 10 cm)
-deg_thres = 18;
+%centroid difference in degrees (36 deg ~ 20 cm)
+deg_thres = 36;
 
 %get the vector idx's of the neurons with near and far centroid differences
-near_field_idx = find((cent_diff_AandB_runFilt.angle_diff <= deg2rad(18)) == 1);
-far_field_idx = find((cent_diff_AandB_runFilt.angle_diff > deg2rad(18)) == 1);
+near_field_idx = find((cent_diff_AandB_runFilt.angle_diff <= deg2rad(deg_thres)) == 1);
+far_field_idx = find((cent_diff_AandB_runFilt.angle_diff > deg2rad(deg_thres)) == 1);
 
 %translate the idxs to absolute ROIs idxs (A and B are the same)
 near_idx_centroid = final_filtered_ROI.A(near_field_idx);
-global_remap_idx_centroid = final_filtered_ROI.A(far_field_idx);
+global_remap_ROI = final_filtered_ROI.A(far_field_idx);
 
 %place field width positions
 %potential rate remapping
 placeField_near_centroid{1} = placeField_final{1}(near_field_idx);
 placeField_near_centroid{2} = placeField_final{2}(near_field_idx);
 
+%global remapping
+placeField_global_centroid{1} = placeField_final{1}(far_field_idx);
+placeField_global_centroid{2} = placeField_final{2}(far_field_idx);
+
 %event position (normalized)
 %potential rate remapping
 event_pos_inField_near_centroid{1} = event_pos_inField_final{1}(near_field_idx);
 event_pos_inField_near_centroid{2} = event_pos_inField_final{2}(near_field_idx);
 
+%global remapping
+event_pos_inField_global_centroid{1} = event_pos_inField_final{1}(far_field_idx);
+event_pos_inField_global_centroid{2} = event_pos_inField_final{2}(far_field_idx);
+
 %select the event indices for event/place filtered ROIs
 events_in_field_near_centroid{1} = events_in_field_final_filtered{1}(near_field_idx);
 events_in_field_near_centroid{2} = events_in_field_final_filtered{2}(near_field_idx);
+
+%global remapping
+events_in_field_global_centroid{1} = events_in_field_final_filtered{1}(far_field_idx);
+events_in_field_global_centroid{2} = events_in_field_final_filtered{2}(far_field_idx);
 
 %% Do Mann Whitney U test for AUC of events in nearby place field (rate remapping ROIs) 
 
@@ -517,6 +529,7 @@ event_pos_inField_common{2} = event_pos_inField_near_centroid{2}(common_log);
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 
+%rate remapping
 if options.dispFigure ==1
     %plot normalized position
     %show A selective first
@@ -565,6 +578,100 @@ if options.dispFigure ==1
         clf
     end
     
+
+end
+
+%global
+if options.dispFigure ==1
+    %plot normalized position
+    %show A selective first
+    figure('Position', [1930 130 1890 420])
+    hold on
+    title('Global remapping neurons')
+    for rr=1:size(global_remap_ROI,2)%1:size(Aonly_notSIb_idx,2)
+        %ROI = rr%AandB_tuned_idx(rr);
+        ROI = global_remap_ROI(rr); %Aonly_notSIb_idx(rr);
+        hold on
+        title(num2str(ROI))
+        yticks([0 0.5 1])
+        ylabel('Normalized position')
+        xlabel('Time [min]');
+        xticks(0:3:12);
+        %ylim([0 1])
+        set(gca,'FontSize',14)
+        set(gca,'LineWidth',1)
+        %A laps
+        for ii=1:size(lap_idxs.A,1)
+            plot(Imaging_split{1}{1}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
+                Behavior_split{1}{1}.resampled.position_norm(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
+                'Color',[0 0 1 0.6],'LineWidth',1.5)
+        end
+        %B laps
+        for ii=1:size(lap_idxs.B,1)
+            plot(Imaging_split{1}{2}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
+                Behavior_split{1}{2}.resampled.position_norm(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
+                'Color',[1 0 0 0.6],'LineWidth',1.5)
+        end
+        %overlay significant calcium run events
+        %A
+        scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
+        %B
+        scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
+        
+        %plot horz lines signifying start and end of place field
+        %start
+        lineS = refline(0,placeField_global_centroid{1}{rr}(1))
+        lineS.Color = 'g';
+        %end
+        lineE = refline(0,placeField_global_centroid{1}{rr}(2))
+        lineE.Color = 'g';
+        
+        pause
+        clf
+    end
+
+end
+
+%% Export task-selective ROIs in struct
+
+%export indices for task selective neurons
+task_selective_ROIs.A.idx = final_filtered_ROI.A;
+task_selective_ROIs.B.idx = final_filtered_ROI.B;
+
+%field margin for task selective neurons
+task_selective_ROIs.A.field_margin = placeField_final{1};
+task_selective_ROIs.B.field_margin = placeField_final{2};
+
+%event associated with selected place field
+task_selective_ROIs.A.fieldEvents = event_pos_inField_final{1};
+task_selective_ROIs.B.fieldEvents = event_pos_inField_final{2};
+
+%% Patch generator for run epochs
+%creates x range of patches
+if 0
+figure;
+hold on
+xRange = {5:10; 20; 40:42; 50; 60:75; 90:95};
+for k1 = 1:size(xRange,1)
+    q = xRange{k1};
+    %if very brief period
+    if length(q) == 1
+        q = [q q+0.1];
+    end
+    %start x end x; end x start x
+    qx = [min(q) max(q)  max(q)  min(q)];
+    yl = ylim;
+    %start y x2; end y x2
+    qy = [[1 1]*yl(1) [1 1]*yl(2)];
+    %plot the patches
+    %green
+    %patch(qx, qy, [0 1 0],'EdgeColor', 'none','FaceAlpha', 0.3)
+    %red
+    patch(qx, qy, [1 0 0],'EdgeColor', 'none','FaceAlpha', 0.3)
+end
+end
+
+%% SECOND PLOTTER - discard later
     %show B selective second
 %     figure('Position', [1930 130 1890 420])
 %     hold on
@@ -610,46 +717,6 @@ if options.dispFigure ==1
 %         pause
 %         clf
 %     end
-end
-
-%% Export task-selective ROIs in struct
-
-%export indices for task selective neurons
-task_selective_ROIs.A.idx = final_filtered_ROI.A;
-task_selective_ROIs.B.idx = final_filtered_ROI.B;
-
-%field margin for task selective neurons
-task_selective_ROIs.A.field_margin = placeField_final{1};
-task_selective_ROIs.B.field_margin = placeField_final{2};
-
-%event associated with selected place field
-task_selective_ROIs.A.fieldEvents = event_pos_inField_final{1};
-task_selective_ROIs.B.fieldEvents = event_pos_inField_final{2};
-
-%% Patch generator for run epochs
-%creates x range of patches
-if 0
-figure;
-hold on
-xRange = {5:10; 20; 40:42; 50; 60:75; 90:95};
-for k1 = 1:size(xRange,1)
-    q = xRange{k1};
-    %if very brief period
-    if length(q) == 1
-        q = [q q+0.1];
-    end
-    %start x end x; end x start x
-    qx = [min(q) max(q)  max(q)  min(q)];
-    yl = ylim;
-    %start y x2; end y x2
-    qy = [[1 1]*yl(1) [1 1]*yl(2)];
-    %plot the patches
-    %green
-    %patch(qx, qy, [0 1 0],'EdgeColor', 'none','FaceAlpha', 0.3)
-    %red
-    patch(qx, qy, [1 0 0],'EdgeColor', 'none','FaceAlpha', 0.3)
-end
-end
 
 %% OLD PLOTTING CODE
 % %plot normalized position
