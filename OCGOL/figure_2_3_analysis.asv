@@ -154,6 +154,8 @@ options.tuning_criterion = 'ts';
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
+
+
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
 
 options.tuning_criterion = 'ts';
@@ -180,7 +182,7 @@ options.dispFigure = 1;
 %% Centroid distribution across lap for A tuned and B tuned neurons
 %use tuning spec criterion for this
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
-[centroid_ct] = centroid_dist_task_selective(tunedLogical,task_selective_ROIs, max_bin_rate,options);
+[centroid_ct] = centroid_dist_task_selective(tunedLogical, max_bin_rate,options);
 
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
