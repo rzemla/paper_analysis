@@ -175,7 +175,7 @@ save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB
 %which criterion to use for task-selective ROIs
 options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
-options.dispFigure = 1;
+options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
@@ -195,8 +195,7 @@ options.dispFigure = 1;
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
-%PV correlation embedded inside of this function
-plot_STC_OCGOL_singleSes(session_vars,tunedLogical,options)
+plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options)
 
 
 %% Get percentage correct in each trial type and
