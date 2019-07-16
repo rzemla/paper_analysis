@@ -192,7 +192,7 @@ options.dispFigure = 1;
 %sorted by A trials
 
 %set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
+options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
 %PV correlation embedded inside of this function

@@ -31,6 +31,11 @@ switch options.tuning_criterion
             onlyA_tuned{ss} = tunedLogical(ss).ts.onlyA_tuned;
             onlyB_tuned{ss} = tunedLogical(ss).ts.onlyB_tuned;
         end
+    case 'selective_filtered'
+        %neurons idxs associated with selective filtering for
+        %task-selectivity
+        select_filt_ROIs.A = task_selective_ROIs.A.idx;
+        select_filt_ROIs.B = task_selective_ROIs.B.idx;
         
 end
 
@@ -45,11 +50,11 @@ for ss =1:size(animal_data,2)
     A_STC_nn{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.rate_map_smooth{8};
     B_STC_nn{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.rate_map_smooth{8};
     
-    A_df_both{ss} = A_df{ss}(:,AandB_tuned{ss});
-    B_df_both{ss} = B_df{ss}(:,AandB_tuned{ss});
+    %A_df_both{ss} = A_df{ss}(:,AandB_tuned{ss});
+    %B_df_both{ss} = B_df{ss}(:,AandB_tuned{ss});
     
-    A_df_onlyA{ss} = A_df{ss}(:,onlyA_tuned{ss});
-    B_df_onlyA{ss} = B_df{ss}(:,onlyA_tuned{ss});
+    %A_df_onlyA{ss} = A_df{ss}(:,onlyA_tuned{ss});
+    %B_df_onlyA{ss} = B_df{ss}(:,onlyA_tuned{ss});
 end
 
 %% Normalize eahc STC ROI across both trials in non-norm STCs
