@@ -154,13 +154,6 @@ options.tuning_criterion = 'ts';
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
-%% Centroid distribution across lap for A tuned and B tuned neurons
-%use tuning spec criterion for this
-options.tuning_criterion = 'ts'; %si or ts
-[centroid_ct] = centroid_dist(tunedLogical, max_bin_rate,options);
-
-%save the fractions output data
-save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
 
 
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
@@ -186,6 +179,14 @@ options.dispFigure = 1;
 [task_selective_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
 
+%% Centroid distribution across lap for A tuned and B tuned neurons
+%use tuning spec criterion for this
+options.tuning_criterion = 'ts'; %si or ts
+[centroid_ct] = centroid_dist(tunedLogical, max_bin_rate,options);
+
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
+
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options
 %tuned in both sessions by SI score
@@ -195,7 +196,7 @@ options.dispFigure = 1;
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
-plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options)
+plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
 
 
 %% Get percentage correct in each trial type and
