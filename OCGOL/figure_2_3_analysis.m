@@ -2,15 +2,16 @@
 
 %lab workstation
 %input directories to matching function
-%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'}; % field rate error
+path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'}; % field rate error
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; %place field finder problem - adjust
 %path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %place field finder problem - adjust
-%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'}; %problem with task-selective code - fix
+%path_dir =
+%{'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'}; %problem with task-selective code - fix
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
@@ -45,13 +46,6 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 %returns struct of structs
 [tunedLogical] = defineTunedLogicals(session_vars,options);
 
-%% Add a filter for logical selection of A/B selective neurons here (Figure 2)
-
-
-
-%% Add a filter for logical selection of A&B remapping neurons here (Figure 3)
-
-
 %% Plot example neuron (for display/figure) - trace, position, event spiral, TS arrows, A vs. B
 %I42L example plots ROIs
 %59, 66 (nice), 111(nice),162,180, 208,214 234 (nice),252,280  - A specific
@@ -65,7 +59,6 @@ options.allCorrect = 1; %1  = A correct; 2 = B correct
 %generate figure used in task selecitve figure
 options.plotFigure2 = 1;
 raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
-
 
 %% Plot fraction of each neuron tuned 
 
@@ -173,8 +166,10 @@ options.dispFigure = 0;
 %which criterion to use for task-selective ROIs
 options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
-options.dispFigure = 1;
-[task_selective_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
+options.dispFigure = 0;
+%make sure that this function does not overwrite the the previous
+%task_selective_ROIs structure
+%[task_selective_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
 
 %% Centroid distribution across lap for A tuned and B tuned neurons
