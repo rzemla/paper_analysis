@@ -195,7 +195,27 @@ centroid_mat_B_norm = centroid_mat_B./sum(centroid_mat_B,2);
 centroid_mat_A_norm_mean = mean(centroid_mat_A_norm,1);
 centroid_mat_B_norm_mean = mean(centroid_mat_B_norm,1);
 
-%plot this an empirical distribution curve
+%get normalized standard deviation for centroid of task-selective neurons
+centroid_mat_A_norm_std = std(centroid_mat_A_norm,0,1);
+centroid_mat_B_norm_std = std(centroid_mat_B_norm,0,1);
+
+%plot as fraction of neurons tuned in each bin with shaded std
+figure;
+subplot(2,1,1)
+hold on;
+ylabel('Normalized density')
+ylim([0 0.07])
+plot(centroid_mat_A_norm_mean,'b')
+hold off
+
+subplot(2,1,2)
+hold on;
+ylabel('Normalized density')
+ylim([0 0.07])
+plot(centroid_mat_B_norm_mean,'r')
+xlabel('Spatial bin')
+
+%plot this an empirical distribution curve (histogram)
 figure;
 subplot(2,1,1)
 hold on
@@ -229,6 +249,45 @@ pax2.RColor = 'r';
 pax2.FontSize = 14;
 polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', sum(centroid_mat_B,1),'Normalization', 'probability',...
     'FaceColor','red')
+
+%% Polar plot mean
+figure;
+pax1 = subplot(1,2,1,polaraxes);
+hold on
+title('A selective')
+pax1.ThetaAxisUnits = 'degrees';
+pax1.RAxisLocation = 45;
+pax1.RLim = [0 0.06];
+pax1.RColor = 'r';
+pax1.FontSize = 14;
+polarhistogram(pax1,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centroid_mat_A_norm_mean,'Normalization','probability',...
+    'FaceColor','blue')
+
+pax2 = subplot(1,2,2,polaraxes);
+hold on
+title('B selective')
+pax2.ThetaAxisUnits = 'degrees';
+pax2.RAxisLocation = 45;
+pax2.RLim = [0 0.06];
+pax2.RColor = 'r';
+pax2.FontSize = 14;
+polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centroid_mat_B_norm_mean,'Normalization', 'probability',...
+    'FaceColor','red')
+
+%empirical cdf
+if 0
+    figure;
+    hold on
+    ecdf((1:100),'Frequency',sum(centroid_mat_A,1)/sum(sum(centroid_mat_A,1)))
+    ecdf((1:100),'Frequency',sum(centroid_mat_B,1)/sum(sum(centroid_mat_B,1)))
+end
+
+% figure;
+% hold on
+% subplot(2,1,1)
+% plot(sum(centroid_mat_A,1),'b')
+% subplot(2,1,2)
+% plot(sum(centroid_mat_B,1),'r')
 
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 
 
@@ -343,44 +402,6 @@ xticklabels({'1','20','40','60','80','100'})
 xlabel('Spatial bin')
 ylabel('Centroid difference [rad]');
 title('Positional centroid distbutions (cumulative)')
-
-%% Polar plot mean
-figure;
-pax1 = subplot(1,2,1,polaraxes);
-hold on
-title('A selective')
-pax1.ThetaAxisUnits = 'degrees';
-pax1.RAxisLocation = 45;
-pax1.RLim = [0 0.04];
-pax1.RColor = 'r';
-pax1.FontSize = 14;
-polarhistogram(pax1,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centroid_mat_A_norm_mean,'Normalization','probability',...
-    'FaceColor','blue')
-
-pax2 = subplot(1,2,2,polaraxes);
-hold on
-title('B selective')
-pax2.ThetaAxisUnits = 'degrees';
-pax2.RAxisLocation = 45;
-pax2.RLim = [0 0.04];
-pax2.RColor = 'r';
-pax2.FontSize = 14;
-polarhistogram(pax2,'BinEdges',0:(2*pi)/100:2*pi,'BinCounts', centroid_mat_B_norm_mean,'Normalization', 'probability',...
-    'FaceColor','red')
-
-%empirical cdf
-figure;
-hold on
-ecdf((1:100),'Frequency',sum(centroid_mat_A,1)/sum(sum(centroid_mat_A,1)))
-ecdf((1:100),'Frequency',sum(centroid_mat_B,1)/sum(sum(centroid_mat_B,1)))
-
-% figure;
-% hold on
-% subplot(2,1,1)
-% plot(sum(centroid_mat_A,1),'b')
-% subplot(2,1,2)
-% plot(sum(centroid_mat_B,1),'r')
-
 
 %% PV/TC correlation
 %read relevant data
