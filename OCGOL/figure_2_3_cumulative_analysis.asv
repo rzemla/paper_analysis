@@ -200,7 +200,7 @@ centroid_mat_A_norm_std = std(centroid_mat_A_norm,0,1);
 centroid_mat_B_norm_std = std(centroid_mat_B_norm,0,1);
 
 %plot as fraction of neurons tuned in each bin with shaded std
-figure('Position', [2015 120 635 820]);
+figure('Position' 2014         118         635         822]);
 subplot(2,1,1)
 hold on;
 set(gca,'FontSize',14)
