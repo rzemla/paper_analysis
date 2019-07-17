@@ -350,15 +350,19 @@ for tt=1:2
             for ll=1:size(corr_lap_idx{2},1)
                 % - depdendent on B parameter
                 split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{2}(ll));
+                
+                split_lap_pos{tt}{rr}{ll} = lap_pos_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
+                split_lap_runEpoch{tt}{rr}{ll} = lap_runEpoch_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
             end
         elseif tt == 2
             for ll=1:size(corr_lap_idx{1},1)
                 split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{1}(ll));
+                
+                split_lap_pos{tt}{rr}{ll} = lap_pos_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
+                split_lap_runEpoch{tt}{rr}{ll} = lap_runEpoch_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
             end
         end
         
-        split_lap_pos{tt}{rr}{ll} = lap_pos_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
-        split_lap_runEpoch{tt}{rr}{ll} = lap_runEpoch_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
     end
 end
 
