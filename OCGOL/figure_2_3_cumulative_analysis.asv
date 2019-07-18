@@ -200,7 +200,7 @@ centroid_mat_A_norm_std = std(centroid_mat_A_norm,0,1);
 centroid_mat_B_norm_std = std(centroid_mat_B_norm,0,1);
 
 %plot as fraction of neurons tuned in each bin with shaded std
-figure('Position' 2014         118         635         822]);
+figure('Position', [2015 120 635 820]);
 subplot(2,1,1)
 hold on;
 set(gca,'FontSize',14)
@@ -474,14 +474,48 @@ text([11 11],[0.9 0.9],'Odor zone end','Color',[0 153 153]/255,'FontSize',14)
 %TC
 %place in separate cells (combine diagnonal values)
 for ee=1:size(path_dir,2)
+    %A tuned by stat sig TS only
     diag_TC.A{ee} = diag(correlation_data{ee}.correlation.TCcorr.Aonly);
+    %B tuned by stat sig TS only
     diag_TC.B{ee} = diag(correlation_data{ee}.correlation.TCcorr.Bonly);
+    %A selective (with added filters)
+    diag_TC.Asel{ee} = diag(correlation_data{ee}.correlation.TCcorr.Aselective);
+    %B selective (with added filters)
+    diag_TC.Bsel{ee} = diag(correlation_data{ee}.correlation.TCcorr.Bselective);
+    %current A&B tuned without filter
     diag_TC.AB{ee} = diag(correlation_data{ee}.correlation.TCcorr.AB);
+    %all neurons
+    diag_TC.all{ee} = diag(correlation_data{ee}.correlation.TCcorr.all);
 end
+
 %combine correlation values into single matrix
 comb_TC.A = cell2mat(diag_TC.A');
 comb_TC.B = cell2mat(diag_TC.B');
 comb_TC.AB = cell2mat(diag_TC.AB');
+comb_TC.Asel = cell2mat(diag_TC.Asel');
+comb_TC.Bsel = cell2mat(diag_TC.Bsel');
+
+%plot the mean TC for each animal with bar and SD with A-selective and
+%B-selective and for (current, not-filtered) AB neurons 
+for ee=1:size(path_dir,2)
+    mean_TC.Asel(ee) = nanmean(diag_TC.Asel{ee});
+    mean_TC.Bsel(ee) = nanmean(diag_TC.Bsel{ee});
+    mean_TC.AB(ee) = nanmean(diag_TC.AB{ee}); 
+    mean_TC.all(ee) = nanmean(diag_TC.all{ee}); 
+end
+
+%plot the mean TC points for A-sel,B-sel and AB
+figure
+hold on
+scatter(ones(1,9)', mean_TC.Asel)
+scatter(2*ones(1,9)', mean_TC.Bsel)
+scatter(3*ones(1,9)', mean_TC.all)
+
+figure
+hold on
+boxplot([mean_TC.Asel;mean_TC.Bsel;mean_TC.AB;mean_TC.all]')
+xticklabels({'A-selective','B-selective','A&B','All'})
+ylabel('Correlation coef.')
 
 %plot combined TC corr values as single plot
 figure;

@@ -474,14 +474,48 @@ text([11 11],[0.9 0.9],'Odor zone end','Color',[0 153 153]/255,'FontSize',14)
 %TC
 %place in separate cells (combine diagnonal values)
 for ee=1:size(path_dir,2)
+    %A tuned by stat sig TS only
     diag_TC.A{ee} = diag(correlation_data{ee}.correlation.TCcorr.Aonly);
+    %B tuned by stat sig TS only
     diag_TC.B{ee} = diag(correlation_data{ee}.correlation.TCcorr.Bonly);
+    %A selective (with added filters)
+    diag_TC.Asel{ee} = diag(correlation_data{ee}.correlation.TCcorr.Aselective);
+    %B selective (with added filters)
+    diag_TC.Bsel{ee} = diag(correlation_data{ee}.correlation.TCcorr.Bselective);
+    %current A&B tuned without filter
     diag_TC.AB{ee} = diag(correlation_data{ee}.correlation.TCcorr.AB);
+    %all neurons
+    diag_TC.all{ee} = diag(correlation_data{ee}.correlation.TCcorr.all);
 end
+
 %combine correlation values into single matrix
 comb_TC.A = cell2mat(diag_TC.A');
 comb_TC.B = cell2mat(diag_TC.B');
 comb_TC.AB = cell2mat(diag_TC.AB');
+comb_TC.Asel = cell2mat(diag_TC.Asel');
+comb_TC.Bsel = cell2mat(diag_TC.Bsel');
+
+%plot the mean TC for each animal with bar and SD with A-selective and
+%B-selective and for (current, not-filtered) AB neurons 
+for ee=1:size(path_dir,2)
+    mean_TC.Asel(ee) = nanmean(diag_TC.Asel{ee});
+    mean_TC.Bsel(ee) = nanmean(diag_TC.Bsel{ee});
+    mean_TC.AB(ee) = nanmean(diag_TC.AB{ee}); 
+    mean_TC.all(ee) = nanmean(diag_TC.all{ee}); 
+end
+
+%plot the mean TC boxplots for A-sel,B-sel and AB
+
+figure('Position',[650 190 500 420])
+hold on
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+ylim([0 0.8])
+title('Tuning curve correlation between task laps')
+boxplot([mean_TC.Asel;mean_TC.Bsel;mean_TC.AB;mean_TC.all]','Colors',[65,105,225; 220,20,60; 255,0,255; 0 0 0]/255)
+xticklabels({'A-selective','B-selective','A&B','All'})
+xtickangle(45)
+ylabel('Correlation coef.')
 
 %plot combined TC corr values as single plot
 figure;

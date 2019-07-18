@@ -1,4 +1,4 @@
-function [correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,options)
+function [correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,options)
 
 
 
@@ -33,6 +33,12 @@ switch options.tuning_criterion
         end
         
 end
+
+%add task-selective neurons (additional filters)
+%neurons idxs associated with selective filtering for
+%task-selectivity
+select_filt_ROIs.A = task_selective_ROIs.A.idx;
+select_filt_ROIs.B = task_selective_ROIs.B.idx;
 
 %% Extract mean STC map in each spatial bin (not normalized and not occupancy divided) (100 bins)
 %for each session
@@ -76,9 +82,13 @@ TCcorr.Aonly = corr(A_STC_nn{1}(:,onlyA_tuned{1}),B_STC_nn{1}(:,onlyA_tuned{1}),
 TCcorr.Bonly = corr(A_STC_nn{1}(:,onlyB_tuned{1}),B_STC_nn{1}(:,onlyB_tuned{1}), 'Rows', 'complete');
 TCcorr.AB = corr(A_STC_nn{1}(:,AandB_tuned{1}),B_STC_nn{1}(:,AandB_tuned{1}), 'Rows', 'complete');
 
-nanmean(diag(TCcorr.Aonly))
-nanmean(diag(TCcorr.Bonly))
-nanmean(diag(TCcorr.AB))
+%TC correlations for A-selective and B-selective filtered 
+TCcorr.Aselective =  corr(A_STC_nn{1}(:,select_filt_ROIs.A),B_STC_nn{1}(:,select_filt_ROIs.A), 'Rows', 'complete');
+TCcorr.Bselective =  corr(A_STC_nn{1}(:,select_filt_ROIs.B),B_STC_nn{1}(:,select_filt_ROIs.B), 'Rows', 'complete');
+
+% nanmean(diag(TCcorr.Aonly))
+% nanmean(diag(TCcorr.Bonly))
+% nanmean(diag(TCcorr.AB))
 
 %sort TC correlation by ROI
 diagTC = diag(TCcorr.all);

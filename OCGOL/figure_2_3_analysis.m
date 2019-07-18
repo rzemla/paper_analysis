@@ -94,13 +94,6 @@ end
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
 
-%% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
-
-options.tuning_criterion = 'ts'; %si or ts
-[total_AUC_min] = AUC_scatter(tunedLogical,session_vars,options);
-save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
-
-
 %% Number of place fields and widths for each sub-class of neurons
 
 options.tuning_criterion = 'si'; %si or ts
@@ -138,13 +131,7 @@ options.sortTrial = 2;
 %trials
 [max_bin_rate,max_transient_peak] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
 
-%% PV and TC correlation matrices for each class of tuned neurons
 
-options.tuning_criterion = 'ts';
-[correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,options);
-
-%save the fractions output data
-save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
 
@@ -170,6 +157,14 @@ options.dispFigure = 0;
 %task_selective_ROIs structure
 %[task_selective_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
+%% PV and TC correlation matrices for each class of tuned neurons
+
+options.tuning_criterion = 'ts';
+[correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,options);
+
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
+
 
 %% Centroid distribution across lap for A tuned and B tuned neurons
 %use tuning spec criterion for this
@@ -189,6 +184,13 @@ options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
 plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
+
+%% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
+
+options.tuning_criterion = 'ts'; %si or ts
+[total_AUC_min] = AUC_scatter(tunedLogical,task_selective_ROIs,session_vars,options);
+save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
+
 
 
 %% Get percentage correct in each trial type and
