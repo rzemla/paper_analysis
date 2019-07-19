@@ -159,9 +159,10 @@ ylim([0 10])
 xticks(0:2:10)
 yticks(0:2:10)
 set(gca,'FontSize',14)
+set(gca,'LineWidth',2)
 xlabel('AUC/min - A trials')
 ylabel('AUC/min - B trials')
-title('Average for all animals')
+title('Activity rate for task selective place cells')
 %A selective
 for ee=1:size(path_dir,2)
     scatter(mean(auc_data{ee}.total_AUC_min.A(1,:)),mean(auc_data{ee}.total_AUC_min.A(2,:)),'filled','MarkerFaceColor',cmap_blue(ee+2,:))
@@ -171,7 +172,7 @@ for ee=1:size(path_dir,2)
     scatter(mean(auc_data{ee}.total_AUC_min.B(1,:)),mean(auc_data{ee}.total_AUC_min.B(2,:)),'filled','MarkerFaceColor',cmap_red(ee+2,:))
 end
 %plot center line
-plot([0 10], [0 10],'Color',[0.5 0.5 0.5],'LineStyle', '--')
+plot([0 10], [0 10],'Color',[0.5 0.5 0.5],'LineStyle', '--','LineWidth',2)
 
 %% Centroid distribution
 
