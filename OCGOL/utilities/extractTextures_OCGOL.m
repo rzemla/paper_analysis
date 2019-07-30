@@ -125,7 +125,6 @@ end
 tex_signals_idx = 1:size(pks_final_pos,2);
 tex_signals_idx([first_cue_tex_idx, reward_cue_tex_idx, lap_cue_tex_idx]) = [];
 
-
 %isolate first cue and sound signal in separate cells by absolute indices
 first_cue_onsets = pks_final_indexes{first_cue_tex_idx}(first_cue_on);
 

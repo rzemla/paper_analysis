@@ -20,7 +20,8 @@ options.defineDir = 1;
 
 %setDir = 'G:\Figure_2_3_selective_remap\I57_LT_AB_prePost_sal_050619_1';
 
-setDir = 'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119';
+%setDir = 'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119';
+setDir = 'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -120,10 +121,10 @@ setDir = 'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119';
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 0;
+options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 0;
+options.loadImagingData = 1;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL

@@ -175,6 +175,9 @@ end
 
 %% Plot calcium trace and position for a sample ROI across all laps
 
+%insert conditional here to bypass 1 and 2 if no correct laps - want to
+%preserve numbering order, so leave as is
+
 %A trial laps (2 = correct, A trials)
 lapSelect{1} = find(lap_order == 2);
 %B trial laps (3 = correct, B trials)

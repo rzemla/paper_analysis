@@ -397,9 +397,8 @@ for rr=1:size(gauss_fit,2)
         gauss_fit_edges{rr}{pp} = InterX([gauss_fit_bin_range{rr}{pp}; ones(1,size(gauss_fit_bin_range{rr}{pp},2))*fracPeak*max(gauss_fit{rr}{pp})],...
             [gauss_fit_bin_range{rr}{pp};gauss_fit{rr}{pp}]);
         %if no edges detected, check if outlier broad gaussain fit and set fixed thres at 0.1 and
-        %calculate edge using this thres (or only one edge found)
-        if isempty(gauss_fit_edges{rr}{pp}) || (size(gauss_fit_edges{rr}{pp},2) == 1)
-            %disp('empty')
+        %calculate edge using this thres
+        if isempty(gauss_fit_edges{rr}{pp})
                 gauss_fit_edges{rr}{pp} = InterX([gauss_fit_bin_range{rr}{pp}; ones(1,size(gauss_fit_bin_range{rr}{pp},2))*0.1],...
             [gauss_fit_bin_range{rr}{pp};gauss_fit{rr}{pp}]);
         end

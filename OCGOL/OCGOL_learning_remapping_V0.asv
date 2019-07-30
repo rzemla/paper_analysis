@@ -73,13 +73,11 @@ options.gSigma = 3;
 %5 - all B regardless if correct
 
 %for each session
-for ss=1:size(session_vars,2) %1,2,3,4,5,6 OK
-    for ii = [4,5]
+for ss=3%1:size(session_vars,2) %3OK,
+    for ii =[4,5]
         options.place_struct_nb = ii;
-        disp(ii);
         [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
     end
-    disp('Session: '); disp(ss);
 end
 
 %% Plot smoothed event rate across track (function)
