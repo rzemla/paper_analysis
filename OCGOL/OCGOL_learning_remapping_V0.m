@@ -53,7 +53,7 @@ elseif options.register == 0
     
 end
 
-%% Visualize the matching ROIs that were matched above
+%% Visualize the matching ROIs that were matched above (match on every session only!)
 %number of ROIs (rows) by sessions (cols)
 rows = 20;
 cols = 6; %take # of sessions as input
@@ -61,6 +61,11 @@ ROI_zooms = registered.multi.ROI_zooms;
 ROI_outlines = registered.multi.ROI_outlines;
 
 visualize_matches(rows,cols,ROI_zooms,ROI_outlines);
+
+%% Get ROI_zooms and ROI_outlines for each neuron on each day
+%number of sessions
+nbSes = size(session_vars,2);
+defineOutlines_eachSes(nbSes,session_vars, path_dir)
 
 %% TO-DO  --> write script to removed low quality/incorrect matches
 
