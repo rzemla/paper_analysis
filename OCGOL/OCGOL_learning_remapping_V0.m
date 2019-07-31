@@ -57,15 +57,16 @@ end
 %number of ROIs (rows) by sessions (cols)
 rows = 20;
 cols = 6; %take # of sessions as input
-ROI_zooms = registered.multi.ROI_zooms;
-ROI_outlines = registered.multi.ROI_outlines;
+%only those matching across all sessions
+ROI_zooms_all_match = registered.multi.ROI_zooms;
+ROI_outlines_all_match = registered.multi.ROI_outlines;
 
 visualize_matches(rows,cols,ROI_zooms,ROI_outlines);
 
 %% Get ROI_zooms and ROI_outlines for each neuron on each day
 %number of sessions
 nbSes = size(session_vars,2);
-defineOutlines_eachSes(nbSes,session_vars, path_dir)
+[ROI_zooms, ROI_outlines] = defineOutlines_eachSes(nbSes,session_vars, path_dir);
 
 %% TO-DO  --> write script to removed low quality/incorrect matches
 
@@ -177,6 +178,60 @@ options.idx_show = find(registered.multi.assigned_all(:,1) == 357);
 %separate processing part from display portion (speed reason)
 
 %break down in simpler code in the future;
+%interesting ROI I56_RTLS: 
+%s5 - split over time
+%s6 - start A sel and end A sel
+%s14 - separate place field formation over time
+%s20 - task selective place field formation over time
+
+%session 1: 27 - selective, split, converge, diverge
+%s1_31 - common and then diverge
+%s1_41 - starts A and B and ends A&B
+%45 -split
+%47  - B sel deve
+%54 - split
+%58 common - split
+%63 - split to common
+%74 - flip contexts
+%79 - narrow of place field (dF/F) and common -> split
+%93 - common to selective
+%95 - selective, split, common
+%97 - common - split - B selective - split
+%122 - common -> split
+%128 - selective - split - back to selective
+%135 - scatter - common 2 field
+%138 - common - divergence - convergence
+%143 - evolution of partial remapping neuron
+%146 - selective - split - common
+%152 - common to selective
+%161 - task sel stable
+%166 - common - split
+%168 - split - common
+%175 - split to task sel (B)
+%181 - commom to common - same place
+%185 - spread - converge to common
+%186 - flip contexts
+%190 - scatter to common
+%207 - A sel - B sel - common
+%216 - A sel B sel A sel (multiple selective flips)
+%218 - common - B sel - split - maintain
+%243 - scatter - A sel - split commong
+%245 flip context
+%246 split - maintain split + common
+%263 - partial to common
+%265 - stable split
+%266 - stable
+%268 common to split
+%271 - scatter, split common
+%279 - common, reward A , reward A in B, split
+%280 - scatter, common,selective 
+%285 - scatter -> common
+%286 - scatter - narrow
+%290 - selective common split partial
+%293 - common sel A - split - sel A
+%294 - non common split, conjunctive sel
+%296 - scatter split comoon
+
 compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms, options);
 
 
