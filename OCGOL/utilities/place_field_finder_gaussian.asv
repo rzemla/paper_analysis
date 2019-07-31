@@ -531,9 +531,9 @@ for rr=1:size(merge_peak_nb,2)
 end
 
 %
-%temp_ROI = [1:259,261:481]
+temp_ROI = [1:259,261:481]
 %check for peaks
-for rr = 1:size(merge_peak_nb,2)
+for rr = temp_ROI%1:size(merge_peak_nb,2)
     if ~isempty(merge_peak_nb{rr})
         %check if cell (more than 1 intial peaks)
         
