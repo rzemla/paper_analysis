@@ -1,7 +1,6 @@
 function [field_event_rates,pf_vector] = transient_rate_in_field_single_ses(session_vars,options)
 %input - cell of structs with animal data
 
-
 %% Define input variables 
 
 %try for 1 session first
@@ -31,7 +30,8 @@ end
 %% Find and store transient rate in each place field
 
 for ss=1:size(session_vars,2)
-    %for each trial (A or B) regardless if correct
+    %for each trial (A or B) regardless if correct (4,5) or only correct
+    %(1,2)
     for tt=options.selectSes
         %find field event rate for each session and trial types
         field_event_rates{ss}{tt} = field_rate(event_map{ss}{tt},occupancy{ss}{tt},placeField_edges{ss}{tt});

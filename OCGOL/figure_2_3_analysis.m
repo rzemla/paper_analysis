@@ -2,10 +2,10 @@
 
 %lab workstation
 %input directories to matching function
-%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'}; % field rate error
+%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
 %path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'};
@@ -13,7 +13,7 @@ path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -152,10 +152,10 @@ options.dispFigure = 0;
 %which criterion to use for task-selective ROIs
 options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
-options.dispFigure = 0;
+options.dispFigure = 1;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
-%[task_selective_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
+[task_remapping_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
 %% PV and TC correlation matrices for each class of tuned neurons
 
