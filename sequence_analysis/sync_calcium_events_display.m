@@ -6,6 +6,7 @@ options.register = 0;
 %input directories to matching function
 %path_dir = {'G:\OCGOL_training\I56_RLTS_041019\5A5B'};
 path_dir = {'G:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
+
 %cross session directory
 %crossdir = 'G:\OCGOL_training\I56_RLTS_041019\crossSession';
 
@@ -34,8 +35,8 @@ run_epoch_binary = session_vars{1}.Behavior.run_ones;
 traces = session_vars{1}.Imaging.trace_restricted;
 
 %SI score
-A_tuned = session_vars{1, 1}.Place_cell{1, 4}.Spatial_Info.significant_ROI;
-B_tuned = session_vars{1, 1}.Place_cell{1, 5}.Spatial_Info.significant_ROI;
+A_tuned = session_vars{1, 1}.Place_cell{1, 1}.Spatial_Info.significant_ROI;
+B_tuned = session_vars{1, 1}.Place_cell{1, 2}.Spatial_Info.significant_ROI;
 AorB_tuned = A_tuned | B_tuned;
 
 %binary onset logicals

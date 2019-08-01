@@ -5,7 +5,7 @@
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'}; % field rate error
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
 %path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'};
@@ -13,7 +13,7 @@
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -121,10 +121,10 @@ options.selectSes = [1 2];
 options.tuning_criterion = 'si'; %si or ts
 %AandB, AorB, onlyA, onlyB, neither all
 %all won't work b/c no defined fields to sort by
-options.trialTuning = 'onlyB';
+options.trialTuning = 'onlyA';
 options.selectSes = [1 2];
 %sort according to which trial 1 2 4 5
-options.sortTrial = 2;
+options.sortTrial = 1;
 
 %outputs:
 %max_transient_peak - peak idx where event rate is highest for correct A/B
@@ -235,8 +235,7 @@ for ROI = rejectedROI_idx
     %pause(0.01)
 end
 
-
-
+%% Synchronized calcium event analysis
 
 
 

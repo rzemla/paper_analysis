@@ -463,10 +463,7 @@ onlyA_idx = task_selective_ROIs.A.idx;
 %onlyB_idx = find(tunedLogical.si.onlyB_tuned ==  1);
 %after filter
 onlyB_idx = task_selective_ROIs.B.idx;
-AandB_idx = find(tunedLogical.ts.AandB_tuned == 1);
-
-%centroid diff associated with with A&B tuned neurons
-%find(tunedLogical.ts.AandB_tuned ==1)
+AandB_idx = find(tunedLogical.si.AandB_tuned == 1);
 
 for ss=1:size(SCE_ROIs,2)
     log_A{ss} = ismember(SCE_ROIs{ss},onlyA_idx);
@@ -475,21 +472,18 @@ for ss=1:size(SCE_ROIs,2)
     log_B{ss} = ismember(SCE_ROIs{ss},onlyB_idx);
     %percentrage B of all ROIs in SCE
     percentages(ss,2) = size(find(log_B{ss}==1),2)/size(log_B{ss},2);
-    [log_AB{ss},cent_idx{ss}] = ismember(SCE_ROIs{ss},AandB_idx);
-    %get mean centroid diff for involved neurons
-    mean_cent_diff(ss) = rad2deg(nanmean(cent_diff_AandB.angle_diff(cent_idx{ss}(log_AB{ss}))));
+    log_AB{ss} = ismember(SCE_ROIs{ss},AandB_idx);
     %percentrage A&B of all ROIs in SCE
     percentages(ss,3) = size(find(log_AB{ss}==1),2)/size(log_AB{ss},2);
 end
 
-%add centroid diff to percentrages
-percentages = [percentages, mean_cent_diff'];
+
 
 %% Extract sync intervals, neurons involved, and plot
 
 %plot entire dF/F for each sync event ROIs
 figure
-imagesc(traces(:,SCE_ROIs{77}  )')
+imagesc(traces(:,SCE_ROIs{22}  )')
 hold on
 axis normal;
 caxis([0 1]);
@@ -500,27 +494,6 @@ hold off
 input_data_A = session_vars{1}.Imaging_split{1}.trace_restricted;
 input_data_B = session_vars{1}.Imaging_split{2}.trace_restricted;
 
-%dF/F
-figure
-subplot(1,2,1)
-imagesc(input_data_A(:,SCE_ROIs{78})')
-hold on
-title('A')
-axis normal;
-caxis([0 1]);
-ylabel('Neuron #');
-colormap(gca,'jet')
-hold off
-
-subplot(1,2,2)
-imagesc(input_data_B(:,SCE_ROIs{78})')
-hold on
-title('B')
-axis normal;
-caxis([0 1]);
-ylabel('Neuron #');
-colormap(gca,'jet')
-hold off
 
 %% Same code as in early simple version search
 
