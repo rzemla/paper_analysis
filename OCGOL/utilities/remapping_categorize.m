@@ -526,7 +526,20 @@ event_pos_inField_common{2} = event_pos_inField_near_centroid{2}(common_log);
 %events_in_field_final_filtered{1} = events_in_field_pf_filtered{1}(run_epoch_filt_both);
 %events_in_field_final_filtered{2} = events_in_field_pf_filtered{2}(run_epoch_filt_both);
 
-%% Partial remapping
+%% Partial remapping ROIs
+
+%remove other i'd'd indices from this set
+global_overlap_log = ismember(partial_remap_idx_start,global_remap_ROI);
+rate_overlap_log = ismember(partial_remap_idx_start,rate_remapping_ROI);
+common_overlap_log = ismember(partial_remap_idx_start,common_ROI);
+
+%make shared logical of all overlapping and remove from
+%partial_remap_idx_start_ROI
+remove_previous_ROI_log =  (common_overlap_log | (global_overlap_log | rate_overlap_log));
+
+%filter out previously categorized neurons
+partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log);
+
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 
@@ -633,6 +646,56 @@ if options.dispFigure ==1
 
 end
 
+%partial
+if options.dispFigure ==1
+    %plot normalized position
+    %show A selective first
+    figure('Position', [1930 130 1890 420])
+    hold on
+    title('Partial remapping neurons')
+    for rr=1:size(partial_idx_previous_removed,2)%1:size(Aonly_notSIb_idx,2)
+        %ROI = rr%AandB_tuned_idx(rr);
+        ROI = partial_idx_previous_removed(rr); %Aonly_notSIb_idx(rr);
+        hold on
+        title(num2str(ROI))
+        yticks([0 0.5 1])
+        ylabel('Normalized position')
+        xlabel('Time [min]');
+        xticks(0:3:12);
+        %ylim([0 1])
+        set(gca,'FontSize',14)
+        set(gca,'LineWidth',1)
+        %A laps
+        for ii=1:size(lap_idxs.A,1)
+            plot(Imaging_split{1}{1}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
+                Behavior_split{1}{1}.resampled.position_norm(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
+                'Color',[0 0 1 0.6],'LineWidth',1.5)
+        end
+        %B laps
+        for ii=1:size(lap_idxs.B,1)
+            plot(Imaging_split{1}{2}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
+                Behavior_split{1}{2}.resampled.position_norm(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
+                'Color',[1 0 0 0.6],'LineWidth',1.5)
+        end
+        %overlay significant calcium run events
+        %A
+        scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
+        %B
+        scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
+        
+        %plot horz lines signifying start and end of place field
+        %start
+        %lineS = refline(0,placeField_global_centroid{1}{rr}(1))
+        lineS.Color = 'g';
+        %end
+        %lineE = refline(0,placeField_global_centroid{1}{rr}(2))
+        lineE.Color = 'g';
+        
+        pause
+        clf
+    end
+
+end
 %% Export task-selective ROIs in struct
 
 %export indices for task selective neurons

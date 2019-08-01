@@ -1,4 +1,4 @@
-function [field_event_rates, field_total_events] = field_rate(event_map,occupancy,placeField_edges)
+function [field_event_rates] = field_rate(event_map,occupancy,placeField_edges)
 
 
 %%
@@ -17,7 +17,7 @@ for rr=1:size(event_map,2)
             %across bin (s)
             field_event_rates{rr}(pp) = sum(event_map(place_bins{rr}{pp},rr))./sum(occupancy(place_bins{rr}{pp}));
             %total events (not occupancy normalzied)
-            field_total_events{rr}(pp) = sum(event_map(place_bins{rr}{pp},rr));
+            field_total_events
         end
     else
         %set to empty to prevent clipping of vector
