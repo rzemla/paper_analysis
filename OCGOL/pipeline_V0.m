@@ -2,129 +2,18 @@
 
 options.defineDir = 1;
 
-%setDir = 'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1';
-
-%setDir = 'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1';
-
-%setDir = 'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1';
-
-%setDir = 'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1';
-%setDir = 'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1';
-
-%setDir = 'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1';
-
-%setDir = 'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1';
-
-%setDir = 'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1';
-%setDir = 'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1';
-
-%setDir = 'G:\Figure_2_3_selective_remap\I57_LT_AB_prePost_sal_050619_1';
-
-%setDir = 'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119';
-setDir = 'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2';
+setDir = 'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d3_062218_3';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
 
-%performance/texture code works - backup this dataset!
-%setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
-
-%performance/texture code works - backup this dataset!
-%setDir = 'E:\I42R_AB_1\I42R_AB_d1_032118_1';
-
-
-%setDir = 'G:\OCGOL_training\I56_RTLS_ABrand_no_punish_041519';
-%setDir = 'G:\OCGOL_training\I57_RLTS_5AB_041019';
-
-%setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
-%setDir = 'F:\OCGOL_training\I56_RLTS_041019\5A5B';
-%setDir = 'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619';
-
-
-
-%performance/texture code works - backup this dataset!
-%check missed reward collection feature
-%setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I47_LP_AB_d1_062018';
-
-%performance/texture code works - backup this dataset!
-%setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
-
-%performance/texture code works - backup this dataset!
-%setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I45_RT_AB_d1_062018';
-
-%performance/texture code works - backup this dataset!
-%setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\1';
-
-%performance/texture code works
-%setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\2';
-%performance/texture code works
-%setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\3';
-
-%performance/texture code works
-%setDir ='G:\I52RT_AB_sal_PSEM_113018_120118\4';
-
-%performance/texture code works
-%setDir ='G:\I53LT_AB_sal_PSEM_113018_120118\1';
-%performance/texture code works
-%setDir ='G:\I53LT_AB_sal_PSEM_113018_120118\2';
-%performance/texture code works
-%setDir ='G:\I53LT_AB_sal_PSEM_113018_120118\3';
-%performance/texture code works
-%setDir ='G:\I53LT_AB_sal_PSEM_113018_120118\4';
-
-%setDir = 'E:\I42L_AB_1\I42L_AB_d1_032118_1';
-
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\1'; %(RF of GOL)
-
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
-
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\6'; %(Block 2 day 5)
-
-%home workstation directory
-%setDir = 'F:\I55_RTLS_RF_GOL_022219\2'; % (Block 1 day 1)
-
-%setDir = 'F:\I52RT_AB_sal_PSEM_113018_120118\1';
-
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\3';
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\4';
-%setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\5';
-
- %setDir = 'G:\GOL\I55_RTLS_RF_GOL_022219\7';
- 
- %setDir = 'G:\GOL\LEC_silenced\I56_RTLS_RF_GOL_032019\3';
- %setDir = 'G:\GOL\LEC_silenced\I56_RTLS_RF_GOL_032019\4';
- %setDir = 'G:\GOL\LEC_silenced\I57_RTLS_RF_GOL_032019\3';
-  
-%setDir = 'G:\GOL\I54_LTRS_RF_GOL_022219\1';
-%setDir = 'G:\GOL\I54_LTRS_RF_GOL_022219\2';
-%setDir = 'G:\GOL\I54_LTRS_RF_GOL_022219\2';
-%setDir = 'G:\GOL\I54_LTRS_RF_GOL_022219\3';
-%setDir = 'G:\GOL\I54_LTRS_RF_GOL_022219\7';
-
-%setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I45_RT_AB_d1_062018';
-%setDir = 'G:\lec_paper_data\OCGOL_nonsilenced\I46_AB_d1_062018';
-
-%see an effect
-%setDir = 'G:\I57_RTLS_RF_bas_sal_792_031419\3';
-%setDir = 'G:\I57_RTLS_RF_bas_sal_792_031419\1';
-
-%setDir = 'G:\I57_LT_RF_bas_sal_792_031419\1';
-
-
-%setDir = 'G:\I56_RTLS_RF_bas_sal_792_031419\1';
-%setDir = 'G:\I56_RTLS_RF_bas_sal_792_031419\3';
-%setDir = 'G:\I56_RTLS_RF_bas_sal_792_031419\2';
-%setDir ='G:\I56_RT_RF_bas_sal_792_031519\3';
-%setDir ='G:\I56_RT_RF_bas_sal_792_031519\3';
-
-
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 1;
+options.loadBehaviorData = 0;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 1;
+options.loadImagingData = 0;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
