@@ -51,7 +51,7 @@ subplot(5,8,ll)
 hold on
 title(['Licks \newline lap: ', num2str(ll)])
 xlim([0,200])
-stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
+%stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
 hold off
 end
 

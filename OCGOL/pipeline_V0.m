@@ -2,7 +2,7 @@
 
 options.defineDir = 1;
 
-setDir = 'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d3_062218_3';
+setDir = 'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
