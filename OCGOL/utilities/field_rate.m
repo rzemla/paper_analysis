@@ -22,6 +22,7 @@ for rr=1:size(event_map,2)
     else
         %set to empty to prevent clipping of vector
         field_event_rates{rr} = [];
+        field_total_events{rr} = [];
     end
 end
 

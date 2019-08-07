@@ -105,7 +105,7 @@ for ss=1:size(session_vars,2)
     %(1,2)
     for tt=options.selectSes
         %find field event rate for each session and trial types
-        [field_event_rates{ss}{tt}, field_total_events] = field_rate(event_map{ss}{tt},occupancy{ss}{tt},placeField_edges{ss}{tt});
+        [field_event_rates{ss}{tt}, field_total_events{ss}{tt}] = field_rate(event_map{ss}{tt},occupancy{ss}{tt},placeField_edges{ss}{tt});
     end
 end
 
