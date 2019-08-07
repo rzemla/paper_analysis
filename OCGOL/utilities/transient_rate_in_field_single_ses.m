@@ -207,8 +207,14 @@ end
 
 %% Create logical selection vectors for neurons with place fields that contain at least 5 events on distinct laps
 
-x=1;
-
+%create logical for each ROI on each set of trial types
+for tt=1:2
+    for rr=1:size(event_in_field_nb{tt},2)
+            %get logical of place fields with more than 5 distinct calcium
+            %events in field
+            select_fields{tt}{rr} = event_in_field_nb{tt}{rr} >= 5; 
+    end
+end
 
 %% Plot
 %which session

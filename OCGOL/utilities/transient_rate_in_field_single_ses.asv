@@ -163,7 +163,7 @@ end
 for tt=1:2
     for rr=1:size(placeField_posnorm{tt},2)
         if tt == 1 %correct A trials
-            if ~isempty(size(placeField_posnorm{tt}{rr},1))
+            if ~isempty(placeField_posnorm{tt}{rr})
                 %for each id'd place field
                 for pp=1:size(placeField_posnorm{tt}{rr},1)
                     events_in_field{tt}{rr}{pp} = find(event_norm_pos_run.A{rr} >= placeField_posnorm{tt}{rr}(pp,1) & ...
@@ -183,7 +183,7 @@ for tt=1:2
             end
             
         elseif tt == 2 %correct B trials
-            if ~isempty(size(placeField_posnorm{tt}{rr},1))
+            if ~isempty(placeField_posnorm{tt}{rr})
                 %for each id'd place field
                 for pp=1:size(placeField_posnorm{tt}{rr},1)
                     events_in_field{tt}{rr}{pp} = find(event_norm_pos_run.B{rr} >= placeField_posnorm{tt}{rr}(pp,1) & ...
@@ -204,6 +204,14 @@ for tt=1:2
         end
     end
 end
+
+%% Create logical selection vectors for neurons with place fields that contain at least 5 events on distinct laps
+
+%create logical for each ROI on each set of trial types
+for tt=1:2
+    for rr=1:size(placeField_posnorm{tt},2)
+        if tt == 1 %correct A trials
+            select_fields{tt}Prr 
 
 
 %% Plot
