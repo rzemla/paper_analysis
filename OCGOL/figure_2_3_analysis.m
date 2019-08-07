@@ -113,7 +113,7 @@ save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_di
 %[4 5] - all A B trials
 options.selectSes = [1 2];
 
-[field_event_rates,pf_vector] = transient_rate_in_field_single_ses(session_vars,options);
+[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_single_ses(session_vars,options);
 
 %% Plot spatial tuning curves according to transient rate and return max bin position (split into 2 fxn later)
 %normalized to each neuron across 

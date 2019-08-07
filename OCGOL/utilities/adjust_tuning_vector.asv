@@ -1,7 +1,4 @@
 function [pf_vector] = adjust_tuning_vector(tun_vectors,tun_vector,placeField_edges,options)
-%define the tuning vectors for each place field and outputs tuning vector
-%for each field in the pf_vector cell
-
 
 %% Set variables
 

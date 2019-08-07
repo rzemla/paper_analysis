@@ -1,4 +1,4 @@
-function [field_event_rates,pf_vector] = transient_rate_in_field_single_ses(session_vars,options)
+function [field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_single_ses(session_vars,options)
 %input - cell of structs with animal data
 
 %% Define input variables 
