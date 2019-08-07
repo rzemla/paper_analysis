@@ -137,48 +137,56 @@ placeField_edge{2} = Place_cell{1}{2}.placeField.edge;
 %convert edges from relevant place field to normalized postion edges
 %edges are the normalized position equivalents of the bin edges identified
 %in bin space (using 100 bins)
+
 for tt=1:2
     %for each ROI
     for rr=1:size(placeField_edge{tt},2)
         %start position of PF %edges 1 trial for both since the binning is
         %the same
-        %for each place field (same sure same size cell comes out) _FIX
-        %THIS
-        for pp=1:size(placeField_edge{tt}{rr},1)
-            placeField_posnorm{tt}{rr}(pp,1) = edges{1}(placeField_edge{tt}{rr}(pp,1));
-            %end position of PF
-            placeField_posnorm{tt}{rr}(pp,2) = edges{1}(placeField_edge{tt}{rr}(pp,2)+1)-0.01;
+        %for each place field
+        if ~isempty(placeField_edge{tt}{rr})
+            for pp=1:size(placeField_edge{tt}{rr},1)
+                placeField_posnorm{tt}{rr}(pp,1) = edges{1}(placeField_edge{tt}{rr}(pp,1));
+                %end position of PF
+                placeField_posnorm{tt}{rr}(pp,2) = edges{1}(placeField_edge{tt}{rr}(pp,2)+1)-0.01;
+            end
+        else
+            placeField_posnorm{tt}{rr} = [];
         end
+        
     end
 end
 
 %% Filter out neurons that do not have at least 5 sig events in max place field in at least 5 distinct laps
 
-%take in put from above code and _FIX ABOVE AND RESUME HERE
-
-%find events occuring within max place field for each ROI
+%find events occuring within each place field for each ROI
 for tt=1:2
-    for rr=1:size(placeField_filtered_max_posnorm{tt},2)
-        %get idxs of events with max place field
+    for rr=1:size(placeField_posnorm{tt},2)
         if tt == 1 %correct A trials
-            events_in_field{tt}{rr} = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                event_norm_pos_run.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-            %register the corresponding lap of in-field filtered event
-            event_in_field_laps{tt}{rr} = event_lap_idx.A{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
-            %get number of unique events (those occuring on each lap)
-            event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
-            %get position of in-field events
-            events_in_field_pos{tt}{rr} = event_norm_pos_run.A{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
+            %for each id'd place field
+            for pp=1:size(placeField_posnorm{tt}{rr},1)
+                events_in_field{tt}{rr}{pp} = find(event_norm_pos_run.A{rr} >= placeField_posnorm{tt}{rr}(pp,1) & ...
+                    event_norm_pos_run.A{rr} <= placeField_posnorm{tt}{rr}(pp,2));
+                %register the corresponding lap of in-field filtered event
+                event_in_field_laps{tt}{rr}{pp} = event_lap_idx.A{rr}(events_in_field{tt}{rr}{pp});
+                %get number of unique events (those occuring on each lap)
+                event_in_field_nb{tt}{rr}(pp) = size(unique(event_in_field_laps{tt}{rr}{pp}),1);
+                %get position of in-field events
+                events_in_field_pos{tt}{rr}{pp} = event_norm_pos_run.A{rr}(events_in_field{tt}{rr}{pp});
+            end
             
         elseif tt == 2 %correct B trials
-            events_in_field{tt}{rr} = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-            %register the corresponding lap of in-field filtered event
-            event_in_field_laps{tt}{rr} = event_lap_idx.B{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
-            %get number of unique events (those occuring on each lap)
-            event_in_field_nb{tt}{rr} = size(unique(event_in_field_laps{tt}{rr}),1);
-            %get position of in-field events
-            events_in_field_pos{tt}{rr} = event_norm_pos_run.B{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
+            %for each id'd place field
+            for pp=1:size(placeField_posnorm{tt}{rr},1)
+                events_in_field{tt}{rr}{pp} = find(event_norm_pos_run.B{rr} >= placeField_posnorm{tt}{rr}(pp,1) & ...
+                    event_norm_pos_run.B{rr} <= placeField_posnorm{tt}{rr}(pp,2));
+                %register the corresponding lap of in-field filtered event
+                event_in_field_laps{tt}{rr}{pp} = event_lap_idx.B{rr}(events_in_field{tt}{rr}{pp});
+                %get number of unique events (those occuring on each lap)
+                event_in_field_nb{tt}{rr}(pp) = size(unique(event_in_field_laps{tt}{rr}{pp}),1);
+                %get position of in-field events
+                events_in_field_pos{tt}{rr}{pp} = event_norm_pos_run.B{rr}(events_in_field{tt}{rr}{pp});
+            end
         end
     end
 end
