@@ -163,33 +163,51 @@ end
 for tt=1:2
     for rr=1:size(placeField_posnorm{tt},2)
         if tt == 1 %correct A trials
-            %for each id'd place field
-            for pp=1:size(placeField_posnorm{tt}{rr},1)
-                events_in_field{tt}{rr}{pp} = find(event_norm_pos_run.A{rr} >= placeField_posnorm{tt}{rr}(pp,1) & ...
-                    event_norm_pos_run.A{rr} <= placeField_posnorm{tt}{rr}(pp,2));
-                %register the corresponding lap of in-field filtered event
-                event_in_field_laps{tt}{rr}{pp} = event_lap_idx.A{rr}(events_in_field{tt}{rr}{pp});
-                %get number of unique events (those occuring on each lap)
-                event_in_field_nb{tt}{rr}(pp) = size(unique(event_in_field_laps{tt}{rr}{pp}),1);
-                %get position of in-field events
-                events_in_field_pos{tt}{rr}{pp} = event_norm_pos_run.A{rr}(events_in_field{tt}{rr}{pp});
+            if ~isempty(placeField_posnorm{tt}{rr})
+                %for each id'd place field
+                for pp=1:size(placeField_posnorm{tt}{rr},1)
+                    events_in_field{tt}{rr}{pp} = find(event_norm_pos_run.A{rr} >= placeField_posnorm{tt}{rr}(pp,1) & ...
+                        event_norm_pos_run.A{rr} <= placeField_posnorm{tt}{rr}(pp,2));
+                    %register the corresponding lap of in-field filtered event
+                    event_in_field_laps{tt}{rr}{pp} = event_lap_idx.A{rr}(events_in_field{tt}{rr}{pp});
+                    %get number of unique events (those occuring on each lap)
+                    event_in_field_nb{tt}{rr}(pp) = size(unique(event_in_field_laps{tt}{rr}{pp}),1);
+                    %get position of in-field events
+                    events_in_field_pos{tt}{rr}{pp} = event_norm_pos_run.A{rr}(events_in_field{tt}{rr}{pp});
+                end
+            else
+                events_in_field{tt}{rr} = [];
+                event_in_field_laps{tt}{rr} = [];
+                event_in_field_nb{tt}{rr} = [];
+                events_in_field_pos{tt}{rr} = [];
             end
             
         elseif tt == 2 %correct B trials
-            %for each id'd place field
-            for pp=1:size(placeField_posnorm{tt}{rr},1)
-                events_in_field{tt}{rr}{pp} = find(event_norm_pos_run.B{rr} >= placeField_posnorm{tt}{rr}(pp,1) & ...
-                    event_norm_pos_run.B{rr} <= placeField_posnorm{tt}{rr}(pp,2));
-                %register the corresponding lap of in-field filtered event
-                event_in_field_laps{tt}{rr}{pp} = event_lap_idx.B{rr}(events_in_field{tt}{rr}{pp});
-                %get number of unique events (those occuring on each lap)
-                event_in_field_nb{tt}{rr}(pp) = size(unique(event_in_field_laps{tt}{rr}{pp}),1);
-                %get position of in-field events
-                events_in_field_pos{tt}{rr}{pp} = event_norm_pos_run.B{rr}(events_in_field{tt}{rr}{pp});
+            if ~isempty(placeField_posnorm{tt}{rr})
+                %for each id'd place field
+                for pp=1:size(placeField_posnorm{tt}{rr},1)
+                    events_in_field{tt}{rr}{pp} = find(event_norm_pos_run.B{rr} >= placeField_posnorm{tt}{rr}(pp,1) & ...
+                        event_norm_pos_run.B{rr} <= placeField_posnorm{tt}{rr}(pp,2));
+                    %register the corresponding lap of in-field filtered event
+                    event_in_field_laps{tt}{rr}{pp} = event_lap_idx.B{rr}(events_in_field{tt}{rr}{pp});
+                    %get number of unique events (those occuring on each lap)
+                    event_in_field_nb{tt}{rr}(pp) = size(unique(event_in_field_laps{tt}{rr}{pp}),1);
+                    %get position of in-field events
+                    events_in_field_pos{tt}{rr}{pp} = event_norm_pos_run.B{rr}(events_in_field{tt}{rr}{pp});
+                end
+            else
+                events_in_field{tt}{rr} = [];
+                event_in_field_laps{tt}{rr} = [];
+                event_in_field_nb{tt}{rr} = [];
+                events_in_field_pos{tt}{rr} = [];
             end
         end
     end
 end
+
+%% Create logical selection vectors for neurons with place fields that contain at least 5 events on distinct laps
+
+x=1;
 
 
 %% Plot
@@ -221,9 +239,11 @@ for ss=1:size(session_vars,2)
     end
 end
 
-%% Turn into function
+% Turn into function
 %input edges and tuning vector
 %output - adjusted tuning vector
+
+%make separate output that calculates the tuning vectors for all fields
 
 options.pf.skipDisplay = 0;
 
