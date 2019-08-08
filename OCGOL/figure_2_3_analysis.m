@@ -5,15 +5,15 @@
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
-%path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %bug with remapper select ROI code
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -141,8 +141,11 @@ options.tuning_criterion = 'ts';
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
 
-%% Split neurons by A or B task selective category - common, partial, global, rate remapping
+%% Split neurons by A or B task selective category - A or B selective (exclusive)
 %which criterion to use for task-selective ROIs
+%ts or both - ts selects only selective neurons based on TS tuning
+%criterion
+%both - uses both SI and TS criterion to select selectiven neurons
 options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
 options.dispFigure = 0;
@@ -190,7 +193,6 @@ plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective
 options.tuning_criterion = 'ts'; %si or ts
 [total_AUC_min] = AUC_scatter(tunedLogical,task_selective_ROIs,session_vars,options);
 save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
-
 
 
 %% Get percentage correct in each trial type and

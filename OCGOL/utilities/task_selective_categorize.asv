@@ -5,66 +5,58 @@ function [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tune
 
 %% Get ROI indices of A selective, B selective, A&B selective neurons
 
-% %choose if SI or TS tuned
-% switch options.tuning_criterion
-%     case 'si' %spatial information
-%         AandB_tuned_idx = find(tuned_logical.si.AandB_tuned == 1);
-%         Aonly_tuned_idx = find(tuned_logical.si.onlyA_tuned == 1);
-%         Bonly_tuned_idx = find(tuned_logical.si.onlyB_tuned == 1);
-%
-%case 'ts' %tuning specificity
-%both A and B tuned by TS
-AandB_tuned_idx = find(tuned_logical.ts.AandB_tuned ==1);
-%only A tuned by TS
-Aonly_tuned_idx = find(tuned_logical.ts.onlyA_tuned == 1);
-%only B tuned by tS
-Bonly_tuned_idx = find(tuned_logical.ts.onlyB_tuned == 1);
+%choose if SI or TS tuned
+switch options.tuning_criterion
+    case 'si' %spatial information
+        AandB_tuned_idx = find(tuned_logical.si.AandB_tuned == 1);
+        Aonly_tuned_idx = find(tuned_logical.si.onlyA_tuned == 1);
+        Bonly_tuned_idx = find(tuned_logical.si.onlyB_tuned == 1);
+        
+    case 'ts' %tuning specificity
+        %both A and B tuned by TS
+        AandB_tuned_idx = find(tuned_logical.ts.AandB_tuned ==1);
+        %only A tuned by TS
+        Aonly_tuned_idx = find(tuned_logical.ts.onlyA_tuned == 1);
+        %only B tuned by tS
+        Bonly_tuned_idx = find(tuned_logical.ts.onlyB_tuned == 1);
+        
+        %SI only tuned in either
+        Aonly_tuned_idx_si = find(tuned_logical.si.onlyA_tuned == 1);
+        Bonly_tuned_idx_si = find(tuned_logical.si.onlyB_tuned == 1);
+        
+        %all A tuned by SI
+        A_tuned_si_idx = find(tuned_logical.si.Atuned == 1);
+        %all B tuned by SI
+        B_tuned_si_idx = find(tuned_logical.si.Btuned == 1);
+        
+        %all A tuned by TS
+        A_tuned_ts_idx = find(tuned_logical.ts.Atuned == 1);
+        %all B tuned by TS
+        B_tuned_ts_idx = find(tuned_logical.ts.Btuned == 1);
 
-%SI only tuned in either
-Aonly_tuned_idx_si = find(tuned_logical.si.onlyA_tuned == 1);
-Bonly_tuned_idx_si = find(tuned_logical.si.onlyB_tuned == 1);
-
-%all A tuned by SI
-A_tuned_si_idx = find(tuned_logical.si.Atuned == 1);
-%all B tuned by SI
-B_tuned_si_idx = find(tuned_logical.si.Btuned == 1);
-
-%all A tuned by TS
-A_tuned_ts_idx = find(tuned_logical.ts.Atuned == 1);
-%all B tuned by TS
-B_tuned_ts_idx = find(tuned_logical.ts.Btuned == 1);
-
-%only A tuned by TS, but also not SI B tuned
-Aonly_notSIb_idx = setdiff(Aonly_tuned_idx,B_tuned_si_idx);
-
-%only B tuned by TS, but also not SI A tuned
-Bonly_notSIa_idx = setdiff(Bonly_tuned_idx,A_tuned_si_idx);
-
-%only A tuned by SI, but also not TS B tuned
-Aonly_notTSb_idx = setdiff(Aonly_tuned_idx_si,B_tuned_ts_idx);
-
-%only B tuned by SI, but also not TS A tuned
-Bonly_notTSa_idx = setdiff(Bonly_tuned_idx_si,A_tuned_ts_idx);
-
-%merge A and B chosen by exclusive
-A_only_idx = union(Aonly_notSIb_idx, Aonly_notTSb_idx);
-B_only_idx = union(Bonly_notSIa_idx,Bonly_notTSa_idx);
-%end
+        %only A tuned by TS, but also not SI B tuned
+        Aonly_notSIb_idx = setdiff(Aonly_tuned_idx,B_tuned_si_idx);
+        
+        %only B tuned by TS, but also not SI A tuned
+        Bonly_notSIa_idx = setdiff(Bonly_tuned_idx,A_tuned_si_idx);
+        
+        %only A tuned by SI, but also not TS B tuned
+        Aonly_notSIb_idx = setdiff(Aonly_tuned_idx_si,B_tuned_ts_idx);
+        
+        %only B tuned by SI, but also not TS A tuned
+        Bonly_notSIa_idx = setdiff(Bonly_tuned_idx_si,A_tuned_ts_idx);
+end
 
 %spatial crtiteria input ROIs - will be used as initial preselected ROIs
 %for all downstream processing below
 %TS tuned in either A exclusive or B exclusive and also no opposing trial
 %typing by SI criterion
-switch options.tuning_criterion
-    case 'ts'
-        input_idx_Aonly = Aonly_notSIb_idx;
-        input_idx_Bonly = Bonly_notSIa_idx;
-        
-    case 'both'
-        %SI only and TS only tuned for either A or B trials
-        input_idx_Aonly = A_only_idx;
-        input_idx_Bonly = B_only_idx;
-end
+input_idx_Aonly = Aonly_notSIb_idx;
+input_idx_Bonly = Bonly_notSIa_idx;
+
+%SI only and TS only tuned for either A or B trials
+input_idx_Aonly = Aonly_notSIb_idx;
+input_idx_Bonly = Bonly_notSIa_idx;
 
 %% Define/load variables for each session
 
@@ -191,31 +183,31 @@ run_position_norm{2} = Behavior_split{1}{2}.resampled.run_position_norm;
 
 %edges of all identified
 %correct A
-placeFieldEdges{1} = Place_cell{1}{1}.placeField.edge(input_idx_Aonly);
+placeFieldEdges{1} = Place_cell{1}{1}.placeField.edge(Aonly_notSIb_idx);
 %correct B
-placeFieldEdges{2} = Place_cell{1}{2}.placeField.edge(input_idx_Bonly);
+placeFieldEdges{2} = Place_cell{1}{2}.placeField.edge(Bonly_notSIa_idx);
 
 %in A trials
-idx_wo_placeFields{1} = input_idx_Aonly(find(cellfun(@isempty,placeFieldEdges{1}) ==1));
+idx_wo_placeFields{1} = Aonly_notSIb_idx(find(cellfun(@isempty,placeFieldEdges{1}) ==1));
 %in B trials
-idx_wo_placeFields{2} = input_idx_Bonly(find(cellfun(@isempty,placeFieldEdges{2}) ==1));
+idx_wo_placeFields{2} = Bonly_notSIa_idx(find(cellfun(@isempty,placeFieldEdges{2}) ==1));
 
 %remove ROIs for A and B that do not have place fields
 %for A trials
 if ~isempty(idx_wo_placeFields{1})
     %copy
-    Aonly_field_filtered = setdiff(input_idx_Aonly,idx_wo_placeFields{1});
+    Aonly_field_filtered = setdiff(Aonly_notSIb_idx,idx_wo_placeFields{1});
 
 else %keep the previous ROIs (copy only)
-    Aonly_field_filtered = input_idx_Aonly;
+    Aonly_field_filtered = Aonly_notSIb_idx;
 end
 %for B trials
 if ~isempty(idx_wo_placeFields{2})
     %copy
-    Bonly_field_filtered = setdiff(input_idx_Bonly,idx_wo_placeFields{2});
+    Bonly_field_filtered = setdiff(Bonly_notSIa_idx,idx_wo_placeFields{2});
 
 else %keep the previous ROIs (copy only)
-    Bonly_field_filtered = input_idx_Bonly;
+    Bonly_field_filtered = Bonly_notSIa_idx;
 end
 
 %% Determine the equivalent normalized position range of the max place field

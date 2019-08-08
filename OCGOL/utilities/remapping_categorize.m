@@ -686,10 +686,10 @@ if options.dispFigure ==1
         %plot horz lines signifying start and end of place field
         %start
         %lineS = refline(0,placeField_global_centroid{1}{rr}(1))
-        lineS.Color = 'g';
+        %lineS.Color = 'g';
         %end
         %lineE = refline(0,placeField_global_centroid{1}{rr}(2))
-        lineE.Color = 'g';
+        %lineE.Color = 'g';
         
         pause
         clf
