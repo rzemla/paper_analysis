@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_STC_OCGOL_training(animal_data, tunedLogical,registered,options)
+function [outputArg1,outputArg2] = plot_STC_OCGOL_recall(animal_data, tunedLogical,registered,options)
 
 %% Import variables
 
@@ -43,8 +43,8 @@ end
 %% Extract mean STC map in each spatial bin (not normalized and not occupancy divided) (100 bins)
 %for each session
 for ss = options.sessionSelect%1:size(animal_data,2)
-    A_df{ss} = animal_data{ss}.Place_cell{4}.Spatial_tuning_curve;
-    B_df{ss} = animal_data{ss}.Place_cell{5}.Spatial_tuning_curve;
+    A_df{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve;
+    B_df{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve;
     
     A_df_both{ss} = A_df{ss}(:,AandB_tuned{ss});
     B_df_both{ss} = B_df{ss}(:,AandB_tuned{ss});
@@ -52,6 +52,10 @@ for ss = options.sessionSelect%1:size(animal_data,2)
     A_df_onlyA{ss} = A_df{ss}(:,onlyA_tuned{ss});
     B_df_onlyA{ss} = B_df{ss}(:,onlyA_tuned{ss});
 end
+
+%% Compare session number (temporary)
+%session to compare against
+ses_comp = 2;
 
 %% A vs. B on early vs late training (A or B tuned)
 
@@ -84,19 +88,19 @@ plot([100 100],[1,size(dF_maps_all_AB_early_late{1},1)], 'k','LineWidth', 1.5);
 hold off
 
 subplot(2,1,2)
-imagesc(dF_maps_all_AB_early_late{6}(sortOrder_all_AB{1},:))
+imagesc(dF_maps_all_AB_early_late{ses_comp}(sortOrder_all_AB{ses_comp},:))
 hold on
 title('Random AB')
 colormap('jet')
 caxis([0 1])
 %A/B vertical separator line
-plot([100 100],[1,size(dF_maps_all_AB_early_late{6},1)], 'k','LineWidth', 1.5);
+plot([100 100],[1,size(dF_maps_all_AB_early_late{ses_comp},1)], 'k','LineWidth', 1.5);
 
 
 hold off
 
 %% Plot STCs from ROIs matching 1 and any chosen session thereafter
-ses_comp = 6;
+ses_comp = 4;
 
 %get the matching ROIs from 2 ses
 matching_ses_ROI_idxs = matching_list(:,[1,ses_comp]);
@@ -130,8 +134,6 @@ caxis([0 1]);
 
 %% Make matching ROI list with tuning criteria for both sessions
 
-%session to compare against
-ses_comp = 6;
 
 %tuned to A or B on either sessions
 AorB_idx{1} = find(AorB_tuned{1} ==1);

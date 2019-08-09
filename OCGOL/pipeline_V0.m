@@ -2,7 +2,7 @@
 
 options.defineDir = 1;
 
-setDir = 'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7';
+setDir = 'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d3_062218_3';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -10,7 +10,7 @@ setDir = 'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7';
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 0;
+options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
 options.loadImagingData = 0;

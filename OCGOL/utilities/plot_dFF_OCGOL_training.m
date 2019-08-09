@@ -13,7 +13,7 @@ matching_list = registered.multi.assigned_all;
 switch options.tuning_criterion
     case 'si' %spatial information
         %for each session
-        for ss =1:size(animal_data,2)
+        for ss =options.sessionSelect%1:size(animal_data,2)
             %spatial information criterion
             Atuned{ss} = tunedLogical(ss).si.Atuned;
             Btuned{ss} = tunedLogical(ss).si.Btuned;
@@ -24,7 +24,7 @@ switch options.tuning_criterion
             onlyB_tuned{ss} = tunedLogical(ss).si.onlyB_tuned;
         end
    case 'ts' %spatial information 
-        for ss =1:size(animal_data,2)
+        for ss =options.sessionSelect%1:size(animal_data,2)
             %spatial information criterion
             Atuned{ss} = tunedLogical(ss).ts.Atuned;
             Btuned{ss} = tunedLogical(ss).ts.Btuned;
@@ -39,7 +39,7 @@ end
 
 %% Extract mean dF map in each spatial bin (not normalized and not occupancy divided) (100 bins)
 %for each session
-for ss =1:size(animal_data,2)
+for ss =options.sessionSelect% 1:size(animal_data,2)
     A_df{ss} = animal_data{ss}.Place_cell{4}.Spatial_Info.mean_dF_map{8};
     B_df{ss} = animal_data{ss}.Place_cell{5}.Spatial_Info.mean_dF_map{8};
     
@@ -55,13 +55,13 @@ end
 %ALL NEURONS in each session that meet criteria - tuned to either A or B
 %early day
 %make condition here for what kind of patterns to plot
-for ss =1:size(animal_data,2)
+for ss =options.sessionSelect%1:size(animal_data,2)
     dF_maps_all_AB_early_late{ss} = [A_df{ss}(:,AorB_tuned{ss})', B_df{ss}(:,AorB_tuned{ss})'];
     %dF_maps_all_AB_early_late{ss} = [A_df{ss}(:,onlyA_tuned{ss})', B_df{ss}(:,onlyA_tuned{ss})'];
 end
 
 %sort each session by A map
-for ss =1:size(animal_data,2)
+for ss =options.sessionSelect %1:size(animal_data,2)
     %maxBin - spatial bin where activity is greatest for each ROI
     [~,maxBin_all_AB{ss}] = max(dF_maps_all_AB_early_late{ss}(:,1:100)', [], 1);
     %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
@@ -100,7 +100,7 @@ hold off
 
 %tuned to A or B on either sessions
 AorB_idx{1} = find(AorB_tuned{1} ==1);
-AorB_idx{2} = find(AorB_tuned{2} ==1);
+AorB_idx{6} = find(AorB_tuned{6} ==1);
 
 % AorB_idx{1} = find(onlyB_tuned{1} ==1);
 % AorB_idx{2} = find(onlyB_tuned{2} ==1);
@@ -110,14 +110,14 @@ AorB_idx{2} = find(AorB_tuned{2} ==1);
 
 %intersect with
 [tuned_match_idx{1},match_idx{1},~] = intersect(matching_list(:,1),AorB_idx{1},'stable');
-[tuned_match_idx{2},match_idx{2},~] = intersect(matching_list(:,2),AorB_idx{2},'stable');
+[tuned_match_idx{6},match_idx{6},~] = intersect(matching_list(:,6),AorB_idx{6},'stable');
 
 %create not logical for nan exclusion from copied matrix assignement below
 include_log{1} = false(1,size(matching_list,1));
 include_log{1}(match_idx{1}) = 1; 
 %session 2 
 include_log{2} = false(1,size(matching_list,1));
-include_log{2}(match_idx{2}) = 1;
+include_log{2}(match_idx{6}) = 1;
 
 %make copy
 tuned_matching_ROI_list = matching_list;

@@ -3,8 +3,9 @@ function [tunedLogical] = defineTunedLogicals(animal_data,options)
 
 %% Get logicals of neurons tuned using each metric SI or TS
 
+
 %for each animal
-for aa=1:size(animal_data,2)
+for aa=options.sessionSelect%1:size(animal_data,2)
     %only use correct A or B vs all A or B
     if options.allCorrect == 1
         
