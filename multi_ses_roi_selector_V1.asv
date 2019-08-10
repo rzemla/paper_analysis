@@ -58,11 +58,11 @@ end
 %% Adjust all these variables for removed components 
 for ss=1:size(path_dir,2) %all sessions
     
-    selector_var(ss).A_keep_filt = selector_var(ss).A_keep(:,removed_ROI(ss).compSelect);
-    selector_var(ss).C_keep_filt = selector_var(ss).C_keep(removed_ROI(ss).compSelect,:);
-    selector_var(ss).Coor_kp_filt = selector_var(ss).Coor_kp(removed_ROI(ss).compSelect);
-    selector_var(ss).expDffMedZeroed_filt = selector_var(ss).expDffMedZeroed(removed_ROI(ss).compSelect,:);
-    selector_var(ss).centers_filt = selector_var(ss).centers(removed_ROI(ss).compSelect,:);
+    selector_var(ss).A_keep = selector_var(ss).A_keep(:,removed_ROI(1).compSelect);
+    selector_var(ss).C_keep = selector_var(ss).C_keep(removed_ROI(1).compSelect,:);
+    selector_var(ss).Coor_kp = selector_var(ss).Coor_kp;
+    selector_var(ss).expDffMedZeroed = selector_var(ss).expDffMedZeroed;
+    selector_var(ss).centers = selector_var(ss).centers
 end
 
 
