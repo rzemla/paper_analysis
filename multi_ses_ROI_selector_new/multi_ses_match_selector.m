@@ -22,7 +22,7 @@ function varargout = multi_ses_match_selector(varargin)
 
 % Edit the above text to modify the response to help multi_ses_match_selector
 
-% Last Modified by GUIDE v2.5 10-Aug-2019 10:48:40
+% Last Modified by GUIDE v2.5 10-Aug-2019 15:38:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -66,6 +66,10 @@ handles.initComp = 1;
 %generate 2D logical equal to size of assignment matrix
 global input_logical
 input_logical = handles.input_log;
+
+global output_logical
+%initialize initially as input logical and update along the way
+output_logical = input_logical;
 
 %initialize slider
 handles.compNb = size(handles.input_log,1);
@@ -186,7 +190,8 @@ function varargout = multi_ses_match_selector_OutputFcn(hObject, eventdata, hand
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
+global output_logical
+varargout{1} = output_logical;
 
 
 % --- Executes on button press in remove_ROI_1.
@@ -194,98 +199,238 @@ function remove_ROI_1_Callback(hObject, eventdata, handles)
 % hObject    handle to remove_ROI_1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,1) = 0;
+disp(sprintf('Removing ROI (session 1): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Removing ROI (session 1): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton2.
-function pushbutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in keep_ROI_1.
+function keep_ROI_1_Callback(hObject, eventdata, handles)
+% hObject    handle to keep_ROI_1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,1) = 1;
+disp(sprintf('Keeping ROI (session 1): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Keeping ROI (session 1): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton3.
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in remove_ROI_2.
+function remove_ROI_2_Callback(hObject, eventdata, handles)
+% hObject    handle to remove_ROI_2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,2) = 0;
+disp(sprintf('Removing ROI (session 2): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Removing ROI (session 2): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in keep_ROI_2.
+function keep_ROI_2_Callback(hObject, eventdata, handles)
+% hObject    handle to keep_ROI_2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,2) = 1;
+disp(sprintf('Keeping ROI (session 2): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Keeping ROI (session 2): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton5.
-function pushbutton5_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton5 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in remove_ROI_3.
+function remove_ROI_3_Callback(hObject, eventdata, handles)
+% hObject    handle to remove_ROI_3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,3) = 0;
+disp(sprintf('Removing ROI (session 3): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Removing ROI (session 3): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton6.
-function pushbutton6_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton6 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in remove_ROI_4.
+function remove_ROI_4_Callback(hObject, eventdata, handles)
+% hObject    handle to remove_ROI_4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,4) = 0;
+disp(sprintf('Removing ROI (session 4): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Removing ROI (session 4): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton7.
-function pushbutton7_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton7 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in remove_ROI_5.
+function remove_ROI_5_Callback(hObject, eventdata, handles)
+% hObject    handle to remove_ROI_5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,5) = 0;
+disp(sprintf('Removing ROI (session 5): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Removing ROI (session 5): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton8.
-function pushbutton8_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton8 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in remove_ROI_6.
+function remove_ROI_6_Callback(hObject, eventdata, handles)
+% hObject    handle to remove_ROI_6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,6) = 0;
+disp(sprintf('Removing ROI (session 6): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Removing ROI (session 6): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton9.
-function pushbutton9_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton9 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in remove_ROI_7.
+function remove_ROI_7_Callback(hObject, eventdata, handles)
+% hObject    handle to remove_ROI_7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,7) = 0;
+disp(sprintf('Removing ROI (session 7): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Removing ROI (session 7): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton10.
-function pushbutton10_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton10 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in keep_ROI_3.
+function keep_ROI_3_Callback(hObject, eventdata, handles)
+% hObject    handle to keep_ROI_3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,3) = 1;
+disp(sprintf('Keeping ROI (session 3): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Keeping ROI (session 3): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton11.
-function pushbutton11_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton11 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in keep_ROI_4.
+function keep_ROI_4_Callback(hObject, eventdata, handles)
+% hObject    handle to keep_ROI_4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,4) = 1;
+disp(sprintf('Keeping ROI (session 4): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Keeping ROI (session 4): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton12.
-function pushbutton12_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton12 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in keep_ROI_5.
+function keep_ROI_5_Callback(hObject, eventdata, handles)
+% hObject    handle to keep_ROI_5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,5) = 1;
+disp(sprintf('Keeping ROI (session 5): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Keeping ROI (session 5): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton13.
-function pushbutton13_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton13 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in keep_ROI_6.
+function keep_ROI_6_Callback(hObject, eventdata, handles)
+% hObject    handle to keep_ROI_6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,6) = 1;
+disp(sprintf('Keeping ROI (session 6): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Keeping ROI (session 6): %d',handles.initComp);
 
-% --- Executes on button press in pushbutton14.
-function pushbutton14_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton14 (see GCBO)
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
+
+% --- Executes on button press in keep_ROI_7.
+function keep_ROI_7_Callback(hObject, eventdata, handles)
+% hObject    handle to keep_ROI_7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,7) = 1;
+disp(sprintf('Keeping ROI (session 7): %d',handles.initComp));
 
+%update text box with action
+handles.text3.String = sprintf('Keeping ROI (session 7): %d',handles.initComp);
+
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);
 
 % --- Executes on button press in next_ROI.
 function next_ROI_Callback(hObject, eventdata, handles)
@@ -344,3 +489,14 @@ function remove_all_matches_Callback(hObject, eventdata, handles)
 % hObject    handle to remove_all_matches (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global output_logical
+%remove selected component
+output_logical(handles.initComp,:) = 0;
+disp(sprintf('Removing ROI (all sessions): %d',handles.initComp));
+
+%update text box with action
+handles.text3.String = sprintf('Removing ROI (all sessions): %d',handles.initComp);
+
+%disp(removedROI);
+% Update handles structure
+guidata(hObject, handles);

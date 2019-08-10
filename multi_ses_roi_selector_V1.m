@@ -56,6 +56,7 @@ for ss=1:size(path_dir,2) %all sessions
 end
 
 %% Adjust all these variables for removed components 
+
 for ss=1:size(path_dir,2) %all sessions
     
     selector_var(ss).A_keep_filt = selector_var(ss).A_keep(:,removed_ROI(ss).compSelect);
@@ -64,7 +65,6 @@ for ss=1:size(path_dir,2) %all sessions
     selector_var(ss).expDffMedZeroed_filt = selector_var(ss).expDffMedZeroed(removed_ROI(ss).compSelect,:);
     selector_var(ss).centers_filt = selector_var(ss).centers(removed_ROI(ss).compSelect,:);
 end
-
 
 %% start the selector GUI
 %removedROI in the workspace will be cleared unless the removedROI variable
@@ -75,22 +75,22 @@ end
 
 %split into 150 ROIs at a time to prevent slowdown
 
-% number of assignments from CNMF script
-nbROI = size(ROI_assignments,1);
-
-%every how many ROIs to do split
-split_ROI = 20;
-
-%how many splits
-splitNb = ceil(nbROI/split_ROI);
-
-%ROI index range
-startIdx = 1:split_ROI:nbROI;
-endIdx = [startIdx(2:splitNb)-1,nbROI];
-
-%split selector_var struct in cell of structs and iterate through
-%pre-define cell
-selector_var_split = cell(1,splitNb);
+% % number of assignments from CNMF script
+% nbROI = size(ROI_assignments,1);
+% 
+% %every how many ROIs to do split
+% split_ROI = 20;
+% 
+% %how many splits
+% splitNb = ceil(nbROI/split_ROI);
+% 
+% %ROI index range
+% startIdx = 1:split_ROI:nbROI;
+% endIdx = [startIdx(2:splitNb)-1,nbROI];
+% 
+% %split selector_var struct in cell of structs and iterate through
+% %pre-define cell
+% selector_var_split = cell(1,splitNb);
 
 %split the selector_var struct
 % for ii=1:splitNb
@@ -105,20 +105,19 @@ selector_var_split = cell(1,splitNb);
 % end
 
 %preallocate logicals
-removedROI = false(nbROI,1);
-somaROI = false(nbROI,1);
-dendriteROI = false(nbROI,1);
-
-%run through each batch of ROIs
-%for ii=1:splitNb
-    [removedROI_temp,somaROI_temp,dendriteROI_temp] = multi_ses_ROI_selector_GUI_V1(selector_var,ROI_assignments);
-    
-    removedROI(startIdx(ii):endIdx(ii)) = removedROI_temp;
-    somaROI(startIdx(ii):endIdx(ii)) = somaROI_temp;
-    dendriteROI(startIdx(ii):endIdx(ii)) = dendriteROI_temp;
+% removedROI = false(nbROI,1);
+% somaROI = false(nbROI,1);
+% dendriteROI = false(nbROI,1);
+% 
+% %run through each batch of ROIs
+% %for ii=1:splitNb
+%     [removedROI_temp,somaROI_temp,dendriteROI_temp] = multi_ses_ROI_selector_GUI_V1(selector_var,ROI_assignments);
+%     
+%     removedROI(startIdx(ii):endIdx(ii)) = removedROI_temp;
+%     somaROI(startIdx(ii):endIdx(ii)) = somaROI_temp;
+%     dendriteROI(startIdx(ii):endIdx(ii)) = dendriteROI_temp;
 %end
 %% Working version
-
 
 %remove 'single' assignment from ROI_assignmnents
 nan_log_ROI = isnan(ROI_assignments);
@@ -131,7 +130,21 @@ ROI_assign_multi(remove_singles,:) = [];
 %generate 2D logical
 assign_sel_log = ~isnan(ROI_assign_multi);
 
-multi_ses_match_selector(selector_var,ROI_assign_multi,assign_sel_log)
+%start interactive GUI
+output_logical = multi_ses_match_selector(selector_var,ROI_assign_multi,assign_sel_log);
+
+
+%% Update the match matrix
+
+
+%% Check the updated matches with the GUI
+
+
+%% Save and export
+
+
+%% REMOVE ALL BELOW
+
 
 %%  Filter out removed soma
 
