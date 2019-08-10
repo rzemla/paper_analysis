@@ -129,7 +129,14 @@ for ii=1:size(handles.assign,2)
         
         %plot the template
         imagesc(handles.vars(ii).template);
-        axis off
+        %remove labels from all axes
+        axis(handles.axes1,'off')
+        axis(handles.axes2,'off')
+        axis(handles.axes3,'off')
+        axis(handles.axes4,'off')
+        axis(handles.axes5,'off')
+        axis(handles.axes6,'off')
+        axis(handles.axes7,'off')
         
         hold on
         grayMap = brighten(gray,0.6);
