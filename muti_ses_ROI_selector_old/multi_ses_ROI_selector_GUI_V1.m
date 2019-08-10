@@ -45,7 +45,7 @@ end
 % End initialization code - DO NOT EDIT
 
 % --- Executes just before ROI_selector_GUI_V1 is made visible.
-function ROI_selector_GUI_V1_OpeningFcn(hObject, eventdata, handles, varargin)
+function multi_ses_ROI_selector_GUI_V1_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -65,26 +65,24 @@ handles.initComp = 1;
 %Create a logical array for keep track of removed ROIs
 global removedROI;
 global somaROI;
-%global dendriteROI;
 
 switch nargin
     case  5
         removedROI = logical(zeros(size(handles.vars.A_keep,2),1));
         somaROI = logical(zeros(size(handles.vars.A_keep,2),1));
-        %dendriteROI = logical(zeros(size(handles.vars.A_keep,2),1));
+       
     case 6
         removedROI = varargin{end};
         somaROI = logical(zeros(size(handles.vars.A_keep,2),1));
-        %dendriteROI = logical(zeros(size(handles.vars.A_keep,2),1));
+       
     case 7
         removedROI = varargin{end-1};
         somaROI = varargin{end};
-        %dendriteROI = logical(zeros(size(handles.vars.A_keep,2),1));
+       
     otherwise
         removedROI = varargin{end-2};
         somaROI = varargin{end-1};
-        %dendriteROI = varargin{end};
-end
+        
 
 %initialize slider
 handles.compNb = size(handles.vars.A_keep,2);
@@ -105,7 +103,7 @@ guidata(hObject, handles);
 updatePlots(handles.initComp, handles);
 
 % UIWAIT makes ROI_selector_GUI_V1 wait for user response (see UIRESUME)
- uiwait(handles.figure1);
+uiwait(handles.figure1);
 
 function updatePlots(initComp,handles)
 %plot BW outline of the component
@@ -162,7 +160,7 @@ hold off
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = ROI_selector_GUI_V1_OutputFcn(hObject, eventdata, handles) 
+function varargout = multi_ses_ROI_selector_GUI_V1_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB

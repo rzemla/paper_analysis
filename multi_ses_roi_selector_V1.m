@@ -117,7 +117,12 @@ dendriteROI = false(nbROI,1);
     somaROI(startIdx(ii):endIdx(ii)) = somaROI_temp;
     dendriteROI(startIdx(ii):endIdx(ii)) = dendriteROI_temp;
 %end
+%% Working version
+%generate 2D logical
+assign_sel_log = ~isnan(ROI_assignments);
 
+
+multi_ses_match_selector(selector_var,ROI_assignments,assign_sel_log)
 
 %%  Filter out removed soma
 
