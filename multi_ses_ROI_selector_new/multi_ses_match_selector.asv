@@ -445,11 +445,7 @@ function next_ROI_Callback(hObject, eventdata, handles)
 % hObject    handle to next_ROI (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global last_idx
 handles.initComp = handles.initComp + 1;
-
-%save current index in global variable
-last_idx = handles.initComp;
 
 %Update componnent string
 handles.text2.String = [num2str(handles.initComp), '/',num2str(handles.compNb)];
@@ -472,12 +468,8 @@ function slider_ROI_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-global last_idx
 positionSld = round(hObject.Value);
 handles.initComp = single(positionSld);
-
-%save current index in global variable
-last_idx = handles.initComp;
 
 %Update componnent string
 handles.text2.String = [num2str(handles.initComp), '/',num2str(handles.compNb)];

@@ -131,7 +131,7 @@ ROI_assign_multi(remove_singles,:) = [];
 assign_sel_log = ~isnan(ROI_assign_multi);
 
 %start interactive GUI
-output_logical = multi_ses_match_selector(selector_var,ROI_assign_multi,assign_sel_log);
+[output_logical, last_idx] = multi_ses_match_selector(selector_var,ROI_assign_multi,assign_sel_log);
 
 
 %% Update the match matrix
