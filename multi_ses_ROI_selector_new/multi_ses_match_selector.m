@@ -22,7 +22,7 @@ function varargout = multi_ses_match_selector(varargin)
 
 % Edit the above text to modify the response to help multi_ses_match_selector
 
-% Last Modified by GUIDE v2.5 09-Aug-2019 22:50:23
+% Last Modified by GUIDE v2.5 10-Aug-2019 10:48:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -89,6 +89,15 @@ updatePlots(handles.initComp, handles);
 uiwait(handles.figure1);
 %
 function updatePlots(initComp,handles)
+%clear all axes
+cla(handles.axes1)
+cla(handles.axes2)
+cla(handles.axes3)
+cla(handles.axes4)
+cla(handles.axes5)
+cla(handles.axes6)
+cla(handles.axes7)
+
 %plot BW outline of the component
 for ii=1:size(handles.assign,2)
     %check if ROI is nan
@@ -99,31 +108,28 @@ for ii=1:size(handles.assign,2)
                 axes(handles.axes1);
                 
             case 2
-                
                 axes(handles.axes2);
-                cla
+                %axis OFF 
             case 3
-                
                 axes(handles.axes3);
-                cla
+                %axis OFF 
             case 4
-                
                 axes(handles.axes4);
-                cla
+                %axis OFF 
             case 5
-                
                 axes(handles.axes5);
-                cla
+                %axis OFF 
             case 6
                 axes(handles.axes6);
-                cla
+                %axis OFF 
             case 7
                 axes(handles.axes7);
-                cla
+                %axis OFF 
         end
         
         %plot the template
         imagesc(handles.vars(ii).template);
+        axis off
         
         hold on
         grayMap = brighten(gray,0.6);
@@ -282,7 +288,7 @@ function next_ROI_Callback(hObject, eventdata, handles)
 handles.initComp = handles.initComp + 1;
 
 %Update componnent string
-handles.compText.String = [num2str(handles.initComp), '/',num2str(handles.compNb)];
+handles.text2.String = [num2str(handles.initComp), '/',num2str(handles.compNb)];
 
 %Update slider position
 handles.slider_ROI.Value = handles.slider_ROI.Value + 1;
@@ -324,3 +330,10 @@ function slider_ROI_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
+
+
+% --- Executes on button press in remove_all_matches.
+function remove_all_matches_Callback(hObject, eventdata, handles)
+% hObject    handle to remove_all_matches (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

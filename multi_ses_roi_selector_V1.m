@@ -118,11 +118,20 @@ dendriteROI = false(nbROI,1);
     dendriteROI(startIdx(ii):endIdx(ii)) = dendriteROI_temp;
 %end
 %% Working version
+
+
+%remove 'single' assignment from ROI_assignmnents
+nan_log_ROI = isnan(ROI_assignments);
+remove_singles = find(sum(nan_log_ROI,2) == 5);
+
+%without singles
+ROI_assign_multi = ROI_assignments;
+ROI_assign_multi(remove_singles,:) = [];
+
 %generate 2D logical
-assign_sel_log = ~isnan(ROI_assignments);
+assign_sel_log = ~isnan(ROI_assign_multi);
 
-
-multi_ses_match_selector(selector_var,ROI_assignments,assign_sel_log)
+multi_ses_match_selector(selector_var,ROI_assign_multi,assign_sel_log)
 
 %%  Filter out removed soma
 
