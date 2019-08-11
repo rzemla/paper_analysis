@@ -75,6 +75,15 @@ elseif options.register == 0
     
 end
 
+%% Load filtered ROI matches into registered struct
+
+%get dir path with wildcard match to .mat files
+filtered_ROI_dir_path = subdir(fullfile(crossdir,'filtered_match_ROI','*.mat'));
+%load in temp var
+match_var = load(filtered_ROI_dir_path.name);
+%load in registered struct
+registered.multi.assigned_filtered = match_var.ROI_assign_multi_filtered;
+
 %% Visualize the matching ROIs that were matched above (match on every session only!)
 %number of ROIs (rows) by sessions (cols)
 rows = 20;

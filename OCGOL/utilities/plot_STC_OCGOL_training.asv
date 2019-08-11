@@ -8,7 +8,8 @@ function [outputArg1,outputArg2] = plot_STC_OCGOL_training(animal_data, tunedLog
 %matched on all days
 %matching_list = registered.multi.assigned_all;
 %matched on any day (including nans)
-matching_list = registered.multi.assigned;
+%use matches that were additionally manually filtered for mismatches
+matching_list = registered.multi.assigned_filtered;
 
 %% Define tuned cell combinations across trials
 
@@ -96,7 +97,7 @@ plot([100 100],[1,size(dF_maps_all_AB_early_late{6},1)], 'k','LineWidth', 1.5);
 hold off
 
 %% Plot STCs from ROIs matching 1 and any chosen session thereafter
-ses_comp = 6;
+ses_comp = 2;
 
 %get the matching ROIs from 2 ses
 matching_ses_ROI_idxs = matching_list(:,[1,ses_comp]);
@@ -110,20 +111,25 @@ B_comp_STCs = [B_df{1}(:,matching_ses_ROI_idxs_nonan(:,1))', B_df{ses_comp}(:,ma
 
 %sort by A on ses 1 and apply sort downstream
 %sort by A trials on session 1
-[~,matched_maxBin] = max(A_comp_STCs(:,1:100)', [], 1);
+%[~,matched_maxBin_A] = max(A_comp_STCs(:,1:100)', [], 1);
+[~,matched_maxBin_A] = max(A_comp_STCs(:,101:200)', [], 1);
 %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
-[~,matched_sortOrder_1] = sort(matched_maxBin,'ascend');
+[~,matched_sortOrder_A] = sort(matched_maxBin_A,'ascend');
+
+[~,matched_maxBin_B] = max(B_comp_STCs(:,1:100)', [], 1);
+%sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+[~,matched_sortOrder_B] = sort(matched_maxBin_B,'ascend');
 
 %plot
 figure('Position',[2630 50 490 890])
 subplot(2,1,1)
-imagesc(A_comp_STCs(matched_sortOrder_1,:))
+imagesc(A_comp_STCs(matched_sortOrder_A,:))
 hold on
 colormap('jet')
 caxis([0 1]);
 
 subplot(2,1,2)
-imagesc(B_comp_STCs(matched_sortOrder_1,:))
+imagesc(B_comp_STCs(matched_sortOrder_B,:))
 hold on
 colormap('jet')
 caxis([0 1]);

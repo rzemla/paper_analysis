@@ -3,14 +3,24 @@ clear
 %% List of datasets
 
 %input directories to matching function
- path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+%  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+
+ path_dir = {'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d1_062018_1',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d2_062118_2',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d3_062218_3',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d6_062518_4',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d7_062618_5',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d8_062718_6',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d9_062818_7'};
 %cross session directory
-crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+crossdir = 'G:\OCGOL_stability_recall\I47_LP\crossSession';
 
 %% Load cross session registered ROIs
 %load auto component registration struct
@@ -21,14 +31,17 @@ ROI_assignments = registered.multi.assigned;
 
 %% load in dataset variables
 
-%find mat files with calcium data
+%load in struct table
 for ss=1:size(path_dir,2) %all sessions
     %get directory names of mat files
     files(ss) = subdir(fullfile(path_dir{ss},'input','*.mat'));
-    
     %load directly into memory (fast than memmap with smaller variables)
-    %m(ss) = load(files(ss).name,'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
-    
+    m(ss) = load(files(ss).name,'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
+end
+
+%find mat files with calcium data
+for ss=1:size(path_dir,2) %all sessions
+
     %load removed ROIs
     removed_ROI_files(ss) = subdir(fullfile(path_dir{ss},'removedROI','*.mat'));
     %load the logical vector
@@ -38,12 +51,11 @@ for ss=1:size(path_dir,2) %all sessions
     template(ss) = load(fullfile(path_dir{ss},'template_nr.mat'));
     
     %assign template to m struct
-    m(ss).template = template(ss).template;
+    m(ss).template = template(ss).template;     
 end
 
 %number of sessions
 nb_ses = size(path_dir,2);
-
 
 %% Move the variables into a structure (all sessions)
 
@@ -74,7 +86,7 @@ end
 
 %remove 'single' assignment from ROI_assignmnents
 nan_log_ROI = isnan(ROI_assignments);
-remove_singles = find(sum(nan_log_ROI,2) == (nb_ses_1));
+remove_singles = find(sum(nan_log_ROI,2) == (nb_ses -1));
 
 %without singles
 ROI_assign_multi = ROI_assignments;

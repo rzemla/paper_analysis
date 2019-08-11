@@ -3,14 +3,24 @@ clear
 %% List of datasets
 
 %input directories to matching function
- path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+%  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+
+ path_dir = {'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d1_062018_1',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d2_062118_2',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d3_062218_3',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d6_062518_4',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d7_062618_5',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d8_062718_6',...
+     'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d9_062818_7'};
 %cross session directory
-crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+crossdir = 'G:\OCGOL_stability_recall\I47_LP\crossSession';
 
 %% Load cross session registered ROIs
 %load auto component registration struct
@@ -21,13 +31,15 @@ ROI_assignments = registered.multi.assigned;
 
 %% load in dataset variables
 
+m(1)  = struct([]);
+
 %find mat files with calcium data
 for ss=1:size(path_dir,2) %all sessions
     %get directory names of mat files
     files(ss) = subdir(fullfile(path_dir{ss},'input','*.mat'));
     
     %load directly into memory (fast than memmap with smaller variables)
-    %m(ss) = load(files(ss).name,'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
+    m(ss) = load(files(ss).name,'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
     
     %load removed ROIs
     removed_ROI_files(ss) = subdir(fullfile(path_dir{ss},'removedROI','*.mat'));
@@ -69,6 +81,71 @@ for ss=1:size(path_dir,2) %all sessions
     selector_var(ss).expDffMedZeroed_filt = selector_var(ss).expDffMedZeroed(removed_ROI(ss).compSelect,:);
     selector_var(ss).centers_filt = selector_var(ss).centers(removed_ROI(ss).compSelect,:);
 end
+
+%% Prep variables for GUI input and run GUI
+
+%remove 'single' assignment from ROI_assignmnents
+nan_log_ROI = isnan(ROI_assignments);
+remove_singles = find(sum(nan_log_ROI,2) == (nb_ses_1));
+
+%without singles
+ROI_assign_multi = ROI_assignments;
+ROI_assign_multi(remove_singles,:) = [];
+
+%generate 2D logical
+assign_sel_log = ~isnan(ROI_assign_multi);
+
+%start interactive GUI
+[output_logical, last_idx] = multi_ses_match_selector(selector_var,ROI_assign_multi,assign_sel_log);
+
+%copy in case global overwrite from GUI
+copy_output_logical = output_logical;
+
+%% Update the match matrix
+
+%set to nan filtered out matches
+ROI_assign_multi_filtered = ROI_assign_multi;
+ROI_assign_multi_filtered(~output_logical) = nan;
+
+%find nans (single match or all nans)
+filtered_nan_sum = sum(isnan(ROI_assign_multi_filtered),2);
+filtered_idxs = find(filtered_nan_sum == nb_ses | filtered_nan_sum == (nb_ses -1));
+
+%remove from filtered match ROI idx
+ROI_assign_multi_filtered(filtered_idxs,:) = [];
+
+
+%% Check the updated matches with the GUI
+%start interactive GUI
+%generate 2D logical
+assign_sel_log_filtered = ~isnan(ROI_assign_multi_filtered);
+
+multi_ses_match_selector(selector_var,ROI_assign_multi_filtered,assign_sel_log_filtered);
+
+%% Save and export
+
+cd(crossdir) 
+
+%make output directory if it does not exist
+try
+    mkdir('filtered_match_ROI');
+    cd(fullfile(crossdir, ['\','filtered_match_ROI']))
+catch
+    disp('Directory already exists');
+end
+
+%get date
+currentDate = date;
+%replace dashes with underscores in date
+dashIdx = regexp(currentDate,'\W');
+currentDate(dashIdx) = '_';
+
+%save all
+save([currentDate,'_filtered_match_ROIs.mat'],'ROI_assign_multi_filtered','-v7.3');
+
+%% REMOVE ALL BELOW
+
+%{
 
 %% start the selector GUI
 %removedROI in the workspace will be cleared unless the removedROI variable
@@ -121,40 +198,6 @@ end
 %     somaROI(startIdx(ii):endIdx(ii)) = somaROI_temp;
 %     dendriteROI(startIdx(ii):endIdx(ii)) = dendriteROI_temp;
 %end
-%% Working version
-
-%remove 'single' assignment from ROI_assignmnents
-nan_log_ROI = isnan(ROI_assignments);
-remove_singles = find(sum(nan_log_ROI,2) == (nb_ses_1));
-
-%without singles
-ROI_assign_multi = ROI_assignments;
-ROI_assign_multi(remove_singles,:) = [];
-
-%generate 2D logical
-assign_sel_log = ~isnan(ROI_assign_multi);
-
-%start interactive GUI
-[output_logical, last_idx] = multi_ses_match_selector(selector_var,ROI_assign_multi,assign_sel_log);
-
-
-%% Update the match matrix
-
-%set to nan filtered out matches
-ROI_assign_multi_filtered = ROI_assign_multi;
-ROI_assign_multi_filtered(~output_logical) = nan;
-
-%remove nans (single match or all 
-find(sum(isnan(ROI_assign_multi_filtered),2) == nb_ses | 
-
-%% Check the updated matches with the GUI
-
-
-%% Save and export
-
-
-%% REMOVE ALL BELOW
-
 
 %%  Filter out removed soma
 
@@ -236,3 +279,4 @@ currentDate(dashIdx) = '_';
 %save all
 save([currentDate,'_selectedROIs.mat'],'compSelect','-v7.3');
 
+%}
