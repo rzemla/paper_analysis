@@ -380,7 +380,7 @@ plot_STC_OCGOL_recall(session_vars,tunedLogical,registered,options)
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'si'; %si or ts
 options.sessionSelect = [1 2 3 4 5 6 7];
-plot_STC_OCGOL_recall(session_vars,tunedLogical,registered,options)
+PV_corr_across_days(session_vars,tunedLogical,registered,options)
 
 
 
