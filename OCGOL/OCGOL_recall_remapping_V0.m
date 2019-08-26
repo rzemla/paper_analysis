@@ -383,7 +383,6 @@ options.sessionSelect = [1 2 3 4 5 6 7];
 PV_corr_across_days(session_vars,tunedLogical,registered,options)
 
 
-
 %% All neuron (at least 2 match between sessions) raster (non_norm)
 
 %set option as to how to select neurons for plots

@@ -18,10 +18,32 @@ for ss = options.sessionSelect%1:size(animal_data,2)
     A_STC{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve;
     B_STC{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve;
     
-    %A_STC{ss} =
-    %B_STC{ss} = 
+    %Gs smoothed, but not normalized (nn) to itself
+    %animal_data{ss}.Place_cell{1}.Spatial_Info.rate_map_smooth{8}
+    %same as the following
+    A_STC_noNorm{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve_no_norm;
+    B_STC_noNorm{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve_no_norm;
+  
+    %dF/F (like STC - normalized) 
+    %A_df{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_dF;
+    %B_df{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_dF;
+    
+    %not occupancy normalized mean dF values across respective A and B
+    %trials (not Gaussian smoothed)
+    A_df_non_oc{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.mean_dF_map{8};
+    B_df_non_oc{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.mean_dF_map{8};
     
 end
+
+%take raw dF/F values, Gaussian smoothed and occupancy normalize
+
+%normalized occupancy
+%animal_data{1, 1}.Place_cell{1, 1}.Spatial_Info.proba_bin  
+
+%% Debug/qc related
+%isequal(animal_data{1, 1}.Place_cell{1, 1}.Spatial_Info.rate_map_smooth{1, 8}(:,35),...
+ %        animal_data{1, 1}.Place_cell{1, 1}.Spatial_tuning_curve_no_norm(:,35))
+
 
 %% Plot STC of neurons matching across all sessions - black STC for NaNs
 
@@ -53,9 +75,11 @@ for ss=1:7
 end
 
 %sort the values according to day 1 (A)
-%maxBin - spatial bin where activity is greatest for each ROI
+%maxBin - spatial bin where activity is greatest for each ROI - returns
+%bin index with max value
 [~,maxBin_all_A] = max(matchSTCs_A(:,1:100)', [], 1,'includenan');
 %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+%sort according to max bin values for all ROIs
 [~,sortOrder_all_A] = sort(maxBin_all_A,'ascend');
 
 %sort the values according to day 1 (B)
@@ -90,7 +114,6 @@ matchSTC_sorted_nonan.BrelA = matchSTCs_sorted.BrelA(~nan_d1_log.A,:);
 matchSTC_nan_sorted.BrelA = [matchSTC_sorted_nonan.BrelA; matchSTC_sorted_nan.BrelA];
 
 
-
 %% Plot the raster sorted independently
 
 figure
@@ -120,19 +143,26 @@ colormap(gca,'jet');
 figure
 %A
 subplot(1,2,1)
-%create blank alpha shading matrix where 
+%create blank alpha shading matrix where
+%set equal (max) transparency across the matrix
 imAlpha=ones(size(matchSTC_nan_sorted.A));
+%set transparency of nan values to 0 (non transparency/min)
 imAlpha(isnan(matchSTC_nan_sorted.A))=0;
+%plot raster with transparency matrix set
 imagesc(matchSTC_nan_sorted.A,'AlphaData',imAlpha);
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
 %set colormap to 
 colormap(gca,'jet');
+
 %B
 subplot(1,2,2)
 %create blank alpha shading matrix where 
+%set equal (max) transparency across the matrix
 imAlpha=ones(size(matchSTC_nan_sorted.BrelA));
+%set transparency of nan values to 0 (non transparency/min)
 imAlpha(isnan(matchSTC_nan_sorted.BrelA))=0;
+%plot raster with transparency matrix set
 imagesc(matchSTC_nan_sorted.BrelA,'AlphaData',imAlpha);
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
@@ -158,7 +188,7 @@ B_comp_STCs = [B_STC{1}(:,matching_ses_ROI_idxs_nonan(:,1))', B_STC{ses_comp}(:,
 %[~,matched_maxBin_A] = max(A_comp_STCs(:,101:200)', [], 1);
 %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
 [~,matched_sortOrder_A] = sort(matched_maxBin_A,'ascend');
-
+%find max bin for each ROI and return index
 [~,matched_maxBin_B] = max(B_comp_STCs(:,1:100)', [], 1);
 %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
 [~,matched_sortOrder_B] = sort(matched_maxBin_B,'ascend');
