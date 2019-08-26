@@ -384,6 +384,13 @@ PV_corr_across_days(session_vars,tunedLogical,registered,options)
 
 
 
+%% All neuron (at least 2 match between sessions) raster (non_norm)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+options.sessionSelect = [1 2 3 4 5 6 7];
+non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options)
+
 %% Measure PV and TC correlation between A/B trial on first training day and once learned
 %expect greater dissimilarity once learned
 

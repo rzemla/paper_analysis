@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = PV_corr_across_days(animal_data, tunedLogical,registered,options)
+function [outputArg1,outputArg2] = non_norm_matching_STC_rasters(animal_data, tunedLogical,registered,options)
 
 
 %% Get list of matching ROIs across sessions
@@ -85,10 +85,14 @@ matchSTC_nan_sorted.B = [matchSTC_sorted_nonan.B; matchSTC_sorted_nan.B];
 
 %% Sort B trials relative to A trials
 matchSTCs_sorted.BrelA = matchSTCs_B(sortOrder_all_A,:);
-matchSTC_sorted_nan.BrelA = matchSTCs_sorted.B(nan_d1_log.A,:);
-matchSTC_sorted_nonan.BrelA = matchSTCs_sorted.B(~nan_d1_log.A,:);
+matchSTC_sorted_nan.BrelA = matchSTCs_sorted.BrelA(nan_d1_log.A,:);
+matchSTC_sorted_nonan.BrelA = matchSTCs_sorted.BrelA(~nan_d1_log.A,:);
+matchSTC_nan_sorted.BrelA = [matchSTC_sorted_nonan.BrelA; matchSTC_sorted_nan.BrelA];
+
+
 
 %% Plot the raster sorted independently
+
 figure
 %A
 subplot(1,2,1)
@@ -106,6 +110,30 @@ subplot(1,2,2)
 imAlpha=ones(size(matchSTC_nan_sorted.B));
 imAlpha(isnan(matchSTC_nan_sorted.B))=0;
 imagesc(matchSTC_nan_sorted.B,'AlphaData',imAlpha);
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+colormap(gca,'jet');
+
+%% Plot rasters of B ROIs/trial sorted relative to A trials
+
+figure
+%A
+subplot(1,2,1)
+%create blank alpha shading matrix where 
+imAlpha=ones(size(matchSTC_nan_sorted.A));
+imAlpha(isnan(matchSTC_nan_sorted.A))=0;
+imagesc(matchSTC_nan_sorted.A,'AlphaData',imAlpha);
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+colormap(gca,'jet');
+%B
+subplot(1,2,2)
+%create blank alpha shading matrix where 
+imAlpha=ones(size(matchSTC_nan_sorted.BrelA));
+imAlpha(isnan(matchSTC_nan_sorted.BrelA))=0;
+imagesc(matchSTC_nan_sorted.BrelA,'AlphaData',imAlpha);
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
 %set colormap to 
