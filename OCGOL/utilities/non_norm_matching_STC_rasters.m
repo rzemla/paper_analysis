@@ -40,6 +40,24 @@ end
 %normalized occupancy
 %animal_data{1, 1}.Place_cell{1, 1}.Spatial_Info.proba_bin  
 
+
+%% Normalized to max STC value across A and B trials (for each ROI)
+%for each session, take max value for each ROI
+for ss=1:7
+    %make cumulative matrix for that session
+    comb_STC = [A_STC_noNorm{ss}; B_STC_noNorm{ss}];
+    %get min and max value for each ROI (min should all be 0 for STC based on event
+    %map)
+    min_STC = min(comb_STC,[],1);
+    max_STC = max(comb_STC,[],1);
+    %get max - min difference for each ROI for [0-1] normalization below
+    diff_max_min_STC = max_STC - min_STC;
+    
+    %feature scale/normalize (0-1 range)
+    A_STC_norm{ss} = (A_STC_noNorm{ss} - min_STC)./(diff_max_min_STC);
+    B_STC_norm{ss} = (B_STC_noNorm{ss} - min_STC)./(diff_max_min_STC);
+end
+
 %% Debug/qc related
 %isequal(animal_data{1, 1}.Place_cell{1, 1}.Spatial_Info.rate_map_smooth{1, 8}(:,35),...
  %        animal_data{1, 1}.Place_cell{1, 1}.Spatial_tuning_curve_no_norm(:,35))
@@ -106,6 +124,7 @@ matchSTC_sorted_nonan.B = matchSTCs_sorted.B(~nan_d1_log.B,:);
 %combine matrices with d1 nans below rest of sorted neurons
 matchSTC_nan_sorted.A = [matchSTC_sorted_nonan.A; matchSTC_sorted_nan.A];
 matchSTC_nan_sorted.B = [matchSTC_sorted_nonan.B; matchSTC_sorted_nan.B];
+
 
 %% Sort B trials relative to A trials
 matchSTCs_sorted.BrelA = matchSTCs_B(sortOrder_all_A,:);
