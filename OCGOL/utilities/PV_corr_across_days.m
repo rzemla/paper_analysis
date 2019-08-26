@@ -23,10 +23,87 @@ for ss = options.sessionSelect%1:size(animal_data,2)
     
 end
 
-%% STC of neurons matching across all sessions
+%% Plot STC of neurons matching across all sessions - black STC for NaNs
 
-x=1
+%colormap with black values below 0;
+%default call returns 64 values for cmap range
+% cmap = colormap('jet');
+% %black map
+% cmap_black = repmat([0 0 0],63,1);
+% %combined map
+% cmap_extended = [cmap_black; cmap];
 
+%generate sample map for 1 vs. 2 day with NaN filled with -1 value
+%generate blank ROI by bins matrix
+matchSTCs_A = zeros(size(matching_list,1),7*100);
+matchSTCs_B = zeros(size(matching_list,1),7*100);
+
+%fill the nan assignments to STC to be NaN
+for ss=1:7
+   nan_log = isnan(matching_list(:,ss));
+   matchSTCs_A(nan_log,1+(ss-1)*100:ss*100) = NaN;
+   matchSTCs_B(nan_log,1+(ss-1)*100:ss*100) = NaN;
+end
+
+%fill the matching assignments with trial-normalized STC
+for ss=1:7
+   nan_log = isnan(matching_list(:,ss));
+   matchSTCs_A(~nan_log,1+(ss-1)*100:ss*100) = A_STC{ss}(:,matching_list(~nan_log,ss))';
+   matchSTCs_B(~nan_log,1+(ss-1)*100:ss*100) = B_STC{ss}(:,matching_list(~nan_log,ss))';
+end
+
+%sort the values according to day 1 (A)
+%maxBin - spatial bin where activity is greatest for each ROI
+[~,maxBin_all_A] = max(matchSTCs_A(:,1:100)', [], 1,'includenan');
+%sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+[~,sortOrder_all_A] = sort(maxBin_all_A,'ascend');
+
+%sort the values according to day 1 (B)
+%maxBin - spatial bin where activity is greatest for each ROI
+[~,maxBin_all_B] = max(matchSTCs_B(:,1:100)', [], 1,'includenan');
+%sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+[~,sortOrder_all_B] = sort(maxBin_all_B,'ascend');
+
+%sorted matrix by day 1
+matchSTCs_sorted.A = matchSTCs_A(sortOrder_all_A,:);
+matchSTCs_sorted.B = matchSTCs_B(sortOrder_all_B,:);
+
+%remove nan values that originate from STC calculation or non-match NaN
+%split NaN values from A and B trials (based on 1st session and remove rest) - split in 2 matrices
+nan_d1_log.A = isnan(matchSTCs_sorted.A(:,1));
+nan_d1_log.B = isnan(matchSTCs_sorted.B(:,1));
+
+matchSTC_sorted_nan.A = matchSTCs_sorted.A(nan_d1_log.A,:);
+matchSTC_sorted_nonan.A = matchSTCs_sorted.A(~nan_d1_log.A,:);
+
+matchSTC_sorted_nan.B = matchSTCs_sorted.B(nan_d1_log.B,:);
+matchSTC_sorted_nonan.B = matchSTCs_sorted.B(~nan_d1_log.B,:);
+
+%combine matrices with d1 nans below rest of sorted neurons
+matchSTC_nan_sorted.A = [matchSTC_sorted_nonan.A; matchSTC_sorted_nan.A];
+matchSTC_nan_sorted.B = [matchSTC_sorted_nonan.B; matchSTC_sorted_nan.B];
+
+figure
+%A
+subplot(1,2,1)
+%create blank alpha shading matrix where 
+imAlpha=ones(size(matchSTC_nan_sorted.A));
+imAlpha(isnan(matchSTC_nan_sorted.A))=0;
+imagesc(matchSTC_nan_sorted.A,'AlphaData',imAlpha);
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+colormap(gca,'jet');
+%B
+subplot(1,2,2)
+%create blank alpha shading matrix where 
+imAlpha=ones(size(matchSTC_nan_sorted.B));
+imAlpha(isnan(matchSTC_nan_sorted.B))=0;
+imagesc(matchSTC_nan_sorted.B,'AlphaData',imAlpha);
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+colormap(gca,'jet');
 
 %% Plot STCs from ROIs matching 1 and any chosen session thereafter
 ses_comp = 7;
