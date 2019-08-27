@@ -63,6 +63,7 @@ end
  %        animal_data{1, 1}.Place_cell{1, 1}.Spatial_tuning_curve_no_norm(:,35))
 
 
+
 %% Plot STC of neurons matching across all sessions - black STC for NaNs
 
 %colormap with black values below 0;
@@ -75,21 +76,47 @@ end
 
 %generate sample map for 1 vs. 2 day with NaN filled with -1 value
 %generate blank ROI by bins matrix
+
+%normalized to A/self trials
 matchSTCs_A = zeros(size(matching_list,1),7*100);
 matchSTCs_B = zeros(size(matching_list,1),7*100);
 
+%normalized across both A and B trials
+matchSTCs_A_norm = zeros(size(matching_list,1),7*100);
+matchSTCs_B_norm = zeros(size(matching_list,1),7*100);
+
+%not self normalized both A and B trials
+matchSTCs_A_noNorm = zeros(size(matching_list,1),7*100);
+matchSTCs_B_Nonorm = zeros(size(matching_list,1),7*100);
+
+
 %fill the nan assignments to STC to be NaN
 for ss=1:7
-   nan_log = isnan(matching_list(:,ss));
-   matchSTCs_A(nan_log,1+(ss-1)*100:ss*100) = NaN;
-   matchSTCs_B(nan_log,1+(ss-1)*100:ss*100) = NaN;
+    nan_log = isnan(matching_list(:,ss));
+    %norm self
+    matchSTCs_A(nan_log,1+(ss-1)*100:ss*100) = NaN;
+    matchSTCs_B(nan_log,1+(ss-1)*100:ss*100) = NaN;
+    %norm both trials
+    matchSTCs_A_norm(nan_log,1+(ss-1)*100:ss*100) = NaN;
+    matchSTCs_B_norm(nan_log,1+(ss-1)*100:ss*100) = NaN;
+    
+    %no norm both trials
+    matchSTCs_A_noNorm(nan_log,1+(ss-1)*100:ss*100) = NaN;
+    matchSTCs_B_noNorm(nan_log,1+(ss-1)*100:ss*100) = NaN;
 end
 
 %fill the matching assignments with trial-normalized STC
 for ss=1:7
-   nan_log = isnan(matching_list(:,ss));
-   matchSTCs_A(~nan_log,1+(ss-1)*100:ss*100) = A_STC{ss}(:,matching_list(~nan_log,ss))';
-   matchSTCs_B(~nan_log,1+(ss-1)*100:ss*100) = B_STC{ss}(:,matching_list(~nan_log,ss))';
+    nan_log = isnan(matching_list(:,ss));
+    matchSTCs_A(~nan_log,1+(ss-1)*100:ss*100) = A_STC{ss}(:,matching_list(~nan_log,ss))';
+    matchSTCs_B(~nan_log,1+(ss-1)*100:ss*100) = B_STC{ss}(:,matching_list(~nan_log,ss))';
+    %norm both trials
+    matchSTCs_A_norm(~nan_log,1+(ss-1)*100:ss*100) = A_STC_norm{ss}(:,matching_list(~nan_log,ss))';
+    matchSTCs_B_norm(~nan_log,1+(ss-1)*100:ss*100) = B_STC_norm{ss}(:,matching_list(~nan_log,ss))';
+    
+    %no norm both trials
+    matchSTCs_A_noNorm(~nan_log,1+(ss-1)*100:ss*100) = A_STC_noNorm{ss}(:,matching_list(~nan_log,ss))';
+    matchSTCs_B_noNorm(~nan_log,1+(ss-1)*100:ss*100) = B_STC_noNorm{ss}(:,matching_list(~nan_log,ss))';    
 end
 
 %sort the values according to day 1 (A)
@@ -188,6 +215,100 @@ set(gca,'color',0*[1 1 1]);
 %set colormap to 
 colormap(gca,'jet');
 
+%% Plot rasters normalized for each ROI across both sessions
+%use sort order for self-norm A trials
+matchSTCs_norm_sorted.A = matchSTCs_A_norm(sortOrder_all_A,:);
+matchSTCs_norm_sorted.B = matchSTCs_B_norm(sortOrder_all_A,:);
+
+%push nans to bottom of raster
+matchSTC_norm_sorted_nan.A = matchSTCs_norm_sorted.A(nan_d1_log.A,:);
+matchSTC_norm_sorted_nonan.A = matchSTCs_norm_sorted.A(~nan_d1_log.A,:);
+
+matchSTC_norm_sorted_nan.BrelA = matchSTCs_norm_sorted.B(nan_d1_log.A,:);
+matchSTC_norm_sorted_nonan.BrelA = matchSTCs_norm_sorted.B(~nan_d1_log.A,:);
+
+%combine matrices with d1 nans below rest of sorted neurons
+matchSTC_norm_nan_sorted.A = [matchSTC_norm_sorted_nonan.A; matchSTC_norm_sorted_nan.A];
+matchSTC_norm_nan_sorted.BrelA = [matchSTC_norm_sorted_nonan.BrelA; matchSTC_norm_sorted_nan.BrelA];
+
+%% Plot normalized and A sorted STC rasters
+figure
+%A
+subplot(1,2,1)
+%create blank alpha shading matrix where
+%set equal (max) transparency across the matrix
+imAlpha=ones(size(matchSTC_norm_nan_sorted.A));
+%set transparency of nan values to 0 (non transparency/min)
+imAlpha(isnan(matchSTC_norm_nan_sorted.A))=0;
+%plot raster with transparency matrix set
+imagesc(matchSTC_norm_nan_sorted.A,'AlphaData',imAlpha);
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+colormap(gca,'jet');
+
+%B
+subplot(1,2,2)
+%create blank alpha shading matrix where 
+%set equal (max) transparency across the matrix
+imAlpha=ones(size(matchSTC_norm_nan_sorted.BrelA));
+%set transparency of nan values to 0 (non transparency/min)
+imAlpha(isnan(matchSTC_norm_nan_sorted.BrelA))=0;
+%plot raster with transparency matrix set
+imagesc(matchSTC_norm_nan_sorted.BrelA,'AlphaData',imAlpha);
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+colormap(gca,'jet');
+
+%% PV correlation analysis across days (relative to D1) for A and B trials
+
+%split matched neuron STC (non_norm) into cell of matrices
+for ss = 1:7
+    matchSTCs_nn.A{ss} = matchSTCs_A_noNorm(:,1+(ss-1)*100:ss*100);
+    matchSTCs_nn.B{ss} = matchSTCs_B_noNorm(:,1+(ss-1)*100:ss*100);
+end
+
+%run population correlation between non-norm event based STCs
+for ss = 2:7
+    %A corr across days
+    PVcorr_rel_d1.A{ss-1} = corr(matchSTCs_nn.A{1},matchSTCs_nn.A{ss}, 'type','Pearson','rows','complete');
+    %B corr across days
+    PVcorr_rel_d1.B{ss-1} = corr(matchSTCs_nn.B{1},matchSTCs_nn.B{ss}, 'type','Pearson','rows','complete');   
+end
+
+%get mean PV score on each day relative to day 1
+for ss = 2:7
+    %A corr across days
+    meanPV_rel_d1.A(ss-1) = nanmean(diag(PVcorr_rel_d1.A{ss-1}));
+    %B corr across days
+    meanPV_rel_d1.B(ss-1) = nanmean(diag(PVcorr_rel_d1.B{ss-1}));
+end
+
+%same day correlation between A and B trials
+for ss = 1:7
+    %between A and B trials
+    PVcorr_same_day.AB{ss} = corr(matchSTCs_nn.A{ss},matchSTCs_nn.B{ss}, 'type','Pearson','rows','complete');
+end
+
+%% Plot the mean PV correlation as a line plot
+
+figure;
+hold on
+title('Population vector correlation relative to D1')
+ylim([0 1])
+ylabel('Mean correlation')
+p1 = plot(meanPV_rel_d1.A,'b');
+p2 = plot(meanPV_rel_d1.B,'r');
+legend([p1 p2], 'A','B')
+xticks(1:6)
+xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
+
+
+%% %% PV correlation analysis across days (function of time)
+
+%% OLD CODE
+%{
 %% Plot STCs from ROIs matching 1 and any chosen session thereafter
 ses_comp = 7;
 
@@ -226,6 +347,7 @@ hold on
 colormap('jet')
 caxis([0 1]);
 
+%}
 
 end
 
