@@ -54,7 +54,7 @@ end_batch = [start_batch(2:end)-1 size(start_end_ROI,1)];
 comb_batch = [start_batch; end_batch];
 
 %number of batch plots
-for pp=1:nb_plots
+for pp=1%1:nb_plots
     
     figure('renderer','painters','Position', [2200 100 1900 900]) %scale the width by 300 for each ses
     %assign the roi range for display (group of ROI list
@@ -70,7 +70,7 @@ for pp=1:nb_plots
             for ss=1:nb_ses %size(display_matrix,2)
                 %convert to position on extended plot
                 %subplot(rows,batch_nb*cols,display_matrix_ex(rr,ss+(start_batch_idx*6)))
-                disp(display_matrix_ex(rr,ss+(start_batch_idx*6)))
+                disp(display_matrix_ex(rr,ss+(start_batch_idx*nb_ses)))
                 %determine spacing between columns and rows
                 %vertically space every batch
                 %             if ss+(start_batch_idx*6) == 6 || ss+(start_batch_idx*6) == 12
@@ -78,7 +78,7 @@ for pp=1:nb_plots
                 %                     'SpacingVertical',0.001,...
                 %                     'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0,'MarginBottom',0.1)
                 %             else
-                subaxis(rows, batch_nb*cols, display_matrix_ex(rr,ss+(start_batch_idx*6)), 'SpacingHorizontal', 0.0015,...
+                subaxis(rows, batch_nb*cols, display_matrix_ex(rr,ss+(start_batch_idx*nb_ses)), 'SpacingHorizontal', 0.0015,...
                     'SpacingVertical',0.001,...
                     'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
                 % end
