@@ -85,12 +85,12 @@ for ss =1:nbSes
                 %create the binary outline
                 %if no outline (empty)
                 if ~isempty(session_vars{ss}.Coor_kp{jj})
-                    %ROI_outlines{jj,ss}(session_vars{ss}.Coor_kp{ROI(ss)}(1,:)',session_vars{ss}.Coor_kp{ROI(ss)}(2,:)') = 1;
-                    ROI_outlines{jj,ss}(sub2ind([512,512],session_vars{ss}.Coor_kp{jj}(2,:),session_vars{ss}.Coor_kp{jj}(1,:))) =1;
-                    %clip the outline to match the field of of the ROI
-                    ROI_outlines{jj,ss} = ROI_outlines{jj,ss}(xrange(1):xrange(2), yrange(1):yrange(2));
+                %ROI_outlines{jj,ss}(session_vars{ss}.Coor_kp{ROI(ss)}(1,:)',session_vars{ss}.Coor_kp{ROI(ss)}(2,:)') = 1;
+                ROI_outlines{jj,ss}(sub2ind([512,512],session_vars{ss}.Coor_kp{jj}(2,:),session_vars{ss}.Coor_kp{jj}(1,:))) =1;
+                %clip the outline to match the field of of the ROI
+                ROI_outlines{jj,ss} = ROI_outlines{jj,ss}(xrange(1):xrange(2), yrange(1):yrange(2));
                 else %set matrix output to empty
-                    ROI_outlines{jj,ss} = [];
+                ROI_outlines{jj,ss} = [];
                 end
             end
         end

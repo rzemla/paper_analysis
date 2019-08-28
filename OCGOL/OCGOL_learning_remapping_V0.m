@@ -1,7 +1,7 @@
 %% Import variables and define options
 
 %run componenet registration across sessions
-options.register = 1;
+options.register = 0;
 
 %lab workstation
 %input directories to matching function
@@ -20,8 +20,8 @@ options.register = 1;
      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_3A3B_041219_3',...
      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_1A1B_041319_4',...
      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041519_5',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041619_6',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
+     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041619_6'};
+     %'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
 %cross session directory
 crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 
@@ -68,6 +68,12 @@ match_var = load(filtered_ROI_dir_path.name);
 %load in registered struct
 registered.multi.assigned_filtered = match_var.ROI_assign_multi_filtered;
 
+%% Get ROI_zooms and ROI_outlines for each neuron on each day
+%number of sessions (runs even if not all session vars are loaded)
+%already soma parsed
+nbSes = size(session_vars,2);
+[ROI_zooms, ROI_outlines] = defineOutlines_eachSes(nbSes,session_vars, path_dir);
+
 %% Visualize the matching ROIs that were matched above (match on every session only!)
 %number of ROIs (rows) by sessions (cols)
 rows = 20;
@@ -77,13 +83,6 @@ ROI_zooms_all_match = registered.multi.ROI_zooms;
 ROI_outlines_all_match = registered.multi.ROI_outlines;
 
 visualize_matches(rows,cols,ROI_zooms_all_match,ROI_outlines_all_match);
-
-%% Get ROI_zooms and ROI_outlines for each neuron on each day
-%number of sessions (runs even if not all session vars are loaded)
-nbSes = size(session_vars,2);
-[ROI_zooms, ROI_outlines] = defineOutlines_eachSes(nbSes,session_vars, path_dir);
-
-%% TO-DO  --> write script to removed low quality/incorrect matches
 
 %% Calculate relevant place fields
 %use rate map - number of event onsets/ occupancy across all laps

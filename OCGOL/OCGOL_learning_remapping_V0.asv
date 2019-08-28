@@ -5,43 +5,27 @@ options.register = 0;
 
 %lab workstation
 %input directories to matching function
- path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+%  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+
+%I57_RTLS
+ path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
+     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_5AB_041119_2',...
+     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_3A3B_041219_3',...
+     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_1A1B_041319_4',...
+     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041519_5',...
+     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041619_6'};
+     %'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
 %cross session directory
-crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 
-%  path_dir = {'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d1_062018_1',...
-%      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d2_062118_2',...
-%      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d3_062218_3',...
-%      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d6_062518_4',...
-%      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d7_062618_5',...
-%      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d8_062718_6',...
-%      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d9_062818_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I47_LP\crossSession';
-
-%  path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
-
-%home
-% path_dir = {'F:\OCGOL_training\I56_RLTS_041019\5A5B',...
-%     'F:\OCGOL_training\I56_RLTS_041019\ABrand_no_punish_041619'};
-% 
-% %cross session directory
-% crossdir = 'F:\OCGOL_training\I56_RLTS_041019\crossSession';
-
-%load place cell variables for each session
+%% Load place cell variables for each session
 %get mat directories in each output folder
 for ii=1:size(path_dir,2)
     %get matfile names for each session
@@ -84,6 +68,11 @@ match_var = load(filtered_ROI_dir_path.name);
 %load in registered struct
 registered.multi.assigned_filtered = match_var.ROI_assign_multi_filtered;
 
+%% Get ROI_zooms and ROI_outlines for each neuron on each day
+%number of sessions (runs even if not all session vars are loaded)
+nbSes = size(session_vars,2);
+[ROI_zooms, ROI_outlines] = defineOutlines_eachSes(nbSes,session_vars, path_dir);
+
 %% Visualize the matching ROIs that were matched above (match on every session only!)
 %number of ROIs (rows) by sessions (cols)
 rows = 20;
@@ -93,11 +82,6 @@ ROI_zooms_all_match = registered.multi.ROI_zooms;
 ROI_outlines_all_match = registered.multi.ROI_outlines;
 
 visualize_matches(rows,cols,ROI_zooms_all_match,ROI_outlines_all_match);
-
-%% Get ROI_zooms and ROI_outlines for each neuron on each day
-%number of sessions (runs even if not all session vars are loaded)
-nbSes = size(session_vars,2);
-[ROI_zooms, ROI_outlines] = defineOutlines_eachSes(nbSes,session_vars, path_dir);
 
 %% TO-DO  --> write script to removed low quality/incorrect matches
 
@@ -346,8 +330,8 @@ plot_STC_OCGOL_training(session_vars,tunedLogical,registered,options)
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 7];
-non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options)
+options.sessionSelect = [1 2 3 4 5 6];
+non_norm_matching_STC_rasters_learning(session_vars,tunedLogical,registered,options)
 
 
 %% Measure PV and TC correlation between A/B trial on first training day and once learned
