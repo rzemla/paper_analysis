@@ -109,6 +109,23 @@ for ss = [1 2 3 6]%1:size(session_vars,2) %1,2,3,4,5,6 OK
     disp('Session: '); disp(ss);
 end
 
+%% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
+
+%funtion to calculate transient rate in field
+%take raw event rate and divide by occupancy (s) transients/s
+% TODO: see ifrecalculate to see if dividing by normalized occupancy (fractional 0-1)
+%yields different result
+
+%which sessions to use to calculate the in field transient rate
+%[1 2] - only correct A B trials
+%[4 5] - all A B trials
+options.selectSes = [1 2];
+
+%IMPORTANT!!  - make adjustments to make sure that selectSes is passed
+%through all parts of the code!!!!
+[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
+
+
 %% Plot smoothed event rate across track (function)
 
 %% Plot dF/F rasters side by side by laps for matching ROIs

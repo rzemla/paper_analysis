@@ -64,9 +64,9 @@ for ss=1:size(session_vars,2)
     %Bin running position in 100 bins and get edges for each set of laps:
     %for each number of bins, bin the normalized position during run epochs
     %for correct A trials
-    [count_bin{ss}{1},edges{ss}{1},bin{ss}{1}] = histcounts(run_position_norm{ss}{1}, 100);
+    [count_bin{1},edges{1},bin{1}] = histcounts(run_position_norm{1}, 100);
     %for correct B trials
-    [count_bin{ss}{2},edges{ss}{2},bin{ss}{2}] = histcounts(run_position_norm{ss}{2}, 100);
+    [count_bin{2},edges{2},bin{2}] = histcounts(run_position_norm{2}, 100);
 end
 
 %% Event onsets in run interval
