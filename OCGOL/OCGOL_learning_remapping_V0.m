@@ -77,12 +77,19 @@ nbSes = size(session_vars,2);
 %% Visualize the matching ROIs that were matched above (match on every session only!)
 %number of ROIs (rows) by sessions (cols)
 rows = 20;
-cols = 7; %take # of sessions as input
+cols = 6; %take # of sessions as input
 %only those matching across all sessions
-ROI_zooms_all_match = registered.multi.ROI_zooms;
-ROI_outlines_all_match = registered.multi.ROI_outlines;
+% ROI_zooms_all_match = registered.multi.ROI_zooms;
+% ROI_outlines_all_match = registered.multi.ROI_outlines;
+% 
+% visualize_matches(rows,cols,ROI_zooms_all_match,ROI_outlines_all_match);
 
-visualize_matches(rows,cols,ROI_zooms_all_match,ROI_outlines_all_match);
+%take in out ROI zooms and outlines and output filtered matches
+
+%number of sessions to look at
+nb_ses = cols;
+
+visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses);
 
 %% Calculate relevant place fields
 %use rate map - number of event onsets/ occupancy across all laps
