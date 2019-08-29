@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = filter_matching_components(registered,tunedLogical,select_fields)
+function [registered] = filter_matching_components(registered,tunedLogical,select_fields)
 
 %% Define variables
 
@@ -37,9 +37,31 @@ for ss=1:size(select_fields,2)
     end
 end
 
-%do an & comparison for both trial types on each day - RESUME HERE
+%do an & comparison for both trial types on each day for A and B tuned
+%for each session
+for ss=1:size(select_fields,2)
+    select_fieldsAB{ss} = select_fields_binary{ss}{1} & select_fields_binary{ss}{2};
+    
+end
 
-%%
+%% Parse the tuning criterion filtered matching neurons
+%copy first
+matching_list.si_AB_filt_event_filt = matching_list.si_AB_filt;
+
+%for each session
+for ss=1:size(select_fields,2)
+    %get idxs
+    event_idx_temp = find(select_fieldsAB{ss} ==1);
+    %get logical with values that are si tuned
+    keep_idx_log = ismember(matching_list.si_AB_filt_event_filt(:,ss),event_idx_temp);
+    %set the negative of the log to nan (no match based on tuning criterion
+    matching_list.si_AB_filt_event_filt(~keep_idx_log,ss) = nan;
+
+end
+
+%% Output
+
+registered.multi.matching_list_filtered =  matching_list;
     
 end
 

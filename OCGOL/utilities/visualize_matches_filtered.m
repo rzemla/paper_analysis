@@ -54,7 +54,7 @@ end_batch = [start_batch(2:end)-1 size(start_end_ROI,1)];
 comb_batch = [start_batch; end_batch];
 
 %number of batch plots
-for pp=1%1:nb_plots
+for pp=1:nb_plots
     
     figure('renderer','painters','Position', [2200 100 1900 900]) %scale the width by 300 for each ses
     %assign the roi range for display (group of ROI list

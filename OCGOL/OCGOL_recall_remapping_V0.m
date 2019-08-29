@@ -183,7 +183,7 @@ options.selectSes = [1 2];
 
 %select fields has logical 1 for whichever neurons has a place field at at
 %least 5 events on distinct laps within that PF - otherwise not PF
-filter_matching_components(registered,tunedLogical,select_fields)
+[registered] = filter_matching_components(registered,tunedLogical,select_fields);
 
 %% Centroid difference (max transient rate)
 
@@ -477,6 +477,27 @@ options.idx_show = find(registered.multi.assigned_all(:,1) == 357);
 compare_sessions_raster_spiral(session_vars,registered,ROI_outlines,ROI_zooms, options);
 
 
+%% Line between subplots (plotting on entire figure)
+% two 2x5 arrays with random data
+a1 = rand(2,5);
+a2 = rand(2,5);
+figure
+% two subplots
+subplot(211)
+scatter(a1(1,:),a1(2,:))
+% Convert axes coordinates to figure coordinates for 1st axes
+[xa1 ya1] = ds2nfu(a1(1,:),a1(2,:));
+
+
+subplot(212)
+scatter(a2(1,:),a2(2,:))
+% Convert axes coordinates to figure coordinates for 2nd axes
+[xa2 ya2] = ds2nfu(a2(1,:),a2(2,:));
+
+% draw the lines
+for k=1:numel(xa1)
+    annotation('line',[xa1(k) xa2(k)],[ya1(k) ya2(k)],'color','r');
+end
 
 
 
