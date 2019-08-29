@@ -177,7 +177,7 @@ options.sessionSelect = [1 2 3 4 5 6 7];
 %A correct/B correct or all
 options.selectSes = [1 2];
 %continue to modify 
-[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
+[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,registered,options);
 
 
 %% Centroid difference (max transient rate)
