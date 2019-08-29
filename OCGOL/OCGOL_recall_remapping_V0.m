@@ -179,6 +179,11 @@ options.selectSes = [1 2];
 %continue to modify 
 [field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,registered,options);
 
+%% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in firld
+
+%select fields has logical 1 for whichever neurons has a place field at at
+%least 5 events on distinct laps within that PF - otherwise not PF
+filter_matching_components(registered,tunedLogical,select_fields)
 
 %% Centroid difference (max transient rate)
 

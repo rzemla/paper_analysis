@@ -177,13 +177,17 @@ options.sessionSelect = [1 2 3 4 5 6 7];
 %A correct/B correct or all
 options.selectSes = [1 2];
 %continue to modify 
-[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
+[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,registered,options);
 
+%% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in firld
+
+%select fields has logical 1 for whichever neurons has a 
+filter_matching_components(registered,tunedLogical,select_fields)
 
 %% Centroid difference (max transient rate)
 
 options.tuning_criterion = 'ts';
-centroid_diff_learning(session_vars,tunedLogical, pf_vector,field_event_rates,registered,options)
+centroid_diff_recall(session_vars,tunedLogical, pf_vector,field_event_rates,registered,options)
 
 %% Tuning specificity differences pre-learning vs. post-learning (matching neurons)
 
@@ -210,29 +214,6 @@ B_perf(2) = length(find(session_vars{2}.Behavior.performance.trialOrder == 3))/.
     size(find(session_vars{2}.Behavior.performance.trialOrder == 3 | session_vars{2}.Behavior.performance.trialOrder == 30),1);
 
 
-%% Generate dF/F maps of neurons tuned in either session and plot side by side
-%customize to add options
-%tuned in both sessions by SI score
-%sorted by A trials
-
-%set option as to how to select neurons for plots
-%use SI or TS
-options.tuning_criterion = 'ts'; %si or ts
-
-%select which session to use
-options.sessionSelect = [1 2 3 6];
-
-plot_dFF_OCGOL_training(session_vars,tunedLogical,registered,options)
-
-%% Generate STC maps of neurons tuned in either session and plot side by side
-%customize to add options
-%tuned in both sessions by SI score
-%sorted by A trials
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 7];
-plot_STC_OCGOL_recall(session_vars,tunedLogical,registered,options)
 
 %% PV correlation for all matching neurons in A and B trials across days (line plot)
 
@@ -256,6 +237,31 @@ non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options)
 %% Event property difference (duration of sig events in fields vs
 
 %% Place field width for A or B trials early vs late (all neurons vs matching neurons)
+
+
+%% Generate dF/F maps of neurons tuned in either session and plot side by side
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
+
+%set option as to how to select neurons for plots
+%use SI or TS
+options.tuning_criterion = 'ts'; %si or ts
+
+%select which session to use
+options.sessionSelect = [1 2 3 6];
+
+plot_dFF_OCGOL_training(session_vars,tunedLogical,registered,options)
+
+%% Generate STC maps of neurons tuned in either session and plot side by side
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+options.sessionSelect = [1 2 3 4 5 6 7];
+plot_STC_OCGOL_recall(session_vars,tunedLogical,registered,options)
 
 
 %% Learning pre and post event spiral
