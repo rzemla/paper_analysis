@@ -183,7 +183,7 @@ options.selectSes = [1 2];
 %% Centroid difference (max transient rate)
 
 options.tuning_criterion = 'ts';
-centroid_diff_learning(session_vars,tunedLogical, pf_vector,field_event_rates,registered,options)
+centroid_diff_recall(session_vars,tunedLogical, pf_vector,field_event_rates,registered,options)
 
 %% Tuning specificity differences pre-learning vs. post-learning (matching neurons)
 
