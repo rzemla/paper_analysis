@@ -204,71 +204,71 @@ scatter(theta{ses_comp(1)}(d2d_match_list(:,1)), theta{ses_comp(2)}(d2d_match_li
 
 %% Generate match list
 
-tuning_selection = AandB_tuned;
-%tuned to A or B on either sessions
-select_match_idx{1} = find(tuning_selection{1} ==1);
-select_match_idx{2} = find(tuning_selection{2} ==1);
-
-%intersect with
-[tuned_match_idx{1},match_idx{1},~] = intersect(matching_list(:,1),select_match_idx{1},'stable');
-[tuned_match_idx{2},match_idx{2},~] = intersect(matching_list(:,2),select_match_idx{2},'stable');
-
-%create not logical for nan exclusion from copied matrix assignement below
-include_log{1} = false(1,size(matching_list,1));
-include_log{1}(match_idx{1}) = 1; 
-%session 2 
-include_log{2} = false(1,size(matching_list,1));
-include_log{2}(match_idx{2}) = 1;
-
-%make copy
-tuned_matching_ROI_list = matching_list;
-%nan first session that are not tuned and last session that are not
-%tuned
-tuned_matching_ROI_list(~include_log{1},1) = nan;
-tuned_matching_ROI_list(~include_log{2},2) = nan;
-
-%which neurons to remove based on tuning criterion
-keep_ROI = sum(isnan(tuned_matching_ROI_list),2) == 0;
-
-%retain only tuned and matched ROIs
-tuned_matching_ROI_list(~keep_ROI,:) = [];
-
-%convert to respective logicals
-%ses 1
-select_ses_logi{1} = false(1,size(AandB_tuned{1},2));
-select_ses_logi{1}(tuned_matching_ROI_list(:,1)) = true;
-%ses 2
-select_ses_logi{2} = false(1,size(AandB_tuned{2},2));
-select_ses_logi{2}(tuned_matching_ROI_list(:,2)) = true;
+% tuning_selection = AandB_tuned;
+% %tuned to A or B on either sessions
+% select_match_idx{1} = find(tuning_selection{1} ==1);
+% select_match_idx{2} = find(tuning_selection{2} ==1);
+% 
+% %intersect with
+% [tuned_match_idx{1},match_idx{1},~] = intersect(matching_list(:,1),select_match_idx{1},'stable');
+% [tuned_match_idx{2},match_idx{2},~] = intersect(matching_list(:,2),select_match_idx{2},'stable');
+% 
+% %create not logical for nan exclusion from copied matrix assignement below
+% include_log{1} = false(1,size(matching_list,1));
+% include_log{1}(match_idx{1}) = 1; 
+% %session 2 
+% include_log{2} = false(1,size(matching_list,1));
+% include_log{2}(match_idx{2}) = 1;
+% 
+% %make copy
+% tuned_matching_ROI_list = matching_list;
+% %nan first session that are not tuned and last session that are not
+% %tuned
+% tuned_matching_ROI_list(~include_log{1},1) = nan;
+% tuned_matching_ROI_list(~include_log{2},2) = nan;
+% 
+% %which neurons to remove based on tuning criterion
+% keep_ROI = sum(isnan(tuned_matching_ROI_list),2) == 0;
+% 
+% %retain only tuned and matched ROIs
+% tuned_matching_ROI_list(~keep_ROI,:) = [];
+% 
+% %convert to respective logicals
+% %ses 1
+% select_ses_logi{1} = false(1,size(AandB_tuned{1},2));
+% select_ses_logi{1}(tuned_matching_ROI_list(:,1)) = true;
+% %ses 2
+% select_ses_logi{2} = false(1,size(AandB_tuned{2},2));
+% select_ses_logi{2}(tuned_matching_ROI_list(:,2)) = true;
 
 %% Plot the differences as histograms - only matching ROIs
-figure('Position', [2900 500 1300 400]);
-subplot(1,3,1)
-hold on;
-ylim([0 0.3])
-ylabel('Normalized prob');
-xlabel('Angular difference [rad]');
-title('5A5B')
-histogram(theta{1}(select_ses_logi{1}),15,'Normalization','probability','BinLimits',[0,pi]);
-hold off
-subplot(1,3,2)
-hold on
-ylim([0 0.3])
-ylabel('Normalized prob');
-xlabel('Angular difference [rad]');
-title('Random AB')
-histogram(theta{2}(select_ses_logi{2}),15,'Normalization','probability','BinLimits',[0,pi]);
-hold off
-%plot cdf curves for each
-subplot(1,3,3)
-hold on
-e1 = cdfplot(theta{1}(select_ses_logi{1}));
-e2 = cdfplot(theta{2}(select_ses_logi{2}));
-gca
-xlabel('Angular difference [rad]');
-ylabel('Cumulative fraction');
-legend([e1,e2], '5A5B','Random AB', 'Location','southeast');
-hold off
+% figure('Position', [2900 500 1300 400]);
+% subplot(1,3,1)
+% hold on;
+% ylim([0 0.3])
+% ylabel('Normalized prob');
+% xlabel('Angular difference [rad]');
+% title('5A5B')
+% histogram(theta{1}(select_ses_logi{1}),15,'Normalization','probability','BinLimits',[0,pi]);
+% hold off
+% subplot(1,3,2)
+% hold on
+% ylim([0 0.3])
+% ylabel('Normalized prob');
+% xlabel('Angular difference [rad]');
+% title('Random AB')
+% histogram(theta{2}(select_ses_logi{2}),15,'Normalization','probability','BinLimits',[0,pi]);
+% hold off
+% %plot cdf curves for each
+% subplot(1,3,3)
+% hold on
+% e1 = cdfplot(theta{1}(select_ses_logi{1}));
+% e2 = cdfplot(theta{2}(select_ses_logi{2}));
+% gca
+% xlabel('Angular difference [rad]');
+% ylabel('Cumulative fraction');
+% legend([e1,e2], '5A5B','Random AB', 'Location','southeast');
+% hold off
 
 %% ROIs that significantly TS tuned in each session
 

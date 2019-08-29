@@ -216,7 +216,7 @@ B_perf(2) = length(find(session_vars{2}.Behavior.performance.trialOrder == 3))/.
 
 
 
-%% PV correlation for all matching neurons in A and B trials across days (line plot)
+%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'si'; %si or ts
