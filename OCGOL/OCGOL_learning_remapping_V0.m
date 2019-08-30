@@ -89,7 +89,7 @@ cols = 6; %take # of sessions as input
 %number of sessions to look at
 nb_ses = cols;
 
-visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses);
+visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses,crossdir);
 
 %% Calculate relevant place fields
 %use rate map - number of event onsets/ occupancy across all laps
@@ -98,16 +98,29 @@ options.gSigma = 3;
 %iterate through place_cell cells of interest
 %4 - all A regardless if correct
 %5 - all B regardless if correct
+%I57 RTLS - problem with 4,4
 
-%for each session
-for ss = [1 2 3 6]%1:size(session_vars,2) %1,2,3,4,5,6 OK
+for ss = [1 2 3 4 5 6]%1:size(session_vars,2) %1,2,3,4,5,6 OK
+    disp(['Running session: ', num2str(ss)]);
     for ii = [4,5]
         options.place_struct_nb = ii;
-        disp(ii);
+        disp(['Running trial type: ', num2str(ii)]);
         [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
     end
     disp('Session: '); disp(ss);
 end
+
+%% Define tuned logical vectors
+
+%flag to all A or B trial or only correct A or B trials
+%all correct = 0 ==> uses trials 4,5
+%all correct = 1 ==> uses trials 1,2
+options.allCorrect = 0;
+%select which session to use
+options.sessionSelect = [1 2 3 4 5 6];
+%returns struct of structs
+[tunedLogical] = defineTunedLogicals(session_vars,options);
+
 
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
@@ -115,16 +128,36 @@ end
 %take raw event rate and divide by occupancy (s) transients/s
 % TODO: see ifrecalculate to see if dividing by normalized occupancy (fractional 0-1)
 %yields different result
+%[field_event_rates,pf_vector] = transient_rate_in_field(session_vars);
 
-%which sessions to use to calculate the in field transient rate
+%which trials to use to calculate the in field transient rate
 %[1 2] - only correct A B trials
 %[4 5] - all A B trials
-options.selectSes = [1 2];
+%A correct/B correct or all
+options.selectSes = [4 5];
+%continue to modify 
+[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,registered,options);
 
-%IMPORTANT!!  - make adjustments to make sure that selectSes is passed
-%through all parts of the code!!!!
-[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
+%% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in firld
 
+%which trials to use to calculate the in field transient rate
+options.selectSes = [4 5];
+%select fields has logical 1 for whichever neurons has a place field at at
+%least 5 events on distinct laps within that PF - otherwise not PF
+[registered] = filter_matching_components(registered,tunedLogical,select_fields,options);
+
+%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+options.sessionSelect = [1 2 3 4 5 6 ];
+options.selectSes = [4 5];
+%learning or recall datasets
+options.learning_data = 1;
+[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
+
+%save to output file for cumulative analysis
+save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
 
 %% Plot smoothed event rate across track (function)
 

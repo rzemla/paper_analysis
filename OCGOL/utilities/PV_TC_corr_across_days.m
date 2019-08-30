@@ -17,14 +17,14 @@ matching_list_filtered = registered.multi.matching_list_filtered;
 %for each session
 for ss = options.sessionSelect%1:size(animal_data,2)
     %normalized to A or B trials independently
-    A_STC{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve;
-    B_STC{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve;
+    A_STC{ss} = animal_data{ss}.Place_cell{options.selectSes(1)}.Spatial_tuning_curve;
+    B_STC{ss} = animal_data{ss}.Place_cell{options.selectSes(2)}.Spatial_tuning_curve;
     
     %Gs smoothed, but not normalized (nn) to itself
     %animal_data{ss}.Place_cell{1}.Spatial_Info.rate_map_smooth{8}
     %same as the following
-    A_STC_noNorm{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve_no_norm;
-    B_STC_noNorm{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve_no_norm;
+    A_STC_noNorm{ss} = animal_data{ss}.Place_cell{options.selectSes(1)}.Spatial_tuning_curve_no_norm;
+    B_STC_noNorm{ss} = animal_data{ss}.Place_cell{options.selectSes(2)}.Spatial_tuning_curve_no_norm;
   
     %dF/F (like STC - normalized) 
     %A_df{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_dF;
@@ -32,15 +32,15 @@ for ss = options.sessionSelect%1:size(animal_data,2)
     
     %not occupancy normalized mean dF values across respective A and B
     %trials (not Gaussian smoothed)
-    A_df_non_oc{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.mean_dF_map{8};
-    B_df_non_oc{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.mean_dF_map{8};
+    A_df_non_oc{ss} = animal_data{ss}.Place_cell{options.selectSes(1)}.Spatial_Info.mean_dF_map{8};
+    B_df_non_oc{ss} = animal_data{ss}.Place_cell{options.selectSes(2)}.Spatial_Info.mean_dF_map{8};
     
 end
 
 
 %% Normalized to max STC value across A and B trials (for each ROI)
 %for each session, take max value for each ROI
-for ss=1:7
+for ss=options.sessionSelect
     %make cumulative matrix for that session
     comb_STC = [A_STC_noNorm{ss}; B_STC_noNorm{ss}];
     %get min and max value for each ROI (min should all be 0 for STC based on event
@@ -75,7 +75,7 @@ matchSTCs_B_Nonorm = zeros(size(matching_list,1),7*100);
 
 
 %fill the nan assignments to STC to be NaN
-for ss=1:7
+for ss=options.sessionSelect
     nan_log = isnan(matching_list(:,ss));
     %norm self
     matchSTCs_A(nan_log,1+(ss-1)*100:ss*100) = NaN;
@@ -90,7 +90,7 @@ for ss=1:7
 end
 
 %fill the matching assignments with trial-normalized STC
-for ss=1:7
+for ss=options.sessionSelect
     nan_log = isnan(matching_list(:,ss));
     matchSTCs_A(~nan_log,1+(ss-1)*100:ss*100) = A_STC{ss}(:,matching_list(~nan_log,ss))';
     matchSTCs_B(~nan_log,1+(ss-1)*100:ss*100) = B_STC{ss}(:,matching_list(~nan_log,ss))';
@@ -137,13 +137,13 @@ matchSTC_nan_sorted.B = [matchSTC_sorted_nonan.B; matchSTC_sorted_nan.B];
 %% PV correlation analysis across days (relative to D1) for A and B trials
 
 %split matched neuron STC (non_norm) into cell of matrices
-for ss = 1:7
+for ss = options.sessionSelect
     matchSTCs_nn.A{ss} = matchSTCs_A_noNorm(:,1+(ss-1)*100:ss*100);
     matchSTCs_nn.B{ss} = matchSTCs_B_noNorm(:,1+(ss-1)*100:ss*100);
 end
 
 %run population correlation between non-norm event based STCs
-for ss = 2:7
+for ss = options.sessionSelect(2:end)
     %A corr across days
     PVcorr_rel_d1.A{ss-1} = corr(matchSTCs_nn.A{1},matchSTCs_nn.A{ss}, 'type','Pearson','rows','complete');
     %B corr across days
@@ -151,7 +151,7 @@ for ss = 2:7
 end
 
 %get mean PV score on each day relative to day 1
-for ss = 2:7
+for ss = options.sessionSelect(2:end)
     %A corr across days
     meanPV_rel_d1.A(ss-1) = nanmean(diag(PVcorr_rel_d1.A{ss-1}));
     %B corr across days
@@ -159,13 +159,13 @@ for ss = 2:7
 end
 
 %same day correlation between A and B trials
-for ss = 1:7
+for ss = options.sessionSelect
     %between A and B trials
     PVcorr_same_day.AB{ss} = corr(matchSTCs_nn.A{ss},matchSTCs_nn.B{ss}, 'type','Pearson','rows','complete');
 end
 
 %take mean of diagnonal of same day PV correlation
-for ss = 1:7
+for ss = options.sessionSelect
     %between A and B trials
     meanPV_same_day.AB(ss) = nanmean(diag(PVcorr_same_day.AB{ss}));
 end
@@ -179,8 +179,12 @@ ylim([0 1])
 ylabel('Mean correlation')
 p1 = plot(meanPV_same_day.AB,'m');
 legend([p1], 'A vs. B')
-xticks(1:7)
-xticklabels({'1 ', '2', '3','6','7', '8', '9'})
+xticks(options.sessionSelect)
+if options.learning_data ==1
+    xticklabels({'1 ', '2', '3','4','5', '6'})
+else
+    xticklabels({'1 ', '2', '3','6','7', '8', '9'})
+end
 
 %% Plot the mean PV correlation (rel to D1) as a line plot
 
@@ -192,15 +196,19 @@ ylabel('Mean correlation')
 p1 = plot(meanPV_rel_d1.A,'b');
 p2 = plot(meanPV_rel_d1.B,'r');
 legend([p1 p2], 'A','B')
-xticks(1:6)
-xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
+xticks(options.sessionSelect)
+if options.learning_data ==1
+    xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 4','1 vs. 5','1 vs. 6'})
+else
+    xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
+end
 
 %% TC correlation for neurons (relative to day1)
 
 %SI
 %for A tuned matching day 2 day (relative to D1)
 %for each session (relative to D1
-for ss=2:7
+for ss=options.sessionSelect(2:end)
     %get index of matches for filtered match matrix
     non_nan_idx = find(sum(~isnan(matching_list_filtered.si_Aall_filt_event_filt(:,[1,ss])),2) == 2);
     
@@ -215,7 +223,7 @@ end
 %SI
 %for B tuned matching day 2 day (relative to D1)
 %for each session (relative to D1
-for ss=2:7
+for ss=options.sessionSelect(2:end)
     %get index of matches for filtered match matrix
     non_nan_idx = find(sum(~isnan(matching_list_filtered.si_Ball_filt_event_filt(:,[1,ss])),2) == 2);
     
@@ -230,7 +238,7 @@ end
 %TS
 %for A tuned matching day 2 day (relative to D1)
 %for each session (relative to D1
-for ss=2:7
+for ss=options.sessionSelect(2:end)
     %get index of matches for filtered match matrix
     non_nan_idx = find(sum(~isnan(matching_list_filtered.ts_Aall_filt_event_filt(:,[1,ss])),2) == 2);
     
@@ -245,7 +253,7 @@ end
 %TS
 %for B tuned matching day 2 day (relative to D1)
 %for each session (relative to D1
-for ss=2:7
+for ss=options.sessionSelect(2:end)
     %get index of matches for filtered match matrix
     non_nan_idx = find(sum(~isnan(matching_list_filtered.ts_Ball_filt_event_filt(:,[1,ss])),2) == 2);
     
@@ -257,11 +265,8 @@ for ss=2:7
 
 end
 
-
-
-
 %take the diagonal and mean for TC correlation relative to D1
-for ss = 2:7
+for ss = options.sessionSelect(2:end)
     %SI
     %A corr across days
     meanTC_rel_d1.si.A(ss-1) = nanmean(diag(TCcorr_rel_d1.si.A{ss-1}));
@@ -276,7 +281,7 @@ end
 
 %TS
 
-%% Plot
+%% Plot - tuning curve correlations
 
 figure('Position',[2040 320 800 330]);
 subplot(1,2,1)
@@ -287,8 +292,13 @@ ylabel('Mean correlation')
 p1 = plot(meanTC_rel_d1.si.A,'b');
 p2 = plot(meanTC_rel_d1.si.B,'r');
 legend([p1 p2], 'A','B')
-xticks(1:6)
-xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
+xticks(options.sessionSelect)
+if options.learning_data ==1
+    xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 4','1 vs. 5','1 vs. 6'})
+
+else
+    xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
+end
 
 subplot(1,2,2)
 hold on
@@ -298,9 +308,12 @@ ylabel('Mean correlation')
 p1 = plot(meanTC_rel_d1.ts.A,'b');
 p2 = plot(meanTC_rel_d1.ts.B,'r');
 legend([p1 p2], 'A','B')
-xticks(1:6)
-xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
-
+xticks(options.sessionSelect)
+if options.learning_data ==1
+    xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 4','1 vs. 5','1 vs. 6'})
+else
+    xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
+end
 
 %% Export data for cumulative analysis for all animals
 

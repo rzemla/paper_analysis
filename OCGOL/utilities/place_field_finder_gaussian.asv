@@ -166,7 +166,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =58 %SI_tuned_ROIs%1:100
+    for rr =512 %SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -270,10 +270,13 @@ for rr = 1:size(pks,2) %SI_tuned_ROIs%1:100
                 %loc_range{rr}{peak_nb} = [round(lc{rr}(peak_nb)-(w{rr}(peak_nb)):round(lc{rr}(peak_nb)+(w{rr}(peak_nb))))];
                 curve_range{rr}{peak_nb} = ex_rate_map_sm(loc_range{rr}{peak_nb},rr);
                 
-                %add 0.01 to peak value(avoid error if neighboring
+                %add 0.01 to peak value(avoid error if neighboring max
+                %values are the same - return flat line fit)
+                [~,i_max] =max(curve_range{rr}{peak_nb});
+                curve_range{rr}{peak_nb}(i_max) = curve_range{rr}{peak_nb}(i_max) + 0.01;
                 
                 %fit gaussian to peak
-                [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', ex_rate_map_sm(loc_range{rr}{peak_nb},rr),'gauss1');
+                [f{rr}{peak_nb},gof{rr}{peak_nb},output{rr}{peak_nb}] = fit(loc_range{rr}{peak_nb}', curve_range{rr}{peak_nb},'gauss1');
                 %calculate gaussian at near range for fgir
                 gauss_fit{rr}{peak_nb} = f{rr}{peak_nb}.a1*exp(-(([loc_range{rr}{peak_nb}]-f{rr}{peak_nb}.b1)./f{rr}{peak_nb}.c1).^2);
                 
@@ -290,15 +293,15 @@ end
 %% Debug fitting param - solution to diff with fitting gaussian - if neighboring peak values are the same, git will return flat curve
 %solution add 0.01 (or slightly different from neighboring value for fit
 %work)
-[~,i_max] =max(y)
-y(i_max) = y(i_max)+0.01
-rr=58; peak_nb = 1
-x = loc_range{rr}{peak_nb};
-y= ex_rate_map_sm(loc_range{rr}{peak_nb},rr)
-%fit gaussian to peak
-[f_p,gof_p,output_p] = fit(x', y,'gauss1');
-%calculate gaussian at near range for fgir
-gauss_fit_p = f_p.a1*exp(-(([x]-f_p.b1)./f_p.c1).^2);
+% [~,i_max] =max(y)
+% y(i_max) = y(i_max)+0.01
+% rr=58; peak_nb = 1
+% x = loc_range{rr}{peak_nb};
+% y= ex_rate_map_sm(loc_range{rr}{peak_nb},rr)
+% %fit gaussian to peak
+% [f_p,gof_p,output_p] = fit(x', y,'gauss1');
+% %calculate gaussian at near range for fgir
+% gauss_fit_p = f_p.a1*exp(-(([x]-f_p.b1)./f_p.c1).^2);
 
 %% Check intersecting gaussian fit curves and merge
 
@@ -528,6 +531,31 @@ for rr =1:size(merge_peak_nb_edge,2)
         end
     end
 end
+
+%% Check that all place fields have both edges defined (not just 1 end) 
+%if 1 edge missing, determine which relative to center peak
+%for each ROI
+%for each ID'd place field
+for rr=1:size(gauss_fit_edges,2)
+    for pp=1:size(gauss_fit_edges{rr},2)
+        %if only 1 edge of place field detected
+        if size(gauss_fit_edges{rr}{pp},2) == 1
+            %check which edge is missing by comparing it to peak curve
+            %if existing edge greater than center of peak
+            if lc{rr}(pp) > gauss_fit_edges{rr}{pp}(1)
+                %fill in lower edge (by taking bin edge of fit)
+                 gauss_fit_edges{rr}{pp} = [[gauss_fit_bin_range{rr}{pp}(1); 0.05],   
+            else
+                %fill in farther edge
+                gauss_fit_bin_range{rr}{pp}(end)
+            end
+            
+        end
+    end
+end
+
+%edge values should be less than 0.1 for edge value corresponding to bin
+%necesssary for very wide fits 
 
 %% Set place field centers, edges
 %(take endpoints of fitting Gaussians)

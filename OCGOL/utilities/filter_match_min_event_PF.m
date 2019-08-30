@@ -1,4 +1,4 @@
-function [matching_list] = filter_match_min_event_PF(matching_list,select_fields)
+function [matching_list] = filter_match_min_event_PF(matching_list,select_fields,options)
 
 
 %% Generate logical vector filter to ensure at least 1 PF and 5 distinct events in field 
@@ -6,7 +6,7 @@ function [matching_list] = filter_match_min_event_PF(matching_list,select_fields
 %convert logical field in binary
 %for each session
 for ss=1:size(select_fields,2)
-    for tt=1:2
+    for tt=options.selectSes
         %for each ROI
         for rr=1:size(select_fields{ss}{tt},2)
             %find at least 1 PF with 5 distinct events
@@ -21,9 +21,9 @@ end
 %for each session (both trials)
 %generate for A trials and B trials as well (naming)
 for ss=1:size(select_fields,2)
-    select_fieldsAB{ss} = select_fields_binary{ss}{1} & select_fields_binary{ss}{2};
-    select_fieldsA{ss} = select_fields_binary{ss}{1};
-    select_fieldsB{ss} = select_fields_binary{ss}{2};
+    select_fieldsAB{ss} = select_fields_binary{ss}{options.selectSes(1)} & select_fields_binary{ss}{options.selectSes(2)};
+    select_fieldsA{ss} = select_fields_binary{ss}{options.selectSes(1)};
+    select_fieldsB{ss} = select_fields_binary{ss}{options.selectSes(2)};
 end
 
 %%

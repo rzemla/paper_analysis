@@ -1,4 +1,4 @@
-function [registered] = filter_matching_components(registered,tunedLogical,select_fields)
+function [registered] = filter_matching_components(registered,tunedLogical,select_fields,options)
 
 %% Define variables
 
@@ -14,7 +14,7 @@ matching_list.original = registered.multi.assigned_filtered;
 
 %% Parse the tuning criterion filtered matching neurons
 
-[matching_list] = filter_match_min_event_PF(matching_list,select_fields);
+[matching_list] = filter_match_min_event_PF(matching_list,select_fields,options);
 
 
 %% Output

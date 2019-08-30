@@ -166,7 +166,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =298 %SI_tuned_ROIs%1:100
+    for rr =512 %SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -531,6 +531,32 @@ for rr =1:size(merge_peak_nb_edge,2)
         end
     end
 end
+
+%% Check that all place fields have both edges defined (not just 1 end) 
+%if 1 edge missing, determine which relative to center peak
+%for each ROI
+%for each ID'd place field
+for rr=1:size(gauss_fit_edges,2)
+    for pp=1:size(gauss_fit_edges{rr},2)
+        %if only 1 edge of place field detected
+        if size(gauss_fit_edges{rr}{pp},2) == 1
+            %check which edge is missing by comparing it to peak curve
+            %if existing edge greater than center of peak
+            if lc{rr}(pp) > gauss_fit_edges{rr}{pp}(1)
+                %fill in lower edge (by taking bin edge of fit)
+                 gauss_fit_edges{rr}{pp} = [[gauss_fit_bin_range{rr}{pp}(1); 0.05], gauss_fit_edges{rr}{pp}];
+            else
+                %fill in farther edge
+                gauss_fit_edges{rr}{pp} = [gauss_fit_edges{rr}{pp},[gauss_fit_bin_range{rr}{pp}(end); 0.05]];
+            end
+            
+        end
+    end
+end
+
+%% Future check - see if any edge values are greater than 0.1 which may affect downstream mering
+%should be less than 0.1 for edge value corresponding to bin
+%necesssary for very wide fits 
 
 %% Set place field centers, edges
 %(take endpoints of fitting Gaussians)

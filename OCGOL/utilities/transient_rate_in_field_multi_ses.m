@@ -60,15 +60,15 @@ end
 for ss=1:size(session_vars,2)
     %get edges for corresponding bins!! - find place in spatial info where
     %correct A trials
-    run_position_norm{ss}{1} = Behavior_split{ss}{1}.resampled.run_position_norm;
+    run_position_norm{ss}{options.selectSes(1)} = Behavior_split{ss}{options.selectSes(1)}.resampled.run_position_norm;
     %correct B trials
-    run_position_norm{ss}{2} = Behavior_split{ss}{2}.resampled.run_position_norm;
+    run_position_norm{ss}{options.selectSes(2)} = Behavior_split{ss}{options.selectSes(2)}.resampled.run_position_norm;
     %Bin running position in 100 bins and get edges for each set of laps:
     %for each number of bins, bin the normalized position during run epochs
     %for correct A trials
-    [count_bin{ss}{1},edges{ss}{1},bin{ss}{1}] = histcounts(run_position_norm{ss}{1}, 100);
+    [count_bin{ss}{options.selectSes(1)},edges{ss}{options.selectSes(1)},bin{ss}{options.selectSes(1)}] = histcounts(run_position_norm{ss}{options.selectSes(1)}, 100);
     %for correct B trials
-    [count_bin{ss}{2},edges{ss}{2},bin{ss}{2}] = histcounts(run_position_norm{ss}{2}, 100);
+    [count_bin{ss}{options.selectSes(2)},edges{ss}{options.selectSes(2)},bin{ss}{options.selectSes(2)}] = histcounts(run_position_norm{ss}{options.selectSes(2)}, 100);
 end
 
 %% Event onsets in run interval
@@ -77,22 +77,22 @@ for ss=1:size(session_vars,2)
     %for each ROI
     for rr=1:size(events{ss}{1},2)
         %time of significant run events in A
-        event_norm_time{ss}.A{rr} = Imaging_split{ss}{1}.time_restricted(find(Event_split{ss}{1}.Run.run_onset_binary(:,rr) == 1))/60;
+        event_norm_time{ss}.A{rr} = Imaging_split{ss}{options.selectSes(1)}.time_restricted(find(Event_split{ss}{options.selectSes(1)}.Run.run_onset_binary(:,rr) == 1))/60;
         %normalizesd position of significant run events in A
-        event_norm_pos_run{ss}.A{rr} = Behavior_split{ss}{1}.resampled.position_norm(find(Event_split{ss}{1}.Run.run_onset_binary(:,rr) == 1));
+        event_norm_pos_run{ss}.A{rr} = Behavior_split{ss}{options.selectSes(1)}.resampled.position_norm(find(Event_split{ss}{options.selectSes(1)}.Run.run_onset_binary(:,rr) == 1));
         %lap assignment for A
-        event_lap_idx{ss}.A{rr} = Behavior_split{ss}{1}.resampled.lapNb(logical(Event_split{ss}{1}.Run.run_onset_binary(:,rr)));
+        event_lap_idx{ss}.A{rr} = Behavior_split{ss}{options.selectSes(1)}.resampled.lapNb(logical(Event_split{ss}{options.selectSes(1)}.Run.run_onset_binary(:,rr)));
         %get respective AUC values
-        event_AUC{ss}.A{rr} = Event_split{ss}{1}.Run.properties.AUC{rr};
+        event_AUC{ss}.A{rr} = Event_split{ss}{options.selectSes(1)}.Run.properties.AUC{rr};
         
         %time of significant run events in B
-        event_norm_time{ss}.B{rr} = Imaging_split{ss}{2}.time_restricted(find(Event_split{ss}{2}.Run.run_onset_binary(:,rr) == 1))/60;
+        event_norm_time{ss}.B{rr} = Imaging_split{ss}{options.selectSes(2)}.time_restricted(find(Event_split{ss}{options.selectSes(2)}.Run.run_onset_binary(:,rr) == 1))/60;
         %normalizesd position of significant run events in B
-        event_norm_pos_run{ss}.B{rr} = Behavior_split{ss}{2}.resampled.position_norm(find(Event_split{ss}{2}.Run.run_onset_binary(:,rr) == 1));
+        event_norm_pos_run{ss}.B{rr} = Behavior_split{ss}{options.selectSes(2)}.resampled.position_norm(find(Event_split{ss}{options.selectSes(2)}.Run.run_onset_binary(:,rr) == 1));
         %lap assignment for B
-        event_lap_idx{ss}.B{rr} = Behavior_split{ss}{2}.resampled.lapNb(logical(Event_split{ss}{2}.Run.run_onset_binary(:,rr)));
+        event_lap_idx{ss}.B{rr} = Behavior_split{ss}{options.selectSes(2)}.resampled.lapNb(logical(Event_split{ss}{options.selectSes(2)}.Run.run_onset_binary(:,rr)));
         %get respective AUC values
-        event_AUC{ss}.B{rr} = Event_split{ss}{2}.Run.properties.AUC{rr};
+        event_AUC{ss}.B{rr} = Event_split{ss}{options.selectSes(2)}.Run.properties.AUC{rr};
         
     end
 end
@@ -119,9 +119,9 @@ end
 for ss=1:size(session_vars,2)
     %get the edges of all neurons (all fields, not just max rate field)
     %correct A
-    placeField_edge{ss}{1} = Place_cell{ss}{options.selectSes(1)}.placeField.edge;
+    placeField_edge{ss}{options.selectSes(1)} = Place_cell{ss}{options.selectSes(1)}.placeField.edge;
     %correct B
-    placeField_edge{ss}{2} = Place_cell{ss}{options.selectSes(2)}.placeField.edge;
+    placeField_edge{ss}{options.selectSes(2)} = Place_cell{ss}{options.selectSes(2)}.placeField.edge;
     
 end
 
@@ -232,7 +232,7 @@ end
 
 %% Plot
 %which session
-session_nb = 7;
+session_nb = 6;
 
 %histogram of rates in id'd fields
 figure;
@@ -283,7 +283,7 @@ if 0
     figure;
     %for each ROI on the matching list
     for rr=1:size(matching_list,1)
-        for ss =1:7
+        for ss =1:6
             %plot unsmoothed/non-normalized event rate
             subplot(7,1,ss)
             hold on;
