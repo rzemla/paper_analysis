@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses)
+function [outputArg1,outputArg2] = visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses,crossdir)
 
 %number of session to look at
 %nb_ses = 6;
@@ -56,7 +56,7 @@ comb_batch = [start_batch; end_batch];
 %number of batch plots
 for pp=1:nb_plots
     
-    figure('renderer','painters','Position', [2200 100 1900 900]) %scale the width by 300 for each ses
+    f{pp} = figure('renderer','painters','Position', [2200 100 1900 900]); %scale the width by 300 for each ses
     %assign the roi range for display (group of ROI list
     %iterate through each range
     start_batch_idx = 0;
@@ -110,7 +110,14 @@ for pp=1:nb_plots
         %advance batch index
         start_batch_idx = start_batch_idx + 1;
     end
-    
+
+%save match_output for each run of 100 ROIs
+%print('-f4','MySavedPlot','-dtiff','-r600','-painters')
+%make dirctory with matching ROI images/outlines
+mkdir(fullfile(crossdir,'match_images'))
+disp(['Saving match ROIs ',num2str(pp)])
+export_fig(f{pp} ,fullfile(crossdir,'match_images',[num2str(pp),'_300.png']),'-r300')
+
 end
 
 end

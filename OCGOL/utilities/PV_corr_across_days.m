@@ -190,10 +190,11 @@ for ss=2:7
     d2d_match_list = matching_list_filtered.si_Aall_filt_event_filt(non_nan_idx,[1,ss]);
         
     %A corr across days
-    TCcorr_rel_d1.A{ss-1} = corr(A_STC_noNorm{1}(:,d2d_match_list(:,1)),A_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+    TCcorr_rel_d1.si.A{ss-1} = corr(A_STC_noNorm{1}(:,d2d_match_list(:,1)),A_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
 
 end
 
+%SI
 %for B tuned matching day 2 day (relative to D1)
 %for each session (relative to D1
 for ss=2:7
@@ -204,27 +205,80 @@ for ss=2:7
     d2d_match_list = matching_list_filtered.si_Ball_filt_event_filt(non_nan_idx,[1,ss]);
         
     %A corr across days
-    TCcorr_rel_d1.B{ss-1} = corr(B_STC_noNorm{1}(:,d2d_match_list(:,1)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+    TCcorr_rel_d1.si.B{ss-1} = corr(B_STC_noNorm{1}(:,d2d_match_list(:,1)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
 
 end
+
+%TS
+%for A tuned matching day 2 day (relative to D1)
+%for each session (relative to D1
+for ss=2:7
+    %get index of matches for filtered match matrix
+    non_nan_idx = find(sum(~isnan(matching_list_filtered.ts_Aall_filt_event_filt(:,[1,ss])),2) == 2);
+    
+    %generate day2 day match matrix
+    d2d_match_list = matching_list_filtered.ts_Aall_filt_event_filt(non_nan_idx,[1,ss]);
+        
+    %A corr across days
+    TCcorr_rel_d1.ts.A{ss-1} = corr(A_STC_noNorm{1}(:,d2d_match_list(:,1)),A_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+
+end
+
+%TS
+%for B tuned matching day 2 day (relative to D1)
+%for each session (relative to D1
+for ss=2:7
+    %get index of matches for filtered match matrix
+    non_nan_idx = find(sum(~isnan(matching_list_filtered.ts_Ball_filt_event_filt(:,[1,ss])),2) == 2);
+    
+    %generate day2 day match matrix
+    d2d_match_list = matching_list_filtered.ts_Ball_filt_event_filt(non_nan_idx,[1,ss]);
+        
+    %A corr across days
+    TCcorr_rel_d1.ts.B{ss-1} = corr(B_STC_noNorm{1}(:,d2d_match_list(:,1)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+
+end
+
+
+
 
 %take the diagonal and mean for TC correlation relative to D1
 for ss = 2:7
+    %SI
     %A corr across days
-    meanTC_rel_d1.A(ss-1) = nanmean(diag(TCcorr_rel_d1.A{ss-1}));
+    meanTC_rel_d1.si.A(ss-1) = nanmean(diag(TCcorr_rel_d1.si.A{ss-1}));
     %B corr across days
-    meanTC_rel_d1.B(ss-1) = nanmean(diag(TCcorr_rel_d1.B{ss-1}));
+    meanTC_rel_d1.si.B(ss-1) = nanmean(diag(TCcorr_rel_d1.si.B{ss-1}));
+    %TS
+    %A corr across days
+    meanTC_rel_d1.ts.A(ss-1) = nanmean(diag(TCcorr_rel_d1.ts.A{ss-1}));
+    %B corr across days
+    meanTC_rel_d1.ts.B(ss-1) = nanmean(diag(TCcorr_rel_d1.ts.B{ss-1}));    
 end
+
+%TS
 
 %% Plot
 
 figure;
+subplot(1,2,1)
 hold on
-title('Tuning curve correlation relative to D1')
+title('Tuning curve correlation relative to D1 (S.I.)')
 ylim([0 1])
 ylabel('Mean correlation')
-p1 = plot(meanTC_rel_d1.A,'b');
-p2 = plot(meanTC_rel_d1.B,'r');
+p1 = plot(meanTC_rel_d1.si.A,'b');
+p2 = plot(meanTC_rel_d1.si.B,'r');
+legend([p1 p2], 'A','B')
+xticks(1:6)
+xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
+
+subplot(1,2,2)
+hold on
+title('Tuning curve correlation relative to D1 (T.S.)')
+ylim([0 1])
+ylabel('Mean correlation')
+p1 = plot(meanTC_rel_d1.ts.A,'b');
+p2 = plot(meanTC_rel_d1.ts.B,'r');
 legend([p1 p2], 'A','B')
 xticks(1:6)
 xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})

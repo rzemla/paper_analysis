@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = non_norm_matching_STC_rasters(animal_data, tunedLogical,registered,options)
+function [outputArg1,outputArg2] = non_norm_matching_STC_rasters(animal_data, tunedLogical,registered,options,crossdir)
 
 
 %% Get list of matching ROIs across sessions
@@ -232,7 +232,9 @@ matchSTC_norm_nan_sorted.A = [matchSTC_norm_sorted_nonan.A; matchSTC_norm_sorted
 matchSTC_norm_nan_sorted.BrelA = [matchSTC_norm_sorted_nonan.BrelA; matchSTC_norm_sorted_nan.BrelA];
 
 %% Plot normalized and A sorted STC rasters
-figure
+f = figure('Position',[2075 40 1630 930]);
+%set background to white
+set(f,'color','w');
 %A
 subplot(1,2,1)
 %create blank alpha shading matrix where
@@ -242,10 +244,36 @@ imAlpha=ones(size(matchSTC_norm_nan_sorted.A));
 imAlpha(isnan(matchSTC_norm_nan_sorted.A))=0;
 %plot raster with transparency matrix set
 imagesc(matchSTC_norm_nan_sorted.A,'AlphaData',imAlpha);
+hold on
+title({'A trials',''})
+ylabel('Matching neurons')
+xlabel('Track position [m]')
+xticks([300 400])
+xticklabels({'0', '2'})
+set(gca,'FontSize',14)
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
 %set colormap to 
 colormap(gca,'jet');
+%first axis for position
+ax1 = gca;
+ax1_pos = ax1.Position;
+%second axis for day label
+ax2 = axes('Position',ax1_pos,...
+    'XAxisLocation','top',...
+    'YAxisLocation','right',...
+    'Color','none');
+yticks(ax2,[]);
+xlim(ax2,[1 700])
+xticks(ax2,[50:100:700])
+xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 6','Day 7','Day 8','Day 9'})
+set(ax2,'FontSize',12')
+set(ax2,'FontWeight','Bold')
+set(ax2,'FontAngle','Italic')
+%add horizontal line to delineate sessions
+for ll = 1:6 %6 separators
+plot(ax1,[ll*100 ll*100],[1, size(matching_list,1)],'LineWidth',1,'Color',[1 1 1],'LineStyle','--')
+end
 
 %B
 subplot(1,2,2)
@@ -256,98 +284,42 @@ imAlpha=ones(size(matchSTC_norm_nan_sorted.BrelA));
 imAlpha(isnan(matchSTC_norm_nan_sorted.BrelA))=0;
 %plot raster with transparency matrix set
 imagesc(matchSTC_norm_nan_sorted.BrelA,'AlphaData',imAlpha);
+hold on
+
+title({'B trials',''})
+xlabel('Track position [m]')
+xticks([300 400])
+xticklabels({'0', '2'})
+set(gca,'FontSize',14)
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
 %set colormap to 
 colormap(gca,'jet');
-
-%% PV correlation analysis across days (relative to D1) for A and B trials
-
-%split matched neuron STC (non_norm) into cell of matrices
-for ss = 1:7
-    matchSTCs_nn.A{ss} = matchSTCs_A_noNorm(:,1+(ss-1)*100:ss*100);
-    matchSTCs_nn.B{ss} = matchSTCs_B_noNorm(:,1+(ss-1)*100:ss*100);
+%first axis for position
+ax1 = gca;
+ax1_pos = ax1.Position;
+%second axis for day label
+ax2 = axes('Position',ax1_pos,...
+    'XAxisLocation','top',...
+    'YAxisLocation','right',...
+    'Color','none');
+yticks(ax2,[]);
+xlim(ax2,[1 700])
+xticks(ax2,[50:100:700])
+xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 6','Day 7','Day 8','Day 9'})
+set(ax2,'FontSize',12')
+set(ax2,'FontWeight','Bold')
+set(ax2,'FontAngle','Italic')
+%add horizontal line to delineate sessions
+for ll = 1:6 %6 separators
+plot(ax1,[ll*100 ll*100],[1, size(matching_list,1)],'LineWidth',1,'Color',[1 1 1],'LineStyle','--')
 end
 
-%run population correlation between non-norm event based STCs
-for ss = 2:7
-    %A corr across days
-    PVcorr_rel_d1.A{ss-1} = corr(matchSTCs_nn.A{1},matchSTCs_nn.A{ss}, 'type','Pearson','rows','complete');
-    %B corr across days
-    PVcorr_rel_d1.B{ss-1} = corr(matchSTCs_nn.B{1},matchSTCs_nn.B{ss}, 'type','Pearson','rows','complete');   
-end
+%save global STC (all matching neurons)
+mkdir(fullfile(crossdir,'match_STC'))
+disp('Saving match ROIs STC ')
+export_fig(f ,fullfile(crossdir,'match_STC','all_matching_300.png'),'-r300')
 
-%get mean PV score on each day relative to day 1
-for ss = 2:7
-    %A corr across days
-    meanPV_rel_d1.A(ss-1) = nanmean(diag(PVcorr_rel_d1.A{ss-1}));
-    %B corr across days
-    meanPV_rel_d1.B(ss-1) = nanmean(diag(PVcorr_rel_d1.B{ss-1}));
-end
-
-%same day correlation between A and B trials
-for ss = 1:7
-    %between A and B trials
-    PVcorr_same_day.AB{ss} = corr(matchSTCs_nn.A{ss},matchSTCs_nn.B{ss}, 'type','Pearson','rows','complete');
-end
-
-%% Plot the mean PV correlation as a line plot
-
-figure;
-hold on
-title('Population vector correlation relative to D1')
-ylim([0 1])
-ylabel('Mean correlation')
-p1 = plot(meanPV_rel_d1.A,'b');
-p2 = plot(meanPV_rel_d1.B,'r');
-legend([p1 p2], 'A','B')
-xticks(1:6)
-xticklabels({'1 vs. 2', '1 vs.3', '1 vs. 6','1 vs. 7','1 vs. 8', '1 vs. 9'})
-
-
-%% %% PV correlation analysis across days (function of time)
-
-%% OLD CODE
-%{
-%% Plot STCs from ROIs matching 1 and any chosen session thereafter
-ses_comp = 7;
-
-%get the matching ROIs from 2 ses
-matching_ses_ROI_idxs = matching_list(:,[1,ses_comp]);
-%get rid of nan values and get non-nan ROIs on both ses
-matching_ses_ROI_idxs_nonan = matching_ses_ROI_idxs(find(sum(isnan(matching_ses_ROI_idxs),2)==0),:);
-
-%generate matching A STC
-A_comp_STCs = [A_STC{1}(:,matching_ses_ROI_idxs_nonan(:,1))', A_STC{ses_comp}(:,matching_ses_ROI_idxs_nonan(:,2))'];
-%generate matching B STC
-B_comp_STCs = [B_STC{1}(:,matching_ses_ROI_idxs_nonan(:,1))', B_STC{ses_comp}(:,matching_ses_ROI_idxs_nonan(:,2))'];
-
-%sort by A on ses 1 and apply sort downstream
-%sort by A trials on session 1
-[~,matched_maxBin_A] = max(A_comp_STCs(:,1:100)', [], 1);
-%[~,matched_maxBin_A] = max(A_comp_STCs(:,101:200)', [], 1);
-%sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
-[~,matched_sortOrder_A] = sort(matched_maxBin_A,'ascend');
-%find max bin for each ROI and return index
-[~,matched_maxBin_B] = max(B_comp_STCs(:,1:100)', [], 1);
-%sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
-[~,matched_sortOrder_B] = sort(matched_maxBin_B,'ascend');
-
-%plot
-figure('Position',[2630 50 490 890])
-subplot(2,1,1)
-imagesc(A_comp_STCs(matched_sortOrder_A,:))
-hold on
-colormap('jet')
-caxis([0 1]);
-
-subplot(2,1,2)
-imagesc(B_comp_STCs(matched_sortOrder_B,:))
-hold on
-colormap('jet')
-caxis([0 1]);
-
-%}
 
 end
 

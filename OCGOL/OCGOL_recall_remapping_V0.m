@@ -24,25 +24,25 @@ options.register = 0;
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I47_LP\crossSession';
 
-%  path_dir = {'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d1_032118_1',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d2_032218_2',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d3_032318_3',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d6_032618_4_2',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d7_032718_5',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d8_032818_6',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d9_032918_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
-% 
- path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
-     'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
-     'G:\OCGOL_stability_recall\I46\I46_AB_d3_062218_3',...
-     'G:\OCGOL_stability_recall\I46\I46_AB_d6_062518_4',...
-     'G:\OCGOL_stability_recall\I46\I46_AB_d7_062618_5',...
-     'G:\OCGOL_stability_recall\I46\I46_AB_d8_062718_6',...
-     'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
+ path_dir = {'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d1_032118_1',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d2_032218_2',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d3_032318_3',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d6_032618_4_2',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d7_032718_5',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d8_032818_6',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d9_032918_7'};
 %cross session directory
-crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
+crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
+% 
+%  path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
+%      'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
+%      'G:\OCGOL_stability_recall\I46\I46_AB_d3_062218_3',...
+%      'G:\OCGOL_stability_recall\I46\I46_AB_d6_062518_4',...
+%      'G:\OCGOL_stability_recall\I46\I46_AB_d7_062618_5',...
+%      'G:\OCGOL_stability_recall\I46\I46_AB_d8_062718_6',...
+%      'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
 
 %  path_dir = {'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d1_062018_1',...
 %      'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d2_062118_2',...
@@ -135,7 +135,7 @@ cols = 7; %take # of sessions as input
 %number of sessions to look at
 nb_ses = cols;
 
-visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses);
+visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses,crossdir);
 
 
 %% Calculate relevant place fields
@@ -148,9 +148,10 @@ options.gSigma = 3;
 
 %for each session
 for ss = [1 2 3 4 5 6 7]%1:size(session_vars,2) %1,2,3,4,5,6 OK
+    disp(['Running session: ', num2str(ss)]);
     for ii = [1,2]
         options.place_struct_nb = ii;
-        disp(ii);
+        disp(['Running trial type: ', num2str(ii)]);
         [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
     end
     disp('Session: '); disp(ss);
@@ -185,6 +186,25 @@ options.selectSes = [1 2];
 %least 5 events on distinct laps within that PF - otherwise not PF
 [registered] = filter_matching_components(registered,tunedLogical,select_fields);
 
+
+%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+options.sessionSelect = [1 2 3 4 5 6 7];
+[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
+
+%save to output file for cumulative analysis
+save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
+
+%% All neuron (at least 2 match between sessions) raster (non_norm)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+options.sessionSelect = [1 2 3 4 5 6 7];
+non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
+
+
 %% Centroid difference (max transient rate)
 
 options.tuning_criterion = 'ts';
@@ -214,21 +234,6 @@ B_perf(1) = length(find(session_vars{1}.Behavior.performance.trialOrder == 3))/.
 B_perf(2) = length(find(session_vars{2}.Behavior.performance.trialOrder == 3))/...
     size(find(session_vars{2}.Behavior.performance.trialOrder == 3 | session_vars{2}.Behavior.performance.trialOrder == 30),1);
 
-
-
-%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 7];
-PV_corr_across_days(session_vars,tunedLogical,registered,options)
-
-%% All neuron (at least 2 match between sessions) raster (non_norm)
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 7];
-non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options)
 
 %% Measure PV and TC correlation between A/B trial on first training day and once learned
 %expect greater dissimilarity once learned
