@@ -216,6 +216,17 @@ options.learning_data = 0;
 non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
 
 
+%% Extract performance fractions across sessions (respective laps)
+%check if agree with manual analysis
+%turn into table with future code upgrade
+
+%which sessions to use
+options.sessionSelect = [1 2 3 4 5 6 7];
+%chose all A/B (learning) vs. only correct A/B (recall)
+options.selectTrial = [1,2];
+
+[session_performance] = session_performance(session_vars,options);
+
 %% Centroid difference (max transient rate)
 
 options.tuning_criterion = 'ts';
@@ -229,22 +240,6 @@ TS_score_diff(session_vars,tunedLogical,registered)
 
 options.tuning_criterion = 'ts'; %si or ts
 plot_STC_transient_rate(session_vars,tunedLogical,registered,field_event_rates, pf_vector,options)
-
-%% Performance fractions
-
-all_perf(1) = length(find(session_vars{1}.Behavior.performance.trialCorrect ==1))/size(session_vars{1}.Behavior.performance.trialCorrect,1);
-all_perf(2) = length(find(session_vars{2}.Behavior.performance.trialCorrect ==1))/size(session_vars{2}.Behavior.performance.trialCorrect,1);
-
-A_perf(1) = length(find(session_vars{1}.Behavior.performance.trialOrder == 2))/...
-    size(find(session_vars{1}.Behavior.performance.trialOrder == 2 | session_vars{1}.Behavior.performance.trialOrder == 20),1);
-A_perf(2) = length(find(session_vars{2}.Behavior.performance.trialOrder == 2))/...
-    size(find(session_vars{2}.Behavior.performance.trialOrder == 2 | session_vars{2}.Behavior.performance.trialOrder == 20),1);
-
-B_perf(1) = length(find(session_vars{1}.Behavior.performance.trialOrder == 3))/...
-    size(find(session_vars{1}.Behavior.performance.trialOrder == 3 | session_vars{1}.Behavior.performance.trialOrder == 30),1);
-B_perf(2) = length(find(session_vars{2}.Behavior.performance.trialOrder == 3))/...
-    size(find(session_vars{2}.Behavior.performance.trialOrder == 3 | session_vars{2}.Behavior.performance.trialOrder == 30),1);
-
 
 %% Measure PV and TC correlation between A/B trial on first training day and once learned
 %expect greater dissimilarity once learned

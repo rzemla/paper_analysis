@@ -368,7 +368,10 @@ PV_TC_corr.meanTC_rel_d1 = meanTC_rel_d1;
 PV_TC_corr.meanPV_rel_d1 = meanPV_rel_d1;
 %PV correlations same day
 PV_TC_corr.meanPV_same_day = meanPV_same_day;
-
+%PV correlation - same day - all neurons
+PV_TC_corr.PVcorr_all_same_day = PVcorr_all_same_day;
+%PV correlation - same day - all neurons - diagnonal values (bin by bin)
+PV_TC_corr.PVcorr_all_same_day_diag = PVcorr_all_same_day_diag;
 
 end
 
