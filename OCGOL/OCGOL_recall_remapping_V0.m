@@ -225,7 +225,11 @@ options.sessionSelect = [1 2 3 4 5 6 7];
 %chose all A/B (learning) vs. only correct A/B (recall)
 options.selectTrial = [1,2];
 
-[session_performance] = session_performance(session_vars,options);
+[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
+
+%export session performance data
+save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
+
 
 %% Centroid difference (max transient rate)
 
