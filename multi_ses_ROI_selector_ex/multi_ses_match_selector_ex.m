@@ -1,35 +1,35 @@
 function varargout = multi_ses_match_selector_ex(varargin)
-% MULTI_SES_MATCH_SELECTOR MATLAB code for multi_ses_match_selector.fig
-%      MULTI_SES_MATCH_SELECTOR, by itself, creates a new MULTI_SES_MATCH_SELECTOR or raises the existing
+% MULTI_SES_MATCH_SELECTOR_EX MATLAB code for multi_ses_match_selector_ex.fig
+%      MULTI_SES_MATCH_SELECTOR_EX, by itself, creates a new MULTI_SES_MATCH_SELECTOR_EX or raises the existing
 %      singleton*.
 %
-%      H = MULTI_SES_MATCH_SELECTOR returns the handle to a new MULTI_SES_MATCH_SELECTOR or the handle to
+%      H = MULTI_SES_MATCH_SELECTOR_EX returns the handle to a new MULTI_SES_MATCH_SELECTOR_EX or the handle to
 %      the existing singleton*.
 %
-%      MULTI_SES_MATCH_SELECTOR('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in MULTI_SES_MATCH_SELECTOR.M with the given input arguments.
+%      MULTI_SES_MATCH_SELECTOR_EX('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in MULTI_SES_MATCH_SELECTOR_EX.M with the given input arguments.
 %
-%      MULTI_SES_MATCH_SELECTOR('Property','Value',...) creates a new MULTI_SES_MATCH_SELECTOR or raises the
+%      MULTI_SES_MATCH_SELECTOR_EX('Property','Value',...) creates a new MULTI_SES_MATCH_SELECTOR_EX or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before multi_ses_match_selector_OpeningFcn gets called.  An
+%      applied to the GUI before multi_ses_match_selector_ex_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to multi_ses_match_selector_OpeningFcn via varargin.
+%      stop.  All inputs are passed to multi_ses_match_selector_ex_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help multi_ses_match_selector
+% Edit the above text to modify the response to help multi_ses_match_selector_ex
 
-% Last Modified by GUIDE v2.5 31-Aug-2019 15:58:23
+% Last Modified by GUIDE v2.5 31-Aug-2019 17:33:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @multi_ses_match_selector_OpeningFcn, ...
-                   'gui_OutputFcn',  @multi_ses_match_selector_OutputFcn, ...
+                   'gui_OpeningFcn', @multi_ses_match_selector_ex_OpeningFcn, ...
+                   'gui_OutputFcn',  @multi_ses_match_selector_ex_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,15 +44,15 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before multi_ses_match_selector is made visible.
-function multi_ses_match_selector_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before multi_ses_match_selector_ex is made visible.
+function multi_ses_match_selector_ex_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to multi_ses_match_selector (see VARARGIN)
+% varargin   command line arguments to multi_ses_match_selector_ex (see VARARGIN)
 
-% Choose default command line output for multi_ses_match_selector
+% Choose default command line output for multi_ses_match_selector_ex
 handles.output = hObject;
 
 %load variablesi into handles
@@ -140,7 +140,7 @@ for ii=1:size(handles.assign,2)
                 %axis OFF
             case 9
                 axes(handles.axes9);
-                %axis OFF
+                %axis OFF                
         end
         
         %plot the template
@@ -201,7 +201,7 @@ hold off
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = multi_ses_match_selector_OutputFcn(hObject, eventdata, handles) 
+function varargout = multi_ses_match_selector_ex_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB

@@ -12,6 +12,8 @@ matching_list = registered.multi.assigned_filtered;
 %event,PF, and criteria filtered
 matching_list_filtered = registered.multi.matching_list_filtered;
 
+%number of sessions
+nb_ses = size(options.sessionSelect,2);
 
 %% Extract mean STC map in each spatial bin (not normalized and not occupancy divided) (100 bins)
 %for each session
@@ -170,6 +172,42 @@ for ss = options.sessionSelect
     meanPV_same_day.AB(ss) = nanmean(diag(PVcorr_same_day.AB{ss}));
 end
 
+%% PV correlation (all neurons) - same day for each session
+%expect the value to to down with learning and remain constant with recall
+%no filter at the moment
+for ss = options.sessionSelect
+    PVcorr_all_same_day{ss} = corr(A_STC_noNorm{ss}',B_STC_noNorm{ss}', 'type','Pearson','rows','complete');
+    PVcorr_all_same_day_diag(ss,:) = diag(PVcorr_all_same_day{ss});
+end
+
+
+%plot A vs B PV vectors as fxn of track/bin position across sessions
+cmap_purple = cbrewer('seq','YlGn',nb_ses);
+figure;
+hold on
+for ss=1:nb_ses
+    plot(PVcorr_all_same_day_diag(ss,:),'Color',cmap_purple(ss,:))
+end
+
+
+%plot as raster for the animal
+figure
+imagesc(PVcorr_all_same_day_diag)
+hold on
+caxis([0 1])
+colormap('jet')
+
+%plot diagonal curves across sessions
+
+%% Mean PV as function of task performance
+
+
+%% TC correlation between session of A&B tuned neurons
+
+
+%% Do above PV and TC correlations for day-2-day matching neurons
+
+
 %% Plot the mean PV correlation (same day) as a line plot
 
 figure('Position',[2845 320 430 330]);
@@ -244,10 +282,14 @@ for ss=options.sessionSelect(2:end)
     
     %generate day2 day match matrix
     d2d_match_list = matching_list_filtered.ts_Aall_filt_event_filt(non_nan_idx,[1,ss]);
-        
-    %A corr across days
-    TCcorr_rel_d1.ts.A{ss-1} = corr(A_STC_noNorm{1}(:,d2d_match_list(:,1)),A_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
-
+    
+    %if not matched
+    if ~isempty(d2d_match_list)
+        %A corr across days
+        TCcorr_rel_d1.ts.A{ss-1} = corr(A_STC_noNorm{1}(:,d2d_match_list(:,1)),A_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+    else
+        TCcorr_rel_d1.ts.A{ss-1} = nan;
+    end
 end
 
 %TS
@@ -259,10 +301,13 @@ for ss=options.sessionSelect(2:end)
     
     %generate day2 day match matrix
     d2d_match_list = matching_list_filtered.ts_Ball_filt_event_filt(non_nan_idx,[1,ss]);
-        
-    %A corr across days
-    TCcorr_rel_d1.ts.B{ss-1} = corr(B_STC_noNorm{1}(:,d2d_match_list(:,1)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
-
+       %if not matched
+       if ~isempty(d2d_match_list)
+           %A corr across days
+           TCcorr_rel_d1.ts.B{ss-1} = corr(B_STC_noNorm{1}(:,d2d_match_list(:,1)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+       else
+           TCcorr_rel_d1.ts.A{ss-1} = nan;
+       end
 end
 
 %take the diagonal and mean for TC correlation relative to D1

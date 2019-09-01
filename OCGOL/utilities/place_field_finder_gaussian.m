@@ -1,5 +1,12 @@
 function [Place_cell] = place_field_finder_gaussian(Place_cell,options)
 
+%% Disable min peak height warning for peak finder fxn
+
+warning_id = 'signal:findpeaks:largeMinPeakHeight';
+warning('off',warning_id);
+
+%% Set parameters
+
 %find place fields based on Zaremba et al. 2017
 %gaussian kernel with sigma = 3 spatial bins
 
@@ -93,7 +100,7 @@ end
 %% Plot to visualize maxima - skip; move advanced plotting beloq
 if 0
     figure;
-    for rr=58%1:size(ex_rate_map,2)
+    for rr=282%1:size(ex_rate_map,2)
         hold on;
         %plot smoothed rate map
         plot(ex_rate_map_sm(:,rr),'k');
@@ -166,7 +173,7 @@ toc;
 %skip for now - add as option later for display
 if 0
     figure;
-    for rr =512 %SI_tuned_ROIs%1:100
+    for rr =282 %SI_tuned_ROIs%1:100
         subplot(2,1,1)
         if ~isempty(pks{rr})
             %for each id'd peak
@@ -249,7 +256,7 @@ end
 %RESUME HERE
 count_nb = 0;
 %how many bins to extend on each end when trying to re-adjust Gaussian fit
-adjust_width = 4;
+adjust_width = -2;
 
 for rr = 1:size(pks,2) %SI_tuned_ROIs%1:100
     if ~isempty(pks{rr})

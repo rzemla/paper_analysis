@@ -1,18 +1,18 @@
 %% Import variables and define options
 
 %run componenet registration across sessions
-options.register = 1;
+options.register = 0;
 
 %lab workstation
 %input directories to matching function
-%  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+ path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+%cross session directory
+crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
 
 % %I57_RTLS
 %  path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
@@ -26,16 +26,17 @@ options.register = 1;
 % crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 
 %I57_LT
- path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
-%cross session directory
-crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
+%  path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
+%  %,...
+%      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
+%      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
 
 %% Load place cell variables for each session
 %get mat directories in each output folder
@@ -48,6 +49,7 @@ end
 for ii = [1 2 3 4 5 6]%1:size(path_dir,2)
     %add event variables
     disp(ii)
+    %decide which variables here do not need to be loaded
     session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
         'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split');
 end
@@ -80,11 +82,14 @@ match_var = load(filtered_ROI_dir_path.name);
 %load in registered struct
 registered.multi.assigned_filtered = match_var.ROI_assign_multi_filtered;
 
+
 %% Get ROI_zooms and ROI_outlines for each neuron on each day
 %number of sessions (runs even if not all session vars are loaded)
 %already soma parsed
 nbSes = size(session_vars,2);
-[ROI_zooms, ROI_outlines] = defineOutlines_eachSes(nbSes,session_vars, path_dir);
+if 0
+    [ROI_zooms, ROI_outlines] = defineOutlines_eachSes(nbSes,session_vars, path_dir);
+end
 
 %% Visualize the matching ROIs that were matched above (match on every session only!)
 %number of ROIs (rows) by sessions (cols)
@@ -100,8 +105,9 @@ cols = 6; %take # of sessions as input
 
 %number of sessions to look at
 nb_ses = cols;
-
-visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses,crossdir);
+if 0
+    visualize_matches_filtered(rows,cols,registered,ROI_zooms,ROI_outlines,nb_ses,crossdir);
+end
 
 %% Calculate relevant place fields
 %use rate map - number of event onsets/ occupancy across all laps
@@ -110,9 +116,12 @@ options.gSigma = 3;
 %iterate through place_cell cells of interest
 %4 - all A regardless if correct
 %5 - all B regardless if correct
-%I57 RTLS - problem with 4,4
+%I57 RTLS - problem with 4,4 - fixed
+%I57 LT - problem with ses 4, trial 5 adjust (set to -2) - narrow as opposed to
+%extend field - apply to rest of animals
 
 for ss = [1 2 3 4 5 6]%1:size(session_vars,2) %1,2,3,4,5,6 OK
+    %for ss= [4]
     disp(['Running session: ', num2str(ss)]);
     for ii = [4,5]
         options.place_struct_nb = ii;
@@ -120,6 +129,16 @@ for ss = [1 2 3 4 5 6]%1:size(session_vars,2) %1,2,3,4,5,6 OK
         [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
     end
     disp('Session: '); disp(ss);
+end
+
+%% Insert save checkpoint here to avoid re-preprocessing above data
+
+%create cross session processed/loaded data directory
+mkdir(fullfile(crossdir,'cross_data'))
+if 0
+%save the loaded and processed componenet/place cell data
+disp('Saving place field, session variables, and component matching data');
+save(fullfile(crossdir,'cross_data','cross_loaded.mat'),'session_vars','ROI_outlines','ROI_zooms','registered','-v7.3');
 end
 
 %% Define tuned logical vectors
@@ -170,6 +189,17 @@ options.learning_data = 1;
 
 %save to output file for cumulative analysis
 save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
+
+%% All neuron (at least 2 match between sessions) raster (non_norm)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+options.sessionSelect = [1 2 3 4 5 6];
+%chose all A/B (learning) vs. only correct A/B (recall)
+options.selectTrial = [4,5];
+%is it a learning set (for plot/raster annotation)
+options.learning_data = 1;
+non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
 
 %% Plot smoothed event rate across track (function)
 
@@ -400,6 +430,8 @@ plot_STC_OCGOL_training(session_vars,tunedLogical,registered,options)
 options.tuning_criterion = 'si'; %si or ts
 options.sessionSelect = [1 2 3 4 5 6];
 non_norm_matching_STC_rasters_learning(session_vars,tunedLogical,registered,options)
+
+
 
 
 %% Measure PV and TC correlation between A/B trial on first training day and once learned

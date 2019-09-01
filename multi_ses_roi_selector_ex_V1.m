@@ -182,7 +182,7 @@ ROI_assign_multi_filtered(filtered_idxs,:) = [];
 %generate 2D logical
 assign_sel_log_filtered = ~isnan(ROI_assign_multi_filtered);
 
-multi_ses_match_selector(selector_var,ROI_assign_multi_filtered,assign_sel_log_filtered);
+multi_ses_match_selector_ex(selector_var,ROI_assign_multi_filtered,assign_sel_log_filtered);
 
 %% Save and export
 

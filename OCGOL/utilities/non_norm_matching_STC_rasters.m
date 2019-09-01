@@ -10,19 +10,21 @@ function [outputArg1,outputArg2] = non_norm_matching_STC_rasters(animal_data, tu
 %use matches that were additionally manually filtered for mismatches
 matching_list = registered.multi.assigned_filtered;
 
+%number of sessions
+nb_ses = size(options.sessionSelect,2);
 
 %% Extract mean STC map in each spatial bin (not normalized and not occupancy divided) (100 bins)
 %for each session
 for ss = options.sessionSelect%1:size(animal_data,2)
     %normalized to A or B trials independently
-    A_STC{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve;
-    B_STC{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve;
+    A_STC{ss} = animal_data{ss}.Place_cell{options.selectTrial(1)}.Spatial_tuning_curve;
+    B_STC{ss} = animal_data{ss}.Place_cell{options.selectTrial(2)}.Spatial_tuning_curve;
     
     %Gs smoothed, but not normalized (nn) to itself
     %animal_data{ss}.Place_cell{1}.Spatial_Info.rate_map_smooth{8}
     %same as the following
-    A_STC_noNorm{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve_no_norm;
-    B_STC_noNorm{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve_no_norm;
+    A_STC_noNorm{ss} = animal_data{ss}.Place_cell{options.selectTrial(1)}.Spatial_tuning_curve_no_norm;
+    B_STC_noNorm{ss} = animal_data{ss}.Place_cell{options.selectTrial(2)}.Spatial_tuning_curve_no_norm;
   
     %dF/F (like STC - normalized) 
     %A_df{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_dF;
@@ -30,8 +32,8 @@ for ss = options.sessionSelect%1:size(animal_data,2)
     
     %not occupancy normalized mean dF values across respective A and B
     %trials (not Gaussian smoothed)
-    A_df_non_oc{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.mean_dF_map{8};
-    B_df_non_oc{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.mean_dF_map{8};
+    A_df_non_oc{ss} = animal_data{ss}.Place_cell{options.selectTrial(1)}.Spatial_Info.mean_dF_map{8};
+    B_df_non_oc{ss} = animal_data{ss}.Place_cell{options.selectTrial(2)}.Spatial_Info.mean_dF_map{8};
     
 end
 
@@ -43,7 +45,7 @@ end
 
 %% Normalized to max STC value across A and B trials (for each ROI)
 %for each session, take max value for each ROI
-for ss=1:7
+for ss=options.sessionSelect
     %make cumulative matrix for that session
     comb_STC = [A_STC_noNorm{ss}; B_STC_noNorm{ss}];
     %get min and max value for each ROI (min should all be 0 for STC based on event
@@ -78,20 +80,20 @@ end
 %generate blank ROI by bins matrix
 
 %normalized to A/self trials
-matchSTCs_A = zeros(size(matching_list,1),7*100);
-matchSTCs_B = zeros(size(matching_list,1),7*100);
+matchSTCs_A = zeros(size(matching_list,1),nb_ses*100);
+matchSTCs_B = zeros(size(matching_list,1),nb_ses*100);
 
 %normalized across both A and B trials
-matchSTCs_A_norm = zeros(size(matching_list,1),7*100);
-matchSTCs_B_norm = zeros(size(matching_list,1),7*100);
+matchSTCs_A_norm = zeros(size(matching_list,1),nb_ses*100);
+matchSTCs_B_norm = zeros(size(matching_list,1),nb_ses*100);
 
 %not self normalized both A and B trials
-matchSTCs_A_noNorm = zeros(size(matching_list,1),7*100);
-matchSTCs_B_Nonorm = zeros(size(matching_list,1),7*100);
+matchSTCs_A_noNorm = zeros(size(matching_list,1),nb_ses*100);
+matchSTCs_B_Nonorm = zeros(size(matching_list,1),nb_ses*100);
 
 
 %fill the nan assignments to STC to be NaN
-for ss=1:7
+for ss=options.sessionSelect
     nan_log = isnan(matching_list(:,ss));
     %norm self
     matchSTCs_A(nan_log,1+(ss-1)*100:ss*100) = NaN;
@@ -106,7 +108,7 @@ for ss=1:7
 end
 
 %fill the matching assignments with trial-normalized STC
-for ss=1:7
+for ss=options.sessionSelect
     nan_log = isnan(matching_list(:,ss));
     matchSTCs_A(~nan_log,1+(ss-1)*100:ss*100) = A_STC{ss}(:,matching_list(~nan_log,ss))';
     matchSTCs_B(~nan_log,1+(ss-1)*100:ss*100) = B_STC{ss}(:,matching_list(~nan_log,ss))';
@@ -162,6 +164,10 @@ matchSTC_nan_sorted.BrelA = [matchSTC_sorted_nonan.BrelA; matchSTC_sorted_nan.Br
 
 %% Plot the raster sorted independently
 
+%red and blue colormaps for each trial type
+cmap_blue=cbrewer('seq', 'Blues', 16);
+cmap_red=cbrewer('seq', 'Reds', 16);
+
 figure
 %A
 subplot(1,2,1)
@@ -172,7 +178,7 @@ imagesc(matchSTC_nan_sorted.A,'AlphaData',imAlpha);
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
 %set colormap to 
-colormap(gca,'jet');
+colormap(gca,cmap_blue);
 %B
 subplot(1,2,2)
 %create blank alpha shading matrix where 
@@ -182,7 +188,7 @@ imagesc(matchSTC_nan_sorted.B,'AlphaData',imAlpha);
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
 %set colormap to 
-colormap(gca,'jet');
+colormap(gca,cmap_red);
 
 %% Plot rasters of B ROIs/trial sorted relative to A trials
 
@@ -199,7 +205,7 @@ imagesc(matchSTC_nan_sorted.A,'AlphaData',imAlpha);
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
 %set colormap to 
-colormap(gca,'jet');
+colormap(gca,cmap_blue);
 
 %B
 subplot(1,2,2)
@@ -213,7 +219,7 @@ imagesc(matchSTC_nan_sorted.BrelA,'AlphaData',imAlpha);
 %set background axis color to black
 set(gca,'color',0*[1 1 1]);
 %set colormap to 
-colormap(gca,'jet');
+colormap(gca,cmap_red);
 
 %% Plot rasters normalized for each ROI across both sessions
 %use sort order for self-norm A trials
@@ -231,9 +237,16 @@ matchSTC_norm_sorted_nonan.BrelA = matchSTCs_norm_sorted.B(~nan_d1_log.A,:);
 matchSTC_norm_nan_sorted.A = [matchSTC_norm_sorted_nonan.A; matchSTC_norm_sorted_nan.A];
 matchSTC_norm_nan_sorted.BrelA = [matchSTC_norm_sorted_nonan.BrelA; matchSTC_norm_sorted_nan.BrelA];
 
+
+%% Clip the match matrix for presentation purposes
+
+%find nans on the sorted matrix on A and BrelA STCs
+matchSTC_norm_nan_sorted.A_nan_d1_clipped = matchSTC_norm_nan_sorted.A(~isnan(matchSTC_norm_nan_sorted.A(:,1)),:);
+matchSTC_norm_nan_sorted.BrelA_nan_d1_clipped = matchSTC_norm_nan_sorted.BrelA(~isnan(matchSTC_norm_nan_sorted.A(:,1)),:);
+
 %% Plot normalized and A sorted STC rasters
 f = figure('Position',[2075 40 1630 930]);
-%set background to white
+%set figure background to white
 set(f,'color','w');
 %A
 subplot(1,2,1)
@@ -252,9 +265,11 @@ xticks([300 400])
 xticklabels({'0', '2'})
 set(gca,'FontSize',14)
 %set background axis color to black
-set(gca,'color',0*[1 1 1]);
+%set(gca,'color',0*[1 1 1]);
+%background to white
+set(gca,'color',1*[1 1 1]);
 %set colormap to 
-colormap(gca,'jet');
+colormap(gca,cmap_blue);
 %first axis for position
 ax1 = gca;
 ax1_pos = ax1.Position;
@@ -264,14 +279,18 @@ ax2 = axes('Position',ax1_pos,...
     'YAxisLocation','right',...
     'Color','none');
 yticks(ax2,[]);
-xlim(ax2,[1 700])
-xticks(ax2,[50:100:700])
-xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 6','Day 7','Day 8','Day 9'})
+xlim(ax2,[1 nb_ses*100])
+xticks(ax2,[50:100:nb_ses*100])
+if options.learning_data == 1
+    xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 4','Day 5','Day 6'})
+else
+    xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 6','Day 7','Day 8','Day 9'})
+end
 set(ax2,'FontSize',12')
 set(ax2,'FontWeight','Bold')
 set(ax2,'FontAngle','Italic')
 %add horizontal line to delineate sessions
-for ll = 1:6 %6 separators
+for ll = 1:(nb_ses-1) %6 separators
 plot(ax1,[ll*100 ll*100],[1, size(matching_list,1)],'LineWidth',1,'Color',[1 1 1],'LineStyle','--')
 end
 
@@ -292,9 +311,11 @@ xticks([300 400])
 xticklabels({'0', '2'})
 set(gca,'FontSize',14)
 %set background axis color to black
-set(gca,'color',0*[1 1 1]);
+%set(gca,'color',0*[1 1 1]);
+%background to white
+set(gca,'color',1*[1 1 1]);
 %set colormap to 
-colormap(gca,'jet');
+colormap(gca,cmap_red);
 %first axis for position
 ax1 = gca;
 ax1_pos = ax1.Position;
@@ -304,14 +325,18 @@ ax2 = axes('Position',ax1_pos,...
     'YAxisLocation','right',...
     'Color','none');
 yticks(ax2,[]);
-xlim(ax2,[1 700])
-xticks(ax2,[50:100:700])
-xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 6','Day 7','Day 8','Day 9'})
+xlim(ax2,[1 nb_ses*100])
+xticks(ax2,[50:100:nb_ses*100])
+if options.learning_data == 1
+    xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 4','Day 5','Day 6'})
+else
+    xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 6','Day 7','Day 8','Day 9'})
+end
 set(ax2,'FontSize',12')
 set(ax2,'FontWeight','Bold')
 set(ax2,'FontAngle','Italic')
 %add horizontal line to delineate sessions
-for ll = 1:6 %6 separators
+for ll = 1:nb_ses-1 %6 separators
 plot(ax1,[ll*100 ll*100],[1, size(matching_list,1)],'LineWidth',1,'Color',[1 1 1],'LineStyle','--')
 end
 
@@ -320,6 +345,113 @@ mkdir(fullfile(crossdir,'match_STC'))
 disp('Saving match ROIs STC ')
 export_fig(f ,fullfile(crossdir,'match_STC','all_matching_300.png'),'-r300')
 
+%% Plot normalized and A sorted STC rasters - day 1 nan clipped 
+f_clip = figure('Position',[2075 40 1630 930]);
+%set figure background to white
+set(f_clip,'color','w');
+%A
+subplot(1,2,1)
+%create blank alpha shading matrix where
+%set equal (max) transparency across the matrix
+imAlpha=ones(size(matchSTC_norm_nan_sorted.A_nan_d1_clipped));
+%set transparency of nan values to 0 (non transparency/min)
+imAlpha(isnan(matchSTC_norm_nan_sorted.A_nan_d1_clipped))=0;
+%plot raster with transparency matrix set
+imagesc(matchSTC_norm_nan_sorted.A_nan_d1_clipped,'AlphaData',imAlpha);
+hold on
+title({'A trials',''})
+ylabel('Matching neurons')
+xlabel('Track position [m]')
+xticks([300 400])
+xticklabels({'0', '2'})
+set(gca,'FontSize',14)
+%set background axis color to black
+%set(gca,'color',0*[1 1 1]);
+%background to white
+set(gca,'color',1*[1 1 1]);
+%set colormap to 
+colormap(gca,cmap_blue);
+%first axis for position
+ax1 = gca;
+ax1_pos = ax1.Position;
+%second axis for day label
+ax2 = axes('Position',ax1_pos,...
+    'XAxisLocation','top',...
+    'YAxisLocation','right',...
+    'Color','none');
+yticks(ax2,[]);
+xlim(ax2,[1 nb_ses*100])
+xticks(ax2,[50:100:nb_ses*100])
+if options.learning_data == 1
+    xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 4','Day 5','Day 6'})
+else
+    xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 6','Day 7','Day 8','Day 9'})
+end
+set(ax2,'FontSize',12')
+set(ax2,'FontWeight','Bold')
+set(ax2,'FontAngle','Italic')
+%add horizontal line to delineate sessions
+for ll = 1:(nb_ses-1) %6 separators
+    %white separator lines
+%plot(ax1,[ll*100 ll*100],[1, size(matching_list,1)],'LineWidth',1,'Color',[1 1 1],'LineStyle','--')
+    %black separator lines
+plot(ax1,[ll*100 ll*100],[1, size(matching_list,1)],'LineWidth',1,'Color',[0 0 0],'LineStyle','--')
+
+end
+
+%B
+subplot(1,2,2)
+%create blank alpha shading matrix where 
+%set equal (max) transparency across the matrix
+imAlpha=ones(size(matchSTC_norm_nan_sorted.BrelA_nan_d1_clipped));
+%set transparency of nan values to 0 (non transparency/min)
+imAlpha(isnan(matchSTC_norm_nan_sorted.BrelA_nan_d1_clipped))=0;
+%plot raster with transparency matrix set
+imagesc(matchSTC_norm_nan_sorted.BrelA_nan_d1_clipped,'AlphaData',imAlpha);
+hold on
+
+title({'B trials',''})
+xlabel('Track position [m]')
+xticks([300 400])
+xticklabels({'0', '2'})
+set(gca,'FontSize',14)
+%set background axis color to black
+%set(gca,'color',0*[1 1 1]);
+%background to white
+set(gca,'color',1*[1 1 1]);
+%set colormap to 
+colormap(gca,cmap_red);
+%first axis for position
+ax1 = gca;
+ax1_pos = ax1.Position;
+%second axis for day label
+ax2 = axes('Position',ax1_pos,...
+    'XAxisLocation','top',...
+    'YAxisLocation','right',...
+    'Color','none');
+yticks(ax2,[]);
+xlim(ax2,[1 nb_ses*100])
+xticks(ax2,[50:100:nb_ses*100])
+if options.learning_data == 1
+    xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 4','Day 5','Day 6'})
+else
+    xticklabels(ax2,{'Day 1', 'Day 2','Day 3','Day 6','Day 7','Day 8','Day 9'})
+end
+set(ax2,'FontSize',12')
+set(ax2,'FontWeight','Bold')
+set(ax2,'FontAngle','Italic')
+%add horizontal line to delineate sessions
+for ll = 1:nb_ses-1 %6 separators
+    %white separator lines
+%plot(ax1,[ll*100 ll*100],[1, size(matching_list,1)],'LineWidth',1,'Color',[1 1 1],'LineStyle','--')
+    %black separator lines
+plot(ax1,[ll*100 ll*100],[1, size(matching_list,1)],'LineWidth',1,'Color',[0 0 0],'LineStyle','--')
+end
+
+%save global STC (all matching neurons)
+mkdir(fullfile(crossdir,'match_STC'))
+disp('Saving match ROIs STC ')
+export_fig(f_clip ,fullfile(crossdir,'match_STC','all_matching__nan_d1_clipped_300.png'),'-r300')
 
 end
 
