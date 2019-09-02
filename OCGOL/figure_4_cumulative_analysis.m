@@ -306,6 +306,6 @@ f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m','EdgeColor','none')
 end
 
 %save figure 4a component match example learning
-mkdir(fullfile(crossdir,'match_STC'))
+
 disp('Saving match ROIs STC ')
-export_fig(f ,fullfile(crossdir,'match_STC','all_matching__nan_d1_clipped_300.png'),'-r300')
+export_fig(f ,fullfile('G:\Figure_4_figures','componenent_matching.png'),'-r300')

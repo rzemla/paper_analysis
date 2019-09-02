@@ -534,7 +534,6 @@ xlabel('Track position [m]')
 xticks([100 200])
 xticklabels({'0', '2'})
 set(gca,'FontSize',18)
-yticks([]);
 %set background axis color to black
 %set(gca,'color',0*[1 1 1]);
 %background to white
@@ -571,7 +570,7 @@ end
 %save global STC (all matching neurons)
 mkdir(fullfile(crossdir,'match_STC'))
 disp('Saving match ROIs STC ')
-export_fig(f_clip_1_3 ,fullfile(crossdir,'match_STC','all_matching_nan_d1_d3_clipped_300.png'),'-r300')
+export_fig(f_clip_1_3 ,fullfile(crossdir,'match_STC','all_matching__nan_d1_d3_clipped_300.png'),'-r300')
 
 end
 
