@@ -1,32 +1,6 @@
-%% Load in PV and TC correlation data from recall animals
+%% Load  data from learn and recall animals
 
-%cross session directories (recall experiments)
-cross_dirs_recall = {'G:\OCGOL_stability_recall\I46\crossSession',...
-    'G:\OCGOL_stability_recall\I45_RT\crossSession',...
-    'G:\OCGOL_stability_recall\I42L_1\crossSession',...
-    'G:\OCGOL_stability_recall\I42R_1\crossSession'};
-
-%cross session directories (recall experiments)
-cross_dirs_learning = {'G:\OCGOL_learning_short_term\I56_RTLS\crossSession',...
-    'G:\OCGOL_learning_short_term\I57_RTLS\crossSession',...
-    'G:\OCGOL_learning_short_term\I57_LT\crossSession'};
-
-%read in recall data
-for ss=1:size(cross_dirs_recall,2)
-    %TC/PV correlations
-    PV_TC_corr_recall(ss) = load(fullfile(cross_dirs_recall{ss},'PV_TC_corr.mat'));
-    %performance data
-    perf_recall{ss} = load(fullfile(cross_dirs_recall{ss},'ses_perf.mat'));
-    
-end
-
-%read in recall data
-for ss=1:size(cross_dirs_learning,2)
-    %TC/PV correlations
- PV_TC_corr_learning(ss) = load(fullfile(cross_dirs_learning{ss},'PV_TC_corr.mat'));
-     %performance data
-    perf_learning{ss} = load(fullfile(cross_dirs_learning{ss},'ses_perf.mat'));
-end
+[CNMF_learn,reg_learn,reg_recall] = figure4_load_data();
 
 %% Plot learning and recall TC correlation relative to day 1 on same plot
 
@@ -151,13 +125,34 @@ sem_learning_perf = std_learning_perf./size(cross_dirs_learning,2);
 %recall - dash
 %learning - solid
 figure;
-hold on;
-%xaxis(da
-plot([1 2 3 6 7 8 9],mean_recall_perf(1,:),'m-')
 
-plot([1:6],mean_learning_perf(1,:),'LineStyle','--','LineWidth',2,'Color', [139, 0, 139]/255)
-%errorbar 
-errorbar(xData,frac_tuned_each_mean.si',frac_tuned_each_sem.si,'k.')
+%combined - change color for each type
+for tt=1:3
+    %subplot(1,3,tt)
+    hold on
+    ylim([0 1.1])
+yticks(0:0.2:1)
+%plot([1 2 3 6 7 8 9],mean_recall_perf(1,:),'m-')
+
+    if tt ==1
+        %all
+        color_vec = [139, 0, 139]/255;
+    elseif tt ==2
+        %A
+        color_vec = [65,105,225]/255;
+    elseif tt==3
+        %B
+        color_vec = [ 220,20,60]/255;
+    end
+    %errorbar + mean  - learning
+    errorbar([1:6],mean_learning_perf(tt,:),sem_learning_perf(tt,:),'Color', color_vec, 'LineStyle', '-','LineWidth',1.5)
+    %errorbar + mean - recall
+    %errorbar([1 2 3 6 7 8 9],mean_recall_perf(tt,:),sem_recall_perf(tt,:),'Color', color_vec, 'LineStyle', '-','LineWidth',1.5)
+end
+
+
+
+%plot([1:6],mean_learning_perf(1,:),'LineStyle','--','LineWidth',2,'Color', [139, 0, 139]/255)
 
 %shaded plot parameters
 % s = shadedErrorBar(1:6,squeeze(perf_learning_comb(1,:,:))',{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
@@ -210,3 +205,107 @@ for ss=1:size(cross_dirs_learning,2)
     scatter(PV_TC_corr_learning(ss).PV_TC_corr.meanPV_rel_d1.B,perf_learning{ss}.ses_perf(1,:),'r')
 end
 
+
+%% Show outlines of neightboring day matching componenets (1 vs. 2) - learning
+%which animal
+learn_animal = 2;
+% which two sessions to display
+ses_comp = [1 3];
+
+%remove soma parsed components from Coor_kp - coordinate outlines from CNMF
+%ses_1
+soma_keep{1} = removeROI_learn{learn_animal}{ses_comp(1)}.compSelect;
+%ses 2
+soma_keep{2} = removeROI_learn{learn_animal}{ses_comp(2)}.compSelect;
+%coordinate outlines from both sessions
+coor_keep{1} = CNMF_learn.CNMF_vars_learn{learn_animal}{ses_comp(1)}.Coor_kp(soma_keep{1});
+coor_keep{2} = CNMF_learn.CNMF_vars_learn{learn_animal}{ses_comp(2)}.Coor_kp(soma_keep{2});
+
+%extract filtered matching matrix for the two days
+extract_match_idx = find(sum(~isnan(reg_learn{learn_animal}.registered.multi.assigned_filtered(:,ses_comp)),2) ==2);
+%select session match matrix
+vis_match_matrix = reg_learn{learn_animal}.registered.multi.assigned_filtered(extract_match_idx,ses_comp);
+
+%plot BW outline of the component
+
+
+f= figure('Position',[2100 150 1460 540]);
+%set figure background color to white
+set(f,'color','w');
+
+subaxis(1,3,1, 'SpacingHorizontal', 0.0015,...
+    'SpacingVertical',0.001,...
+    'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
+%subplot(1,3,1)
+imagesc(CNMF_learn.templates_learn{learn_animal}{ses_comp(1)}.template);
+hold on
+axes(gca);
+axis square
+xticks(gca,[])
+yticks(gca,[])
+grayMap = brighten(gray,0.2);
+colormap(gca,grayMap)
+
+%plot all selected ROIs as green
+for ROI = vis_match_matrix(:,1)'
+    %plot componenet outline
+    
+    %plot(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'g', 'LineWidth',1);
+    f1= fill(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'c', 'LineWidth',1,'EdgeColor','none');
+    alpha(f1,0.5)
+end
+
+%subplot(1,3,2)
+subaxis(1,3,2, 'SpacingHorizontal', 0.0015,...
+    'SpacingVertical',0.001,...
+    'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
+imagesc(CNMF_learn.templates_learn{learn_animal}{ses_comp(2)}.template);
+hold on
+axes(gca);
+axis square
+xticks(gca,[])
+yticks(gca,[])
+grayMap = brighten(gray,0.2);
+colormap(gca,grayMap)
+%plot all selected ROIs as green
+for ROI = vis_match_matrix(:,2)'
+    %plot componenet outline
+    %plot(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m', 'LineWidth',1);
+        f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'y', 'LineWidth',1,'EdgeColor','none');
+    alpha(f2,0.5)
+end
+
+%combined
+subaxis(1,3,3, 'SpacingHorizontal', 0.0015,...
+    'SpacingVertical',0.001,...
+    'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
+
+imagesc(CNMF_learn.templates_learn{learn_animal}{ses_comp(1)}.template);
+hold on
+axes(gca);
+axis square
+xticks(gca,[])
+yticks(gca,[])
+grayMap = brighten(gray,0.2);
+colormap(gca,grayMap)
+
+%plot all selected ROIs as green
+for ROI = vis_match_matrix(:,1)'
+    %plot componenet outline
+    
+    %plot(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'g--', 'LineWidth',1);
+     f1= fill(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'y', 'LineWidth',1,'EdgeColor','none');
+    alpha(f1,0.5)
+end
+
+for ROI = vis_match_matrix(:,2)'
+    %plot componenet outline
+    %plot(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m-', 'LineWidth',1);
+f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m','EdgeColor','none')
+ alpha(f2,0.5)
+end
+
+%save figure 4a component match example learning
+mkdir(fullfile(crossdir,'match_STC'))
+disp('Saving match ROIs STC ')
+export_fig(f ,fullfile(crossdir,'match_STC','all_matching__nan_d1_clipped_300.png'),'-r300')
