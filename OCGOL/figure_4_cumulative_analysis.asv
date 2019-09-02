@@ -138,14 +138,8 @@ for aa = 1:size(cross_dirs_learning,2)
 end
 
 %get means
-mean_recall_perf = mean(perf_recall_comb,3);
-mean_learning_perf = mean(perf_learning_comb,3);
-%get stds
-std_recall_perf = std(perf_recall_comb,0,3);
-std_learning_perf = std(perf_learning_comb,0,3);
-%get sems
-sem_recall_perf = std_recall_perf./sqrt(size(cross_dirs_recall,2));
-sem_learning_perf = std_learning_perf./size(cross_dirs_learning,2);
+mean_recall_perf = mean(perf_recall_comb,3)
+mean_learning_perf = mean(perf_learning_comb,3)
 
 %plot
 %recall - dash
@@ -156,15 +150,12 @@ hold on;
 plot([1 2 3 6 7 8 9],mean_recall_perf(1,:),'m-')
 
 plot([1:6],mean_learning_perf(1,:),'LineStyle','--','LineWidth',2,'Color', [139, 0, 139]/255)
-%errorbar 
-errorbar(xData,frac_tuned_each_mean.si',frac_tuned_each_sem.si,'k.')
 
-%shaded plot parameters
-% s = shadedErrorBar(1:6,squeeze(perf_learning_comb(1,:,:))',{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
-% set(s.edge,'LineWidth',1,'LineStyle','-','Color',[[139, 0, 139]/255, 0.2]) %last value add transparency value
-% s.mainLine.LineWidth = 2;
-% s.mainLine.Color = [139, 0, 139]/255;
-% s.patch.FaceColor = [139, 0, 139]/255;
+s = shadedErrorBar(1:6,squeeze(perf_learning_comb(1,:,:))',{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
+set(s.edge,'LineWidth',1,'LineStyle','-','Color',[[139, 0, 139]/255, 0.2]) %last value add transparency value
+s.mainLine.LineWidth = 2;
+s.mainLine.Color = [220,20,60]/255;
+s.patch.FaceColor = [220,20,60]/255;
 
 %% Experiment with linear regression and confidence intervals
 
