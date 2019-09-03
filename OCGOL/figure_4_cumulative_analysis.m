@@ -32,36 +32,127 @@ for ss = 1:size(PV_TC_corr_learning,2)
     plot([2 3 4 5 6],PV_TC_corr_learning(ss).PV_TC_corr.meanTC_rel_d1.ts.B,'r--')
 end
 
+%% Extract PV/TC correlation data relative to D1
+
+%recall - collect rel PV data
+for ss = 1:size(PV_TC_corr_recall,2)
+    %collect data from all animals into matrix
+    %A PV
+   PV_rel_d1.recall.A.all(ss,:) = PV_TC_corr_recall(ss).PV_TC_corr.meanPV_rel_d1.A;
+   %B PV
+   PV_rel_d1.recall.B.all(ss,:) = PV_TC_corr_recall(ss).PV_TC_corr.meanPV_rel_d1.B;
+   %A TC
+   TC_rel_d1.recall.A.all(ss,:) = PV_TC_corr_recall(ss).PV_TC_corr.meanTC_rel_d1.ts.A;
+   %B TC
+   TC_rel_d1.recall.B.all(ss,:) = PV_TC_corr_recall(ss).PV_TC_corr.meanTC_rel_d1.ts.B;   
+end
+
+%learning - collect rel PV data
+for ss = 1:size(PV_TC_corr_learning,2)
+    %collect data from all animals into matrix
+    %A
+    PV_rel_d1.learn.A.all(ss,:) = PV_TC_corr_learning(ss).PV_TC_corr.meanPV_rel_d1.A;
+    %B
+    PV_rel_d1.learn.B.all(ss,:) = PV_TC_corr_learning(ss).PV_TC_corr.meanPV_rel_d1.B;
+    %A TC
+    TC_rel_d1.learn.A.all(ss,:) = PV_TC_corr_learning(ss).PV_TC_corr.meanTC_rel_d1.ts.A;
+    %B TC
+    TC_rel_d1.learn.B.all(ss,:) = PV_TC_corr_learning(ss).PV_TC_corr.meanTC_rel_d1.ts.B;
+end
+
+%get mean
+PV_rel_d1.learn.A.mean = nanmean(PV_rel_d1.learn.A.all,1);
+PV_rel_d1.learn.B.mean = nanmean(PV_rel_d1.learn.B.all,1);
+
+PV_rel_d1.recall.A.mean = nanmean(PV_rel_d1.recall.A.all,1);
+PV_rel_d1.recall.B.mean = nanmean(PV_rel_d1.recall.B.all,1);
+
+TC_rel_d1.learn.A.mean = nanmean(TC_rel_d1.learn.A.all,1);
+TC_rel_d1.learn.B.mean = nanmean(TC_rel_d1.learn.B.all,1);
+
+TC_rel_d1.recall.A.mean = nanmean(TC_rel_d1.recall.A.all,1);
+TC_rel_d1.recall.B.mean = nanmean(TC_rel_d1.recall.B.all,1);
+
+%get sem - learn
+PV_rel_d1.learn.A.sem = nanstd(PV_rel_d1.learn.A.all,0,1)./size(PV_TC_corr_learning,2);
+PV_rel_d1.learn.B.sem = nanstd(PV_rel_d1.learn.B.all,0,1)./size(PV_TC_corr_learning,2);
+%recall
+PV_rel_d1.recall.A.sem = nanstd(PV_rel_d1.recall.A.all,0,1)./size(PV_TC_corr_recall,2);
+PV_rel_d1.recall.B.sem = nanstd(PV_rel_d1.recall.B.all,0,1)./size(PV_TC_corr_recall,2);
+
+TC_rel_d1.learn.A.sem = nanstd(TC_rel_d1.learn.A.all,0,1)./size(PV_TC_corr_learning,2);
+TC_rel_d1.learn.B.sem = nanstd(TC_rel_d1.learn.B.all,0,1)./size(PV_TC_corr_learning,2);
+%recall
+TC_rel_d1.recall.A.sem = nanstd(TC_rel_d1.recall.A.all,0,1)./size(PV_TC_corr_recall,2);
+TC_rel_d1.recall.B.sem = nanstd(TC_rel_d1.recall.B.all,0,1)./size(PV_TC_corr_recall,2);
+
 %% Plot learning and recall PV correlation relative to day 1 on same plot
 
-figure;
+%color vectors - blue, red, magenta
+color_vec(1,:) = [139, 0, 139]/255;
+color_vec(2,:) = [65,105,225]/255;
+color_vec(3,:) = [ 220,20,60]/255;
+
+
+f = figure('Position', [2045 231 945 431]);
+set(f,'color','w');
 subplot(1,2,1)
 hold on
-title('PV A')
+title('PV correlation')
 ylim([0 1])
+xlim([0 9])
+xticks(1:2:8)
+ylabel('Correlation coef.')
+xlabel('Days since first session')
+set(gca,'Linewidth',2)
+set(gca,'FontSize', 16)
 %recall data
 for ss = 1:size(PV_TC_corr_recall,2)
-    plot([2 3 6 7 8 9],PV_TC_corr_recall(ss).PV_TC_corr.meanPV_rel_d1.A,'g-')
+    %A
+    errorbar([1 2 5 6 7 8],PV_rel_d1.recall.A.mean,PV_rel_d1.recall.A.sem,'Color', color_vec(2,:), 'LineStyle', '-','LineWidth',1.5)
+    %B
+    errorbar([1 2 5 6 7 8],PV_rel_d1.recall.B.mean,PV_rel_d1.recall.B.sem,'Color', color_vec(3,:), 'LineStyle', '-','LineWidth',1.5)
+        
 end
 
 %learning data
 for ss = 1:size(PV_TC_corr_learning,2)
-    plot([2 3 4 5 6],PV_TC_corr_learning(ss).PV_TC_corr.meanPV_rel_d1.A,'r--')
+    %A
+    errorbar([1:5],PV_rel_d1.learn.A.mean,PV_rel_d1.learn.A.sem,'Color', color_vec(2,:), 'LineStyle', '--','LineWidth',1.5)
+    %B
+    errorbar([1:5],PV_rel_d1.learn.B.mean,PV_rel_d1.learn.B.sem,'Color', color_vec(3,:), 'LineStyle', '--','LineWidth',1.5)
 end
 
+%TC
 subplot(1,2,2)
 hold on
-title('PV B')
+title('TC correlation')
 ylim([0 1])
-%recall data
+xlim([0 9])
+xticks(1:2:8)
+%ylabel('Correlation coef.')
+xlabel('Days since first session')
+set(gca,'Linewidth',2)
+set(gca,'FontSize', 16)
 for ss = 1:size(PV_TC_corr_recall,2)
-    plot([2 3 6 7 8 9],PV_TC_corr_recall(ss).PV_TC_corr.meanPV_rel_d1.B,'g-')
+    %A
+    errorbar([1 2 5 6 7 8],TC_rel_d1.recall.A.mean,TC_rel_d1.recall.A.sem,'Color', color_vec(2,:), 'LineStyle', '-','LineWidth',1.5)
+    %B
+    errorbar([1 2 5 6 7 8],TC_rel_d1.recall.B.mean,TC_rel_d1.recall.B.sem,'Color', color_vec(3,:), 'LineStyle', '-','LineWidth',1.5)
+        
 end
 
 %learning data
 for ss = 1:size(PV_TC_corr_learning,2)
-    plot([2 3 4 5 6],PV_TC_corr_learning(ss).PV_TC_corr.meanPV_rel_d1.B,'r--')
+    %A
+    errorbar([1:5],TC_rel_d1.learn.A.mean,TC_rel_d1.learn.A.sem,'Color', color_vec(2,:), 'LineStyle', '--','LineWidth',1.5)
+    %B
+    errorbar([1:5],TC_rel_d1.learn.B.mean,TC_rel_d1.learn.B.sem,'Color', color_vec(3,:), 'LineStyle', '--','LineWidth',1.5)
 end
+
+%save performance figure
+disp('Saving PV/TC correlation relative to D1 figure ')
+export_fig(f ,fullfile('G:\Figure_4_figures','PV_TC_rel_D1.png'),'-r300')
 
 
 %% Same day PV
