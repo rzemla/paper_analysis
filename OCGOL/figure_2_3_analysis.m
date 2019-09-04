@@ -62,17 +62,6 @@ options.sessionSelect = [1];
 options.plotFigure2 = 1;
 raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 
-%% Plot fraction of each neuron tuned 
-%TODO: add filter for classfing whether each field is significant (min 5 events)
-
-%plot pie chart for each and return counts
-[tuned_fractions] = fractionTuned(tunedLogical);
-
-%export for cumulative analysis
-%make cumul_analysis folder
-mkdir(path_dir{1},'cumul_analysis')
-%save the fractions output data
-save(fullfile(path_dir{1},'cumul_analysis','frac_tuned.mat'),'tuned_fractions');
 
 %% Find  place fields
 %use rate map - number of event onsets/ occupancy across all laps
@@ -157,10 +146,20 @@ options.tuning_criterion = 'si'; %si or ts
 %A correct/B correct or all
 options.selectTrial = [1 2];
 
-[placeField_dist] = placeField_properties(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
+[placeField_dist, pf_count_filtered_log] = placeField_properties(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
 %save the place field distributions output data
 save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
+%% Plot fraction of each neuron tuned 
+
+%plot pie chart for each and return counts
+[tuned_fractions] = fractionTuned(tunedLogical,pf_count_filtered_log);
+
+%export for cumulative analysis
+%make cumul_analysis folder
+mkdir(path_dir{1},'cumul_analysis')
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','frac_tuned.mat'),'tuned_fractions');
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs

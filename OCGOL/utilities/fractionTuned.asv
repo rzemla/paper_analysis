@@ -69,25 +69,23 @@ title('Percentage of active neurons tuned (S.I.) - Filtered');
 colormap([0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5])
 
 subplot(1,2,2)
-p = pie(fracTuned_ts_filt,{['A ', num2str(round(100*fracTuned_ts_filt(1))), '%'],...
+p = pie(fracTuned_ts,{['A ', num2str(round(100*fracTuned_ts_filt(1))), '%'],...
                         ['B ', num2str(round(100*fracTuned_ts_filt(2))), '%'],...
                         ['A&B ', num2str(round(100*fracTuned_ts_filt(3))), '%'],...
                         ['     Neither ', num2str(round(100*fracTuned_ts_filt(4))), '%']});
 hold on
-title('Percentage of active neurons tuned (T.S.) - Filtered');
+title('Percentage of active neurons tuned (T.S.) - Filtere');
 colormap([0 0 1; 1 0 0; 1 0 1; 0.5 0.5 0.5])
 
 %% Place into struct for export
 
 %absolute counts for each subcategory
 tuned_fractions.tuned_count = tuned_count;
-tuned_fractions.tuned_count_filt = tuned_count_filt;
 %fraction tuned by SI criterion
 tuned_fractions.fracTuned_si = fracTuned_si;
-tuned_fractions.fracTuned_si_filt = fracTuned_si_filt;
 %fraction tuned by TS criterion
 tuned_fractions.fracTuned_ts = fracTuned_ts;
-tuned_fractions.fracTuned_ts_filt = fracTuned_ts_filt;
+
 
 end
 

@@ -1,4 +1,4 @@
-function [placeField_dist] = placeField_properties(session_vars, tunedLogical,select_fields,task_selective_ROIs,options)
+function [placeField_dist,pf_count_filtered_log] = placeField_properties(session_vars, tunedLogical,select_fields,task_selective_ROIs,options)
 
 %% Bin to distance conversion factor
 binToCm = 2;
@@ -226,7 +226,9 @@ ylabel('Normalized density')
 xlim([15 70]);
 ylim([0 0.4]);
 
-%% OLD CODE BELOW
+%% OLD CODE BELOW - preserve for for sake of compatibility
+%RESUME WITH EXPORT OF VARIABLES TO BE USED IN REMAPPING FILTER
+%{
 %% Count neurons with 1,2,3+ number of place fields from filtered and tuning criteria selected groups
 
 %count # of neurons with 1 2 or 3+ place fields
@@ -263,7 +265,7 @@ for ii=1:3
         field_count_B(ii) = size(find(nb_fields_B >= ii),2);
     end
 end
-
+}%
 
 %% Bar plot
 figure;
@@ -301,11 +303,18 @@ ylabel('Normalized density')
 xlim([15 70]);
 ylim([0 0.4]);
 
-%% Export stuct
+% placeField_dist.width_cm_Aonly = width_cm_Aonly;
+% placeField_dist.width_cm_Bonly = width_cm_Bonly;
+% placeField_dist.field_count_A = field_count_A;
+% placeField_dist.field_count_B = field_count_B;
 
-placeField_dist.width_cm_Aonly = width_cm_Aonly;
-placeField_dist.width_cm_Bonly = width_cm_Bonly;
-placeField_dist.field_count_A = field_count_A;
-placeField_dist.field_count_B = field_count_B;
+%}
+%% Export stuct
+% 
+
+%place fields for all A and B tuned neurons by either TS or SI with place
+%field and event filters in place
+placeField_dist.all = all;
+placeField_dist.task_sel = task_sel;
 
 end
