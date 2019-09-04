@@ -63,7 +63,6 @@ options.plotFigure2 = 1;
 raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 
 %% Plot fraction of each neuron tuned 
-%TODO: add filter for classfing whether each field is significant (min 5 events)
 
 %plot pie chart for each and return counts
 [tuned_fractions] = fractionTuned(tunedLogical);
@@ -96,27 +95,12 @@ for ss=1:size(session_vars,2)
     end
 end
 
-%parse place fields significance by checking that a minimum of 5 events
-%occured in the field
+%parse place fields significance 
 
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
 
-%% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
-
-%funtion to calculate transient rate in field
-%take raw event rate and divide by occupancy (s) transients/s
-% TODO: see ifrecalculate to see if dividing by normalized occupancy (fractional 0-1)
-%yields different result
-
-options.sessionSelect = [1];
-%A correct/B correct or all
-options.selectSes = [1 2];
-%continue to modify 
-[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
-
 %% Number of place fields and widths for each sub-class of neurons
-%add filter for classfing whether each field is significant (min 5 events)
 
 options.tuning_criterion = 'si'; %si or ts
 [placeField_dist] = placeField_properties(session_vars, tunedLogical,options);

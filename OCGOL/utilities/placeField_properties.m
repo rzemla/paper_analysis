@@ -40,6 +40,9 @@ switch options.tuning_criterion
         end
 end
 
+%% Filter each PF to ensure 5 lap distinct events in each field
+
+
 %% Get counts of place field numbers for each sub-class
 
 %place centers of 
