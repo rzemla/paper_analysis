@@ -40,8 +40,11 @@ for ii = 1:size(path_dir,2)
 end
 
 %% Define tuned logical vectors
+
 %flag to all A or B trial or only correct A or B trials
-options.allCorrect = 1; %1  = A correct; 2 = B correct
+options.allCorrect = 1;
+%select which session to use (single session for these animals)
+options.sessionSelect = [1];
 %returns struct of structs
 [tunedLogical] = defineTunedLogicals(session_vars,options);
 
