@@ -40,7 +40,7 @@ end
 %for each session
 for ss=1:options.sessionSelect
     %for each trial (A or B) regardless if correct
-    for tt=options.selectSes
+    for tt=options.selectTrial
         %Place field edge data
         placeField_edges{ss}{tt} = session_vars{ss}.Place_cell{tt}.placeField.edge;
         
@@ -60,15 +60,15 @@ end
 for ss=1:options.sessionSelect
     %get edges for corresponding bins!! - find place in spatial info where
     %correct A trials
-    run_position_norm{ss}{options.selectSes(1)} = Behavior_split{ss}{options.selectSes(1)}.resampled.run_position_norm;
+    run_position_norm{ss}{options.selectTrial(1)} = Behavior_split{ss}{options.selectTrial(1)}.resampled.run_position_norm;
     %correct B trials
-    run_position_norm{ss}{options.selectSes(2)} = Behavior_split{ss}{options.selectSes(2)}.resampled.run_position_norm;
+    run_position_norm{ss}{options.selectTrial(2)} = Behavior_split{ss}{options.selectTrial(2)}.resampled.run_position_norm;
     %Bin running position in 100 bins and get edges for each set of laps:
     %for each number of bins, bin the normalized position during run epochs
     %for correct A trials
-    [count_bin{ss}{options.selectSes(1)},edges{ss}{options.selectSes(1)},bin{ss}{options.selectSes(1)}] = histcounts(run_position_norm{ss}{options.selectSes(1)}, 100);
+    [count_bin{ss}{options.selectTrial(1)},edges{ss}{options.selectTrial(1)},bin{ss}{options.selectTrial(1)}] = histcounts(run_position_norm{ss}{options.selectTrial(1)}, 100);
     %for correct B trials
-    [count_bin{ss}{options.selectSes(2)},edges{ss}{options.selectSes(2)},bin{ss}{options.selectSes(2)}] = histcounts(run_position_norm{ss}{options.selectSes(2)}, 100);
+    [count_bin{ss}{options.selectTrial(2)},edges{ss}{options.selectTrial(2)},bin{ss}{options.selectTrial(2)}] = histcounts(run_position_norm{ss}{options.selectTrial(2)}, 100);
 end
 
 %% Event onsets in run interval
@@ -77,22 +77,22 @@ for ss=1:options.sessionSelect
     %for each ROI
     for rr=1:size(events{ss}{1},2)
         %time of significant run events in A
-        event_norm_time{ss}.A{rr} = Imaging_split{ss}{options.selectSes(1)}.time_restricted(find(Event_split{ss}{options.selectSes(1)}.Run.run_onset_binary(:,rr) == 1))/60;
+        event_norm_time{ss}.A{rr} = Imaging_split{ss}{options.selectTrial(1)}.time_restricted(find(Event_split{ss}{options.selectTrial(1)}.Run.run_onset_binary(:,rr) == 1))/60;
         %normalizesd position of significant run events in A
-        event_norm_pos_run{ss}.A{rr} = Behavior_split{ss}{options.selectSes(1)}.resampled.position_norm(find(Event_split{ss}{options.selectSes(1)}.Run.run_onset_binary(:,rr) == 1));
+        event_norm_pos_run{ss}.A{rr} = Behavior_split{ss}{options.selectTrial(1)}.resampled.position_norm(find(Event_split{ss}{options.selectTrial(1)}.Run.run_onset_binary(:,rr) == 1));
         %lap assignment for A
-        event_lap_idx{ss}.A{rr} = Behavior_split{ss}{options.selectSes(1)}.resampled.lapNb(logical(Event_split{ss}{options.selectSes(1)}.Run.run_onset_binary(:,rr)));
+        event_lap_idx{ss}.A{rr} = Behavior_split{ss}{options.selectTrial(1)}.resampled.lapNb(logical(Event_split{ss}{options.selectTrial(1)}.Run.run_onset_binary(:,rr)));
         %get respective AUC values
-        event_AUC{ss}.A{rr} = Event_split{ss}{options.selectSes(1)}.Run.properties.AUC{rr};
+        event_AUC{ss}.A{rr} = Event_split{ss}{options.selectTrial(1)}.Run.properties.AUC{rr};
         
         %time of significant run events in B
-        event_norm_time{ss}.B{rr} = Imaging_split{ss}{options.selectSes(2)}.time_restricted(find(Event_split{ss}{options.selectSes(2)}.Run.run_onset_binary(:,rr) == 1))/60;
+        event_norm_time{ss}.B{rr} = Imaging_split{ss}{options.selectTrial(2)}.time_restricted(find(Event_split{ss}{options.selectTrial(2)}.Run.run_onset_binary(:,rr) == 1))/60;
         %normalizesd position of significant run events in B
-        event_norm_pos_run{ss}.B{rr} = Behavior_split{ss}{options.selectSes(2)}.resampled.position_norm(find(Event_split{ss}{options.selectSes(2)}.Run.run_onset_binary(:,rr) == 1));
+        event_norm_pos_run{ss}.B{rr} = Behavior_split{ss}{options.selectTrial(2)}.resampled.position_norm(find(Event_split{ss}{options.selectTrial(2)}.Run.run_onset_binary(:,rr) == 1));
         %lap assignment for B
-        event_lap_idx{ss}.B{rr} = Behavior_split{ss}{options.selectSes(2)}.resampled.lapNb(logical(Event_split{ss}{options.selectSes(2)}.Run.run_onset_binary(:,rr)));
+        event_lap_idx{ss}.B{rr} = Behavior_split{ss}{options.selectTrial(2)}.resampled.lapNb(logical(Event_split{ss}{options.selectTrial(2)}.Run.run_onset_binary(:,rr)));
         %get respective AUC values
-        event_AUC{ss}.B{rr} = Event_split{ss}{options.selectSes(2)}.Run.properties.AUC{rr};
+        event_AUC{ss}.B{rr} = Event_split{ss}{options.selectTrial(2)}.Run.properties.AUC{rr};
         
     end
 end
@@ -106,7 +106,7 @@ end
 for ss=1:options.sessionSelect
     %for each trial (A or B) regardless if correct (4,5) or only correct
     %(1,2)
-    for tt=options.selectSes
+    for tt=options.selectTrial
         %find field event rate for each session and trial types
         [field_event_rates{ss}{tt}, field_total_events{ss}{tt}] = field_rate(event_map{ss}{tt},occupancy{ss}{tt},placeField_edges{ss}{tt});
     end
@@ -119,9 +119,9 @@ end
 for ss=1:options.sessionSelect
     %get the edges of all neurons (all fields, not just max rate field)
     %correct A
-    placeField_edge{ss}{options.selectSes(1)} = Place_cell{ss}{options.selectSes(1)}.placeField.edge;
+    placeField_edge{ss}{options.selectTrial(1)} = Place_cell{ss}{options.selectTrial(1)}.placeField.edge;
     %correct B
-    placeField_edge{ss}{options.selectSes(2)} = Place_cell{ss}{options.selectSes(2)}.placeField.edge;
+    placeField_edge{ss}{options.selectTrial(2)} = Place_cell{ss}{options.selectTrial(2)}.placeField.edge;
     
 end
 
@@ -146,7 +146,7 @@ end
 %edges are the normalized position equivalents of the bin edges identified
 %in bin space (using 100 bins)
 for ss=1:options.sessionSelect
-    for tt=options.selectSes
+    for tt=options.selectTrial
         %for each ROI
         for rr=1:size(placeField_edge{ss}{tt},2)
             %start position of PF %edges 1 trial for both since the binning is
@@ -171,9 +171,9 @@ end
 %for each session
 for ss=1:options.sessionSelect
     %find events occuring within each place field for each ROI
-    for tt=options.selectSes
+    for tt=options.selectTrial
         for rr=1:size(placeField_posnorm{ss}{tt},2)
-            if tt ==options.selectSes(1)%correct A trials (or all A trials)
+            if tt ==options.selectTrial(1)%correct A trials (or all A trials)
                 if ~isempty(placeField_posnorm{ss}{tt}{rr})
                     %for each id'd place field
                     for pp=1:size(placeField_posnorm{ss}{tt}{rr},1)
@@ -193,7 +193,7 @@ for ss=1:options.sessionSelect
                     events_in_field_pos{ss}{tt}{rr} = [];
                 end
                 
-            elseif tt == options.selectSes(2) %correct B trials (or all B trials)
+            elseif tt == options.selectTrial(2) %correct B trials (or all B trials)
                 if ~isempty(placeField_posnorm{ss}{tt}{rr})
                     %for each id'd place field
                     for pp=1:size(placeField_posnorm{ss}{tt}{rr},1)
@@ -221,7 +221,7 @@ end
 %for each session
 for ss=1:options.sessionSelect
     %create logical for each ROI on each set of trial types
-    for tt=options.selectSes
+    for tt=options.selectTrial
         for rr=1:size(event_in_field_nb{ss}{tt},2)
             %get logical of place fields with more than 5 distinct calcium
             %events in field
@@ -241,19 +241,19 @@ hold on;
 xlim([0 1])
 ylim([0 200])
 title('In-field transient rates for all neurons - A trials');
-histogram(cell2mat(field_event_rates{session_nb}{options.selectSes(1)}))
+histogram(cell2mat(field_event_rates{session_nb}{options.selectTrial(1)}))
 subplot(2,1,2)
 hold on
 xlim([0 1])
 ylim([0 200])
 title('In-field transient rates for all neurons - B trials');
-histogram(cell2mat(field_event_rates{session_nb}{options.selectSes(2)}))
+histogram(cell2mat(field_event_rates{session_nb}{options.selectTrial(2)}))
 
 %% Recalculate centroid based on peak with highest transient rate
 
 for ss=1:options.sessionSelect
     %for each trial (A or B) regardless if correct
-    for tt=options.selectSes
+    for tt=options.selectTrial
         %tuning vectors for each ROI
         tun_vectors{ss}{tt} = session_vars{ss}.Place_cell{tt}.Tuning_Specificity.tuning_vector;
         %original sum vector
@@ -271,7 +271,7 @@ options.pf.skipDisplay = 0;
 
 for ss=1:options.sessionSelect
     %for each trial (A or B) regardless if correct
-    for tt=options.selectSes
+    for tt=options.selectTrial
         [pf_vector{ss}{tt}] = adjust_tuning_vector(tun_vectors{ss}{tt},tun_vector{ss}{tt},placeField_edges{ss}{tt},options);
     end
 end

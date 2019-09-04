@@ -63,6 +63,7 @@ options.plotFigure2 = 1;
 raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 
 %% Plot fraction of each neuron tuned 
+%TODO: add filter for classfing whether each field is significant (min 5 events)
 
 %plot pie chart for each and return counts
 [tuned_fractions] = fractionTuned(tunedLogical);
@@ -95,17 +96,11 @@ for ss=1:size(session_vars,2)
     end
 end
 
-%parse place fields significance 
+%parse place fields significance by checking that a minimum of 5 events
+%occured in the field
 
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
-
-%% Number of place fields and widths for each sub-class of neurons
-
-options.tuning_criterion = 'si'; %si or ts
-[placeField_dist] = placeField_properties(session_vars, tunedLogical,options);
-%save the place field distributions output data
-save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
@@ -114,14 +109,11 @@ save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_di
 % TODO: see ifrecalculate to see if dividing by normalized occupancy (fractional 0-1)
 %yields different result
 
-%which sessions to use to calculate the in field transient rate
-%[1 2] - only correct A B trials
-%[4 5] - all A B trials
-options.selectSes = [1 2];
-
-%IMPORTANT!!  - make adjustments to make sure that selectSes is passed
-%through all parts of the code!!!!
-[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_single_ses(session_vars,options);
+options.sessionSelect = [1];
+%A correct/B correct or all
+options.selectTrial = [1 2];
+%continue to modify 
+[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
 
 %% Plot spatial tuning curves according to transient rate and return max bin position (split into 2 fxn later)
 %normalized to each neuron across 
@@ -138,8 +130,6 @@ options.sortTrial = 1;
 %max_transient_peak - peak idx where event rate is highest for correct A/B
 %trials
 [max_bin_rate,max_transient_peak] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
-
-
 
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
 
@@ -158,6 +148,19 @@ options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
+
+
+%% Number of place fields and widths for each sub-class of neurons
+%add filter for classfing whether each field is significant (min 5 events)
+
+options.tuning_criterion = 'si'; %si or ts
+%A correct/B correct or all
+options.selectTrial = [1 2];
+
+[placeField_dist] = placeField_properties(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
+%save the place field distributions output data
+save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
+
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs

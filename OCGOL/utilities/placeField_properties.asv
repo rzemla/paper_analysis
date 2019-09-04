@@ -97,25 +97,11 @@ end
 task_sel.A.width_cm = cell2mat(task_sel.A.field_bin_width)*binToCm;
 task_sel.B.width_cm = cell2mat(task_sel.B.field_bin_width)*binToCm;
 
-%% All A / B tuned neurons by either ST or TS score
-
-
-
-%% Plot PF count for A/B selective and histogram of PF widths
-
-figure;
-hold on
-title('Place field counts for task-selective neurons');
-xticks([1 2 3])
-xticklabels( {'1','2','3+'});
-bar([task_sel.A.field_count_total',task_sel.B.field_count_total'])
-
 %plot histograms
 figure;
 subplot(1,2,1)
 hold on
 histogram(task_sel.A.width_cm  ,0:5:70,'Normalization','probability')
-title('A selective')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);
@@ -123,12 +109,20 @@ ylim([0 0.4]);
 
 subplot(1,2,2)
 hold on
-title('B selective')
 histogram(task_sel.B.width_cm  ,0:5:70,'Normalization','probability')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);
 ylim([0 0.4]);
+
+%% Plot PF count for A/B selective and PF widths
+
+figure;
+hold on
+title('Place field counts for task-selective neurons');
+xticks([1 2 3])
+xticklabels( {'1','2','3+'});
+bar([task_sel.A.field_count_total',task_sel.B.field_count_total'])
 
 %% Count neurons with 1,2,3+ number of place fields from filtered and tuning criteria selected groups
 
