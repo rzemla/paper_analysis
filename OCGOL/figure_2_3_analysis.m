@@ -138,7 +138,6 @@ options.tuning_criterion = 'ts';
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
-
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
 
@@ -146,7 +145,7 @@ options.tuning_criterion = 'si'; %si or ts
 %A correct/B correct or all
 options.selectTrial = [1 2];
 
-[placeField_dist, pf_count_filtered_log] = placeField_properties(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
+[placeField_dist, pf_count_filtered_log, pf_count_filtered] = placeField_properties(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
 %save the place field distributions output data
 save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
@@ -168,7 +167,34 @@ options.tuning_criterion = 'ts';
 options.dispFigure = 0;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
-[task_remapping_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
+[task_remapping_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars,...
+                        max_transient_peak,pf_count_filtered_log, pf_count_filtered,options);
+
+%% Generate STC maps of neurons tuned in either session and plot side by side
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
+
+%add option here to switch between the display of different categories of
+%cells
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'remapping_filtered'; %si or ts or selective_filtered
+%normalized across both sessions
+
+plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,options);
+
+%% Generate STC maps of neurons tuned in either session and plot side by side
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
+%normalized across both sessions
+
+plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_remapping_ROIs,options);
+
 
 %% PV and TC correlation matrices for each class of tuned neurons
 
@@ -187,16 +213,7 @@ options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
 
-%% Generate STC maps of neurons tuned in either session and plot side by side
-%customize to add options
-%tuned in both sessions by SI score
-%sorted by A trials
 
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
-%normalized across both sessions
-
-plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
 
 %% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
 

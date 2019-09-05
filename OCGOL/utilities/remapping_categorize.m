@@ -1,4 +1,4 @@
-function [task_selective_ROIs] = remapping_categorize(cent_diff_AandB, tuned_logical, pf_vector_max, session_vars,max_transient_peak, options)
+function [remapping_ROIs] = remapping_categorize(cent_diff_AandB, tuned_logical, pf_vector_max, session_vars,max_transient_peak, options)
 %split mutually tuned neurons by remapping category: 
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
@@ -540,6 +540,11 @@ remove_previous_ROI_log =  (common_overlap_log | (global_overlap_log | rate_over
 %filter out previously categorized neurons
 partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log);
 
+%% Export indices of neuron in each category as in struct
+
+remapping_ROIs.global = global_remap_ROI;
+remapping_ROIs.rate = rate_remapping_ROI;
+remapping_ROIs.common = common_ROI;
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 

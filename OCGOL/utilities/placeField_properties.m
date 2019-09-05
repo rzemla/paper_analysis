@@ -1,4 +1,4 @@
-function [placeField_dist,pf_count_filtered_log] = placeField_properties(session_vars, tunedLogical,select_fields,task_selective_ROIs,options)
+function [placeField_dist,pf_count_filtered_log, pf_count_filtered] = placeField_properties(session_vars, tunedLogical,select_fields,task_selective_ROIs,options)
 
 %% Bin to distance conversion factor
 binToCm = 2;

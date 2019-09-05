@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_STC_OCGOL_singleSes_task_selective(animal_data, tunedLogical,task_remapping_ROIs,options)
+function [outputArg1,outputArg2] = plot_STC_OCGOL_singleSes_task_remapping(animal_data, tunedLogical,task_remapping_ROIs,options)
 
 %% Import variables
 
@@ -6,31 +6,41 @@ function [outputArg1,outputArg2] = plot_STC_OCGOL_singleSes_task_selective(anima
 
 %make conditional here for si or ts tuned neurons
 switch options.tuning_criterion
-
+    
     case 'selective_filtered'
         %neurons idxs associated with selective filtering for
         %task-selectivity
         select_filt_ROIs.A = task_selective_ROIs.A.idx;
         select_filt_ROIs.B = task_selective_ROIs.B.idx;
-        
+    case 'remapping_filtered'
+        global_remap_idx = task_remapping_ROIs.global;
+        global_remap_idx = task_remapping_ROIs.rate;
+        %global_remap_idx = task_remapping_ROIs.common;
 end
 
 %% Extract mean STC map in each spatial bin (not normalized and not occupancy divided) (100 bins)
 %for each session
 %correct only
 for ss =1:size(animal_data,2)
-    A_df{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve;
-    B_df{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve;
-    
+    %normalized to self and not across trials for each neuron
+    A_STC_sn{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_curve;
+    B_STC_sn{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_curve;
+
+    %dF/F rasters (normalized 0-1) to self
+    A_df_sn{ss} = animal_data{ss}.Place_cell{1}.Spatial_tuning_dF;
+    B_df_sn{ss} = animal_data{ss}.Place_cell{2}.Spatial_tuning_dF;
+
+    %100 bins, not smoothed, not norm
+    A_df_nn{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.mean_dF_map{8};
+    B_df_nn{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.mean_dF_map{8}
+    %100 bins, Gaussian smoothed across all bins (not 2D smoothed), not
+    %norm
+    A_df_nn_smooth{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.mean_dF_map_smooth{8};  
+    B_df_nn_smooth{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.mean_dF_map_smooth{8};
     %Gs smoothed, but not normalized (nn) to itself
     A_STC_nn{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.rate_map_smooth{8};
     B_STC_nn{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.rate_map_smooth{8};
     
-    %A_df_both{ss} = A_df{ss}(:,AandB_tuned{ss});
-    %B_df_both{ss} = B_df{ss}(:,AandB_tuned{ss});
-    
-    %A_df_onlyA{ss} = A_df{ss}(:,onlyA_tuned{ss});
-    %B_df_onlyA{ss} = B_df{ss}(:,onlyA_tuned{ss});
 end
 
 %% Normalize eahc STC ROI across both trials in non-norm STCs
@@ -53,12 +63,15 @@ end
 for tt=1:2
     for ss =1:size(animal_data,2)
         if tt ==1
-            STC_norm_self_AB{ss}{tt} = [A_df{ss}(:,select_filt_ROIs.A)', B_df{ss}(:,select_filt_ROIs.A)'];
-            STC_norm_trials_AB{ss}{tt} = [A_STC_tn{ss}(:,select_filt_ROIs.A)', B_STC_tn{ss}(:,select_filt_ROIs.A)'];
+            STC_norm_self_AB.global{ss}{tt} = [A_STC_sn{ss}(:,global_remap_idx)', B_STC_sn{ss}(:,global_remap_idx)'];
+            STC_norm_trials_AB.global{ss}{tt} = [A_STC_tn{ss}(:,global_remap_idx)', B_STC_tn{ss}(:,global_remap_idx)'];
+            dF_nonnorm_AB.global{ss}{tt} = [A_df_nn{ss}(:,global_remap_idx)', B_df_nn{ss}(:,global_remap_idx)'];
+            dF_nonnorm_sm_AB.global{ss}{tt} = [A_df_nn_smooth{ss}(:,global_remap_idx)', B_df_nn_smooth{ss}(:,global_remap_idx)'];
         elseif tt ==2
-            STC_norm_self_AB{ss}{tt} = [A_df{ss}(:,select_filt_ROIs.B)', B_df{ss}(:,select_filt_ROIs.B)'];
-            STC_norm_trials_AB{ss}{tt} = [A_STC_tn{ss}(:,select_filt_ROIs.B)', B_STC_tn{ss}(:,select_filt_ROIs.B)'];
-            
+            STC_norm_self_AB.global{ss}{tt} = [A_STC_sn{ss}(:,global_remap_idx)', B_STC_sn{ss}(:,global_remap_idx)'];
+            STC_norm_trials_AB.global{ss}{tt} = [A_STC_tn{ss}(:,global_remap_idx)', B_STC_tn{ss}(:,global_remap_idx)'];
+            dF_nonnorm_AB.global{ss}{tt} = [A_df_nn{ss}(:,global_remap_idx)', B_df_nn{ss}(:,global_remap_idx)'];
+            dF_nonnorm_sm_AB.global{ss}{tt} = [A_df_nn_smooth{ss}(:,global_remap_idx)', B_df_nn_smooth{ss}(:,global_remap_idx)'];
         end
         %STC_norm_trials_AB{ss} = [A_STC_tn{ss}(:,neither_tuned{ss})', B_STC_tn{ss}(:,neither_tuned{ss})'];
     end
@@ -71,33 +84,63 @@ for tt=1:2
         %looked at
         %maxBin - spatial bin where activity is greatest for each ROI
         if tt==1
-            [~,maxBin_all_AB{ss}{tt}] = max(STC_norm_trials_AB{ss}{tt}(:,1:100)', [], 1);
+            [~,maxBin_all_AB{ss}{tt}] = max(STC_norm_trials_AB.global{ss}{tt}(:,1:100)', [], 1);
             %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
             [~,sortOrder_all_AB{ss}{tt}] = sort(maxBin_all_AB{ss}{tt},'ascend');
         elseif tt==2
-            [~,maxBin_all_AB{ss}{tt}] = max(STC_norm_trials_AB{ss}{tt}(:,101:200)', [], 1);
+            [~,maxBin_all_AB{ss}{tt}] = max(STC_norm_trials_AB.global{ss}{tt}(:,101:200)', [], 1);
             %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
             [~,sortOrder_all_AB{ss}{tt}] = sort(maxBin_all_AB{ss}{tt},'ascend');
         end
     end
 end
 
-
-%plot side by side; day by day
-figure;
+%% plot side by side; day by day
+figure % event based STC;
 %subplot(2,1,1)
-imagesc(STC_norm_self_AB{1}{1}(sortOrder_all_AB{1}{1},:))
+imagesc(STC_norm_self_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
 %title('5A5B')
 hold on
 colormap('jet')
 caxis([0 1])
 %A/B vertical separator line
-plot([100 100],[1,size(STC_norm_self_AB{1}{1},1)], 'k','LineWidth', 1.5);
+plot([100 100],[1,size(STC_norm_self_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+%plot reward zones as dashed lines
+%B zone
+plot([30 30],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+%A zone
+plot([70 70],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+
+plot([130 130],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+%A zone
+plot([170 170],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+
+%% figure % event based STC;
+%subplot(2,1,1)
+imagesc(STC_norm_self_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
+%title('5A5B')
+hold on
+colormap('jet')
+caxis([0 1])
+%A/B vertical separator line
+plot([100 100],[1,size(STC_norm_self_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+%plot reward zones as dashed lines
+%B zone
+plot([30 30],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+%A zone
+plot([70 70],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+
+plot([130 130],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+%A zone
+plot([170 170],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+
+
+%% Normalized between trials
 
 %STC normalized across trials
 f= figure('Position', [2090 415 1240 420]);
 subplot(1,2,1)
-imagesc(STC_norm_trials_AB{1}{1}(sortOrder_all_AB{1}{1},:))
+imagesc(STC_norm_trials_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
 %title('Normalized according to trials')
 hold on
 caxis([0 1])
@@ -111,10 +154,11 @@ xlabel('Normalized position');
 ax1.XTick = [1 100 200];
 ax1.XTickLabel = {'0','1','1'};
 %A/B vertical separator line
-plot([100 100],[1,size(STC_norm_trials_AB{1}{1},1)], 'k','LineWidth', 1.5);
+plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
 hold off
+
 subplot(1,2,2)
-imagesc(STC_norm_trials_AB{1}{2}(sortOrder_all_AB{1}{2},:))
+imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{2},:))
 hold on
 caxis([0 1])
 colormap('jet')
@@ -127,7 +171,46 @@ xlabel('Normalized position');
 ax1.XTick = [1 100 200];
 ax1.XTickLabel = {'0','1','1'};
 %A/B vertical separator line
-plot([100 100],[1,size(STC_norm_trials_AB{1}{1},1)], 'k','LineWidth', 1.5);
+plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+hold off
+
+%% Non normalized dF/F
+
+%STC normalized across trials
+f= figure('Position', [2090 415 1240 420]);
+subplot(1,2,1)
+imagesc(dF_nonnorm_sm_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
+%title('Normalized according to trials')
+hold on
+caxis([0 2])
+colormap('jet')
+cbar= colorbar;
+cbar.Label.String = 'Normalized activity';
+cbar.Ticks = [0 0.5 1];
+ax1 = gca;
+ylabel('Neuron #');
+xlabel('Normalized position');
+ax1.XTick = [1 100 200];
+ax1.XTickLabel = {'0','1','1'};
+%A/B vertical separator line
+plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+hold off
+
+subplot(1,2,2)
+imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{2},:))
+hold on
+caxis([0 1])
+colormap('jet')
+cbar= colorbar;
+cbar.Label.String = 'Normalized activity';
+cbar.Ticks = [0 0.5 1];
+ax1 = gca;
+ylabel('Neuron #');
+xlabel('Normalized position');
+ax1.XTick = [1 100 200];
+ax1.XTickLabel = {'0','1','1'};
+%A/B vertical separator line
+plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
 hold off
 
 % subplot(2,1,2)
@@ -143,37 +226,37 @@ hold off
 %hold off
 %% PV correlation plot below
 %PVcorr = corr(A_STC_nn{session_nb}(:,tuning_selection{session_nb}),B_STC_nn{session_nb}(:,tuning_selection{session_nb}))
-PVcorr = corr(A_STC_nn{1}',B_STC_nn{1}');
-
-
-figure('Position',[1350, 90, 500 860]);
-subplot(2,1,1)
-imagesc(PVcorr)
-hold on
-title('Population vector correlation');
-xlabel('Spatial bin')
-ylabel('Spatial bin')
-colormap('jet')
-caxis([0 1])
-xticks([20 40 60 80 100]);
-yticks([20 40 60 80 100]);
-axis('square')
-cbar2 = colorbar;
-cbar2.Label.String = 'Correlation coefficient';
-cbar2.Ticks = [0 0.5 1];
-
-subplot(2,1,2)
-hold on
-title('Population vector correlation');
-plot(diag(PVcorr),'k','LineWidth',1.5)
-xlabel('Spatial bin')
-ylabel('Correlation coef.');
-plot([30 30],[0 1],'r--','LineWidth',1.5);
-text([31 31],[0.9 0.9],'Reward zone B','Color','r')
-plot([70 70],[0 1],'b--','LineWidth',1.5);
-text([71 71],[0.3 0.3],'Reward zone A','Color','b')
-plot([10 10],[0 1],'g--','LineWidth',1.5);
-text([11 11],[0.9 0.9],'Odor zone\newline end','Color','g')
+% PVcorr = corr(A_STC_nn{1}',B_STC_nn{1}');
+% 
+% 
+% figure('Position',[1350, 90, 500 860]);
+% subplot(2,1,1)
+% imagesc(PVcorr)
+% hold on
+% title('Population vector correlation');
+% xlabel('Spatial bin')
+% ylabel('Spatial bin')
+% colormap('jet')
+% caxis([0 1])
+% xticks([20 40 60 80 100]);
+% yticks([20 40 60 80 100]);
+% axis('square')
+% cbar2 = colorbar;
+% cbar2.Label.String = 'Correlation coefficient';
+% cbar2.Ticks = [0 0.5 1];
+% 
+% subplot(2,1,2)
+% hold on
+% title('Population vector correlation');
+% plot(diag(PVcorr),'k','LineWidth',1.5)
+% xlabel('Spatial bin')
+% ylabel('Correlation coef.');
+% plot([30 30],[0 1],'r--','LineWidth',1.5);
+% text([31 31],[0.9 0.9],'Reward zone B','Color','r')
+% plot([70 70],[0 1],'b--','LineWidth',1.5);
+% text([71 71],[0.3 0.3],'Reward zone A','Color','b')
+% plot([10 10],[0 1],'g--','LineWidth',1.5);
+% text([11 11],[0.9 0.9],'Odor zone\newline end','Color','g')
 
 %% Make matching ROI list with tuning criteria for both sessions
 
@@ -209,10 +292,10 @@ text([11 11],[0.9 0.9],'Odor zone\newline end','Color','g')
 %row - session
 %column - trial type
 % 
-% session_matched_tuned_dF_maps{1,1} = A_df{1}(:,tuned_matching_ROI_list(:,1))';
-% session_matched_tuned_dF_maps{1,2} = B_df{1}(:,tuned_matching_ROI_list(:,1))';
-% session_matched_tuned_dF_maps{2,1} = A_df{2}(:,tuned_matching_ROI_list(:,2))';
-% session_matched_tuned_dF_maps{2,2} = B_df{2}(:,tuned_matching_ROI_list(:,2))';
+% session_matched_tuned_dF_maps{1,1} = A_STC_sn{1}(:,tuned_matching_ROI_list(:,1))';
+% session_matched_tuned_dF_maps{1,2} = B_STC_sn{1}(:,tuned_matching_ROI_list(:,1))';
+% session_matched_tuned_dF_maps{2,1} = A_STC_sn{2}(:,tuned_matching_ROI_list(:,2))';
+% session_matched_tuned_dF_maps{2,2} = B_STC_sn{2}(:,tuned_matching_ROI_list(:,2))';
 
 % %combined 2x2
 % combined_maps_2x2 = cell2mat(session_matched_tuned_dF_maps);
