@@ -123,7 +123,7 @@ options.sortTrial = 1;
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
 
 options.tuning_criterion = 'ts';
-[cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options);
+[cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options);
 
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
@@ -167,7 +167,7 @@ options.tuning_criterion = 'ts';
 options.dispFigure = 0;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
-[task_remapping_ROIs] = remapping_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars,...
+[task_remapping_ROIs] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max, session_vars,...
                         max_transient_peak,pf_count_filtered_log, pf_count_filtered,options);
 
 %% Generate STC maps of neurons tuned in either session and plot side by side

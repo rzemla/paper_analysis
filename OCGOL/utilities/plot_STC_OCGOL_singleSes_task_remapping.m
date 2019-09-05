@@ -14,7 +14,7 @@ switch options.tuning_criterion
         select_filt_ROIs.B = task_selective_ROIs.B.idx;
     case 'remapping_filtered'
         global_remap_idx = task_remapping_ROIs.global;
-        global_remap_idx = task_remapping_ROIs.rate;
+        %global_remap_idx = task_remapping_ROIs.rate;
         %global_remap_idx = task_remapping_ROIs.common;
 end
 
@@ -32,7 +32,7 @@ for ss =1:size(animal_data,2)
 
     %100 bins, not smoothed, not norm
     A_df_nn{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.mean_dF_map{8};
-    B_df_nn{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.mean_dF_map{8}
+    B_df_nn{ss} = animal_data{ss}.Place_cell{2}.Spatial_Info.mean_dF_map{8};
     %100 bins, Gaussian smoothed across all bins (not 2D smoothed), not
     %norm
     A_df_nn_smooth{ss} = animal_data{ss}.Place_cell{1}.Spatial_Info.mean_dF_map_smooth{8};  
@@ -158,7 +158,7 @@ plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5
 hold off
 
 subplot(1,2,2)
-imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{2},:))
+imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{1},:))
 hold on
 caxis([0 1])
 colormap('jet')
@@ -178,14 +178,14 @@ hold off
 
 %STC normalized across trials
 f= figure('Position', [2090 415 1240 420]);
-subplot(1,2,1)
+%subplot(1,2,1)
 imagesc(dF_nonnorm_sm_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
 %title('Normalized according to trials')
 hold on
 caxis([0 2])
 colormap('jet')
 cbar= colorbar;
-cbar.Label.String = 'Normalized activity';
+cbar.Label.String = 'dF/F';
 cbar.Ticks = [0 0.5 1];
 ax1 = gca;
 ylabel('Neuron #');
@@ -196,22 +196,22 @@ ax1.XTickLabel = {'0','1','1'};
 plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
 hold off
 
-subplot(1,2,2)
-imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{2},:))
-hold on
-caxis([0 1])
-colormap('jet')
-cbar= colorbar;
-cbar.Label.String = 'Normalized activity';
-cbar.Ticks = [0 0.5 1];
-ax1 = gca;
-ylabel('Neuron #');
-xlabel('Normalized position');
-ax1.XTick = [1 100 200];
-ax1.XTickLabel = {'0','1','1'};
-%A/B vertical separator line
-plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
-hold off
+% subplot(1,2,2)
+% imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{2},:))
+% hold on
+% caxis([0 1])
+% colormap('jet')
+% cbar= colorbar;
+% cbar.Label.String = 'Normalized activity';
+% cbar.Ticks = [0 0.5 1];
+% ax1 = gca;
+% ylabel('Neuron #');
+% xlabel('Normalized position');
+% ax1.XTick = [1 100 200];
+% ax1.XTickLabel = {'0','1','1'};
+% %A/B vertical separator line
+% plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+% hold off
 
 % subplot(2,1,2)
 % imagesc(dF_maps_all_AB_early_late{2}(sortOrder_all_AB{2},:))

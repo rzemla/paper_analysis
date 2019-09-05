@@ -168,6 +168,8 @@ end
 
 %% Filter out neurons that do not have at least 5 sig events in max place field in at least 5 distinct laps
 
+%problem with edges here - i.e. fields that cross start/end of track
+
 %for each session
 for ss=1:options.sessionSelect
     %find events occuring within each place field for each ROI
@@ -177,8 +179,22 @@ for ss=1:options.sessionSelect
                 if ~isempty(placeField_posnorm{ss}{tt}{rr})
                     %for each id'd place field
                     for pp=1:size(placeField_posnorm{ss}{tt}{rr},1)
-                        events_in_field{ss}{tt}{rr}{pp} = find(event_norm_pos_run{ss}.A{rr} >= placeField_posnorm{ss}{tt}{rr}(pp,1) & ...
-                            event_norm_pos_run{ss}.A{rr} <= placeField_posnorm{ss}{tt}{rr}(pp,2));
+                        %check of the normalized field position edges cross the start of the track
+                        %(first edge) - i.e. if first edge is greater than
+                        %the second edge
+                        if placeField_posnorm{ss}{tt}{rr}(pp,1) < placeField_posnorm{ss}{tt}{rr}(pp,2)
+                            events_in_field{ss}{tt}{rr}{pp} = find(event_norm_pos_run{ss}.A{rr} >= placeField_posnorm{ss}{tt}{rr}(pp,1) & ...
+                                event_norm_pos_run{ss}.A{rr} <= placeField_posnorm{ss}{tt}{rr}(pp,2));
+                        else %do two event finds and merge (and sort) into one set of indices
+                            events_in_field_temp_1 = find(event_norm_pos_run{ss}.A{rr} >= 0 & ...
+                                event_norm_pos_run{ss}.A{rr} <= placeField_posnorm{ss}{tt}{rr}(pp,2));
+                            events_in_field_temp_2 = find(event_norm_pos_run{ss}.A{rr} >= placeField_posnorm{ss}{tt}{rr}(pp,2) & ...
+                                event_norm_pos_run{ss}.A{rr} <= 1 );
+                            
+                            %merge and sort indices here
+                            events_in_field{ss}{tt}{rr}{pp} = sort([events_in_field_temp_1; events_in_field_temp_2]);
+                        end
+
                         %register the corresponding lap of in-field filtered event
                         event_in_field_laps{ss}{tt}{rr}{pp} = event_lap_idx{ss}.A{rr}(events_in_field{ss}{tt}{rr}{pp});
                         %get number of unique events (those occuring on each lap)
@@ -197,8 +213,21 @@ for ss=1:options.sessionSelect
                 if ~isempty(placeField_posnorm{ss}{tt}{rr})
                     %for each id'd place field
                     for pp=1:size(placeField_posnorm{ss}{tt}{rr},1)
-                        events_in_field{ss}{tt}{rr}{pp} = find(event_norm_pos_run{ss}.B{rr} >= placeField_posnorm{ss}{tt}{rr}(pp,1) & ...
-                            event_norm_pos_run{ss}.B{rr} <= placeField_posnorm{ss}{tt}{rr}(pp,2));
+                        %check of the normalized field position edges cross the start of the track
+                        %(first edge) - i.e. if first edge is greater than
+                        %the second edge
+                        if placeField_posnorm{ss}{tt}{rr}(pp,1) < placeField_posnorm{ss}{tt}{rr}(pp,2)
+                            events_in_field{ss}{tt}{rr}{pp} = find(event_norm_pos_run{ss}.B{rr} >= placeField_posnorm{ss}{tt}{rr}(pp,1) & ...
+                                event_norm_pos_run{ss}.B{rr} <= placeField_posnorm{ss}{tt}{rr}(pp,2));
+                        else %do two event finds and merge (and sort) into one set of indices
+                            events_in_field_temp_1 = find(event_norm_pos_run{ss}.B{rr} >= 0 & ...
+                                event_norm_pos_run{ss}.B{rr} <= placeField_posnorm{ss}{tt}{rr}(pp,2));
+                            events_in_field_temp_2 = find(event_norm_pos_run{ss}.B{rr} >= placeField_posnorm{ss}{tt}{rr}(pp,2) & ...
+                                event_norm_pos_run{ss}.B{rr} <= 1 );
+                            
+                            %merge and sort indices here
+                            events_in_field{ss}{tt}{rr}{pp} = sort([events_in_field_temp_1; events_in_field_temp_2]);
+                        end
                         %register the corresponding lap of in-field filtered event
                         event_in_field_laps{ss}{tt}{rr}{pp} = event_lap_idx{ss}.B{rr}(events_in_field{ss}{tt}{rr}{pp});
                         %get number of unique events (those occuring on each lap)

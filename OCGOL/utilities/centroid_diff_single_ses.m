@@ -1,4 +1,4 @@
-function [cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options)
+function [cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options)
 
 %input
 
@@ -144,7 +144,8 @@ end
 % for ss=1:size(session_vars,2)
 %     [theta{ss}] = centroid_angle_diff_btw_ROIs(uCar{ss},rewardLoc(ss));
 % end
-    %between A and B in first  session 
+    %between A and B in first  session - returns centroid diffs for all
+    %neurons
 [theta{1}] = centroid_angle_diff_btw_ROIs(uCar{1}{1},uCar{1}{2},pf_vector_max);
  
     %between A and B in last session 
@@ -179,15 +180,27 @@ hold off
 
 %% Export centroid diffs for mutually tuned neurons
 
+%ONLY A and B tuned by TS
 %get only mutually tuned ROIs (A), convert to matrix and combined into 1
 place_field_centers_max_AandB{1}{1} = place_field_centers_max{1}{1}(AandB_tuned{1}); 
 place_field_centers_max_AandB{1}{2} = place_field_centers_max{1}{2}(AandB_tuned{1});
 %combined into single matrix
 comb_place_field_max_AB = [place_field_centers_max_AandB{1}{1};place_field_centers_max_AandB{1}{2}];
 
+%ALL neurons
+place_field_centers_max{1}{1} = place_field_centers_max{1}{1}; 
+place_field_centers_max{1}{2} = place_field_centers_max{1}{2};
+%combined into single matrix
+comb_place_field_max = [place_field_centers_max{1}{1};place_field_centers_max{1}{2}];
+
 %export as struct
+%ONLY A and B tuned by TS
 cent_diff_AandB.angle_diff = theta{1}(AandB_tuned{1});
 cent_diff_AandB.max_bin = comb_place_field_max_AB;
+
+%ALL NEURONS
+cent_diff.angle_diff = theta{1};
+cent_diff.max_bin = comb_place_field_max;
 
 end
 

@@ -296,7 +296,8 @@ end
 if options.plotFigure2 ==1
     
     %number of each type of ROI - A,B,common
-    ROI_all = [234,246,197] 
+    %ROI_all = [234,246,197] 
+    ROI_all = [471,423,562];
     %ROI_all = [111, 246, 197];
     ROI_colors = {'b','r','m'};
     ROI_outline_order = [1,6,11];

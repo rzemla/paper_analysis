@@ -282,16 +282,16 @@ for tt=1:2
             %(first edge) - i.e. if first edge is greater than
             %the second edge
             if placeField_filtered_max_posnorm{tt}{rr}(1) < placeField_filtered_max_posnorm{tt}{rr}(2)
-                events_in_field{tt}{rr} = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                    event_norm_pos_run.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+                events_in_field{tt}{rr} = find(event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                    event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
             else %do two event finds and merge (and sort) into one set of indices
-                events_in_field_temp_1 = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= 0 & ...
+                events_in_field_temp_1 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} >= 0 & ...
                     event_norm_pos_run.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-                events_in_field_temp_2 = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(2) & ...
-                    event_norm_pos_run.A{remapping_pf_filtered(rr)} <= 1 );
+                events_in_field_temp_2 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(2) & ...
+                    event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} <= 1 );
                 
                 %merge and sort indices here
-                events_in_field{tt}{rr} = sort([events_in_field_temp_1; events_in_field_temp_2]);
+                events_in_field{ss}{tt}{rr} = sort([events_in_field_temp_1; events_in_field_temp_2]);
             end
 
 
@@ -303,25 +303,8 @@ for tt=1:2
             events_in_field_pos{tt}{rr} = event_norm_pos_run.A{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
             
         elseif tt == 2 %correct B trials
-            %events_in_field{tt}{rr} = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-            %    event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-
-            %check of the normalized field position edges cross the start of the track
-            %(first edge) - i.e. if first edge is greater than
-            %the second edge
-            if placeField_filtered_max_posnorm{tt}{rr}(1) < placeField_filtered_max_posnorm{tt}{rr}(2)
-                events_in_field{tt}{rr} = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                    event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-            else %do two event finds and merge (and sort) into one set of indices
-                events_in_field_temp_1 = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= 0 & ...
-                    event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-                events_in_field_temp_2 = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(2) & ...
-                    event_norm_pos_run.B{remapping_pf_filtered(rr)} <= 1 );
-                
-                %merge and sort indices here
-                events_in_field{tt}{rr} = sort([events_in_field_temp_1; events_in_field_temp_2]);
-            end
-
+            events_in_field{tt}{rr} = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
             %register the corresponding lap of in-field filtered event
             event_in_field_laps{tt}{rr} = event_lap_idx.B{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
             %get number of unique events (those occuring on each lap)
