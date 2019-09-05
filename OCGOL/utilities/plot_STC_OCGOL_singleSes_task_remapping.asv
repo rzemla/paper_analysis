@@ -107,17 +107,17 @@ end
 end
 
 %% plot side by side; day by day
-subplot_order = [1 2; 3 4; 5 6];
-f = figure % event based STC;
-for cc =1:3
+cc=2
 
-    subplot(3,2,subplot_order(cc,1))
+subplot_order = [1 2; 3 4; 5 6];
+figure % event based STC;
+for ii =1:3
+    
+
+    subplot(3,2,subplot_order(ii,1))
     imagesc(STC_norm_trials_AB{cc}{1}{1}(sortOrder_all_AB{cc}{1}{1},:))
     %title('5A5B')
     hold on
-    cbar= colorbar;
-    cbar.Label.String = 'Normalized activity';
-    cbar.Ticks = [0 1];
     colormap('jet')
     caxis([0 1])
     %A/B vertical separator line
@@ -132,7 +132,7 @@ for cc =1:3
     %A zone
     plot([170 170],[1,size(STC_norm_trials_AB{cc}{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
     
-    subplot(3,2,subplot_order(cc,2))
+    subplot(3,2,2)
     imagesc(dF_nonnorm_sm_AB{cc}{1}{1}(sortOrder_all_AB{cc}{1}{1},:))
     %title('Normalized according to trials')
     hold on
