@@ -18,9 +18,9 @@ switch options.tuning_criterion
         %2 - global
         remap_idx{2} = task_remapping_ROIs.global_far;
         %3 - rate
-        %remap_idx{3} = task_remapping_ROIs.rate;
-        %4 - partial
-        remap_idx{3} = task_remapping_ROIs.partial;
+        remap_idx{3} = task_remapping_ROIs.rate;
+        
+        remap_idx{4} = task_remapping_ROIs.partial;
 end
 
 

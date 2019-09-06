@@ -107,10 +107,6 @@ for ss=1:size(session_vars,2)
     end
 end
 
-%% 
-
-%pf_vector_max{1, 1}{1, 4}
-
 %% Get each tuning vector (complex and cartesian) for each max place field vector
 
 %for each session
@@ -137,7 +133,7 @@ for ss=1:size(session_vars,2)
     end
 end
 
-%% Calculate difference from each centroid to 
+%% Calculate difference from each centroid for max field vectors
 
 %for each session
 %largest angle difference should be pi

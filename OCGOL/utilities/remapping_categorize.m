@@ -1,4 +1,4 @@
-function [remapping_ROIs] = remapping_categorize(cent_diff, tuned_logical, pf_vector_max, session_vars,max_transient_peak,pf_count_filtered_log, pf_count_filtered, options)
+function [remapping_ROIs] = remapping_categorize(cent_diff, tuned_logical, pf_vector_max,pf_vector, session_vars,max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields, options)
 %split mutually tuned neurons by remapping category: 
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
@@ -640,6 +640,14 @@ remove_previous_ROI_log =  overlap_log;
 %filter out previously categorized neurons
 partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log);
 
+
+%% Partial ROI filtering here
+
+%centroid diff - common (less than 10 cm) and one more than 30
+%make sure than animal was running both fields on either trials
+%regardless of remap in each zone
+[partial_remap_filtered] = filter_partial_remappers(partial_remap_idx_start,cent_diff,select_fields,Place_cell,edges,pf_vector);
+
 %% Export indices of neuron in each category as in struct
 
 remapping_ROIs.global_near = global_remap_ROI{2};
@@ -648,12 +656,7 @@ remapping_ROIs.global_far = global_remap_ROI{3};
 remapping_ROIs.rate = rate_remapping_ROI;
 remapping_ROIs.common = common_ROI;
 
-%% Partial ROI filtering here
-
-%centroid diff - common (less than 10 cm) and one more than 30
-%make sure than animal was running both fields on either trials
-%regardless of remap in each zone
-[partial_remap_filtered] = filter_partial_remappers(partial_remap_idx_start,cent_diff)
+remapping_ROIs.partial = partial_remap_filtered;
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 

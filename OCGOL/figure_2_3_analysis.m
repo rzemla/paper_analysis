@@ -181,8 +181,8 @@ options.AUC_test = 'ks';
 options.p_sig = 0.01;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
-[task_remapping_ROIs] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max, session_vars,...
-                        max_transient_peak,pf_count_filtered_log, pf_count_filtered,options);
+[task_remapping_ROIs] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
+                        max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options
