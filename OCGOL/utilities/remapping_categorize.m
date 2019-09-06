@@ -3,22 +3,29 @@ function [remapping_ROIs] = remapping_categorize(cent_diff, tuned_logical, pf_ve
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
 
+%% Set parameters
+
+%number of degrees of centroid difference
+deg_thres = options.deg_thres;
+%degree range for splitting the global remapping neurons
+deg_ranges = options.deg_ranges;
+
 %% Get ROI indices of A selective, B selective, A&B selective neurons
 
 %find A&B tuned by either criterion (input option below)
+%unclassified neurons get moved into mixed category
 tuned_A_si_ts = tuned_logical.si.Atuned  | tuned_logical.ts.Atuned;
 tuned_B_si_ts = tuned_logical.si.Btuned  | tuned_logical.ts.Btuned;
 tuned_AB_si_ts = tuned_A_si_ts & tuned_B_si_ts;
 
-
 %rate map, common, and global
 %only TS tuned neurons
-%rate_remap_idx_start = find(tuned_logical.ts.AandB_tuned ==1);
-rate_remap_idx_start = find(tuned_AB_si_ts == 1); 
+rate_remap_idx_start = find(tuned_logical.ts.AandB_tuned ==1);
+%rate_remap_idx_start = find(tuned_AB_si_ts == 1); 
 
 %partial remapping - both A and B tuned to SI
-partial_remap_idx_start = find(tuned_logical.si.AandB_tuned == 1);
-
+%partial_remap_idx_start = find(tuned_logical.si.AandB_tuned == 1);
+partial_remap_idx_start = find(tuned_AB_si_ts == 1);
 
 %choose if SI or TS tuned
 switch options.tuning_criterion
@@ -53,8 +60,16 @@ end
 single_pf_idxs = find(sum((pf_count_filtered == 1),1) ==2);
 %make copy of original rate remap vector
 rate_remap_idx_orig = rate_remap_idx_start;
-%extract only the indcie
+%extract only the indices
 rate_remap_idx_start = intersect(rate_remap_idx_orig,single_pf_idxs);
+
+%% Parse starting partial remap neurons (2PF vs 1 PF)
+%ROIs with siginificant 2PF vs. 1PFs
+single_double_pf_idxs = find(sum((pf_count_filtered == 1) + 2*(pf_count_filtered == 2),1) ==3);
+%make copy of original rate remap vector
+partial_remap_idx_orig = partial_remap_idx_start;
+%extract only the indices that have 2PF vs. 1 PF place fields
+partial_remap_idx_start = intersect(partial_remap_idx_orig,single_double_pf_idxs);
 
 %% Truncate the centroid difference struct to only include the selected ROIs
 cent_diff_AandB.angle_diff = cent_diff.angle_diff(rate_remap_idx_start);
@@ -496,7 +511,7 @@ cent_diff_AandB_runFilt.max_bin = cent_diff_AandB_eventCount.max_bin(:,run_epoch
 
 %% Centroid difference filter (select those with cent diff less than 10cm ~ 18 deg) - point of split between rate and global remap
 %centroid difference in degrees (36 deg ~ 20 cm) (27 deg ~ 15 cm)
-deg_thres = 36;
+%deg_thres = 45;
 
 %get the vector idx's of the neurons with near and far centroid differences
 near_field_idx = find((cent_diff_AandB_runFilt.angle_diff <= deg2rad(deg_thres)) == 1);
@@ -549,12 +564,16 @@ end
 %for each ROI, run Mann-Whitney U comparing in field AUC values
 for rr =1:size(event_AUC_filtered.A,2)
     %return p value for each comparison
-    [p_AUC(rr),~] = ranksum(event_AUC_event_filtered.A{rr},event_AUC_event_filtered.B{rr});
+    switch options.AUC_test
+        case 'ranksum'
+            [p_val(rr),~] = ranksum(event_AUC_event_filtered.A{rr},event_AUC_event_filtered.B{rr});
+        case 'ks'
+            [~,p_val(rr),~] = kstest2(event_AUC_event_filtered.A{rr},event_AUC_event_filtered.B{rr});
+    end
 end
-
 %logical to select out ROIs from final filter
-rate_remap_pos_log = p_AUC <0.05;
-common_log = p_AUC >= 0.05;
+rate_remap_pos_log = p_val <0.01;
+common_log = p_val >= 0.01;
 
 %rate remapping ROIs + filtered out params
 %select ROI indices (from original)

@@ -87,30 +87,41 @@ end
 
 
 for cc=1:size(remap_idx,2)
-%sort each session by A map
-for tt=1:2
-    for ss =1:size(animal_data,2)
-        %change sort order depending of A or B selective neurons being
-        %looked at
-        %maxBin - spatial bin where activity is greatest for each ROI
-        if tt==1
-            [~,maxBin_all_AB{cc}{ss}{tt}] = max(STC_norm_trials_AB{cc}{ss}{tt}(:,1:100)', [], 1);
-            %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
-            [~,sortOrder_all_AB{cc}{ss}{tt}] = sort(maxBin_all_AB{cc}{ss}{tt},'ascend');
-        elseif tt==2
-            [~,maxBin_all_AB{cc}{ss}{tt}] = max(STC_norm_trials_AB{cc}{ss}{tt}(:,101:200)', [], 1);
-            %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
-            [~,sortOrder_all_AB{cc}{ss}{tt}] = sort(maxBin_all_AB{cc}{ss}{tt},'ascend');
+    %sort each session by A map
+    for tt=1:2
+        for ss =1:size(animal_data,2)
+            %change sort order depending of A or B selective neurons being
+            %looked at
+            %maxBin - spatial bin where activity is greatest for each ROI
+            if tt==1
+                [~,maxBin_all_AB{cc}{ss}{tt}] = max(STC_norm_trials_AB{cc}{ss}{tt}(:,1:100)', [], 1);
+                %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+                [~,sortOrder_all_AB{cc}{ss}{tt}] = sort(maxBin_all_AB{cc}{ss}{tt},'ascend');
+                %sort dF/F activity rasters
+                [max_dff{cc}{ss}{tt},maxBin_all_AB_dFF{cc}{ss}{tt}] = max(dF_nonnorm_sm_AB{cc}{ss}{tt}(:,1:100)', [], 1);
+                [~,sortOrder_all_AB_dFF{cc}{ss}{tt}] = sort(max_dff{cc}{ss}{tt},'descend');
+            elseif tt==2
+                [~,maxBin_all_AB{cc}{ss}{tt}] = max(STC_norm_trials_AB{cc}{ss}{tt}(:,101:200)', [], 1);
+                %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+                [~,sortOrder_all_AB{cc}{ss}{tt}] = sort(maxBin_all_AB{cc}{ss}{tt},'ascend');
+                %sort dF/F activity rasters
+                [max_dff{cc}{ss}{tt},maxBin_all_AB_dFF{cc}{ss}{tt}] = max(dF_nonnorm_sm_AB{cc}{ss}{tt}(:,101:200)', [], 1);
+                [~,sortOrder_all_AB_dFF{cc}{ss}{tt}] = sort(maxBin_all_AB_dFF{cc}{ss}{tt},'descend');
+            end
         end
     end
 end
-end
+
+%for rate remapping difference - sort by diff of max dF/F between A and B
+%selected
+[~,sortOrder_rate_remap_only_dFF_diff] = sort(abs(max_dff{3}{1}{1} - max_dff{3}{1}{2}),'descend');
+
 
 %% plot side by side; day by day
 subplot_order = [1 2; 3 4; 5 6];
-f = figure % event based STC;
+f = figure('Position', [2015 84 851 898]); % event based STC;
 for cc =1:3
-
+    
     subplot(3,2,subplot_order(cc,1))
     imagesc(STC_norm_trials_AB{cc}{1}{1}(sortOrder_all_AB{cc}{1}{1},:))
     %title('5A5B')
@@ -133,7 +144,13 @@ for cc =1:3
     plot([170 170],[1,size(STC_norm_trials_AB{cc}{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
     
     subplot(3,2,subplot_order(cc,2))
-    imagesc(dF_nonnorm_sm_AB{cc}{1}{1}(sortOrder_all_AB{cc}{1}{1},:))
+    if cc==3 %ignores and sort by STC order
+        %imagesc(dF_nonnorm_sm_AB{cc}{1}{1}(sortOrder_all_AB_dFF{cc}{1}{1},:))
+        %imagesc(dF_nonnorm_sm_AB{cc}{1}{1}(sortOrder_rate_remap_only_dFF_diff,:))
+        imagesc(dF_nonnorm_sm_AB{cc}{1}{1}(sortOrder_all_AB{cc}{1}{1},:))
+    else
+        imagesc(dF_nonnorm_sm_AB{cc}{1}{1}(sortOrder_all_AB{cc}{1}{1},:))
+    end
     %title('Normalized according to trials')
     hold on
     caxis([0 1.5])
@@ -161,87 +178,86 @@ for cc =1:3
 end
 
 
-
 %% figure % event based STC;
 %subplot(2,1,1)
-imagesc(STC_norm_self_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
-%title('5A5B')
-hold on
-colormap('jet')
-caxis([0 1])
-%A/B vertical separator line
-plot([100 100],[1,size(STC_norm_self_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
-%plot reward zones as dashed lines
-%B zone
-plot([30 30],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
-%A zone
-plot([70 70],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
-
-plot([130 130],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
-%A zone
-plot([170 170],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+% imagesc(STC_norm_self_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
+% %title('5A5B')
+% hold on
+% colormap('jet')
+% caxis([0 1])
+% %A/B vertical separator line
+% plot([100 100],[1,size(STC_norm_self_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+% %plot reward zones as dashed lines
+% %B zone
+% plot([30 30],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+% %A zone
+% plot([70 70],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+% 
+% plot([130 130],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
+% %A zone
+% plot([170 170],[1,size(STC_norm_self_AB.global{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
 
 
 %% Normalized between trials
 
-%STC normalized across trials
-f= figure('Position', [2090 415 1240 420]);
-subplot(1,2,1)
-imagesc(STC_norm_trials_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
-%title('Normalized according to trials')
-hold on
-caxis([0 1])
-colormap('jet')
-cbar= colorbar;
-cbar.Label.String = 'Normalized activity';
-cbar.Ticks = [0 0.5 1];
-ax1 = gca;
-ylabel('Neuron #');
-xlabel('Normalized position');
-ax1.XTick = [1 100 200];
-ax1.XTickLabel = {'0','1','1'};
-%A/B vertical separator line
-plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
-hold off
-
-subplot(1,2,2)
-imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{1},:))
-hold on
-caxis([0 1])
-colormap('jet')
-cbar= colorbar;
-cbar.Label.String = 'Normalized activity';
-cbar.Ticks = [0 0.5 1];
-ax1 = gca;
-ylabel('Neuron #');
-xlabel('Normalized position');
-ax1.XTick = [1 100 200];
-ax1.XTickLabel = {'0','1','1'};
-%A/B vertical separator line
-plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
-hold off
+% %STC normalized across trials
+% f= figure('Position', [2090 415 1240 420]);
+% subplot(1,2,1)
+% imagesc(STC_norm_trials_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
+% %title('Normalized according to trials')
+% hold on
+% caxis([0 1])
+% colormap('jet')
+% cbar= colorbar;
+% cbar.Label.String = 'Normalized activity';
+% cbar.Ticks = [0 0.5 1];
+% ax1 = gca;
+% ylabel('Neuron #');
+% xlabel('Normalized position');
+% ax1.XTick = [1 100 200];
+% ax1.XTickLabel = {'0','1','1'};
+% %A/B vertical separator line
+% plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+% hold off
+% 
+% subplot(1,2,2)
+% imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{1},:))
+% hold on
+% caxis([0 1])
+% colormap('jet')
+% cbar= colorbar;
+% cbar.Label.String = 'Normalized activity';
+% cbar.Ticks = [0 0.5 1];
+% ax1 = gca;
+% ylabel('Neuron #');
+% xlabel('Normalized position');
+% ax1.XTick = [1 100 200];
+% ax1.XTickLabel = {'0','1','1'};
+% %A/B vertical separator line
+% plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+% hold off
 
 %% Non normalized dF/F
 
-%STC normalized across trials
-f= figure('Position', [2090 415 1240 420]);
-%subplot(1,2,1)
-imagesc(dF_nonnorm_sm_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
-%title('Normalized according to trials')
-hold on
-caxis([0 2])
-colormap('jet')
-cbar= colorbar;
-cbar.Label.String = 'dF/F';
-cbar.Ticks = [0 0.5 1];
-ax1 = gca;
-ylabel('Neuron #');
-xlabel('Normalized position');
-ax1.XTick = [1 100 200];
-ax1.XTickLabel = {'0','1','1'};
-%A/B vertical separator line
-plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
-hold off
+% %STC normalized across trials
+% f= figure('Position', [2090 415 1240 420]);
+% %subplot(1,2,1)
+% imagesc(dF_nonnorm_sm_AB.global{1}{1}(sortOrder_all_AB{1}{1},:))
+% %title('Normalized according to trials')
+% hold on
+% caxis([0 2])
+% colormap('jet')
+% cbar= colorbar;
+% cbar.Label.String = 'dF/F';
+% cbar.Ticks = [0 0.5 1];
+% ax1 = gca;
+% ylabel('Neuron #');
+% xlabel('Normalized position');
+% ax1.XTick = [1 100 200];
+% ax1.XTickLabel = {'0','1','1'};
+% %A/B vertical separator line
+% plot([100 100],[1,size(STC_norm_trials_AB.global{1}{1},1)], 'k','LineWidth', 1.5);
+% hold off
 
 % subplot(1,2,2)
 % imagesc(STC_norm_trials_AB.global{1}{2}(sortOrder_all_AB{1}{2},:))

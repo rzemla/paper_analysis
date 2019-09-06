@@ -3,22 +3,29 @@ function [remapping_ROIs] = remapping_categorize(cent_diff, tuned_logical, pf_ve
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
 
+%% Set parameters
+
+%number of degrees of centroid difference
+deg_thres = options.deg_thres;
+%degree range for splitting the global remapping neurons
+deg_ranges = options.deg_ranges;
+
 %% Get ROI indices of A selective, B selective, A&B selective neurons
 
 %find A&B tuned by either criterion (input option below)
+%unclassified neurons get moved into mixed category
 tuned_A_si_ts = tuned_logical.si.Atuned  | tuned_logical.ts.Atuned;
 tuned_B_si_ts = tuned_logical.si.Btuned  | tuned_logical.ts.Btuned;
 tuned_AB_si_ts = tuned_A_si_ts & tuned_B_si_ts;
 
-
 %rate map, common, and global
 %only TS tuned neurons
-%rate_remap_idx_start = find(tuned_logical.ts.AandB_tuned ==1);
-rate_remap_idx_start = find(tuned_AB_si_ts == 1); 
+rate_remap_idx_start = find(tuned_logical.ts.AandB_tuned ==1);
+%rate_remap_idx_start = find(tuned_AB_si_ts == 1); 
 
 %partial remapping - both A and B tuned to SI
-partial_remap_idx_start = find(tuned_logical.si.AandB_tuned == 1);
-
+%partial_remap_idx_start = find(tuned_logical.si.AandB_tuned == 1);
+partial_remap_idx_start = find(tuned_AB_si_ts == 1);
 
 %choose if SI or TS tuned
 switch options.tuning_criterion
@@ -55,6 +62,12 @@ single_pf_idxs = find(sum((pf_count_filtered == 1),1) ==2);
 rate_remap_idx_orig = rate_remap_idx_start;
 %extract only the indcie
 rate_remap_idx_start = intersect(rate_remap_idx_orig,single_pf_idxs);
+
+%% Parse starting partial remap neurons (2PF vs 1 PF)
+%ROIs with siginificant 2PF vs. 1PFs
+single_double_pf_idxs = find(sum((pf_count_filtered == 1) + 2*(pf_count_filtered == 2),1) ==3);
+
+partial_remap_idx_start = 
 
 %% Truncate the centroid difference struct to only include the selected ROIs
 cent_diff_AandB.angle_diff = cent_diff.angle_diff(rate_remap_idx_start);
@@ -282,16 +295,16 @@ for tt=1:2
             %(first edge) - i.e. if first edge is greater than
             %the second edge
             if placeField_filtered_max_posnorm{tt}{rr}(1) < placeField_filtered_max_posnorm{tt}{rr}(2)
-                events_in_field{tt}{rr} = find(event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                    event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-            else %do two event finds and merge (and sort) into one set of indices
-                events_in_field_temp_1 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} >= 0 & ...
+                events_in_field{tt}{rr} = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
                     event_norm_pos_run.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-                events_in_field_temp_2 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(2) & ...
-                    event_norm_pos_run{ss}.A{remapping_pf_filtered(rr)} <= 1 );
+            else %do two event finds and merge (and sort) into one set of indices
+                events_in_field_temp_1 = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= 0 & ...
+                    event_norm_pos_run.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+                events_in_field_temp_2 = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(2) & ...
+                    event_norm_pos_run.A{remapping_pf_filtered(rr)} <= 1 );
                 
                 %merge and sort indices here
-                events_in_field{ss}{tt}{rr} = sort([events_in_field_temp_1; events_in_field_temp_2]);
+                events_in_field{tt}{rr} = sort([events_in_field_temp_1; events_in_field_temp_2]);
             end
 
 
@@ -303,8 +316,25 @@ for tt=1:2
             events_in_field_pos{tt}{rr} = event_norm_pos_run.A{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
             
         elseif tt == 2 %correct B trials
-            events_in_field{tt}{rr} = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
-                event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+            %events_in_field{tt}{rr} = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+            %    event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+
+            %check of the normalized field position edges cross the start of the track
+            %(first edge) - i.e. if first edge is greater than
+            %the second edge
+            if placeField_filtered_max_posnorm{tt}{rr}(1) < placeField_filtered_max_posnorm{tt}{rr}(2)
+                events_in_field{tt}{rr} = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
+                    event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+            else %do two event finds and merge (and sort) into one set of indices
+                events_in_field_temp_1 = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= 0 & ...
+                    event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
+                events_in_field_temp_2 = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(2) & ...
+                    event_norm_pos_run.B{remapping_pf_filtered(rr)} <= 1 );
+                
+                %merge and sort indices here
+                events_in_field{tt}{rr} = sort([events_in_field_temp_1; events_in_field_temp_2]);
+            end
+
             %register the corresponding lap of in-field filtered event
             event_in_field_laps{tt}{rr} = event_lap_idx.B{remapping_pf_filtered(rr)}(events_in_field{tt}{rr});
             %get number of unique events (those occuring on each lap)
@@ -479,7 +509,7 @@ cent_diff_AandB_runFilt.max_bin = cent_diff_AandB_eventCount.max_bin(:,run_epoch
 
 %% Centroid difference filter (select those with cent diff less than 10cm ~ 18 deg) - point of split between rate and global remap
 %centroid difference in degrees (36 deg ~ 20 cm) (27 deg ~ 15 cm)
-deg_thres = 36;
+%deg_thres = 45;
 
 %get the vector idx's of the neurons with near and far centroid differences
 near_field_idx = find((cent_diff_AandB_runFilt.angle_diff <= deg2rad(deg_thres)) == 1);
@@ -532,12 +562,16 @@ end
 %for each ROI, run Mann-Whitney U comparing in field AUC values
 for rr =1:size(event_AUC_filtered.A,2)
     %return p value for each comparison
-    [p_AUC(rr),~] = ranksum(event_AUC_event_filtered.A{rr},event_AUC_event_filtered.B{rr});
+    switch options.AUC_test
+        case 'ranksum'
+            [p_val(rr),~] = ranksum(event_AUC_event_filtered.A{rr},event_AUC_event_filtered.B{rr});
+        case 'ks'
+            [~,p_val(rr),~] = kstest2(event_AUC_event_filtered.A{rr},event_AUC_event_filtered.B{rr});
+    end
 end
-
 %logical to select out ROIs from final filter
-rate_remap_pos_log = p_AUC <0.05;
-common_log = p_AUC >= 0.05;
+rate_remap_pos_log = p_val <0.01;
+common_log = p_val >= 0.01;
 
 %rate remapping ROIs + filtered out params
 %select ROI indices (from original)

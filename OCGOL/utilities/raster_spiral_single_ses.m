@@ -297,7 +297,7 @@ if options.plotFigure2 ==1
     
     %number of each type of ROI - A,B,common
     %ROI_all = [234,246,197] 
-    ROI_all = [471,423,562];
+    ROI_all = [398	404	455];
     %ROI_all = [111, 246, 197];
     ROI_colors = {'b','r','m'};
     ROI_outline_order = [1,6,11];
@@ -328,11 +328,11 @@ ROI_trace_order = [2,3,4; 7 8 9; 12 13 14];
 for rr=1:3
     subplot(4,5,ROI_trace_order(rr,:))
     hold on
-    xlim([0.1 10.2])
-    ylim([-0.2 2.5])
+    xlim([0.1 18.2])
+    ylim([-0.2 4])
     yticks([0 1 2])
     ylabel('dF/F');
-    xticks(0:3:9.5);
+    xticks(0:3:15.5);
     set(gca,'FontSize',14)
     set(gca,'LineWidth',1)
     %convert to minuntes and offset to start at 0 min (0s)
@@ -360,7 +360,7 @@ for rr=1:3
     pax1.ThetaTick = angles;
     thetaticklabels(pax1,{'lap start'});
     rticks(pax1, []);
-    rlim(pax1,[0 20]);
+    rlim(pax1,[0 25]);
     
     polarplot(x{1},r_scaled{1},'k','Linewidth',1.5)
     

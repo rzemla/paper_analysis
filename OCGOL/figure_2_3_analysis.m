@@ -165,6 +165,18 @@ save(fullfile(path_dir{1},'cumul_analysis','frac_tuned.mat'),'tuned_fractions');
 options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
 options.dispFigure = 0;
+%number of degrees of centroid difference
+%45 deg ~25 cm; 
+%36 deg ~20 cm;
+%27 deg ~15 cm;
+%18 dege ~10 cm
+options.deg_thres = 18;
+%ranges for splitting the global remappers into
+%0-10 cm; 10 - 30cm; 30+ cm
+options.deg_ranges = [0 18 54];
+%choice between KS test of unpaired Mann Whitney U (later)
+%either 'ranksum' or ks
+options.AUC_test = 'ks';
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
 [task_remapping_ROIs] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max, session_vars,...
