@@ -272,7 +272,6 @@ median_track_len = median(Behavior_full{1}.position_lap(:,2));
 
 %conversion factor (norm_pos/cm length) - 100 bins
 norm_conv_factor = median_track_len/100;
-%median_track_len/1;
 
 %% Filter out neurons that do not have at least 5 sig events in max place field in at least 5 distinct laps
 
@@ -636,7 +635,7 @@ overlap_log = sum(overlap_mat,1);
 
 %make shared logical of all overlapping and remove from
 %partial_remap_idx_start_ROI
-remove_previous_ROI_log =  overlap_log ;
+remove_previous_ROI_log =  overlap_log;
 
 %filter out previously categorized neurons
 partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log);
@@ -651,6 +650,10 @@ remapping_ROIs.common = common_ROI;
 
 %% Work out partial ROI filtering here
 
+%centroid diff - common (less than 10 cm) and one more than 30
+%make sure than animal was running both fields on either trials
+%regardless of remap in each zone
+partial_remap_idx_start
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 

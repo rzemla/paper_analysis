@@ -16,7 +16,7 @@ switch options.tuning_criterion
         %1 - common
         remap_idx{1} = task_remapping_ROIs.common;
         %2 - global
-        remap_idx{2} = task_remapping_ROIs.global;
+        remap_idx{2} = task_remapping_ROIs.global_far;
         %3 - rate
         remap_idx{3} = task_remapping_ROIs.rate;
 end
