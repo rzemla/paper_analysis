@@ -514,21 +514,30 @@ cent_diff_AandB_runFilt.max_bin = cent_diff_AandB_eventCount.max_bin(:,run_epoch
 %deg_thres = 45;
 
 %get the vector idx's of the neurons with near and far centroid differences
-near_field_idx = find((cent_diff_AandB_runFilt.angle_diff <= deg2rad(deg_thres)) == 1);
-far_field_idx = find((cent_diff_AandB_runFilt.angle_diff > deg2rad(deg_thres)) == 1);
+near_field_idx = find((cent_diff_AandB_runFilt.angle_diff < deg2rad(deg_ranges(2))) == 1);
+%mid_field_idx = find((cent_diff_AandB_runFilt.angle_diff <= deg2rad(deg_thres)) == 1)
+mid_field_idx =find(((cent_diff_AandB_runFilt.angle_diff >= deg2rad(deg_ranges(2))) &...
+ (cent_diff_AandB_runFilt.angle_diff < deg2rad(deg_ranges(3)))) ==1);
+%far centroid split ROIs
+far_field_idx = find((cent_diff_AandB_runFilt.angle_diff >= deg2rad(deg_ranges(3))) == 1);
+
+
 
 %translate the idxs to absolute ROIs idxs (A and B are the same)
 near_idx_centroid = final_filtered_ROI.A(near_field_idx);
-global_remap_ROI = final_filtered_ROI.A(far_field_idx);
+%second cateogory
+global_remap_ROI{2} = final_filtered_ROI.A(mid_field_idx);
+%third category
+global_remap_ROI{3} = final_filtered_ROI.A(far_field_idx);
 
 %place field width positions
 %potential rate remapping
 placeField_near_centroid{1} = placeField_final{1}(near_field_idx);
 placeField_near_centroid{2} = placeField_final{2}(near_field_idx);
-
-%global remapping
-placeField_global_centroid{1} = placeField_final{1}(far_field_idx);
-placeField_global_centroid{2} = placeField_final{2}(far_field_idx);
+ %RESUME HERE
+%global remapping (mid and far field)
+placeField_global_centroid{3}{1} = placeField_final{1}(far_field_idx);
+placeField_global_centroid{3}{2} = placeField_final{2}(far_field_idx);
 
 %event position (normalized)
 %potential rate remapping
