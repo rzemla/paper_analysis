@@ -9,6 +9,8 @@ function [remapping_ROIs] = remapping_categorize(cent_diff, tuned_logical, pf_ve
 deg_thres = options.deg_thres;
 %degree range for splitting the global remapping neurons
 deg_ranges = options.deg_ranges;
+%significance of level for AUC comparison test
+p_sig = options.p_sig;
 
 %% Get ROI indices of A selective, B selective, A&B selective neurons
 
@@ -518,10 +520,8 @@ near_field_idx = find((cent_diff_AandB_runFilt.angle_diff < deg2rad(deg_ranges(2
 %mid_field_idx = find((cent_diff_AandB_runFilt.angle_diff <= deg2rad(deg_thres)) == 1)
 mid_field_idx =find(((cent_diff_AandB_runFilt.angle_diff >= deg2rad(deg_ranges(2))) &...
  (cent_diff_AandB_runFilt.angle_diff < deg2rad(deg_ranges(3)))) ==1);
-%far centroi
+%far centroid split ROIs
 far_field_idx = find((cent_diff_AandB_runFilt.angle_diff >= deg2rad(deg_ranges(3))) == 1);
-
-
 
 %translate the idxs to absolute ROIs idxs (A and B are the same)
 near_idx_centroid = final_filtered_ROI.A(near_field_idx);
@@ -534,8 +534,11 @@ global_remap_ROI{3} = final_filtered_ROI.A(far_field_idx);
 %potential rate remapping
 placeField_near_centroid{1} = placeField_final{1}(near_field_idx);
 placeField_near_centroid{2} = placeField_final{2}(near_field_idx);
- %RESUME HERE
+
 %global remapping (mid and far field)
+placeField_global_centroid{2}{1} = placeField_final{1}(mid_field_idx);
+placeField_global_centroid{2}{2} = placeField_final{2}(mid_field_idx);
+
 placeField_global_centroid{3}{1} = placeField_final{1}(far_field_idx);
 placeField_global_centroid{3}{2} = placeField_final{2}(far_field_idx);
 
@@ -545,16 +548,22 @@ event_pos_inField_near_centroid{1} = event_pos_inField_final{1}(near_field_idx);
 event_pos_inField_near_centroid{2} = event_pos_inField_final{2}(near_field_idx);
 
 %global remapping
-event_pos_inField_global_centroid{1} = event_pos_inField_final{1}(far_field_idx);
-event_pos_inField_global_centroid{2} = event_pos_inField_final{2}(far_field_idx);
+event_pos_inField_global_centroid{2}{1} = event_pos_inField_final{1}(mid_field_idx);
+event_pos_inField_global_centroid{2}{2} = event_pos_inField_final{2}(mid_field_idx);
+
+event_pos_inField_global_centroid{3}{1} = event_pos_inField_final{1}(far_field_idx);
+event_pos_inField_global_centroid{3}{2} = event_pos_inField_final{2}(far_field_idx);
 
 %select the event indices for event/place filtered ROIs
 events_in_field_near_centroid{1} = events_in_field_final_filtered{1}(near_field_idx);
 events_in_field_near_centroid{2} = events_in_field_final_filtered{2}(near_field_idx);
 
 %global remapping
-events_in_field_global_centroid{1} = events_in_field_final_filtered{1}(far_field_idx);
-events_in_field_global_centroid{2} = events_in_field_final_filtered{2}(far_field_idx);
+events_in_field_global_centroid{2}{1} = events_in_field_final_filtered{1}(mid_field_idx);
+events_in_field_global_centroid{2}{2} = events_in_field_final_filtered{2}(mid_field_idx);
+
+events_in_field_global_centroid{3}{1} = events_in_field_final_filtered{1}(far_field_idx);
+events_in_field_global_centroid{3}{2} = events_in_field_final_filtered{2}(far_field_idx);
 
 %% Do Mann Whitney U test for AUC of events in nearby place field (rate remapping ROIs) 
 
@@ -581,8 +590,8 @@ for rr =1:size(event_AUC_filtered.A,2)
     end
 end
 %logical to select out ROIs from final filter
-rate_remap_pos_log = p_val <0.01;
-common_log = p_val >= 0.01;
+rate_remap_pos_log = p_val < p_sig;
+common_log = p_val >= p_sig;
 
 %rate remapping ROIs + filtered out params
 %select ROI indices (from original)
@@ -614,22 +623,34 @@ event_pos_inField_common{2} = event_pos_inField_near_centroid{2}(common_log);
 %% Partial remapping ROIs
 
 %remove other i'd'd indices from this set
-global_overlap_log = ismember(partial_remap_idx_start,global_remap_ROI);
+global_overlap_near_log = ismember(partial_remap_idx_start,global_remap_ROI{2});
+global_overlap_far_log = ismember(partial_remap_idx_start,global_remap_ROI{3});
 rate_overlap_log = ismember(partial_remap_idx_start,rate_remapping_ROI);
 common_overlap_log = ismember(partial_remap_idx_start,common_ROI);
 
+%combine in matrix and do or
+%check for overlaps with partial remapping neurons
+%should be 0 idxs removed b/c only use neurons with single fields
+overlap_mat = [global_overlap_near_log; global_overlap_far_log; rate_overlap_log; common_overlap_log];
+overlap_log = sum(overlap_mat,1);
+
 %make shared logical of all overlapping and remove from
 %partial_remap_idx_start_ROI
-remove_previous_ROI_log =  (common_overlap_log | (global_overlap_log | rate_overlap_log));
+remove_previous_ROI_log =  overlap_log ;
 
 %filter out previously categorized neurons
 partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log);
 
 %% Export indices of neuron in each category as in struct
 
-remapping_ROIs.global = global_remap_ROI;
+remapping_ROIs.global_near = global_remap_ROI{2};
+remapping_ROIs.global_far = global_remap_ROI{3};
+
 remapping_ROIs.rate = rate_remapping_ROI;
 remapping_ROIs.common = common_ROI;
+
+%% Work out partial ROI filtering here
+
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 
