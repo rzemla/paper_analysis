@@ -73,6 +73,10 @@ partial_remap_idx_orig = partial_remap_idx_start;
 %extract only the indices that have 2PF vs. 1 PF place fields
 partial_remap_idx_start = intersect(partial_remap_idx_orig,single_double_pf_idxs);
 
+%% Screen all both trial matching idxs to make at least 1 PF/min 5 event in field
+at_least_one_pf_idxs = find(sum((pf_count_filtered ~= 0),1) ==2);
+tuned_AB_si_ts_filt_idx = intersect(find(tuned_AB_si_ts ==1),at_least_one_pf_idxs);
+
 %% Truncate the centroid difference struct to only include the selected ROIs
 cent_diff_AandB.angle_diff = cent_diff.angle_diff(rate_remap_idx_start);
 cent_diff_AandB.max_bin = cent_diff.angle_diff(:,rate_remap_idx_start);
@@ -648,6 +652,42 @@ partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log)
 %regardless of remap in each zone
 [partial_remap_filtered] = filter_partial_remappers(partial_remap_idx_start,cent_diff,select_fields,Place_cell,edges,pf_vector);
 
+
+%% Create mixed category - all neurons that do not fit any category by are tuned in both trials by either criteria
+
+%all neurons tuned in both trial by either category (filtered by 1PF and
+%min 5 events in field)
+
+%convert to logical
+tuned_AB_si_ts_filt_log = logical(zeros(1,size(tuned_AB_si_ts,2)));
+tuned_AB_si_ts_filt_log(tuned_AB_si_ts_filt_idx) = 1;
+
+%convert idxs of all selected neurons to logical vectors equal to selected
+%ROIs id'd for the session - create common logical matrix
+blank_logical = zeros(6,size(tuned_AB_si_ts,2));
+%Assign true to eahc row in the following order
+%1 - common; 2 - global near; 3 -global far
+%4 - rate; 5 - partial; 6 - mixed
+blank_logical(1,common_ROI) = 1;
+blank_logical(2,global_remap_ROI{2}) = 1;
+blank_logical(3,global_remap_ROI{3}) = 1;
+blank_logical(4,rate_remapping_ROI) = 1;
+blank_logical(5,partial_remap_filtered) = 1;
+%sum the first 5 logicals - should not sum to more than 1
+%create mixed/unclassified category for neurons that do not match the
+%classification above
+blank_logical(6,:) = (~logical(sum(blank_logical(1:5,:))) & tuned_AB_si_ts_filt_log);
+%get indices of mixed ROIs
+mixed_ROI = find(blank_logical(6,:) == 1);
+
+%Check if each cateory split count adds up to whole
+if(sum(sum(blank_logical,2)) == length(find(tuned_AB_si_ts_filt_log == 1)))
+    disp('Category split adds up to whole of A&B neurons.')
+    disp(sum(blank_logical,2))
+else
+    disp('Category split does NOT add up to whole of A&B neurons!')
+end
+
 %% Export indices of neuron in each category as in struct
 
 remapping_ROIs.global_near = global_remap_ROI{2};
@@ -657,6 +697,7 @@ remapping_ROIs.rate = rate_remapping_ROI;
 remapping_ROIs.common = common_ROI;
 
 remapping_ROIs.partial = partial_remap_filtered;
+remapping_ROIs.mixed = mixed_ROI;
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 

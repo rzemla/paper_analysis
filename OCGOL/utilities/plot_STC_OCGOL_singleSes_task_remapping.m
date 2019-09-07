@@ -15,12 +15,16 @@ switch options.tuning_criterion
     case 'remapping_filtered'
         %1 - common
         remap_idx{1} = task_remapping_ROIs.common;
-        %2 - global
-        remap_idx{2} = task_remapping_ROIs.global_far;
-        %3 - rate
-        %remap_idx{3} = task_remapping_ROIs.rate;
-        %4 - partial
-        remap_idx{3} = task_remapping_ROIs.partial;
+        %2 - global near
+        remap_idx{2} = task_remapping_ROIs.global_near;
+        %3 - global far
+        remap_idx{3} = task_remapping_ROIs.global_far;
+        %4 - rate
+        remap_idx{4} = task_remapping_ROIs.rate;
+        %5 - partial
+        remap_idx{5} = task_remapping_ROIs.partial;
+        %6 - mixed/unclassified
+        remap_idx{6} = task_remapping_ROIs.mixed;
 end
 
 
