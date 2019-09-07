@@ -124,11 +124,11 @@ end
 
 
 %% plot side by side; day by day
-subplot_order = [1 2; 3 4; 5 6];
+subplot_order = [1 2; 3 4; 5 6; 7 8; 9 10; 11 12];
 f = figure('Position', [2015 84 851 898]); % event based STC;
-for cc =1:3
+for cc =1:6
     
-    subplot(3,2,subplot_order(cc,1))
+    subplot(6,2,subplot_order(cc,1))
     imagesc(STC_norm_trials_AB{cc}{1}{1}(sortOrder_all_AB{cc}{1}{1},:))
     %title('5A5B')
     hold on
@@ -149,7 +149,7 @@ for cc =1:3
     %A zone
     plot([170 170],[1,size(STC_norm_trials_AB{cc}{1}{1},1)], 'Color', [1 1 1], 'LineStyle','--','LineWidth', 1.5);
     
-    subplot(3,2,subplot_order(cc,2))
+    subplot(6,2,subplot_order(cc,2))
     if cc==3 %ignores and sort by STC order
         %imagesc(dF_nonnorm_sm_AB{cc}{1}{1}(sortOrder_all_AB_dFF{cc}{1}{1},:))
         %imagesc(dF_nonnorm_sm_AB{cc}{1}{1}(sortOrder_rate_remap_only_dFF_diff,:))
