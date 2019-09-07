@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_STC_OCGOL_singleSes_task_selective(animal_data, tunedLogical,task_remapping_ROIs,options)
+function [outputArg1,outputArg2] = plot_STC_OCGOL_singleSes_task_selective(animal_data, tunedLogical,task_selective_ROIs,options)
 
 %% Import variables
 

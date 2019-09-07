@@ -138,6 +138,17 @@ options.tuning_criterion = 'ts';
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
+%% Generate STC maps - task-selective neurons
+%customize to add options
+%tuned in both sessions by SI score
+%sorted by A trials
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
+%normalized across both sessions
+
+plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
+
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
 
@@ -197,18 +208,6 @@ options.tuning_criterion = 'remapping_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
 plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,options);
-
-%% Generate STC maps of neurons tuned in either session and plot side by side
-%customize to add options
-%tuned in both sessions by SI score
-%sorted by A trials
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
-%normalized across both sessions
-
-plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_remapping_ROIs,options);
-
 
 %% PV and TC correlation matrices for each class of tuned neurons
 

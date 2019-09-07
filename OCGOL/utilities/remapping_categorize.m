@@ -489,7 +489,7 @@ for tt=1:2
 end
 
 %combine filters for each epoch into 1 filter
-run_epoch_filt_both = logical(run_epoch_filt_include_log{1}) | logical(run_epoch_filt_include_log{1});
+run_epoch_filt_both = logical(run_epoch_filt_include_log{1}) | logical(run_epoch_filt_include_log{2});
 
 %apply final filter to ROI indices
 
@@ -650,7 +650,8 @@ partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log)
 %centroid diff - common (less than 10 cm) and one more than 30
 %make sure than animal was running both fields on either trials
 %regardless of remap in each zone
-[partial_remap_filtered] = filter_partial_remappers(partial_remap_idx_start,cent_diff,select_fields,Place_cell,edges,pf_vector);
+[partial_remap_filtered] = filter_partial_remappers(partial_remap_idx_start,cent_diff,select_fields,Place_cell,edges,pf_vector,...
+                            Behavior_full,Behavior_split,event_norm_pos_run, event_lap_idx);
 
 
 %% Create mixed category - all neurons that do not fit any category by are tuned in both trials by either criteria
