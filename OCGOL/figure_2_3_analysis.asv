@@ -12,23 +12,28 @@
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
-path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
+%path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
 %good -%no PSEM exposure
-
 %path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %near flat PV until end %bug with idx remapper code; run parser (global) global difference
 %good first PSEM sliencing exp; 
 %I56_RTLS_ABrand_punish_041719 - last exp - part of learning before silence
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  %near flat PV until end %bug with idx remapper code; run parser (global) global difference
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};%near flat PV until end %bug with idx remapper code; run parser (global) global difference
+%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
+%near flat PV until end %bug with idx remapper code; run parser (global) global difference
+
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+%near flat PV until end %bug with idx remapper code; run parser (global) global difference
 %OK acquired the day of silencing but before; can also use session before
-%and from learning
+%and from learning - late learning session in Figure 4 learning datasets
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+
 path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
-%I57_LT_AB_prePost_sal_050619 - last session before next day silencing with
-%PSAM 
+%I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
+
+%whether to load place field data processed below
+options.loadPlaceField_data = 1;
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -79,29 +84,44 @@ raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 
 
 %% Find  place fields
-%use rate map - number of event onsets/ occupancy across all laps
-options.gSigma = 3;
-%which place cell struct to do placefield extraction on
-%iterate through place_cell cells of interest
-%4 - all A regardless if correct
-%5 - all B regardless if correct
-
-%for each session
-for ss=1:size(session_vars,2)
-    %for ii =[4,5] %all A or B 
-    for ii =[1 2] %only correct A or B
-        %works for 1 (A) laps
-        %373 A trial not merged
-        %449 - third field seems not caught
-        %clipping vectors/cells at end
-        options.place_struct_nb = ii;
-        disp(['Running trial type: ', num2str(ii)]);
-        [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
+if options.loadPlaceField_data == 0
+    %use rate map - number of event onsets/ occupancy across all laps
+    options.gSigma = 3;
+    %which place cell struct to do placefield extraction on
+    %iterate through place_cell cells of interest
+    %4 - all A regardless if correct
+    %5 - all B regardless if correct
+    
+    %for each session
+    for ss=1:size(session_vars,2)
+        %for ii =[4,5] %all A or B
+        for ii =[1 2] %only correct A or B
+            %works for 1 (A) laps
+            %373 A trial not merged
+            %449 - third field seems not caught
+            %clipping vectors/cells at end
+            options.place_struct_nb = ii;
+            disp(['Running trial type: ', num2str(ii)]);
+            [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
+        end
     end
+    
+    %save whole place cell struct and load in and replace for each session in
+    %the future
+    %make post-processing directory (postProcess)
+    mkdir(path_dir{1},'postProcess')
+    %make temporary storage variable
+    Place_cell = session_vars{1, 1}.Place_cell;
+    %save Place_cell struct in that directory
+    save(fullfile(path_dir{1},'postProcess','placeField_upd_struct.mat'),'Place_cell')
+elsee
+    tic;
+    disp('Loading place field data')
+    pf_load = load(fullfile(path_dir{1},'postProcess','placeField_upd_struct.mat'));
+    toc
+%replace the Place_cell struct in the session_vars cell
+    Place_cell{1}.placeField  
 end
-
-%parse place fields significance by checking that a minimum of 5 events
-%occured in the field
 
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots

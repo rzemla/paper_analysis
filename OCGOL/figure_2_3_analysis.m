@@ -27,10 +27,13 @@
 %and from learning - late learning session in Figure 4 learning datasets
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
 %I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
+
+%whether to load place field data processed below
+options.loadPlaceField_data = 1;
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -81,29 +84,51 @@ raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 
 
 %% Find  place fields
-%use rate map - number of event onsets/ occupancy across all laps
-options.gSigma = 3;
-%which place cell struct to do placefield extraction on
-%iterate through place_cell cells of interest
-%4 - all A regardless if correct
-%5 - all B regardless if correct
-
-%for each session
-for ss=1:size(session_vars,2)
-    %for ii =[4,5] %all A or B 
-    for ii =[1 2] %only correct A or B
-        %works for 1 (A) laps
-        %373 A trial not merged
-        %449 - third field seems not caught
-        %clipping vectors/cells at end
-        options.place_struct_nb = ii;
-        disp(['Running trial type: ', num2str(ii)]);
-        [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
+if options.loadPlaceField_data == 0
+    %use rate map - number of event onsets/ occupancy across all laps
+    options.gSigma = 3;
+    %which place cell struct to do placefield extraction on
+    %iterate through place_cell cells of interest
+    %4 - all A regardless if correct
+    %5 - all B regardless if correct
+    
+    %for each session
+    for ss=1:size(session_vars,2)
+        %for ii =[4,5] %all A or B
+        for ii =[1 2] %only correct A or B
+            %works for 1 (A) laps
+            %373 A trial not merged
+            %449 - third field seems not caught
+            %clipping vectors/cells at end
+            options.place_struct_nb = ii;
+            disp(['Running trial type: ', num2str(ii)]);
+            [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
+        end
+    end
+    
+    %save whole place cell struct and load in and replace for each session in
+    %the future
+    %make post-processing directory (postProcess)
+    mkdir(path_dir{1},'postProcess')
+    %for each Place_cell session extract placeField struct
+    %use trial types here
+    for tt=1:2
+        session_pf(tt).placeField = session_vars{1}.Place_cell{tt}.placeField;
+    end
+    
+    %save Place_cell struct in that directory
+    save(fullfile(path_dir{1},'postProcess','placeField_upd_struct.mat'),'session_pf')
+else
+    tic;
+    disp('Loading place field data')
+    load(fullfile(path_dir{1},'postProcess','placeField_upd_struct.mat'));
+    toc
+    %replace the Place_cell struct in the session_vars cell
+    for tt=1:2
+        session_vars{1}.Place_cell{tt}.placeField = session_pf(tt).placeField;
     end
 end
 
-%parse place fields significance by checking that a minimum of 5 events
-%occured in the field
 
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
