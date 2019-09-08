@@ -3,17 +3,34 @@
 %lab workstation
 %input directories to matching function
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
+ %near flat PV until end - check PSAM experiment order - late experiment - animal
+%already exposed to PSEM - use I52RT_AB_sal_113018 (no PSEM exposure yet
+%during task)- processed below
+%I52_RT - I52RT_ABp_112218 - last imaged training day
+
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
-%path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %bug with remapper select ROI code
-%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};
+%good -%no PSEM exposure
+%path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %near flat PV until end %bug with idx remapper code; run parser (global) global difference
+%good first PSEM sliencing exp; 
+%I56_RTLS_ABrand_punish_041719 - last exp - part of learning before silence
+
+%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
+%near flat PV until end %bug with idx remapper code; run parser (global) global difference
+
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+%near flat PV until end %bug with idx remapper code; run parser (global) global difference
+%OK acquired the day of silencing but before; can also use session before
+%and from learning - late learning session in Figure 4 learning datasets
+
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+
+path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
+%I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -59,7 +76,7 @@ options.sessionSelect = [1];
 %break down in simpler code in the future;
 
 %generate figure used in task selecitve figure
-options.plotFigure2 = 1;
+options.plotFigure2 = 0;
 raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 
 

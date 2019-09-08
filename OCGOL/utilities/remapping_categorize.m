@@ -437,17 +437,30 @@ for tt=1:2
     %for each ROI in correct A trials
     for rr=1:size(lap_idx_range{tt},2)
         %for each opposing lap
-        for ll=1:size(corr_lap_idx{2},1)
-            % - depdendent on B parameter
-            if tt == 1 %if looking on run status in B trials for correct A trials
+        if tt==1
+            for ll=1:size(corr_lap_idx{2},1)
+                % - depdendent on B parameter
+                %if tt == 1 %if looking on run status in B trials for correct A trials
                 split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{2}(ll));
-            elseif tt == 2
-                split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{1}(ll));
+                %elseif tt == 2
+                %split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{1}(ll));
+                %end
+                split_lap_pos{tt}{rr}{ll} = lap_pos_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
+                split_lap_runEpoch{tt}{rr}{ll} = lap_runEpoch_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
             end
-            
-            split_lap_pos{tt}{rr}{ll} = lap_pos_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
-            split_lap_runEpoch{tt}{rr}{ll} = lap_runEpoch_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
+        elseif tt ==2
+            for ll=1:size(corr_lap_idx{1},1)
+                % - depdendent on B parameter
+                %if tt == 1 %if looking on run status in B trials for correct A trials
+                %split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{2}(ll));
+                %elseif tt == 2
+                split_lap_idxs{tt}{rr}{ll} = find(lap_label_opposed{tt}{rr} == corr_lap_idx{1}(ll));
+                %end
+                split_lap_pos{tt}{rr}{ll} = lap_pos_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
+                split_lap_runEpoch{tt}{rr}{ll} = lap_runEpoch_opposed{tt}{rr}(split_lap_idxs{tt}{rr}{ll});
+            end
         end
+        
     end
 end
 
