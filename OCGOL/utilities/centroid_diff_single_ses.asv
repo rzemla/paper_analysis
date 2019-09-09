@@ -120,14 +120,14 @@ for ss=1:size(session_vars,2)
                 if size(pf_vector{ss}{tt}{rr},2) == 1
                     %pf_vector_max{ss}{tt}(rr) = tun_vector{ss}{tt}(rr);
                     %place field bin center
-                    place_field_centers_all{ss}{tt}(rr) = place_field_centers{ss}{tt}{rr};
+                    place_field_centers_select_all{ss}{tt}(rr) = place_field_centers{ss}{tt}{rr};
                 else %if more than 1
                     %pf_vector_max{ss}{tt}(rr) = pf_vector{ss}{tt}{rr}(max_transient_peak{ss}{tt}(rr));
-                    place_field_centers_all{ss}{tt}(rr) = place_field_centers{ss}{tt}{rr}(max_transient_peak{ss}{tt}(rr));
+                    place_field_centers_select_all{ss}{tt}(rr) = place_field_centers{ss}{tt}{rr}(max_transient_peak{ss}{tt}(rr));
                 end
             else
                 %pf_vector_max{ss}{tt}(rr) = nan;
-                place_field_centers_all{ss}{tt}(rr) = nan;
+                place_field_centers_select_all{ss}{tt}(rr) = nan;
             end
         end
     end
