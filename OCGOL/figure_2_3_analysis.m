@@ -26,14 +26,14 @@
 %OK acquired the day of silencing but before; can also use session before
 %and from learning - late learning session in Figure 4 learning datasets
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
 %I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
 
 %whether to load place field data processed below
-options.loadPlaceField_data = 1;
+options.loadPlaceField_data = 0;
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -234,7 +234,7 @@ options.AUC_test = 'ks';
 options.p_sig = 0.01;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
-[task_remapping_ROIs] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
+[task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
                         max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
@@ -250,6 +250,26 @@ options.tuning_criterion = 'remapping_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
 plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,options);
+
+
+%% Extract spatial bins for each class of remapping neurons
+
+bin_center = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs, select_fields,partial_field_idx);
+
+%plot remapping as scatter
+%green dots - common ; red - partial field 
+
+%distribution of partial fields
+figure
+hold on
+histogram(bin_center.partial_far(1,:),0:10:100)
+histogram(bin_center.partial_far(2,:),0:10:100)
+
+
+figure
+hold on
+histogram(bin_center.partial_com(1,:),0:10:100)
+histogram(bin_center.partial_com(2,:),0:10:100)
 
 %% PV and TC correlation matrices for each class of tuned neurons
 

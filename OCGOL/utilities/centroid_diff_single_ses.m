@@ -120,14 +120,14 @@ for ss=1:size(session_vars,2)
                 if size(pf_vector{ss}{tt}{rr},2) == 1
                     %pf_vector_max{ss}{tt}(rr) = tun_vector{ss}{tt}(rr);
                     %place field bin center
-                    place_field_centers_all{ss}{tt}(rr) = place_field_centers{ss}{tt}{rr};
+                    place_field_centers_select_all{ss}{tt}{rr} = place_field_centers{ss}{tt}{rr}(select_fields{1}{tt}{rr}');
                 else %if more than 1
                     %pf_vector_max{ss}{tt}(rr) = pf_vector{ss}{tt}{rr}(max_transient_peak{ss}{tt}(rr));
-                    place_field_centers_all{ss}{tt}(rr) = place_field_centers{ss}{tt}{rr}(max_transient_peak{ss}{tt}(rr));
+                    place_field_centers_select_all{ss}{tt}{rr} = place_field_centers{ss}{tt}{rr}(select_fields{1}{tt}{rr}');
                 end
             else
                 %pf_vector_max{ss}{tt}(rr) = nan;
-                place_field_centers_all{ss}{tt}(rr) = nan;
+                place_field_centers_select_all{ss}{tt}{rr} = nan;
             end
         end
     end
@@ -223,6 +223,9 @@ cent_diff_AandB.max_bin = comb_place_field_max_AB;
 %ALL NEURONS
 cent_diff.angle_diff = theta{1};
 cent_diff.max_bin = comb_place_field_max;
+%place field bin centers for all fields with significant fields (min 5
+%event on distinct laps and PFs id'd using PF_finder
+cent_diff.all_sig_bin = place_field_centers_select_all;
 
 end
 

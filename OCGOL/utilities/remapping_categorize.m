@@ -1,4 +1,4 @@
-function [remapping_ROIs] = remapping_categorize(cent_diff, tuned_logical, pf_vector_max,pf_vector, session_vars,max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields, options)
+function [remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tuned_logical, pf_vector_max,pf_vector, session_vars,max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields, options)
 %split mutually tuned neurons by remapping category: 
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
@@ -663,7 +663,7 @@ partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log)
 %centroid diff - common (less than 10 cm) and one more than 30
 %make sure than animal was running both fields on either trials
 %regardless of remap in each zone
-[partial_remap_filtered] = filter_partial_remappers(partial_remap_idx_start,cent_diff,select_fields,Place_cell,edges,pf_vector,...
+[partial_remap_filtered,partial_field_idx] = filter_partial_remappers(partial_remap_idx_start,cent_diff,select_fields,Place_cell,edges,pf_vector,...
                             Behavior_full,Behavior_split,event_norm_pos_run, event_lap_idx);
 
 

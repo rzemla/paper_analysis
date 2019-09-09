@@ -27,9 +27,9 @@
 %and from learning - late learning session in Figure 4 learning datasets
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
 %I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
 
 %whether to load place field data processed below
@@ -110,18 +110,25 @@ if options.loadPlaceField_data == 0
     %the future
     %make post-processing directory (postProcess)
     mkdir(path_dir{1},'postProcess')
-    %make temporary storage variable
-    Place_cell = session_vars{1, 1}.Place_cell;
+    %for each Place_cell session extract placeField struct
+    %use trial types here
+    for tt=1:2
+        session_pf(tt).placeField = session_vars{1}.Place_cell{tt}.placeField;
+    end
+    
     %save Place_cell struct in that directory
-    save(fullfile(path_dir{1},'postProcess','placeField_upd_struct.mat'),'Place_cell')
-elsee
+    save(fullfile(path_dir{1},'postProcess','placeField_upd_struct.mat'),'session_pf')
+else
     tic;
     disp('Loading place field data')
-    pf_load = load(fullfile(path_dir{1},'postProcess','placeField_upd_struct.mat'));
+    load(fullfile(path_dir{1},'postProcess','placeField_upd_struct.mat'));
     toc
-%replace the Place_cell struct in the session_vars cell
-    Place_cell{1}.placeField  
+    %replace the Place_cell struct in the session_vars cell
+    for tt=1:2
+        session_vars{1}.Place_cell{tt}.placeField = session_pf(tt).placeField;
+    end
 end
+
 
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
@@ -158,7 +165,7 @@ options.sortTrial = 1;
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
 
 options.tuning_criterion = 'ts';
-[cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,options);
+[cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,options);
 
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
@@ -243,6 +250,12 @@ options.tuning_criterion = 'remapping_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
 plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,options);
+
+
+%% Extract spatial bins for each class of remapping neurons
+
+bin_center = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs, select_fields);
+
 
 %% PV and TC correlation matrices for each class of tuned neurons
 
