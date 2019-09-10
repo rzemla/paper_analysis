@@ -1,8 +1,8 @@
 %% Import variables and define options
-
+clear
 %lab workstation
 %input directories to matching function
-%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
  %near flat PV until end - check PSAM experiment order - late experiment - animal
 %already exposed to PSEM - use I52RT_AB_sal_113018 (no PSEM exposure yet
 %during task)- processed below
@@ -26,14 +26,14 @@
 %OK acquired the day of silencing but before; can also use session before
 %and from learning - late learning session in Figure 4 learning datasets
 
-path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
 %I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
 
 %whether to load place field data processed below
-options.loadPlaceField_data = 0;
+options.loadPlaceField_data = 1;
 
 %load place cell variables for each session
 %get mat directories in each output folder
@@ -256,20 +256,92 @@ plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping
 
 bin_center = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs, select_fields,partial_field_idx);
 
+save(fullfile(path_dir{1},'cumul_analysis','place_field_centers_remap.mat'),'bin_center');
+
 %plot remapping as scatter
 %green dots - common ; red - partial field 
 
 %distribution of partial fields
 figure
 hold on
-histogram(bin_center.partial_far(1,:),0:10:100)
-histogram(bin_center.partial_far(2,:),0:10:100)
+histogram(bin_center.partial_far(1,:),0:50:100)
+histogram(bin_center.partial_far(2,:),0:50:100)
 
+%% For partial, scatter plot of centroids - sort my mean of common place field center
+[~,Isort_com] = sort(mean(bin_center.partial_com),'descend');
+%sort columns by common mean center
+bin_center.partial_com_sort = bin_center.partial_com(:,Isort_com);
+bin_center.partial_far_sort =bin_center.partial_far(:,Isort_com);
+
+figure
+%plot common
+hold on
+for rr=1:size(bin_center.partial_com,2)
+    scatter(bin_center.partial_com_sort(1,rr),rr,'g')
+    scatter(bin_center.partial_com_sort(2,rr),rr,'g')
+end
+%plot partial
+for rr=1:size(bin_center.partial_com,2)
+if ~isnan(bin_center.partial_far_sort(1,rr))
+    scatter(bin_center.partial_far_sort(1,rr),rr,'b')
+else
+    scatter(bin_center.partial_far_sort(2,rr),rr,'r')
+end
+end
+
+%sort global far by B trials
+[~,Isort_glo_far_B] = sort(bin_center.global_far(2,:),'descend');
+[~,Isort_glo_far_A] = sort(bin_center.global_far(1,:),'descend');
+%sort columns by common mean center
+bin_center.global_far_sortB = bin_center.global_far(:,Isort_glo_far_B);
+bin_center.global_far_sortA = bin_center.global_far(:,Isort_glo_far_A);
+%bin_center.partial_far_sort =bin_center.partial_far(:,Isort_com);
+
+%Plot global far
+figure;
+subplot(1,2,1)
+hold on;
+for rr=1:size(bin_center.global_far,2)
+    scatter(bin_center.global_far_sortA(1,rr),rr,'b')
+    scatter(bin_center.global_far_sortA(2,rr),rr,'r')
+end
+subplot(1,2,2)
+hold on;
+for rr=1:size(bin_center.global_far,2)
+    scatter(bin_center.global_far_sortB(1,rr),rr,'b')
+    scatter(bin_center.global_far_sortB(2,rr),rr,'r')
+end
+
+figure;
+hold on
+histogram(bin_center.global_far(1,:),0:10:100)
+
+figure;
+hold on
+histogram(bin_center.global_far(2,:),0:10:100)
 
 figure
 hold on
-histogram(bin_center.partial_com(1,:),0:10:100)
-histogram(bin_center.partial_com(2,:),0:10:100)
+title('Far global remappers - center of A vs center of B')
+xlabel('A field center')
+ylabel('B field center')
+scatter(bin_center.global_far_sortA(1,:),bin_center.global_far_sortA(2,:))
+
+figure
+hold on
+title('Near global remappers - center of A vs center of B')
+xlabel('A field center')
+ylabel('B field center')
+scatter(bin_center.global_near(1,:),bin_center.global_near(2,:))
+plot([0 100],[0 100],'k--')
+
+figure
+hold on
+title('Common - center of A vs center of B')
+xlabel('A field center')
+ylabel('B field center')
+scatter(bin_center.common(1,:),bin_center.common(2,:))
+plot([0 100],[0 100],'k--')
 
 %% PV and TC correlation matrices for each class of tuned neurons
 
