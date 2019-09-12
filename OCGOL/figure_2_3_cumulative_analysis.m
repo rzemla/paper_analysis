@@ -15,12 +15,14 @@ path_dir{11} = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'
 
 
 %% Fraction of place cell (A sel, B sel, A&B remapping,neither) - bar chart and pie chart
-
+%Figure 2C
 fraction_place_cells(path_dir)
 
 
 %% Remapping centroids
-
+%Figure 3E/F
+options.lowPVcorr = [6 7 8];
+remapping_centroids(path_dir,options)
 
 %% AUC/min scatterplots of A vs B neurons for each animal 
 %read relevant data
