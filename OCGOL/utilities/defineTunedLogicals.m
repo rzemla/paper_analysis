@@ -43,6 +43,13 @@ for aa=options.sessionSelect%1:size(animal_data,2)
     tunedLogical(aa).ts.onlyB_tuned = ~tunedLogical(aa).ts.Atuned & tunedLogical(aa).ts.Btuned;
     
     tunedLogical(aa).ts.neither = ~tunedLogical(aa).ts.Atuned & ~tunedLogical(aa).ts.Btuned;
+
+    %A and B tuned by either SI or TS criteria
+%find A&B tuned by either criterion (input option below)
+%unclassified neurons get moved into mixed category
+tuned_A_si_ts = tunedLogical(1).si.Atuned  | tunedLogical(1).ts.Atuned;
+tuned_B_si_ts = tunedLogical(1).si.Btuned  | tunedLogical(1).ts.Btuned;
+tunedLogical(aa).tuned_AB_si_ts = tuned_A_si_ts & tuned_B_si_ts;
     
 end
 

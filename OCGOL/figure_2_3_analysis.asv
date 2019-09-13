@@ -1,7 +1,7 @@
 function figure_2_3_analysis(path_dir)
 
 %% Import variables and define options
-%clear
+clear
 %lab workstation
 %input directories to matching function
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
@@ -426,7 +426,6 @@ end
 
 %% Synchronized calcium event analysis
 
-end
 
 
 

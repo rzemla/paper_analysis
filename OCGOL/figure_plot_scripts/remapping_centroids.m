@@ -216,27 +216,15 @@ g.set_names('column','Origin','x','Zone','y','Place field center','color','Trial
 figure('Position',[100 100 800 400]);
 g.draw();
 
-
-
-
-figure
-hold on
-hAxes = gca;
-boxplot(hAxes,cell2mat(count_3.A'),cell2mat(grouping_box'),'Colors',[65,105,225; 220,20,60; 255,0,255; 0 0 0]/255,'Widths',0.3)
-lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
-set(lines, 'Color', 'k');
-hBoxPlot = hAxes.Children.Children;
-hBoxPlot(2).Color = 'b';
-
-
-y = iosr.statistics.tab2box(cell2mat(grouping_box'),cell2mat(count_3.A'));
-
-figure;
-bp = iosr.statistics.boxPlot(1:3,y,'Notch',false);
-bp.lineColor{2} = 'b';
-
-figure;
-iosr.statistics.boxPlot([count_3.A(1);count_3.B(1)])
+% 
+% y = iosr.statistics.tab2box(cell2mat(grouping_box'),cell2mat(count_3.A'));
+% 
+% figure;
+% bp = iosr.statistics.boxPlot(1:3,y,'Notch',false);
+% bp.lineColor{2} = 'b';
+% 
+% figure;
+% iosr.statistics.boxPlot([count_3.A(1);count_3.B(1)])
 
 figure
 boxplot(count_3.A{1},ones(size(count_3.A{1},1),1))
@@ -342,6 +330,8 @@ histogram(partial.com_parA(:,2),0:5:100)
 %plot([0 0],[0 35],'k--')
 
 %% For partial, scatter plot of centroids - sort my mean of common place field center
+%play with later
+%{
 [~,Isort_com] = sort(mean(bin_center.partial_com),'descend');
 %sort columns by common mean center
 bin_center.partial_com_sort = bin_center.partial_com(:,Isort_com);
@@ -417,6 +407,6 @@ ylabel('B field center')
 scatter(bin_center.common(1,:),bin_center.common(2,:))
 plot([0 100],[0 100],'k--')
 
-
+%}
 end
 
