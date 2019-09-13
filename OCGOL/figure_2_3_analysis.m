@@ -425,6 +425,20 @@ for ROI = rejectedROI_idx
 end
 
 %% Extract frame indices for figure 2A/3A
+% MATLAB:
+% 1) split motion corrected hdf stack in A and B trials
+% 2) downsampled 5x timewise (interpolate /average over interval)
+% 3) convert to uint16 type (from double)
+% 4) save as tif stacks
+% Imagej/Fiji:
+% 1) Load downsample tif stacks
+% 2) Get stack average and max projection for each
+% 3) Subtract average from max projectionf or each
+% 4) Apply blue LUT for A and red LUT for A
+% 5) Window/level both until estimated background looks near black
+% 6) Window/level stack average (in gray LUT) to get nice/clear contrast
+% 7) Use merge colors feature with gray channel being Average stack, red is B, and blue is A.
+% 8) Convert to 8bit and save as tif.
 
 %get absolute frames of correct A and and correct B trials (no run
 %intervals included)
