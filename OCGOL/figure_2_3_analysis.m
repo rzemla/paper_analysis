@@ -93,7 +93,7 @@ toc;
 %take the processed inputs for spiral plots, ROI zooms above and plot for
 %figure presentation
 options.plotFigure2 = 1;
-plot_raster_spiral_only(plot_raster_vars,session_vars,templates,options)
+plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,options)
 
 
 %% Find  place fields
@@ -247,9 +247,9 @@ options.deg_thres = 18;
 options.deg_ranges = [0 18 54];
 %choice between KS test of unpaired Mann Whitney U (later)
 %either 'ranksum' or ks
-options.AUC_test = 'ks';
+options.AUC_test = 'ranksum';
 %significance level of test
-options.p_sig = 0.01;
+options.p_sig = 0.05;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
 [task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
