@@ -1,4 +1,4 @@
-function figure_2_3_analysis(path_dir)
+%function figure_2_3_analysis(path_dir)
 
 %% Import variables and define options
 clear
@@ -31,7 +31,7 @@ clear
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
+path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
 %I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
 
 %whether to load place field data processed below
@@ -52,7 +52,7 @@ end
 for ii = 1:size(path_dir,2)
     %add event variables
     session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
-        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split','updated_dff');
+        'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split','updated_dff','Imaging');
     %load in relevant CNMF variables for visualization purposes
     CNMF_vars{ii} = load(fullfile(inputfiles{ii}.folder,inputfiles{ii}.name),'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
     %load in template (stack average)
@@ -424,8 +424,49 @@ for ROI = rejectedROI_idx
     %pause(0.01)
 end
 
+%% Extract frame indices for figure 2A/3A
+
+%get absolute frames of correct A and and correct B trials (no run
+%intervals included)
+[~,frames_A,~] = intersect(session_vars{1}.Imaging.time ,session_vars{1}.Imaging_split{1}.time_restricted);
+[~,frames_B,~] = intersect(session_vars{1}.Imaging.time ,session_vars{1}.Imaging_split{2}.time_restricted);
+
+%read in the motion correct stack
+Y = read_file(fullfile(path_dir{1}, '1_nr.h5'));
+
+%split Y in into A and B frames
+Ya = Y(:,:,frames_A);
+Yb = Y(:,:,frames_B); 
+
+%clear Y to clear memory
+clear Y
+
+%downsample 5x 
+Y_ds = downsample_data(Y,'time',5);
+
+%convert to uint16
+
+
+%save to directory as 16 bit tiff
+imwrite(uint16(meanStk{ii}),'AVG_nr.tif','tif')
+
+    
+    Yds_16 = uint16(Y_ds);
+    
+    %save downsampled stack
+    saveastiff(Yds_16,'5x_DS_nr.tif');
+    
+    %take max of the downsampled stack
+%     maxStk{ii} = max(Yds_16,[],3);
+%     
+%     %save max projection
+%     imwrite(uint16(maxStk{ii}),'MAX_nr.tif','tif')
+% 
+% meanStk{1} = mean(Y,3);
+
 %% Synchronized calcium event analysis
 
+%end
 
 
 
