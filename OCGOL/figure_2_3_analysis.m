@@ -78,11 +78,22 @@ options.sessionSelect = [1];
 %237
 %currently displaying in Figure 2
 %[234,246,197] 
-%break down in simpler code in the future;
 
 %generate figure used in task selecitve figure
 options.plotFigure2 = 0;
 raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
+
+%% Preprare inputs for raster spiral plotter 
+%add option above to prevent from re-calculating values on every run
+tic;
+[plot_raster_vars] = prepare_inputs_raster(session_vars,CNMF_vars,removeROI);
+toc;
+
+%% Plot raster here only
+%take the processed inputs for spiral plots, ROI zooms above and plot for
+%figure presentation
+options.plotFigure2 = 1;
+plot_raster_spiral_only(plot_raster_vars,session_vars,templates,options)
 
 
 %% Find  place fields
@@ -445,12 +456,37 @@ end
 [~,frames_A,~] = intersect(session_vars{1}.Imaging.time ,session_vars{1}.Imaging_split{1}.time_restricted);
 [~,frames_B,~] = intersect(session_vars{1}.Imaging.time ,session_vars{1}.Imaging_split{2}.time_restricted);
 
+%extract logical for selecting run frames only
+logical_run_A = session_vars{1}.Behavior_split{1}.run_ones == 1;
+logical_run_B = session_vars{1}.Behavior_split{2}.run_ones == 1;
+
+%indices of run frames only
+frames_A_run = frames_A(logical_run_A);
+frames_B_run = frames_B(logical_run_B);
+%indices of no run frames
+frames_A_norun = frames_A(~logical_run_A);
+frames_B_norun = frames_B(~logical_run_B);
+
 %read in the motion correct stack
 Y = read_file(fullfile(path_dir{1}, '1_nr.h5'));
 
-%split Y in into A and B frames
-Ya = Y(:,:,frames_A);
-Yb = Y(:,:,frames_B); 
+%if 1, then only run frames
+%if 2, then no run, 
+%if 3 then all
+runOnly = 2;
+
+%select run only or all
+if runOnly == 1
+    %split Y in into A and B frames
+    Ya = Y(:,:,frames_A_run);
+    Yb = Y(:,:,frames_B_run);
+elseif runOnly == 2
+    Ya = Y(:,:,frames_A_norun);
+    Yb = Y(:,:,frames_B_norun);  
+elseif runOnly == 3
+    Ya = Y(:,:,frames_A);
+    Yb = Y(:,:,frames_B);
+end
 
 %clear Y to clear memory
 clear Y
@@ -465,9 +501,17 @@ Yb_ds_16 = uint16(Yb_ds);
 
 %navigate to exp dir
 cd(path_dir{1})
-%save downsampled stacks
-saveastiff(Ya_ds_16,'A_DS_nr.tif');
-saveastiff(Yb_ds_16,'B_DS_nr.tif');  
+
+if runOnly == 1
+    saveastiff(Ya_ds_16,'A_DS_nr_run.tif');
+    saveastiff(Yb_ds_16,'B_DS_nr_run.tif');
+elseif runOnly == 2
+    saveastiff(Ya_ds_16,'A_DS_nr_norun.tif');
+    saveastiff(Yb_ds_16,'B_DS_nr_norun.tif');
+elseif runOnly == 3
+    saveastiff(Ya_ds_16,'A_DS_nr.tif');
+    saveastiff(Yb_ds_16,'B_DS_nr.tif');
+end
 
     %save to directory as 16 bit tiff
     % imwrite(uint16(meanStk{ii}),'AVG_nr.tif','tif')
