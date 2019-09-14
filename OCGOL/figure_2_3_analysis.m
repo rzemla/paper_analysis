@@ -267,7 +267,7 @@ options.p_sig = 0.05;
 options.tuning_criterion = 'remapping_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
-plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,options);
+plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,path_dir,options);
 
 
 %% Extract spatial bins for each class of remapping neurons
@@ -410,6 +410,14 @@ ii=1;
 selectedROI_idx = find(removeROI{ii}.compSelect == 1)';
 rejectedROI_idx = find(removeROI{ii}.compSelect == 0)';
 
+%show only select neurons for visualization purposes
+selectVis =1;
+
+%show only select neurons for localization purposes
+if selectVis == 1
+selectedROI_idx =[627 416 269 524 458]
+end
+
 %plot BW outline of the component
 figure
 imagesc(templates{ii}.template);
@@ -433,6 +441,38 @@ for ROI = rejectedROI_idx
     %plot componenet outline
     plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'r', 'LineWidth',1);
     %pause(0.01)
+end
+
+%% Show outlines of only select neurons for visulization purposes
+ii=1;
+%get idx's of selected and rejected ROIs
+
+%filter coor kp for selected ROIs
+Coor_kp_soma_rem = CNMF_vars{ii}.Coor_kp(removeROI{ii}.compSelect);
+
+%show only select neurons for visualization purposes
+selectVis =1;
+
+%show only select neurons for localization purposes
+selectedROI_idx =[627 416 269 524 458];
+
+%plot BW outline of the component
+figure
+imagesc(templates{ii}.template);
+hold on
+axes(gca);
+axis square
+xticks(gca,[])
+yticks(gca,[])
+grayMap = brighten(gray,0.6);
+colormap(gca,grayMap)
+
+%plot all selected ROIs as green
+for ROI = selectedROI_idx
+    %plot componenet outline
+    plot(Coor_kp_soma_rem{ROI}(1,:),Coor_kp_soma_rem{ROI}(2,:),'g', 'LineWidth',1);
+    pause()
+    
 end
 
 %% Extract frame indices for figure 2A/3A

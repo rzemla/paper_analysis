@@ -78,7 +78,6 @@ options.sessionSelect = [1];
 %237
 %currently displaying in Figure 2
 %[234,246,197] 
-%break down in simpler code in the future;
 
 %generate figure used in task selecitve figure
 options.plotFigure2 = 0;
@@ -87,13 +86,14 @@ raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
 %% Preprare inputs for raster spiral plotter 
 %add option above to prevent from re-calculating values on every run
 tic;
-
 [plot_raster_vars] = prepare_inputs_raster(session_vars,CNMF_vars,removeROI);
 toc;
 
 %% Plot raster here only
-
-plot_raster_spiral_only
+%take the processed inputs for spiral plots, ROI zooms above and plot for
+%figure presentation
+options.plotFigure2 = 1;
+plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
 
 
 %% Find  place fields
@@ -247,9 +247,9 @@ options.deg_thres = 18;
 options.deg_ranges = [0 18 54];
 %choice between KS test of unpaired Mann Whitney U (later)
 %either 'ranksum' or ks
-options.AUC_test = 'ks';
+options.AUC_test = 'ranksum';
 %significance level of test
-options.p_sig = 0.01;
+options.p_sig = 0.05;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
 [task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
@@ -410,6 +410,14 @@ ii=1;
 selectedROI_idx = find(removeROI{ii}.compSelect == 1)';
 rejectedROI_idx = find(removeROI{ii}.compSelect == 0)';
 
+%show only select neurons for visualization purposes
+selectVis =1;
+
+%show only select neurons for localization purposes
+if selectVis == 1
+selectedROI_idx =[627 416 269 524 458]
+end
+
 %plot BW outline of the component
 figure
 imagesc(templates{ii}.template);
@@ -432,6 +440,38 @@ end
 for ROI = rejectedROI_idx
     %plot componenet outline
     plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'r', 'LineWidth',1);
+    %pause(0.01)
+end
+
+%% Show outlines of only select neurons for vi
+ii=1;
+%get idx's of selected and rejected ROIs
+selectedROI_idx = find(removeROI{ii}.compSelect == 1)';
+rejectedROI_idx = find(removeROI{ii}.compSelect == 0)';
+
+%show only select neurons for visualization purposes
+selectVis =1;
+
+%show only select neurons for localization purposes
+if selectVis == 1
+selectedROI_idx =[627 416 269 524 458]
+end
+
+%plot BW outline of the component
+figure
+imagesc(templates{ii}.template);
+hold on
+axes(gca);
+axis square
+xticks(gca,[])
+yticks(gca,[])
+grayMap = brighten(gray,0.6);
+colormap(gca,grayMap)
+
+%plot all selected ROIs as green
+for ROI = selectedROI_idx
+    %plot componenet outline
+    plot(CNMF_vars{ii}.Coor_kp{ROI}(1,:),CNMF_vars{ii}.Coor_kp{ROI}(2,:),'g', 'LineWidth',1);
     %pause(0.01)
 end
 
