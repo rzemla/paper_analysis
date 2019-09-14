@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,options)
+function [outputArg1,outputArg2] = plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
 
 %% Import variables
 
@@ -60,7 +60,7 @@ idx_B = find(trialOrder ==3 | trialOrder ==30);
 %define each class of ROI to plot
 ROI_all = [627 416	269 524 458];
 for rr=1:5
-    figure('Position',[2951 443 297 313])
+    f = figure('Position',[2951 443 297 313])
     %split into 2 and fill with nans areas where opposite trial is there
     whole_map_temp = session_vars{1}.Place_cell{3}.dF_lap_map_ROI_smooth{ROI_all(rr)};
     whole_map_temp_A = whole_map_temp;
@@ -88,9 +88,9 @@ for rr=1:5
     ax3.Visible = 'off';
 
 %export each raster
-mkdir(fullfile(crossdir,'match_STC'))
-disp('Saving match ROIs STC ')
-export_fig(f_clip ,fullfile(crossdir,'match_STC','all_matching__nan_d1_clipped_300.png'),'-r300')
+mkdir(fullfile(path_dir{1},'remapping_rasters'))
+disp(['Saving raster: ', num2str(rr)])
+export_fig(f ,fullfile(path_dir{1},'remapping_rasters',[num2str(rr),'_300.png']),'-r300')
 
 end
 

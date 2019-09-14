@@ -93,7 +93,7 @@ toc;
 %take the processed inputs for spiral plots, ROI zooms above and plot for
 %figure presentation
 options.plotFigure2 = 1;
-plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,options)
+plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
 
 
 %% Find  place fields
