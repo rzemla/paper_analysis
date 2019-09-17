@@ -1,7 +1,7 @@
-%function figure_2_3_analysis(path_dir)
+function figure_2_3_analysis(path_dir)
 
 %% Import variables and define options
-clear
+%clear
 %lab workstation
 %input directories to matching function
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
@@ -31,7 +31,7 @@ clear
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
 %I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
 
 %whether to load place field data processed below
@@ -70,6 +70,8 @@ options.sessionSelect = [1];
 %returns struct of structs
 [tunedLogical] = defineTunedLogicals(session_vars,options);
 
+%skip plots
+if 0
 %% Plot example neuron (for display/figure) - trace, position, event spiral, TS arrows, A vs. B
 %I42L example plots ROIs
 %59, 66 (nice), 111(nice),162,180, 208,214 234 (nice),252,280  - A specific
@@ -78,6 +80,7 @@ options.sessionSelect = [1];
 %237
 %currently displaying in Figure 2
 %[234,246,197] 
+
 
 %generate figure used in task selecitve figure
 options.plotFigure2 = 0;
@@ -94,7 +97,7 @@ toc;
 %figure presentation
 options.plotFigure2 = 1;
 plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
-
+end
 
 %% Find  place fields
 if options.loadPlaceField_data == 0
@@ -176,17 +179,26 @@ options.sortTrial = 1;
 [max_bin_rate,max_transient_peak] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
 
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
-
+%TODO: put conditional here
 %also generate the cent diff for either A&B tuned by either criteria
 
+% options.tuning_criterion = 'ts';
+% [cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,options);
+% 
+% %save the fractions output data %
+% save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
+% %save the cent diff for all neurons (TS) tuned
+% save(fullfile(path_dir{1},'cumul_analysis','centroid_diff_all.mat'),'cent_diff');
+
+%% Calculate centroid difference between A&B tuned neurons (max in field transient rate) - alt - take centroid of PF of single PF place cells
+%returns same variables as above
 options.tuning_criterion = 'ts';
-[cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,options);
+[cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses_single_PF(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,options);
 
 %save the fractions output data %
 save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
 %save the cent diff for all neurons (TS) tuned
 save(fullfile(path_dir{1},'cumul_analysis','centroid_diff_all.mat'),'cent_diff');
-
 
 %% Split neurons by A or B task selective category - A or B selective (exclusive)
 %which criterion to use for task-selective ROIs
@@ -245,6 +257,8 @@ options.deg_thres = 18;
 %ranges for splitting the global remappers
 %0-10 cm; 10 - 30cm; 30+ cm
 options.deg_ranges = [0 18 54];
+%degree threshold for partial remappers
+options.partial_deg_thres = [18 36];
 %choice between KS test of unpaired Mann Whitney U (later)
 %either 'ranksum' or ks
 options.AUC_test = 'ranksum';
@@ -291,81 +305,7 @@ save(fullfile(path_dir{1},'cumul_analysis','select_ROI_criteria.mat'),'select_fi
                 'task_remapping_ROIs','task_selective_ROIs');
 
 
-%% For partial, scatter plot of centroids - sort my mean of common place field center
-[~,Isort_com] = sort(mean(bin_center.partial_com),'descend');
-%sort columns by common mean center
-bin_center.partial_com_sort = bin_center.partial_com(:,Isort_com);
-bin_center.partial_far_sort =bin_center.partial_far(:,Isort_com);
 
-figure
-%plot common
-hold on
-for rr=1:size(bin_center.partial_com,2)
-    scatter(bin_center.partial_com_sort(1,rr),rr,'g')
-    scatter(bin_center.partial_com_sort(2,rr),rr,'g')
-end
-%plot partial
-for rr=1:size(bin_center.partial_com,2)
-if ~isnan(bin_center.partial_far_sort(1,rr))
-    scatter(bin_center.partial_far_sort(1,rr),rr,'b')
-else
-    scatter(bin_center.partial_far_sort(2,rr),rr,'r')
-end
-end
-
-%sort global far by B trials
-[~,Isort_glo_far_B] = sort(bin_center.global_far(2,:),'descend');
-[~,Isort_glo_far_A] = sort(bin_center.global_far(1,:),'descend');
-%sort columns by common mean center
-bin_center.global_far_sortB = bin_center.global_far(:,Isort_glo_far_B);
-bin_center.global_far_sortA = bin_center.global_far(:,Isort_glo_far_A);
-%bin_center.partial_far_sort =bin_center.partial_far(:,Isort_com);
-
-%Plot global far
-figure;
-subplot(1,2,1)
-hold on;
-for rr=1:size(bin_center.global_far,2)
-    scatter(bin_center.global_far_sortA(1,rr),rr,'b')
-    scatter(bin_center.global_far_sortA(2,rr),rr,'r')
-end
-subplot(1,2,2)
-hold on;
-for rr=1:size(bin_center.global_far,2)
-    scatter(bin_center.global_far_sortB(1,rr),rr,'b')
-    scatter(bin_center.global_far_sortB(2,rr),rr,'r')
-end
-
-figure;
-hold on
-histogram(bin_center.global_far(1,:),0:10:100)
-
-figure;
-hold on
-histogram(bin_center.global_far(2,:),0:10:100)
-
-figure
-hold on
-title('Far global remappers - center of A vs center of B')
-xlabel('A field center')
-ylabel('B field center')
-scatter(bin_center.global_far_sortA(1,:),bin_center.global_far_sortA(2,:))
-
-figure
-hold on
-title('Near global remappers - center of A vs center of B')
-xlabel('A field center')
-ylabel('B field center')
-scatter(bin_center.global_near(1,:),bin_center.global_near(2,:))
-plot([0 100],[0 100],'k--')
-
-figure
-hold on
-title('Common - center of A vs center of B')
-xlabel('A field center')
-ylabel('B field center')
-scatter(bin_center.common(1,:),bin_center.common(2,:))
-plot([0 100],[0 100],'k--')
 
 %% PV and TC correlation matrices for each class of tuned neurons
 
@@ -410,14 +350,6 @@ ii=1;
 selectedROI_idx = find(removeROI{ii}.compSelect == 1)';
 rejectedROI_idx = find(removeROI{ii}.compSelect == 0)';
 
-%show only select neurons for visualization purposes
-selectVis =1;
-
-%show only select neurons for localization purposes
-if selectVis == 1
-selectedROI_idx =[627 416 269 524 458]
-end
-
 %plot BW outline of the component
 figure
 imagesc(templates{ii}.template);
@@ -444,6 +376,8 @@ for ROI = rejectedROI_idx
 end
 
 %% Show outlines of only select neurons for visulization purposes
+
+if 0
 ii=1;
 %get idx's of selected and rejected ROIs
 
@@ -474,8 +408,12 @@ for ROI = selectedROI_idx
     pause()
     
 end
+end
 
 %% Extract frame indices for figure 2A/3A
+
+%skip
+if 0
 % MATLAB:
 % 1) split motion corrected hdf stack in A and B trials
 % 2) downsampled 5x timewise (interpolate /average over interval)
@@ -553,6 +491,7 @@ elseif runOnly == 3
     saveastiff(Yb_ds_16,'B_DS_nr.tif');
 end
 
+end 
     %save to directory as 16 bit tiff
     % imwrite(uint16(meanStk{ii}),'AVG_nr.tif','tif')
     
@@ -566,7 +505,7 @@ end
 
 %% Synchronized calcium event analysis
 
-%end
+end
 
 
 

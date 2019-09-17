@@ -100,17 +100,17 @@ set(gca,'FontSize',16)
 
 %% Scatterplot of max centroid diff for SI+TS A&B tuned neurons 
 
-% %find minimum bin for each neuron and combine with corresponding ang diff 
-% for ee=1:size(path_dir,2)
-%     %min_bins_cent_diff{ee} = min(centroid_bins{ee},[],1);
-%     min_bins_cent_diff{ee} = centroid_bins{ee}(2,:);
-%     %relative to A trials
-%     
-%     min_bins_cent_diff{ee}(2,:) = centroid_diffs{ee};
-% end
-% 
-% %convert coupled min with cent diff into 1 matrix (from cells)
-% combined_min_bins_cent_diff = cell2mat(min_bins_cent_diff);
+%find minimum bin for each neuron and combine with corresponding ang diff 
+for ee=1:size(path_dir,2)
+    %min_bins_cent_diff{ee} = min(centroid_bins{ee},[],1);
+    min_bins_cent_diff{ee} = centroid_bins{ee}(2,:);
+    %relative to A trials
+    
+    min_bins_cent_diff{ee}(2,:) = centroid_diffs{ee};
+end
+
+%convert coupled min with cent diff into 1 matrix (from cells)
+combined_min_bins_cent_diff = cell2mat(min_bins_cent_diff);
 
 %plot (cumlative) scatter as a fxn of minimum bin location of max transient
 figure('Position', [2060 380 770 580]);

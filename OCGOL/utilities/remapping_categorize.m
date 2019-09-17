@@ -664,7 +664,7 @@ partial_idx_previous_removed = partial_remap_idx_start(~remove_previous_ROI_log)
 %make sure than animal was running both fields on either trials
 %regardless of remap in each zone
 [partial_remap_filtered,partial_field_idx] = filter_partial_remappers(partial_remap_idx_start,cent_diff,select_fields,Place_cell,edges,pf_vector,...
-                            Behavior_full,Behavior_split,event_norm_pos_run, event_lap_idx);
+                            Behavior_full,Behavior_split,event_norm_pos_run, event_lap_idx,options);
 
 
 %% Create mixed category - all neurons that do not fit any category by are tuned in both trials by either criteria

@@ -309,7 +309,7 @@ end
 %export rasters fpr first colum
 mkdir(fullfile(path_dir{1},'example_STCs_Fig3D'))
 disp(['Saving raster: 2'])
-export_fig(f ,fullfile(path_dir{1},'example_STCs_Fig3D',[num2str(2),'_300.eps']),'-r300')
+export_fig(f ,fullfile(path_dir{1},'example_STCs_Fig3D',[num2str(2),'_300.png']),'-r300')
 
 %% plot side by side; day by day
 subplot_order = [1 2; 3 4; 5 6; 7 8; 9 10; 11 12];
