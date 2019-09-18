@@ -22,6 +22,7 @@ fraction_place_cells(path_dir)
 %% Remapping centroids
 %Figure 3E/F
 options.lowPVcorr = [6 7 8];
+%organize this 
 remapping_centroids(path_dir,options)
 
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 

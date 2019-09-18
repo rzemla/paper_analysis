@@ -72,31 +72,31 @@ options.sessionSelect = [1];
 
 %skip plots
 if 0
-%% Plot example neuron (for display/figure) - trace, position, event spiral, TS arrows, A vs. B
-%I42L example plots ROIs
-%59, 66 (nice), 111(nice),162,180, 208,214 234 (nice),252,280  - A specific
-%22,34, 46 (one used previously),62,207,246 (nice),282 (nice) - B specific
-%10,30, 49, 82, 89 (nice), 104 (nice),158,161 (nice), 167,171,182,197 (used before) -common
-%237
-%currently displaying in Figure 2
-%[234,246,197] 
-
-
-%generate figure used in task selecitve figure
-options.plotFigure2 = 0;
-raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
-
-%% Preprare inputs for raster spiral plotter 
-%add option above to prevent from re-calculating values on every run
-tic;
-[plot_raster_vars] = prepare_inputs_raster(session_vars,CNMF_vars,removeROI);
-toc;
-
-%% Plot raster here only
-%take the processed inputs for spiral plots, ROI zooms above and plot for
-%figure presentation
-options.plotFigure2 = 1;
-plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
+    %% Plot example neuron (for display/figure) - trace, position, event spiral, TS arrows, A vs. B
+    %I42L example plots ROIs
+    %59, 66 (nice), 111(nice),162,180, 208,214 234 (nice),252,280  - A specific
+    %22,34, 46 (one used previously),62,207,246 (nice),282 (nice) - B specific
+    %10,30, 49, 82, 89 (nice), 104 (nice),158,161 (nice), 167,171,182,197 (used before) -common
+    %237
+    %currently displaying in Figure 2
+    %[234,246,197]
+    
+    
+    %generate figure used in task selecitve figure
+    options.plotFigure2 = 0;
+    raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
+    
+    %% Preprare inputs for raster spiral plotter
+    %add option above to prevent from re-calculating values on every run
+    tic;
+    [plot_raster_vars] = prepare_inputs_raster(session_vars,CNMF_vars,removeROI);
+    toc;
+    
+    %% Plot raster here only
+    %take the processed inputs for spiral plots, ROI zooms above and plot for
+    %figure presentation
+    options.plotFigure2 = 1;
+    plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
 end
 
 %% Find  place fields
