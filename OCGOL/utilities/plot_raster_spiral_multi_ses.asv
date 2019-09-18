@@ -266,7 +266,7 @@ end
 %% Plot raster , spiral, ROI FOV across  - 2 session comparison
 
 %find day1 and da
-if 0
+
 %order of plots
 subplot_matrix = 1:6;
 subplot_matrix = reshape(subplot_matrix,2,3)';
@@ -337,13 +337,16 @@ for ii=1:size(registered.multi.assign_cell{1, 6},1) %with nans where no match
     clf;
     disp(ii)
 end
-end
 
 
 %% Single session for visualization of task remap categories
 
+
+subplot_matrix = 1:6;
+subplot_matrix = reshape(subplot_matrix,2,3)';
+
 %which session to look at
-selectSes = 3;
+selectSes = 2;
 
 %create vector with  ROIs to display
 selectROI = ROI_categories.task_selective_ROIs{selectSes}.B.idx;

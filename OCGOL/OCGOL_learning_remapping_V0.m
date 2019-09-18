@@ -212,6 +212,11 @@ options.sessionSelect = [1 2 3 4 5 6];
 %continue to modify 
 [field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
 
+%% Get max transient peak here
+%get field event rates of max peak
+
+[max_bin_rate,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
+
 %% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in firld
 
 %which trials to use to calculate the in field transient rate
@@ -233,12 +238,50 @@ options.sessionSelect = [1 2 3 4 5 6];
 centroid_diff_multi_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,registered,options)
 
 
-%% Task selective filter
+%% Split neurons by A or B task selective category - A or B selective (exclusive)
+%which criterion to use for task-selective ROIs
+%ts or both - ts selects only selective neurons based on TS tuning
+%criterion
+%both - uses both SI and TS criterion to select selectiven neurons
+options.tuning_criterion = 'both';
+%display events vs position for each task selective neuron in A or B
+options.dispFigure = 0;
+[task_selective_ROIs] = task_selective_categorize_multi_ses(tunedLogical,session_vars, max_transient_peak,options);
 
 
+%quick look at fractions
+for ss=1:6
+counts_task_sel_each(1,ss) = length(task_selective_ROIs{ss}.A.idx)/size(session_vars{ss}.Place_cell{4}.Spatial_Info.ROI_pvalue,2)
+counts_task_sel_each(2,ss) = length(task_selective_ROIs{ss}.B.idx)/size(session_vars{ss}.Place_cell{4}.Spatial_Info.ROI_pvalue,2)
+end
 
-%% Task remapping filter
+%divide by total neurons each day
 
+%% Task remapping filter - split into remapping categories
+%which criterion to use for task-selective ROIs
+options.tuning_criterion = 'ts';
+%display events vs position for each task selective neuron in A or B
+options.dispFigure = 0;
+%number of degrees of centroid difference
+%45 deg ~25 cm; 
+%36 deg ~20 cm;
+%27 deg ~15 cm;
+%18 dege ~10 cm
+options.deg_thres = 18;
+%ranges for splitting the global remappers
+%0-10 cm; 10 - 30cm; 30+ cm
+options.deg_ranges = [0 18 54];
+%degree threshold for partial remappers
+options.partial_deg_thres = [18 36];
+%choice between KS test of unpaired Mann Whitney U (later)
+%either 'ranksum' or ks
+options.AUC_test = 'ranksum';
+%significance level of test
+options.p_sig = 0.05;
+%make sure that this function does not overwrite the the previous
+%task_selective_ROIs structure
+[task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
+                        max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 
@@ -285,8 +328,11 @@ save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
 
 
 %% Plot spiral raster using inputs
+
+ROI_categories.task_selective_ROIs = task_selective_ROIs;
+
 %works with inputs
-plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms, ROI_outlines,options)
+plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms, ROI_outlines,ROI_categories,options)
 
 
 %% Define tuned logical vectors
