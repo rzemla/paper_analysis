@@ -1,4 +1,4 @@
-function [matching_list] = filter_match_tuning_crit(matching_list,tunedLogical,select_fields)
+function [matching_list] = filter_match_tuning_crit(matching_list,tunedLogical,select_fields,options)
 
 %copy first
 matching_list.si_AB_filt = matching_list.original;
@@ -11,7 +11,7 @@ matching_list.ts_Ball_filt = matching_list.original;
 
 %for SI AB Filt
 %for each session
-for ss=1:size(select_fields,2)
+for ss=options.sessionSelect
     %get idxs
     idx_temp = find(tunedLogical(ss).si.AandB_tuned ==1);
     %get logical with values that are si tuned
@@ -22,7 +22,7 @@ for ss=1:size(select_fields,2)
 end
 
 %for SI A filt (any A regardless of B tuning)
-for ss=1:size(select_fields,2)
+for ss=options.sessionSelect
     %get idxs
     idx_temp = find(tunedLogical(ss).si.Atuned   == 1);
     %get logical with values that are si tuned
@@ -33,7 +33,7 @@ for ss=1:size(select_fields,2)
 end
 
 %for SI B filt (any B regardless of A tuning)
-for ss=1:size(select_fields,2)
+for ss=options.sessionSelect
     %get idxs
     idx_temp = find(tunedLogical(ss).si.Btuned   == 1);
     %get logical with values that are si tuned
@@ -44,7 +44,7 @@ for ss=1:size(select_fields,2)
 end
 
 %for TS A filt (any A regardless of B tuning)
-for ss=1:size(select_fields,2)
+for ss=options.sessionSelect
     %get idxs
     idx_temp = find(tunedLogical(ss).ts.Atuned   == 1);
     %get logical with values that are si tuned
@@ -55,7 +55,7 @@ for ss=1:size(select_fields,2)
 end
 
 %for TS B filt (any B regardless of A tuning)
-for ss=1:size(select_fields,2)
+for ss=options.sessionSelect
     %get idxs
     idx_temp = find(tunedLogical(ss).ts.Btuned   == 1);
     %get logical with values that are si tuned

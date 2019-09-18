@@ -38,7 +38,7 @@ for ss=options.sessionSelect
 end
 
 %for each session
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %for each trial (A or B) regardless if correct
     for tt=options.selectTrial
         %Place field edge data
@@ -57,7 +57,7 @@ end
 
 %% Get bin edges from normalized position
 %for each session
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %get edges for corresponding bins!! - find place in spatial info where
     %correct A trials
     run_position_norm{ss}{options.selectTrial(1)} = Behavior_split{ss}{options.selectTrial(1)}.resampled.run_position_norm;
@@ -73,7 +73,7 @@ end
 
 %% Event onsets in run interval
 %only correct trials (1,2)
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %for each ROI
     for rr=1:size(events{ss}{1},2)
         %time of significant run events in A
@@ -103,7 +103,7 @@ end
 
 %% Find and store transient rate and total events in each place field
 
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %for each trial (A or B) regardless if correct (4,5) or only correct
     %(1,2)
     for tt=options.selectTrial
@@ -116,7 +116,7 @@ end
 %% Make at at least 5 sig events on distinct laps
 
 %for each session
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %get the edges of all neurons (all fields, not just max rate field)
     %correct A
     placeField_edge{ss}{options.selectTrial(1)} = Place_cell{ss}{options.selectTrial(1)}.placeField.edge;
@@ -145,7 +145,7 @@ end
 %convert edges from relevant place field to normalized postion edges
 %edges are the normalized position equivalents of the bin edges identified
 %in bin space (using 100 bins)
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     for tt=options.selectTrial
         %for each ROI
         for rr=1:size(placeField_edge{ss}{tt},2)
@@ -171,7 +171,7 @@ end
 %problem with edges here - i.e. fields that cross start/end of track
 
 %for each session
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %find events occuring within each place field for each ROI
     for tt=options.selectTrial
         for rr=1:size(placeField_posnorm{ss}{tt},2)
@@ -248,7 +248,7 @@ end
 
 %% Create logical selection vectors for neurons with place fields that contain at least 5 events on distinct laps
 %for each session
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %create logical for each ROI on each set of trial types
     for tt=options.selectTrial
         for rr=1:size(event_in_field_nb{ss}{tt},2)
@@ -280,7 +280,7 @@ histogram(cell2mat(field_event_rates{session_nb}{options.selectTrial(2)}))
 
 %% Recalculate centroid based on peak with highest transient rate
 
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %for each trial (A or B) regardless if correct
     for tt=options.selectTrial
         %tuning vectors for each ROI
@@ -298,7 +298,7 @@ end
 
 options.pf.skipDisplay = 0;
 
-for ss=1:options.sessionSelect
+for ss=options.sessionSelect
     %for each trial (A or B) regardless if correct
     for tt=options.selectTrial
         [pf_vector{ss}{tt}] = adjust_tuning_vector(tun_vectors{ss}{tt},tun_vector{ss}{tt},placeField_edges{ss}{tt},options);

@@ -151,7 +151,7 @@ mkdir(crossdir,'postProcess')
 %use trial types here
 for ss = [1 2 3 4 5 6]
     for tt=4:5
-        session_pf{ss}(tt).placeField = session_vars{1}.Place_cell{tt}.placeField;
+        session_pf{ss}(tt).placeField = session_vars{ss}.Place_cell{tt}.placeField;
     end
 end
 
@@ -215,10 +215,30 @@ options.sessionSelect = [1 2 3 4 5 6];
 %% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in firld
 
 %which trials to use to calculate the in field transient rate
-options.selectSes = [4 5];
+options.selectTrial = [4 5];
+%which session to include in calculation
+options.sessionSelect = [1 2 3 4 5 6];
 %select fields has logical 1 for whichever neurons has a place field at at
 %least 5 events on distinct laps within that PF - otherwise not PF
 [registered] = filter_matching_components(registered,tunedLogical,select_fields,options);
+
+%% Centroid difference (max transient rate)
+%MODIFY TO BEHAVE LIKE FOR SINGLE SESSIONS
+
+options.tuning_criterion = 'ts';
+%which trials to use 
+options.selectTrial = [4 5];
+%which session to include in calculation
+options.sessionSelect = [1 2 3 4 5 6];
+centroid_diff_multi_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,registered,options)
+
+
+%% Task selective filter
+
+
+
+%% Task remapping filter
+
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 
@@ -290,11 +310,6 @@ options.selectSes = [4 5];
 %continue to modify 
 [field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
 
-
-%% Centroid difference (max transient rate)
-
-options.tuning_criterion = 'ts';
-centroid_diff_learning(session_vars,tunedLogical, pf_vector,field_event_rates,registered,options)
 
 %% Tuning specificity differences pre-learning vs. post-learning (matching neurons)
 
