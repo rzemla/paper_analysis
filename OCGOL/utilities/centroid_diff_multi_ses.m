@@ -248,7 +248,7 @@ hold off
 %% Export centroid diffs for all neurons
 
 %combined into single matrix
-for ss=options.selectSes
+for ss=options.sessionSelect
     comb_place_field_max{ss} = [place_field_centers_max{ss}{options.selectTrial(1)};place_field_centers_max{ss}{options.selectTrial(1)}];
 end
 

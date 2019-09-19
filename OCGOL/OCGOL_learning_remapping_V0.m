@@ -41,10 +41,10 @@ crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 %      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
 %      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
 %      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
-%  %,...
-%      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
-%      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
-% %cross session directory
+% %  %,...
+% %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
+% %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
+% % %cross session directory
 % crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
 
 %% Load place cell variables for each session
@@ -235,7 +235,18 @@ options.tuning_criterion = 'ts';
 options.selectTrial = [4 5];
 %which session to include in calculation
 options.sessionSelect = [1 2 3 4 5 6];
-centroid_diff_multi_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,registered,options)
+[cent_diff] = centroid_diff_multi_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,registered,options);
+
+%% Number of place fields and widths for each sub-class of neurons
+%add filter for classfing whether each field is significant (min 5 events)
+
+options.tuning_criterion = 'si'; %si or ts
+%A correct/B correct or all
+options.selectTrial = [4 5];
+options.sessionSelect = [1 2 3 4 5 6];
+[placeField_dist, pf_count_filtered_log, pf_count_filtered] = placeField_properties_multi_ses(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
+%save the place field distributions output data
+%save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
 
 %% Split neurons by A or B task selective category - A or B selective (exclusive)
@@ -243,7 +254,7 @@ centroid_diff_multi_ses(session_vars,tunedLogical, pf_vector,field_event_rates,s
 %ts or both - ts selects only selective neurons based on TS tuning
 %criterion
 %both - uses both SI and TS criterion to select selectiven neurons
-options.tuning_criterion = 'both';
+options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize_multi_ses(tunedLogical,session_vars, max_transient_peak,options);
@@ -255,7 +266,21 @@ counts_task_sel_each(1,ss) = length(task_selective_ROIs{ss}.A.idx)/size(session_
 counts_task_sel_each(2,ss) = length(task_selective_ROIs{ss}.B.idx)/size(session_vars{ss}.Place_cell{4}.Spatial_Info.ROI_pvalue,2)
 end
 
-%divide by total neurons each day
+figure;
+subplot(1,2,1)
+hold on
+ylim([0 0.4])
+% plot(both_count')
+% plot(sum(both_count,1))
+subplot(1,2,2)
+hold on
+ylim([0 0.4])
+plot(counts_task_sel_each')
+plot(sum(counts_task_sel_each,1))
+
+%% Look at spatial information scores in matching neurons between days in A trials and B trials
+%put into separate script
+ si_score_comparison(session_vars, registered)
 
 %% Task remapping filter - split into remapping categories
 %which criterion to use for task-selective ROIs
@@ -280,8 +305,17 @@ options.AUC_test = 'ranksum';
 options.p_sig = 0.05;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
-[task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
-                        max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
+[task_remapping_ROIs,partial_field_idx] = remapping_categorize_multi_ses(cent_diff, tunedLogical ,pf_vector, session_vars,...
+                        max_transient_peak, pf_count_filtered,select_fields,options);
+
+
+%check out fraction of remapping ROIs on each session
+for ss=1:6
+    global_near_frac(ss) = length(task_remapping_ROIs{ss}.global_near)./size(session_vars{ss}.Place_cell{4}.Spatial_tuning_curve,2)
+    global_far_frac(ss) = length(task_remapping_ROIs{ss}.global_far)./size(session_vars{ss}.Place_cell{4}.Spatial_tuning_curve,2)
+   	common_frac(ss) = length(task_remapping_ROIs{ss}.common)./size(session_vars{ss}.Place_cell{4}.Spatial_tuning_curve,2)
+    rate_frac(ss) = length(task_remapping_ROIs{ss}.rate)./size(session_vars{ss}.Place_cell{4}.Spatial_tuning_curve,2)
+end
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 
@@ -323,7 +357,7 @@ save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
 %% Plot smoothed event rate across track (function)
 
 %% Raster spiral - prepare multi session
-
+% save this in the future as well and load
 [plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars);
 
 

@@ -774,12 +774,10 @@ for ss=sessionSelect
     
     remapping_ROIs{ss}.rate = rate_remapping_ROI{ss};
     remapping_ROIs{ss}.common = common_ROI{ss};
-
-    remapping_ROIs{ss}.partial = partial_remap_filtered{ss};
-    remapping_ROIs{ss}.mixed = mixed_ROI{ss};
 end
 
-
+%remapping_ROIs.partial = partial_remap_filtered;
+%remapping_ROIs.mixed = mixed_ROI;
 
 %% Plot as shaded area to verify correct id of place field onto normalized
 if 0
