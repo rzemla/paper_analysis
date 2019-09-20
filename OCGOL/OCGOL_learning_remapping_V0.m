@@ -380,6 +380,10 @@ plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms,
 
 [norm_events] = normalize_events_pos(session_vars,options);
 
+%% Get AUC/min calculation for each ROI in A vs. B
+%AUC/min and frequency of events events/min in run epoch for A or B trials
+AUC_rate(session_vars,options)
+
 %% Decicated two session spiral plotter with categorical type display
 
 plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,options)

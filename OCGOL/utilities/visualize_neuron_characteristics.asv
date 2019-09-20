@@ -15,6 +15,18 @@ event_norm_time = norm_events.event_norm_time;
 event_norm_pos_run = norm_events.event_norm_pos_run;
 event_lap_idx = norm_events.event_lap_idx;
 
+
+%% Convert place field edges to angles and complex vector for polar plotting
+
+
+for ss =sessionSelect
+    for rr=1:size(session_vars{ss}.Place_cell{4}.placeField.edge,2)
+        %unit vector
+        session_vars{ss}.Place_cell{4}.placeField.edge_vec{rr} = exp(i*deg2rad((session_vars{ss}.Place_cell{4}.placeField.edge{rr}/100)*360));
+        session_vars{ss}.Place_cell{5}.placeField.edge_vec{rr} = exp(i*deg2rad((session_vars{ss}.Place_cell{5}.placeField.edge{rr}/100)*360));
+    end
+end
+
 %% Plot spiral and event map, place field edges and center
 
 ss=4;
@@ -43,6 +55,12 @@ for ii=1:size(selectROI,2) %with nans where no match
             %plot tuning specificity vector for all A trials
             polarplot([0+0i,15*session_vars{ss}.Place_cell{1, 4}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
             
+            for pp=find(select_fields{ss}{4}{ROI} ==1)
+            %plot place field edges as vectors
+            polarplot([0+0i,15*session_vars{ss}.Place_cell{4}.placeField.edge_vec{ROI}(pp,1)],'b--','LineWidth',2)
+            polarplot([0+0i,15*session_vars{ss}.Place_cell{4}.placeField.edge_vec{ROI}(pp,2)],'b--','LineWidth',2)
+            end
+
             %plot B (3) trial events
             for ll=1:size(idxMin{ss}{2},2)
                 polarscatter(angle(posVectorApprox{ss}{2}{ll}{ROI}),r_scaled{ss}(idxMin{ss}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
@@ -53,6 +71,12 @@ for ii=1:size(selectROI,2) %with nans where no match
             %plot tuning specificity vector for all B trials
             polarplot([0+0i,15*session_vars{ss}.Place_cell{1, 5}.Tuning_Specificity.tuning_vector_specificity(ROI)],'r-','LineWidth',2)
             
+
+            for pp=find(select_fields{ss}{5}{ROI} ==1)
+            %plot place field edges as vectors
+            polarplot([0+0i,15*session_vars{ss}.Place_cell{4}.placeField.edge_vec{ROI}(pp,1)],'r--','LineWidth',2)
+            polarplot([0+0i,15*session_vars{ss}.Place_cell{4}.placeField.edge_vec{ROI}(pp,2)],'r--','LineWidth',2)
+            end
             hold off
 
             %event map

@@ -12,6 +12,10 @@ options.load_ROI_zooms_outlines = 1;
 %visualize ROI outlines of matches across sessions
 options.visualize_match = 0;
 
+options.selectTrial = [4 5];
+%which session to include in calculation
+options.sessionSelect = [1 2 3 4 5 6];
+
 %lab workstation
 %input directories to matching function
 %  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
@@ -49,13 +53,13 @@ crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 
 %% Load place cell variables for each session
 %get mat directories in each output folder
-for ii=1:size(path_dir,2)
+for ii=options.sessionSelect
     %get matfile names for each session
     matfiles{ii} = dir([path_dir{ii},'\output','\*.mat']);
 end
 
 %load in place cell variables (and others later)
-for ii = [1 2 3 4 5 6]%1:size(path_dir,2)
+for ii = options.sessionSelect%1:size(path_dir,2)
     %add event variables
     disp(ii)
     %decide which variables here do not need to be loaded
@@ -132,10 +136,10 @@ options.gSigma = 3;
 %I57 LT - problem with ses 4, trial 5 adjust (set to -2) - narrow as opposed to
 %extend field - apply to rest of animals
 
-for ss = [1 2 3 4 5 6]%1:size(session_vars,2) %1,2,3,4,5,6 OK
+for ss =options.sessionSelect%1:size(session_vars,2) %1,2,3,4,5,6 OK
     %for ss= [4]
     disp(['Running session: ', num2str(ss)]);
-    for ii = [4,5]
+    for ii = options.selectTrial
         options.place_struct_nb = ii;
         disp(['Running trial type: ', num2str(ii)]);
         [session_vars{ss}.Place_cell] = place_field_finder_gaussian(session_vars{ss}.Place_cell,options);
@@ -149,8 +153,8 @@ mkdir(crossdir,'postProcess')
 
 %for each Place_cell session extract placeField struct
 %use trial types here
-for ss = [1 2 3 4 5 6]
-    for tt=4:5
+for ss = options.sessionSelect
+    for tt=options.selectTrial
         session_pf{ss}(tt).placeField = session_vars{ss}.Place_cell{tt}.placeField;
     end
 end
@@ -164,9 +168,9 @@ else
     load(fullfile(crossdir,'postProcess','placeField_upd_struct.mat'));
     toc
     %replace the Place_cell struct in the session_vars cell
-    for ss = [1 2 3 4 5 6]
+    for ss = options.sessionSelect
         %all A and all B
-        for tt=4:5
+        for tt=options.selectTrial
             session_vars{ss}.Place_cell{tt}.placeField = session_pf{ss}(tt).placeField;
         end
     end
@@ -254,7 +258,7 @@ options.sessionSelect = [1 2 3 4 5 6];
 %ts or both - ts selects only selective neurons based on TS tuning
 %criterion
 %both - uses both SI and TS criterion to select selectiven neurons
-options.tuning_criterion = 'ts';
+options.tuning_criterion = 'both';
 %display events vs position for each task selective neuron in A or B
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize_multi_ses(tunedLogical,session_vars, max_transient_peak,options);
@@ -319,7 +323,7 @@ for ss=options.sessionSelect
     task_remapping_ROIs{ss}.nbROI = sum(remap_cat_count(ss,:));
 end
 
-fraction_rel_AB = remap_cat_count./repmat(sum(remap_cat_count,2),1,6)
+fraction_rel_AB = remap_cat_count./repmat(sum(remap_cat_count,2),1,6);
 
 %convert to fraction
 figure
@@ -353,13 +357,41 @@ for ss=options.sessionSelect
 end
 
 %extract 2 session index
-ses_comp = [1,2,3,4,5];
-selMatchIdxs = find(sum(~isnan(match_mat(:,ses_comp)),2)==5);
+ses_comp = [4,5];
+selMatchIdxs = find(sum(~isnan(match_mat(:,ses_comp)),2)==2);
 
 cat_registered_cell(selMatchIdxs,ses_comp)
 
+
+%% Raster spiral - prepare multi session
+% save this in the future as well and load
+options.spiral_width = 0.1;
+[plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars,options);
+
+
+%% Plot spiral raster using inputs
+
+ROI_categories.task_selective_ROIs = task_selective_ROIs;
+
+%works with inputs
+plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms, ROI_outlines,ROI_categories,options)
+
+%% Extract normalized events
+
+[norm_events] = normalize_events_pos(session_vars,options);
+
+%% Get AUC/min calculation for each ROI in A vs. B
+%AUC/min and frequency 
+AUC_rate(session_vars)
+
 %% Decicated two session spiral plotter with categorical type display
 
+plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,options)
+
+
+%% Visualize place fields and events for each neurons
+
+visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session_vars,task_selective_ROIs,cat_registered_cell,select_fields,options)
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 
@@ -400,17 +432,6 @@ save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
 
 %% Plot smoothed event rate across track (function)
 
-%% Raster spiral - prepare multi session
-% save this in the future as well and load
-[plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars);
-
-
-%% Plot spiral raster using inputs
-
-ROI_categories.task_selective_ROIs = task_selective_ROIs;
-
-%works with inputs
-plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms, ROI_outlines,ROI_categories,options)
 
 
 %% Define tuned logical vectors
@@ -501,9 +522,9 @@ non_norm_matching_STC_rasters_learning(session_vars,tunedLogical,registered,opti
 
 %compare to which reward (obsolete)
 %if 1 --> GOL Block 1 location; if 2 --> GOL Block 2
-options.rewardBlock = 1;
+%options.rewardBlock = 1;
 
-[centroids] = centroid_diff_reward(session_vars, options);
+%[centroids] = centroid_diff_reward(session_vars, options);
 
 
 %Danielson
@@ -540,18 +561,18 @@ scatter(mean_Distance_TS_sig,frac_rew,'b');
 %% Bar graph of distance to reward on 1st vs last day
 %only tuned cells according to TS tuning criteria
 
-figure;
-hold on
-ylabel('Distance to reward');
-xticks([1 2 3 4 5 6 7]);
-xticklabels({'RF Day 0','GOL 1 Day 1','GOL 1 Day 2','GOL 1 Day 3',...
-    'GOL 2 Day 4','GOL 2 Day 5','GOL 2 Day 6'})
-xtickangle(45)
-yticks([0.7854,1.5708])
-ylim([0.7854,2])
-yticklabels({'\pi/4','\pi/2'})
-bar(mean_Distance_TS_sig,'b')
-refline(0,1.5708)
+% figure;
+% hold on
+% ylabel('Distance to reward');
+% xticks([1 2 3 4 5 6 7]);
+% xticklabels({'RF Day 0','GOL 1 Day 1','GOL 1 Day 2','GOL 1 Day 3',...
+%     'GOL 2 Day 4','GOL 2 Day 5','GOL 2 Day 6'})
+% xtickangle(45)
+% yticks([0.7854,1.5708])
+% ylim([0.7854,2])
+% yticklabels({'\pi/4','\pi/2'})
+% bar(mean_Distance_TS_sig,'b')
+% refline(0,1.5708)
 
 
 %% Raster plotting ROI notes
