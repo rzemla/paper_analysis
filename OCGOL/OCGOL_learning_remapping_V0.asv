@@ -308,13 +308,58 @@ options.p_sig = 0.05;
 [task_remapping_ROIs,partial_field_idx] = remapping_categorize_multi_ses(cent_diff, tunedLogical ,pf_vector, session_vars,...
                         max_transient_peak, pf_count_filtered,select_fields,options);
 
-
-%check out fraction of remapping ROIs on each session
-for ss=1:6
-    global_near_frac(ss) = length(task_remapping_ROIs{ss}.global_near)./size(session_vars{ss}.Place_cell{4}.Spatial_tuning_curve,2)
-    global_far_frac(ss) = length(task_remapping_ROIs{ss}.global_far)./size(session_vars{ss}.Place_cell{4}.Spatial_tuning_curve,2)
-   	common_frac(ss) = length(task_remapping_ROIs{ss}.common)./size(session_vars{ss}.Place_cell{4}.Spatial_tuning_curve,2)
+%calculate total A&B neurons for each session
+for ss=options.sessionSelect
+    remap_cat_count(ss,1) = length(task_remapping_ROIs{ss}.global_near);
+    remap_cat_count(ss,2) = length(task_remapping_ROIs{ss}.global_far);
+    remap_cat_count(ss,3) = length(task_remapping_ROIs{ss}.rate);
+    remap_cat_count(ss,4) = length(task_remapping_ROIs{ss}.common);
+    remap_cat_count(ss,5) = length(task_remapping_ROIs{ss}.partial);
+    remap_cat_count(ss,6) = length(task_remapping_ROIs{ss}.mixed);
+    task_remapping_ROIs{ss}.nbROI = sum(remap_cat_count(ss,:));
 end
+
+fraction_rel_AB = remap_cat_count./repmat(sum(remap_cat_count,2),1,6)
+
+%convert to fraction
+figure
+hold on
+plot(fraction_rel_AB(:,6))
+
+%% Assign each matching neuron to remapping category
+
+match_mat = registered.multi.assigned_filtered;
+%make cell with categorical values
+cat_registered_cell = cell(size(match_mat,1),size(match_mat,2));
+
+%for each session determine which category each cell belongs to
+for ss=options.sessionSelect
+    [~,idx_match] = intersect(match_mat(:,ss),task_selective_ROIs{ss}.A.idx);
+    cat_registered_cell(idx_match,ss) = {'A-selective'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_selective_ROIs{ss}.B.idx);
+    cat_registered_cell(idx_match,ss) = {'B-selective'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.common);
+    cat_registered_cell(idx_match,ss) = {'common'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.rate);
+    cat_registered_cell(idx_match,ss) = {'rate'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.global_near);
+    cat_registered_cell(idx_match,ss) = {'near'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.global_far);
+    cat_registered_cell(idx_match,ss) = {'far'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.partial);
+    cat_registered_cell(idx_match,ss) = {'partial'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.mixed);
+    cat_registered_cell(idx_match,ss) = {'mixed'};
+end
+
+%extract 2 session index
+ses_comp = [1,2,3,4,5];
+selMatchIdxs = find(sum(~isnan(match_mat(:,ses_comp)),2)==5);
+
+cat_registered_cell(selMatchIdxs,ses_comp)
+
+%% Decicated two session spiral plotter with categorical type display
+
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 

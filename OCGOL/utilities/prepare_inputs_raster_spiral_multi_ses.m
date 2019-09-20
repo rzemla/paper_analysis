@@ -1,4 +1,9 @@
-function [plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars)
+function [plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars,options)
+
+
+%% Define parameters
+spiral_width = options.spiral_width;
+
 
 %% Define/load variables for each session
 
@@ -50,11 +55,13 @@ end
 
 %% Define the spiral parameters according to the number of laps
 %equivalent to number of laps for each session (turns = laps)
+
+
 for ss = 1:size(session_vars,2)
     turns(ss) = size(trialOrder{ss},1); %The number of turns the spiral will have (how many laps)
     
     %x is the angle
-    x{ss} = [-1*pi*turns(ss) : 0.01 : pi*turns(ss)];
+    x{ss} = [-1*pi*turns(ss) : spiral_width : pi*turns(ss)];
     
     %r is that radius of the point
     r{ss} = [0:1/(length(x{ss})-1):1];
