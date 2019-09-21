@@ -29,9 +29,10 @@ end
 
 %% Plot spiral and event map, place field edges and center
 
-ss=4;
+%session nb
+ss=5;
 
-selectROI = task_selective_ROIs{ss}.A.idx;
+selectROI =43 %task_selective_ROIs{ss}.A.idx;
 
 figure('Position',[1961 60 938 902]);
 for ii=1:size(selectROI,2) %with nans where no match
@@ -109,6 +110,8 @@ for ii=1:size(selectROI,2) %with nans where no match
 
             hold off
             subplot(2,2,4)
+            %plot SI score, SI p-value; TS score; TS p-value; AUC/min and
+            %event frequency (RUN)
             title(['S.I.: ', num2str(session_vars{ss}.Place_cell{4}.Spatial_Info.Spatial_Info(8,ROI)),...
                         ' ',num2str(session_vars{ss}.Place_cell{5}.Spatial_Info.Spatial_Info(8,ROI)),'\newline',...
                         'p: ',num2str(session_vars{ss}.Place_cell{4}.Spatial_Info.ROI_pvalue(ROI)),' ',num2str(session_vars{ss}.Place_cell{5}.Spatial_Info.ROI_pvalue(ROI)),...
@@ -116,7 +119,9 @@ for ii=1:size(selectROI,2) %with nans where no match
                         'T.S.: ', num2str(session_vars{ss}.Place_cell{4}.Tuning_Specificity.tuning_specificity(ROI)),...
                                   ' ',num2str(session_vars{ss}.Place_cell{5}.Tuning_Specificity.tuning_specificity(ROI)),'\newline',...
                         'p: ', num2str(session_vars{ss}.Place_cell{4}.Tuning_Specificity.ROI_pvalue(ROI)),' ',...
-                           num2str(session_vars{ss}.Place_cell{5}.Tuning_Specificity.ROI_pvalue(ROI))])
+                           num2str(session_vars{ss}.Place_cell{5}.Tuning_Specificity.ROI_pvalue(ROI)),'\newline',...
+                            num2str(session_vars{ss}.Events_split{4}.Run.properties.AUC_min(ROI)),' ',num2str(session_vars{ss}.Events_split{5}.Run.properties.AUC_min(ROI)),'\newline',...
+                             num2str(session_vars{ss}.Events_split{4}.Run.properties.event_freq(ROI)),' ',num2str(session_vars{ss}.Events_split{5}.Run.properties.event_freq(ROI))])
             
     pause()
     clf;

@@ -44,6 +44,8 @@ run_epoch = session_vars{1}.Behavior_split{1}.run_ones;
 
 %input_data = traces(st_idx:end_idx,input_neuron_idxs_sorted);
 
+traces = input_data;
+
 %% 3rd order Savitzky-Golay filter frame size 500ms (~15 frames)
 
 %order of filter

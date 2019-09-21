@@ -1,4 +1,4 @@
-function [sce_event_count] = SCE_count_per_shuffle(noRun_thres_traces)
+function [sce_event_count,final_events] = SCE_count_per_shuffle(noRun_thres_traces)
 %function description
 %input: event onset matrix permute during no run epochs
 %output: return SCE event count
@@ -107,7 +107,7 @@ min_cell_nb = 5;
 
 %width of sync events - 200ms = 6 frames
 %5 will give 2 behind, center and 2 ahead
-%6 will gives 3 beind, cetner
+%6 will gives 3 beind, cetner - verified
 sync_window_width = 6;
 
 %collapse all the no run SCE events 
@@ -122,7 +122,8 @@ figure;
 hold on
 ylim([0 40])
 ylabel('Synchronous event count')
-plot(sce_event_count)
+plot(sce_event_count(1:1000))
+%5 cell threshold
 plot([1 size(final_events,1)],[min_cell_nb min_cell_nb],'r--')
 end
 

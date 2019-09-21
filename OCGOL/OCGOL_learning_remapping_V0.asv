@@ -28,28 +28,30 @@ options.sessionSelect = [1 2 3 4 5 6];
 % crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
 
 % %I57_RTLS
- path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_5AB_041119_2',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_3A3B_041219_3',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_1A1B_041319_4',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041519_5',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041619_6'};
-     %'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
-%cross session directory
-crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
+%  path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_5AB_041119_2',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_3A3B_041219_3',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_1A1B_041319_4',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041519_5',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041619_6'};
+%      %'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 
 %I57_LT
-%  path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
+ path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
+ crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
+
 % %  %,...
 % %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
 % %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
 % % %cross session directory
-% crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
+
 
 %% Load place cell variables for each session
 %get mat directories in each output folder
@@ -109,6 +111,7 @@ if options.load_ROI_zooms_outlines == 0
     save(fullfile(crossdir,'ROI_zooms_outlines.mat'),'ROI_zooms','ROI_outlines');
 else %load from save files
     load(fullfile(crossdir,'ROI_zooms_outlines.mat'),'ROI_zooms','ROI_outlines');
+    disp('Loaded ROI zooms and outlines.')
 end
 
 %% Visualize the matching ROIs that were matched above (match on every session only!)
@@ -241,17 +244,6 @@ options.selectTrial = [4 5];
 options.sessionSelect = [1 2 3 4 5 6];
 [cent_diff] = centroid_diff_multi_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,registered,options);
 
-%% Number of place fields and widths for each sub-class of neurons
-%add filter for classfing whether each field is significant (min 5 events)
-
-options.tuning_criterion = 'si'; %si or ts
-%A correct/B correct or all
-options.selectTrial = [4 5];
-options.sessionSelect = [1 2 3 4 5 6];
-[placeField_dist, pf_count_filtered_log, pf_count_filtered] = placeField_properties_multi_ses(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
-%save the place field distributions output data
-%save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
-
 
 %% Split neurons by A or B task selective category - A or B selective (exclusive)
 %which criterion to use for task-selective ROIs
@@ -281,6 +273,18 @@ hold on
 ylim([0 0.4])
 plot(counts_task_sel_each')
 plot(sum(counts_task_sel_each,1))
+
+
+%% Number of place fields and widths for each sub-class of neurons
+%add filter for classfing whether each field is significant (min 5 events)
+
+options.tuning_criterion = 'si'; %si or ts
+%A correct/B correct or all
+options.selectTrial = [4 5];
+options.sessionSelect = [1 2 3 4 5 6];
+[placeField_dist, pf_count_filtered_log, pf_count_filtered] = placeField_properties_multi_ses(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
+%save the place field distributions output data
+%save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
 %% Look at spatial information scores in matching neurons between days in A trials and B trials
 %put into separate script
@@ -381,8 +385,9 @@ plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms,
 [norm_events] = normalize_events_pos(session_vars,options);
 
 %% Get AUC/min calculation for each ROI in A vs. B
-%AUC/min and frequency 
-AUC_rate(session_vars)
+%AUC/min and frequency of events events/min in run epoch for A or B trials
+%all added no run epochs
+[session_vars] = AUC_rate(session_vars,options);
 
 %% Decicated two session spiral plotter with categorical type display
 
@@ -392,6 +397,101 @@ plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registere
 %% Visualize place fields and events for each neurons
 
 visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session_vars,task_selective_ROIs,cat_registered_cell,select_fields,options)
+
+%% Task-selective neurons - AUC/min and event freq distributions
+
+activity_distributions(session_vars,task_selective_ROIs,options)
+
+%% Detect SCEs and measure number of SCE in each session A or B
+
+[SCE] = detect_SCE(session_vars,options);
+
+%save SCE for all animals
+%export session performance data
+save(fullfile(crossdir,'SCE.mat'),'SCE');
+
+%extract number of SCEs on each day (total)
+for ss=sessionSelect
+    SCE_total_count(ss) = SCE{ss}.nbSCE;
+end
+
+
+%% SCE plots against session performance
+
+%generate x tick labels
+for ss=1:6
+    name_cell{ss} = ['',num2str(ss)];
+end
+
+%color maps -total, A, B
+color_map = [139, 0, 139;  65,105,225; 220,20,60]/255;
+
+figure
+subplot(2,1,1)
+hold on
+ylabel('SCE count')
+plot(SCE_total_count,'LineWidth',2)
+xticks([1:6])
+xticks([1:6])
+xticklabels(name_cell);
+xtickangle(45);
+xlabel('Session');
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+
+subplot(2,1,2)
+hold on
+ylabel('Performance')
+xlabel('Session')
+
+for ii=1:3
+    p(ii) = plot(ses_perf(ii,:),'Color',color_map(ii,:),'LineWidth',2);
+end
+xticks([1:6])
+xticklabels(name_cell);
+xtickangle(45);
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+legend([p(1) p(2) p(3)],'All','A','B','Location','southeast')
+
+%% Number of neurons in each SCE
+for ss=sessionSelect
+    %for each SCE,
+    for cc =1:size(SCE{ss}.sync_range,1)
+        %all unique ROIs in each SCE
+        SCE{ss}.SCE_unique_ROIs{cc} = unique(cell2mat(SCE{ss}.SCE_ROIs(SCE{ss}.sync_range(cc,1):SCE{ss}.sync_range(cc,2))));
+        %number of ROIs in each SCE
+        SCE{ss}.SCE_nbROI(cc) = size(SCE{ss}.SCE_unique_ROIs{cc},2);
+    end
+end
+
+%get 
+figure
+hold on
+for ss=1:6
+    cdfplot(SCE{ss}.SCE_nbROI);
+end
+legend(name_cell);
+
+%% Make SCE matrix
+%row - neuron on/off
+%column - each SCE
+for ss=1:6
+    ses_nbROI(ss) = size(session_vars{ss}.Place_cell{4}.Spatial_tuning_curve,2);
+end
+
+%create SCE matrix
+sce_activity_matrix = zeros(ses_nbROI(ss),SCE{ss}.nbSCE);
+
+%fill in each matrix
+for cc=1:SCE{ss}.nbSCE
+    sce_activity_matrix(SCE{ss}.SCE_unique_ROIs{cc},cc) = 1;
+end
+
+%find neurons that are repeatedly recruited by SCE
+engaged_neurons = find(sum(sce_activity_matrix,2) >3);
+
+intersect(engaged_neurons,task_selective_ROIs{ss}.A.idx)
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 

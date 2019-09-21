@@ -1,4 +1,4 @@
-function [sce_threshold] = sce_detection_shuffle(noRun_thres_traces,run_binary_interval,thres_traces)
+function [sce_threshold,final_events_shuffle] = sce_detection_shuffle(noRun_thres_traces,run_binary_interval,thres_traces)
 
 %GOT IT TO WORK - OPTIMIZE
 %
@@ -112,11 +112,11 @@ imagesc(shuffled_events{cc}')
 %% Get SCE count for each shuffle
 
 %preallocate output structs
-%final_events_shuffle = cell(1,100);
+final_events_shuffle = cell(1,100);
 %sce_event_count 
 
 for cc=1:100
-    [sce_event_count(cc,:),~] = SCE_count_per_shuffle(shuffled_events{cc});
+    [sce_event_count(cc,:),final_events_shuffle{cc}] = SCE_count_per_shuffle(shuffled_events{cc});
 end
 
 %linearize matrix with event counts and calculate mean/std and plot histogram
