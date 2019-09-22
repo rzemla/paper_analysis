@@ -15,10 +15,12 @@ for ss=1:size(select_SCE,2)
 end
 
 %% Normalized covariance matrix and squared Euclidean distance between columns
+assembly_mat = sce_activity_matrix;
 
 %normalized covariance matrix
-norm_cov_SCE = corrcoef(assembly_mat);
-%cov_SCE = cov(assembly_mat);
+%norm_cov_SCE = corrcoef(assembly_mat);
+norm_cov_SCE = corr(assembly_mat);
+cov_SCE = cov(assembly_mat);
 
 %calculated squared euclidean distance between columns of norm cov matrix
 sqE = pdist2(norm_cov_SCE, norm_cov_SCE,'squaredeuclidean');
@@ -27,11 +29,56 @@ sqE = pdist2(norm_cov_SCE, norm_cov_SCE,'squaredeuclidean');
 %100 iterations
 %run for 2-19 clusters
 %idx - SCE cluster assignments
-for ii=2:19
-    [cluster_assign{ii-1}, ~] = kmeans(sqE,ii,'MaxIter',100);
+%parfor ii=2:19
+parfor ii=2:19
+    disp(['# clusters: ', num2str(ii)])
+    for iter_nb=1:100
+        disp(['Iteration nb: ', num2str(iter_nb)])
+        [cluster_assign{ii-1}{iter_nb}, ~] = kmeans(sqE,ii,'MaxIter',iter_nb);
+    end
 end
 
+%% Get sihouette value
 %calculate the silhoutte value for each cluster, take max
+parfor cc=1:18
+    disp(cc);
+    for iter_nb=1:100
+        %mean silhouette value for each iteration
+        sil_vals{cc}{iter_nb} = silhouette(norm_cov_SCE,cluster_assign{cc}{iter_nb});
+    end
+end
+
+%mean of silouette values
+for cc=1:18
+    mean_sil_vals{cc} = cellfun(@mean,sil_vals{cc},'UniformOutput',true);
+end
+
+figure
+boxplot(cell2mat(mean_sil_vals')')
+
+%generate cluster sort order
+%numerical order
+idx_order = size(cov_SCE,1);
+%create sorted cluster
+idx_cluster_order = [];
+nb_clust = 10;
+%make cluster order index vector
+for ii=1:nb_clust
+    idx_cluster_order = [idx_cluster_order;find(cluster_assign{nb_clust}{44} ==ii)];
+end
+
+%2 cluster reordered matrix
+norm_cov_SCE_clust= norm_cov_SCE(idx_cluster_order, idx_cluster_order);
+
+cov_SCE_clust =  cov_SCE(idx_cluster_order, idx_cluster_order);
+
+figure
+%imagesc(norm_cov_SCE_clust)
+imagesc(cov_SCE_clust)
+hold on
+colormap('jet')
+colorbar
+
 
 %% Try sorting by assembly matrix by cluster numbers
 %sort SCEs according to clusters

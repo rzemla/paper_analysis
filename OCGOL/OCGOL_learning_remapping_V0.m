@@ -69,6 +69,19 @@ for ii = options.sessionSelect%1:size(path_dir,2)
         'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split');
 end
 
+%load additional data from struct
+for ii = options.sessionSelect
+    %add event variables
+    disp(ii)
+    session_vars_append{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Imaging','updated_dff');
+end
+
+%assign to main session variable struct
+for ii = options.sessionSelect
+    session_vars{ii}.Imaging = session_vars_append{ii}.Imaging;
+    session_vars{ii}.updated_dff = session_vars_append{ii}.updated_dff;
+end
+
 %% Match ROIs from across OCGOL days
 
 if options.register == 1
@@ -416,6 +429,10 @@ for ss=sessionSelect
 end
 
 
+%% SCE onset order
+
+sce_onset_order(session_vars,SCE)
+
 %% SCE plots against session performance
 
 %generate x tick labels
@@ -488,11 +505,20 @@ for cc=1:SCE{ss}.nbSCE
     sce_activity_matrix(SCE{ss}.SCE_unique_ROIs{cc},cc) = 1;
 end
 
-%find neurons that are repeatedly recruited by SCE
-engaged_neurons = find(sum(sce_activity_matrix,2) >3);
+%% Assign SCEs by trial type
 
-length(intersect(engaged_neurons,task_selective_ROIs{ss}.A.idx))
-length(intersect(engaged_neurons,task_selective_ROIs{ss}.B.idx))
+[SCE] = assign_SCE_trials(session_vars,SCE,options);
+
+% %find neurons that are repeatedly recruited by SCE
+% engaged_neurons = find(sum(sce_activity_matrix,2) >3);
+% 
+% length(intersect(engaged_neurons,task_selective_ROIs{ss}.A.idx))
+% length(intersect(engaged_neurons,task_selective_ROIs{ss}.B.idx))
+
+%% Detect SCE assemblies 
+%max number of clusters in k-means
+options.clust_max = 20;
+detect_SCE_assembly(sce_activity_matrix,options)
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 
