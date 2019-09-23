@@ -78,10 +78,9 @@ end
 
 %assign to main session variable struct
 for ii = options.sessionSelect
-    session_vars{ii}.Imaging = session_vars_append{ss}.Imaging;
-    session_vars{ii}.updated_dff = session_vars_append{ss}.updated_dff;
+    session_vars{ii}.Imaging = session_vars_append{ii}.Imaging;
+    session_vars{ii}.updated_dff = session_vars_append{ii}.updated_dff;
 end
-
 
 %% Match ROIs from across OCGOL days
 
@@ -348,6 +347,15 @@ figure
 hold on
 plot(fraction_rel_AB(:,6))
 
+%% Save task-selective and task remapping neurons into struct neurons 
+
+%get # of ROIs in each session
+for ss=sessionSelect
+ses_nbROI(ss) = size(session_vars{1, 1}.Place_cell{selectTrial(1)}.Tuned_ROI_mask  
+end
+
+save(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs');
+
 %% Assign each matching neuron to remapping category
 
 match_mat = registered.multi.assigned_filtered;
@@ -429,6 +437,10 @@ for ss=sessionSelect
     SCE_total_count(ss) = SCE{ss}.nbSCE;
 end
 
+
+%% SCE onset order
+
+sce_onset_order(session_vars,SCE)
 
 %% SCE plots against session performance
 

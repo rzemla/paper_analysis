@@ -1,7 +1,11 @@
-function [sce_threshold] = sce_detection_shuffle(noRun_thres_traces,run_binary_interval,thres_traces)
+function [sce_threshold] = sce_detection_shuffle(noRun_thres_traces,run_binary_interval,thres_traces,options)
 
 %GOT IT TO WORK - OPTIMIZE
 %
+
+%% Define inputs parameters
+
+shuffle_nb = options.shuffle_nb;
 
 %% Shuffle detected events within run intervals
 %take detected events (binary in event space before delay filtering)
@@ -19,7 +23,7 @@ noRun_thres_traces;
 noRun_idx_allROI = repmat(noRun_int_idx,1,size(noRun_thres_traces,2))';
 
 %preallocate cells for N shuffles
-shuffle_nb = 100;
+
 shuffled_cell = cell(1,shuffle_nb);
 
 %preallocate each cell with 0 matrix to speed up
@@ -69,7 +73,7 @@ end
 % end
 
 %preallocate cells for shuffle events
-shuffle_nb = 100;
+%shuffle_nb = 50;
 shuffled_events = cell(1,shuffle_nb);
 
 %assign the existing matrix to the matrix holders
@@ -115,7 +119,7 @@ imagesc(shuffled_events{cc}')
 %final_events_shuffle = cell(1,100);
 %sce_event_count 
 
-for cc=1:100
+for cc=1:shuffle_nb
     [sce_event_count(cc,:),~] = SCE_count_per_shuffle(shuffled_events{cc});
 end
 

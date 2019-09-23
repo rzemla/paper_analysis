@@ -1,4 +1,4 @@
-function [SCE] = run_detect_SCE_per_session(imaging_traces, position_norm,run_epoch)
+function [SCE] = run_detect_SCE_per_session(imaging_traces, position_norm,run_epoch,options)
 %Detect SCEs for each session with given type of trials
 
 
@@ -171,7 +171,7 @@ imagesc(noRun_event_matrix')
 %% Run SCE shuffle - use event matrix above as input
 %make option to set # of shuffles
 %also return mean, std, and 
-[sce_threshold] = sce_detection_shuffle(noRun_event_matrix,run_binary_interval,thres_traces);
+[sce_threshold] = sce_detection_shuffle(noRun_event_matrix,run_binary_interval,thres_traces,options);
 %previous thres = 8.33 sync events on frame
 
 %% Select individual onsets separated at least 1s - WORKS!

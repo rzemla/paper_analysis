@@ -33,7 +33,7 @@ for ss=sessionSelect
 
     % Run SCE detection for each animal with shuffle
     disp(['Running session:',num2str(ss)]);
-    [SCE{ss}] = run_detect_SCE_per_session(imaging_traces, position_norm,run_epoch)
+    [SCE{ss}] = run_detect_SCE_per_session(imaging_traces, position_norm,run_epoch,options)
 end
 
 

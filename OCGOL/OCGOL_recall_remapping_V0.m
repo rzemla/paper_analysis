@@ -3,6 +3,24 @@
 %run componenet registration across sessions
 options.register = 0;
 
+%whether to load place field data processed below
+options.loadPlaceField_data = 1;
+
+%load extracted ROI zooms/outlines
+options.load_ROI_zooms_outlines = 1;
+
+%visualize ROI outlines of matches across sessions
+options.visualize_match = 0;
+
+options.selectTrial = [4 5];
+%which session to include in calculation
+options.sessionSelect = [1 2 3 4 5 6];
+
+%for use in workspace
+selectTrial = options.selectTrial;
+sessionSelect = options.sessionSelect;
+
+
 %lab workstation
 %input directories to matching function
 %  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...

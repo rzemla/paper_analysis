@@ -16,16 +16,21 @@ options.selectTrial = [4 5];
 %which session to include in calculation
 options.sessionSelect = [1 2 3 4 5 6];
 
+%for use in workspace
+selectTrial = options.selectTrial;
+sessionSelect = options.sessionSelect;
+
+
 %lab workstation
 %input directories to matching function
-%  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+ path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+%cross session directory
+crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
 
 % %I57_RTLS
 %  path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
@@ -34,18 +39,20 @@ options.sessionSelect = [1 2 3 4 5 6];
 %      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_1A1B_041319_4',...
 %      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041519_5',...
 %      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041619_6'};
-%      %'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
-% %cross session directory
 % crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 
+%      %'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
+% %cross session directory
+
+
 %I57_LT
- path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
-     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
- crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
+%  path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
+%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
+%  crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
 
 % %  %,...
 % %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
@@ -76,7 +83,7 @@ for ii = options.sessionSelect
     session_vars_append{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Imaging','updated_dff');
 end
 
-%assign to main session variable struct
+%assign to main session variable struct (additional variables)
 for ii = options.sessionSelect
     session_vars{ii}.Imaging = session_vars_append{ii}.Imaging;
     session_vars{ii}.updated_dff = session_vars_append{ii}.updated_dff;
@@ -347,6 +354,15 @@ figure
 hold on
 plot(fraction_rel_AB(:,6))
 
+%% Save task-selective and task remapping neurons into struct neurons 
+
+%get # of ROIs in each session
+for ss=sessionSelect
+    ses_nbROI(ss) = size(session_vars{ss}.Place_cell{selectTrial(1)}.Tuned_ROI_mask,2)
+end
+
+save(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
+
 %% Assign each matching neuron to remapping category
 
 match_mat = registered.multi.assigned_filtered;
@@ -415,30 +431,62 @@ visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session
 
 activity_distributions(session_vars,task_selective_ROIs,options)
 
-%% Detect SCEs and measure number of SCE in each session A or B
+%% Extract performance fractions across sessions (respective laps)
+%check if agree with manual analysis
+%turn into table with future code upgrade
 
-[SCE] = detect_SCE(session_vars,options);
+%which sessions to use
+options.sessionSelect = [1 2 3 4 5 6];
 
-%save SCE for all animals
+[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
+
 %export session performance data
-save(fullfile(crossdir,'SCE.mat'),'SCE');
+save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
+
+%% Detect SCEs and measure number of SCE in each session A or B
+%how many shuffles to perform
+options.shuffle_nb =50;
+[SCE] = detect_SCE(session_vars,options);
 
 %extract number of SCEs on each day (total)
 for ss=sessionSelect
     SCE_total_count(ss) = SCE{ss}.nbSCE;
 end
 
+%% Number of neurons in each SCE
+for ss=sessionSelect
+    %for each SCE,
+    for cc =1:size(SCE{ss}.sync_range,1)
+        %all unique ROIs in each SCE
+        SCE{ss}.SCE_unique_ROIs{cc} = unique(cell2mat(SCE{ss}.SCE_ROIs(SCE{ss}.sync_range(cc,1):SCE{ss}.sync_range(cc,2))));
+        %number of ROIs in each SCE
+        SCE{ss}.SCE_nbROI(cc) = size(SCE{ss}.SCE_unique_ROIs{cc},2);
+    end
+end
+
+%generate x tick labels
+for ss=1:6
+    name_cell{ss} = ['',num2str(ss)];
+end
+
+
+%get 
+figure
+hold on
+for ss=1:6
+    cdfplot(SCE{ss}.SCE_nbROI);
+end
+legend(name_cell);
+
+%% Save SCE struct for all sessions
+%export session performance data
+save(fullfile(crossdir,'SCE.mat'),'SCE');
 
 %% SCE onset order
 
 sce_onset_order(session_vars,SCE)
 
 %% SCE plots against session performance
-
-%generate x tick labels
-for ss=1:6
-    name_cell{ss} = ['',num2str(ss)];
-end
 
 %color maps -total, A, B
 color_map = [139, 0, 139;  65,105,225; 220,20,60]/255;
@@ -471,24 +519,6 @@ set(gca,'FontSize',16)
 set(gca,'LineWidth',2)
 legend([p(1) p(2) p(3)],'All','A','B','Location','southeast')
 
-%% Number of neurons in each SCE
-for ss=sessionSelect
-    %for each SCE,
-    for cc =1:size(SCE{ss}.sync_range,1)
-        %all unique ROIs in each SCE
-        SCE{ss}.SCE_unique_ROIs{cc} = unique(cell2mat(SCE{ss}.SCE_ROIs(SCE{ss}.sync_range(cc,1):SCE{ss}.sync_range(cc,2))));
-        %number of ROIs in each SCE
-        SCE{ss}.SCE_nbROI(cc) = size(SCE{ss}.SCE_unique_ROIs{cc},2);
-    end
-end
-
-%get 
-figure
-hold on
-for ss=1:6
-    cdfplot(SCE{ss}.SCE_nbROI);
-end
-legend(name_cell);
 
 %% Make SCE matrix
 %row - neuron on/off
@@ -543,18 +573,6 @@ options.selectTrial = [4,5];
 %is it a learning set (for plot/raster annotation)
 options.learning_data = 1;
 non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
-
-%% Extract performance fractions across sessions (respective laps)
-%check if agree with manual analysis
-%turn into table with future code upgrade
-
-%which sessions to use
-options.sessionSelect = [1 2 3 4 5 6];
-
-[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
-
-%export session performance data
-save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
 
 
 %% Plot smoothed event rate across track (function)
