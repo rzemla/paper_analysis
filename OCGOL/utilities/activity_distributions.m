@@ -8,8 +8,8 @@ sessionSelect = options.sessionSelect;
 %% Plot scatter of task-selective ROIs vs AUC/min rate on opposing trials
 %as function of AUC/min
 figure
-for ss=1:6
-    subplot(1,6,ss)
+for ss=sessionSelect
+    subplot(1,size(sessionSelect,2),ss)
     hold on
     xlim([0 3])
     ylim([0 25])
@@ -25,8 +25,8 @@ end
 
 %% Plot scatter of task-selective ROIs vs event frequency on opposing trials
 figure
-for ss=1:6
-    subplot(1,6,ss)
+for ss=sessionSelect
+    subplot(1,size(sessionSelect,2),ss)
     hold on
     xlim([0 3])
     ylim([0 15])
@@ -43,8 +43,8 @@ end
 
 %scatter
 figure;
-for ss=1:6
-subplot(1,6,ss)
+for ss=sessionSelect
+subplot(1,size(sessionSelect,2),ss)
 hold on
 axis square
 title('AUC/min')
@@ -61,8 +61,8 @@ end
 
 %scatter
 figure;
-for ss=1:6
-subplot(1,6,ss)
+for ss=sessionSelect
+subplot(1,size(sessionSelect,2),ss)
 hold on
 axis square
 title('AUC/min')
@@ -76,8 +76,8 @@ end
 
 %% Plot AUC/min of A vs on scatter for all neurons - NO run
 figure;
-for ss=1:6
-subplot(1,6,ss)
+for ss=sessionSelect
+subplot(1,size(sessionSelect,2),ss)
 hold on
 axis square
 title('AUC/min')
@@ -92,7 +92,7 @@ end
 %% Plot AUC/min of A vs on scatter for all neurons - Run vs no run
 figure;
 for ss=sessionSelect
-subplot(1,6,ss)
+subplot(1,size(sessionSelect,2),ss)
 hold on
 axis square
 title('Run vs. No run AUC/min')
@@ -110,7 +110,7 @@ end
 %% Plot Event freq of A vs on scatter for all neurons - Run vs no run
 figure;
 for ss=sessionSelect
-subplot(1,6,ss)
+subplot(1,size(sessionSelect,2),ss)
 hold on
 axis square
 title('Run vs. No run Event freq.')

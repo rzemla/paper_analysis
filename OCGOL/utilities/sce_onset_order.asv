@@ -1,4 +1,4 @@
-function [SCE] = sce_onset_order(session_vars,SCE,options)
+function [outputArg1,outputArg2] = sce_onset_order(session_vars,SCE,options)
 % SCE order detection using parabolic fit (Malvache et al. 2016)
 
 %% Define parameters
