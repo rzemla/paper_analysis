@@ -20,7 +20,7 @@ sessionSelect = options.sessionSelect;
 match_mat = registered.multi.assigned_filtered;
 
 figure('Position',[2230 30 780 960]);
-for ii=1:size(match_mat,1) %with nans where no match
+for ii=82%1:size(match_mat,1) %with nans where no match
 
     %for each session
     for ss=sessionSelect

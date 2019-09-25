@@ -92,13 +92,15 @@ end
 for ii = options.sessionSelect
     %add event variables
     disp(ii)
-    session_vars_append{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Imaging','updated_dff');
+    session_vars_append{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Imaging','updated_dff','Events');
+    %session_vars_append{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Events');   
 end
 
 %assign to main session variable struct (additional variables)
 for ii = options.sessionSelect
     session_vars{ii}.Imaging = session_vars_append{ii}.Imaging;
     session_vars{ii}.updated_dff = session_vars_append{ii}.updated_dff;
+    session_vars{ii}.Events = session_vars_append{ii}.Events;   
 end
 
 %% Match ROIs from across OCGOL days
@@ -488,7 +490,14 @@ save(fullfile(crossdir,'SCE.mat'),'SCE');
 
 %% SCE onset order
 
-sce_onset_order(session_vars,SCE,options)
+[SCE] = sce_onset_order(session_vars,SCE,options);
+
+%% Plot sorted SCE event spirals for each ROI involved in SCE
+
+%% Decicated two session spiral plotter with categorical type display
+
+plot_spiral_raster_SCE(plot_raster_vars,session_vars,registered,cat_registered_cell,SCE,options)
+
 
 %% SCE plots against session performance
 
@@ -524,35 +533,41 @@ set(gca,'FontSize',16)
 set(gca,'LineWidth',2)
 legend([p(1) p(2) p(3)],'All','A','B','Location','southeast')
 
-%% Make SCE matrix
-%row - neuron on/off
-%column - each SCE
-for ss=1:size(sessionSelect,2)
-    ses_nbROI(ss) = size(session_vars{ss}.Place_cell{selectTrial(1)}.Spatial_tuning_curve,2);
+%% Make SCE ROI participation matrix
+%get SCE onset normalized position here as well
+%
+[SCE] = SCE_participation(session_vars,SCE,PV_TC_corr,options);
+
+
+%% Assign number of SCE involved for for each matching neuron
+
+match_list = registered.multi.assigned_filtered;
+%make copy
+SCE_count_all_match = match_list;
+
+for ss=1:7
+    ROI_idx{ss} = find(~isnan(match_list(:,ss))==1);
+    ROI_log{ss} = ~isnan(match_list(:,ss));
+%count all
+ROI_SCE_count_all{ss} = SCE{ss}.ROI_SCE_count(match_list(ROI_idx{ss},ss),3);
+SCE_count_all_match(ROI_log{ss},ss) = ROI_SCE_count_all{ss}
 end
 
-%create SCE matrix
-sce_activity_matrix = zeros(ses_nbROI(ss),SCE{ss}.nbSCE);
 
-%fill in each matrix
-for cc=1:SCE{ss}.nbSCE
-    sce_activity_matrix(SCE{ss}.SCE_unique_ROIs{cc},cc) = 1;
-end
+
+
 
 %% Assign SCEs by trial type
 
 [SCE] = assign_SCE_trials(session_vars,SCE,options);
 
-% %find neurons that are repeatedly recruited by SCE
-% engaged_neurons = find(sum(sce_activity_matrix,2) >3);
-% 
-% length(intersect(engaged_neurons,task_selective_ROIs{ss}.A.idx))
-% length(intersect(engaged_neurons,task_selective_ROIs{ss}.B.idx))
-
 %% Detect SCE assemblies 
 %max number of clusters in k-means
+%doesn't cluster in sub trials either
 options.clust_max = 10;
-detect_SCE_assembly(sce_activity_matrix,options)
+%try clustering A and B trials independently
+detect_SCE_assembly(SCE{3}.sce_activity.B,options)
+
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 

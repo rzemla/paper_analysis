@@ -30,15 +30,16 @@ sessionSelect = options.sessionSelect;
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I47_LP\crossSession';
 
-%  path_dir = {'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d1_032118_1',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d2_032218_2',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d3_032318_3',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d6_032618_4_2',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d7_032718_5',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d8_032818_6',...
-%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d9_032918_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
+ path_dir = {'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d1_032118_1',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d2_032218_2',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d3_032318_3',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d6_032618_4_2',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d7_032718_5',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d8_032818_6',...
+     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d9_032918_7'};
+%cross session directory
+crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
+
 % 
 %  path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
 %      'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
@@ -60,15 +61,15 @@ sessionSelect = options.sessionSelect;
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I45_RT\crossSession';
 
- path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
-%cross session directory
-crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
+%  path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
 
 
 %% Load place cell variables for each session
@@ -91,13 +92,15 @@ end
 for ii = options.sessionSelect
     %add event variables
     disp(ii)
-    session_vars_append{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Imaging','updated_dff');
+    session_vars_append{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Imaging','updated_dff','Events');
+    %session_vars_append{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Events');   
 end
 
 %assign to main session variable struct (additional variables)
 for ii = options.sessionSelect
     session_vars{ii}.Imaging = session_vars_append{ii}.Imaging;
     session_vars{ii}.updated_dff = session_vars_append{ii}.updated_dff;
+    session_vars{ii}.Events = session_vars_append{ii}.Events;   
 end
 
 %% Match ROIs from across OCGOL days
@@ -355,6 +358,204 @@ fraction_rel_AB = remap_cat_count./repmat(sum(remap_cat_count,2),1,6);
 figure
 hold on
 plot(fraction_rel_AB(:,6))
+
+%% Save task-selective and task remapping neurons into struct neurons 
+
+%get # of ROIs in each session
+for ss=sessionSelect
+    ses_nbROI(ss) = size(session_vars{ss}.Place_cell{selectTrial(1)}.Tuned_ROI_mask,2);
+end
+
+save(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
+
+
+%% Assign each matching neuron to remapping category
+
+match_mat = registered.multi.assigned_filtered;
+%make cell with categorical values
+cat_registered_cell = cell(size(match_mat,1),size(match_mat,2));
+
+%for each session determine which category each cell belongs to
+for ss=options.sessionSelect
+    [~,idx_match] = intersect(match_mat(:,ss),task_selective_ROIs{ss}.A.idx);
+    cat_registered_cell(idx_match,ss) = {'A-selective'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_selective_ROIs{ss}.B.idx);
+    cat_registered_cell(idx_match,ss) = {'B-selective'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.common);
+    cat_registered_cell(idx_match,ss) = {'common'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.rate);
+    cat_registered_cell(idx_match,ss) = {'rate'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.global_near);
+    cat_registered_cell(idx_match,ss) = {'near'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.global_far);
+    cat_registered_cell(idx_match,ss) = {'far'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.partial);
+    cat_registered_cell(idx_match,ss) = {'partial'};
+    [~,idx_match] = intersect(match_mat(:,ss),task_remapping_ROIs{ss}.mixed);
+    cat_registered_cell(idx_match,ss) = {'mixed'};
+end
+
+%extract 2 session index
+ses_comp = [4,5];
+selMatchIdxs = find(sum(~isnan(match_mat(:,ses_comp)),2)==2);
+
+cat_registered_cell(selMatchIdxs,ses_comp)
+
+%% Raster spiral - prepare multi session
+% save this in the future as well and load
+options.spiral_width = 0.1;
+[plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars,options);
+
+%% Plot spiral raster using inputs
+
+ROI_categories.task_selective_ROIs = task_selective_ROIs;
+
+%works with inputs
+plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms, ROI_outlines,ROI_categories,options)
+
+%% Extract normalized events
+
+[norm_events] = normalize_events_pos(session_vars,options);
+
+%% Get AUC/min calculation for each ROI in A vs. B
+%AUC/min and frequency of events events/min in run epoch for A or B trials
+%all added no run epochs
+[session_vars] = AUC_rate(session_vars,options);
+
+%% Decicated two session spiral plotter with categorical type display
+
+plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,options)
+
+
+%% Visualize place fields and events for each neurons
+%adjust this to handle data for correct trials as well
+
+visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session_vars,task_selective_ROIs,cat_registered_cell,select_fields,options)
+
+%% Task-selective neurons - AUC/min and event freq distributions
+
+activity_distributions(session_vars,task_selective_ROIs,options)
+
+%% Extract performance fractions across sessions (respective laps)
+%check if agree with manual analysis
+%turn into table with future code upgrade
+
+%which sessions to use
+%options.sessionSelect = [1 2 3 4 5 6];
+
+[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
+
+%export session performance data
+save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
+
+%% Detect SCEs and measure number of SCE in each session A or B
+%how many shuffles to perform
+options.shuffle_nb =50;
+[SCE] = detect_SCE(session_vars,options);
+
+%extract number of SCEs on each day (total)
+for ss=sessionSelect
+    SCE_total_count(ss) = SCE{ss}.nbSCE;
+end
+
+
+%% Number of neurons in each SCE
+for ss=sessionSelect
+    %for each SCE,
+    for cc =1:size(SCE{ss}.sync_range,1)
+        %all unique ROIs in each SCE
+        SCE{ss}.SCE_unique_ROIs{cc} = unique(cell2mat(SCE{ss}.SCE_ROIs(SCE{ss}.sync_range(cc,1):SCE{ss}.sync_range(cc,2))));
+        %number of ROIs in each SCE
+        SCE{ss}.SCE_nbROI(cc) = size(SCE{ss}.SCE_unique_ROIs{cc},2);
+    end
+end
+
+%generate x tick labels
+for ss=sessionSelect
+    name_cell{ss} = ['',num2str(ss)];
+end
+
+
+%get 
+figure
+hold on
+for ss=sessionSelect
+    cdfplot(SCE{ss}.SCE_nbROI);
+end
+legend(name_cell);
+
+%% Save SCE struct for all sessions
+%export session performance data
+save(fullfile(crossdir,'SCE.mat'),'SCE');
+
+%% SCE onset order
+
+[SCE] = sce_onset_order(session_vars,SCE,options);
+
+%% Plot sorted SCE event spirals for each ROI involved in SCE
+
+%% Decicated two session spiral plotter with categorical type display
+
+plot_spiral_raster_SCE(plot_raster_vars,session_vars,registered,cat_registered_cell,SCE,options)
+
+
+%% SCE plots against session performance
+
+%color maps -total, A, B
+color_map = [139, 0, 139;  65,105,225; 220,20,60]/255;
+
+figure
+subplot(2,1,1)
+hold on
+ylabel('SCE count')
+plot(SCE_total_count,'LineWidth',2)
+xticks([1:size(sessionSelect,2)])
+xticks([1:size(sessionSelect,2)])
+xticklabels(name_cell);
+xtickangle(45);
+xlabel('Session');
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+
+subplot(2,1,2)
+hold on
+ylabel('Performance')
+ylim([0 1])
+xlabel('Session')
+
+for ii=1:3
+    p(ii) = plot(ses_perf(ii,:),'Color',color_map(ii,:),'LineWidth',2);
+end
+xticks([1:size(sessionSelect,2)])
+xticklabels(name_cell);
+xtickangle(45);
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+legend([p(1) p(2) p(3)],'All','A','B','Location','southeast')
+
+%% Make SCE ROI participation matrix
+%get SCE onset normalized position here as well
+%
+[SCE] = SCE_participation(session_vars,SCE,PV_TC_corr,options);
+
+
+%% Assign number of SCE involved for for each matching neuron
+
+match_list = registered.multi.assigned_filtered;
+
+ROI~isnan(match_list(:,1))
+
+%% Assign SCEs by trial type
+
+[SCE] = assign_SCE_trials(session_vars,SCE,options);
+
+%% Detect SCE assemblies 
+%max number of clusters in k-means
+%doesn't cluster in sub trials either
+options.clust_max = 10;
+%try clustering A and B trials independently
+detect_SCE_assembly(SCE{3}.sce_activity.B,options)
+
 
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 

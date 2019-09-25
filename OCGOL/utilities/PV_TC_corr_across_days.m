@@ -202,7 +202,12 @@ colormap('jet')
 %% Mean PV as function of task performance
 
 
-%% TC correlation between session of A&B tuned neurons
+%% TC correlation between session of all neurons (non norm STC_
+
+for ss = options.sessionSelect
+    TCcorr_all_same_day{ss} = corr(A_STC_noNorm{ss},B_STC_noNorm{ss}, 'type','Pearson','rows','complete');
+    TCcorr_all_same_day_diag{ss} = diag(TCcorr_all_same_day{ss});
+end
 
 
 %% Do above PV and TC correlations for day-2-day matching neurons
@@ -364,6 +369,10 @@ end
 
 %TC correlations relative to day 1
 PV_TC_corr.meanTC_rel_d1 = meanTC_rel_d1;
+%Same day A vs B. TC correlations for each neuron (all neurons)
+PV_TC_corr.TC_same_day_mat = TCcorr_all_same_day;
+PV_TC_corr.TC_same_day_diag = TCcorr_all_same_day_diag;
+
 %PV correlations relative to day 1
 PV_TC_corr.meanPV_rel_d1 = meanPV_rel_d1;
 %PV correlations same day
@@ -372,6 +381,8 @@ PV_TC_corr.meanPV_same_day = meanPV_same_day;
 PV_TC_corr.PVcorr_all_same_day = PVcorr_all_same_day;
 %PV correlation - same day - all neurons - diagnonal values (bin by bin)
 PV_TC_corr.PVcorr_all_same_day_diag = PVcorr_all_same_day_diag;
+%
+
 
 end
 

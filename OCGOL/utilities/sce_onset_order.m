@@ -17,46 +17,13 @@ for ss = sessionSelect
     [SCE] = get_SCE_order(traces,SCE,ss);
 end
 
-%% Organize to give a number that tells whether frame is correct A or B
 
-%total number of laps
-lap_count = size(session_vars{ss}.Behavior.performance.trialOrder,1);
-%what lap each frame corresponds to
-lap_frame = session_vars{ss}.Behavior.resampled.lapNb;
 
-%total number of frames
-frame_count = size(traces,1);
-%preallocate
-frame_trial_assign = zeros(frame_count,1);
+%% Plot example SCE - move to separate script
 
-%assign trial type
-for ll=1:lap_count
-    %if A trial
-    if session_vars{ss}.Behavior.performance.trialOrder(ll) == 2
-        frame_trial_assign(find(lap_frame ==ll)) = 2;
-    elseif session_vars{ss}.Behavior.performance.trialOrder(ll) == 3
-        frame_trial_assign(find(lap_frame ==ll)) = 3;
-    end
-end
-
-%amend if correct or incorrect trial (20 - wrong A; 30 - wrong B)
-for ll=1:lap_count
-    %if A trial
-    if ~session_vars{ss}.Behavior.performance.trialCorrect(ll) == 1
-        if session_vars{ss}.Behavior.performance.trialOrder(ll) == 2
-            frame_trial_assign(find(lap_frame ==ll)) = 20;
-            
-        elseif session_vars{ss}.Behavior.performance.trialOrder(ll) == 3
-            frame_trial_assign(find(lap_frame ==ll)) = 30;
-        end
-    end
-end 
-
-%% Plot example SCE
-
-    %calcium traces - input into get_SCE_order (all trials)
-    traces = session_vars{ss}.Imaging.trace_restricted;
-
+if 0
+%calcium traces - input into get_SCE_order (all trials)
+traces = session_vars{ss}.Imaging.trace_restricted;
 
 
 figure;
@@ -66,8 +33,8 @@ for cc=34
     %temporary generate times and speed for select input inverval
     time = session_vars{ss}.Imaging.time_restricted;
     speed = session_vars{ss}.Behavior.speed;
-    pos_norm = session_vars{ss}.Behavior.resampled.normalizedposition; 
-
+    pos_norm = session_vars{ss}.Behavior.resampled.normalizedposition;
+    
     %# of frames before and after onset of SCE
     plot_range = [7500, 27500];
     
@@ -90,7 +57,7 @@ for cc=34
     title('All SCE ROIS traces sorted by onset time')
     colormap('hot')
     caxis([0 1])
-
+    
     subplot(3,1,2)
     hold on
     ylabel('Normalized position')
@@ -104,7 +71,7 @@ for cc=34
     %color red B trials
     fr_assign_cut_B  = pos_norm(st_idx:end_idx);
     plot(find(frame_trial_assign(st_idx:end_idx)==3),fr_assign_cut_B(find(frame_trial_assign(st_idx:end_idx)==3)),'r')
-
+    
     subplot(3,1,3)
     hold on
     plot(speed(st_idx:end_idx),'k','LineWidth',1)
@@ -112,9 +79,10 @@ for cc=34
     ylabel('Speed [cm/s]');
     %plot frames where sync event occurred
     plot([plot_range(1),plot_range(1)],[-5 25],'Color',[0.5 0.5 0.5],'LineStyle', '--')
-
+    
     pause
     clf;
+end
 end
 
 %% Return the onset order for each SCE
@@ -147,6 +115,7 @@ end
 %speed = speed(select_speed_idx);
 
 %%
+%{
 % Plot speed, position and dF/F trace of neurons prior to SCE in no-run epoch
 figure
 subplot(4,1,1)
@@ -228,6 +197,7 @@ run_SCE_onsets
 [rho,p] =  corr(run_SCE_onsets', median_run_seq_onset(recur_idx_pos)','Type','Spearman')
 %if p less than 0.05 and positive --> forward replay; 
 %if spearman correlation negative --> reverse replay;
+%}
 
 end
 
