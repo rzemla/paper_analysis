@@ -4,13 +4,16 @@
 options.register = 0;
 
 %whether to load place field data processed below
-options.loadPlaceField_data = 0;
+options.loadPlaceField_data = 1;
 
 %load extracted ROI zooms/outlines
-options.load_ROI_zooms_outlines = 0;
+options.load_ROI_zooms_outlines = 1;
 
 %visualize ROI outlines of matches across sessions
 options.visualize_match = 0;
+
+%load SCE data shuffled n=50/100 (re-shuffle later on cluster with n =1000)
+options.loadSCE = 1;
 
 options.selectTrial = [1 2];
 %which session to include in calculation
@@ -29,16 +32,16 @@ sessionSelect = options.sessionSelect;
 %      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d9_062818_7'};
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I47_LP\crossSession';
-
- path_dir = {'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d1_032118_1',...
-     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d2_032218_2',...
-     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d3_032318_3',...
-     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d6_032618_4_2',...
-     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d7_032718_5',...
-     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d8_032818_6',...
-     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d9_032918_7'};
-%cross session directory
-crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
+% 
+%  path_dir = {'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d1_032118_1',...
+%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d2_032218_2',...
+%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d3_032318_3',...
+%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d6_032618_4_2',...
+%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d7_032718_5',...
+%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d8_032818_6',...
+%      'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d9_032918_7'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
 
 % 
 %  path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
@@ -60,17 +63,17 @@ crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
 %      'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d9_062818_7'};
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I45_RT\crossSession';
-
-%  path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
-
+% 
+ path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
+%cross session directory
+crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
+% 
 
 %% Load place cell variables for each session
 %get mat directories in each output folder
@@ -282,22 +285,22 @@ options.dispFigure = 0;
 
 
 %quick look at fractions
-for ss=sessionSelect
-counts_task_sel_each(1,ss) = length(task_selective_ROIs{ss}.A.idx)/size(session_vars{ss}.Place_cell{selectTrial(1)}.Spatial_Info.ROI_pvalue,2)
-counts_task_sel_each(2,ss) = length(task_selective_ROIs{ss}.B.idx)/size(session_vars{ss}.Place_cell{selectTrial(2)}.Spatial_Info.ROI_pvalue,2)
-end
-
-figure;
-subplot(1,2,1)
-hold on
-ylim([0 0.4])
-% plot(both_count')
-% plot(sum(both_count,1))
-subplot(1,2,2)
-hold on
-ylim([0 0.4])
-plot(counts_task_sel_each')
-plot(sum(counts_task_sel_each,1))
+% for ss=sessionSelect
+% counts_task_sel_each(1,ss) = length(task_selective_ROIs{ss}.A.idx)/size(session_vars{ss}.Place_cell{selectTrial(1)}.Spatial_Info.ROI_pvalue,2)
+% counts_task_sel_each(2,ss) = length(task_selective_ROIs{ss}.B.idx)/size(session_vars{ss}.Place_cell{selectTrial(2)}.Spatial_Info.ROI_pvalue,2)
+% end
+% 
+% figure;
+% subplot(1,2,1)
+% hold on
+% ylim([0 0.4])
+% % plot(both_count')
+% % plot(sum(both_count,1))
+% subplot(1,2,2)
+% hold on
+% ylim([0 0.4])
+% plot(counts_task_sel_each')
+% plot(sum(counts_task_sel_each,1))
 
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
@@ -313,7 +316,7 @@ options.tuning_criterion = 'si'; %si or ts
 %% Look at spatial information scores in matching neurons between days in A trials and B trials
 %mod this
 %put into separate script
- si_score_comparison(session_vars, registered)
+ %si_score_comparison(session_vars, registered)
 
 %% Task remapping filter - split into remapping categories
 %which criterion to use for task-selective ROIs
@@ -434,7 +437,7 @@ visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session
 
 %% Task-selective neurons - AUC/min and event freq distributions
 
-activity_distributions(session_vars,task_selective_ROIs,options)
+activity_distributions(session_vars,task_selective_ROIs,options) 
 
 %% Extract performance fractions across sessions (respective laps)
 %check if agree with manual analysis
@@ -449,15 +452,22 @@ activity_distributions(session_vars,task_selective_ROIs,options)
 save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
 
 %% Detect SCEs and measure number of SCE in each session A or B
-%how many shuffles to perform
-options.shuffle_nb =50;
-[SCE] = detect_SCE(session_vars,options);
 
-%extract number of SCEs on each day (total)
-for ss=sessionSelect
-    SCE_total_count(ss) = SCE{ss}.nbSCE;
+%load or run shuffle to determine SCEs
+if options.loadSCE == 0
+    %how many shuffles to perform
+    options.shuffle_nb =50;
+    [SCE] = detect_SCE(session_vars,options);
+    
+    %extract number of SCEs on each day (total)
+    for ss=sessionSelect
+        SCE_total_count(ss) = SCE{ss}.nbSCE;
+    end
+    
+elseif options.loadSCE == 1
+    %export session performance data
+    load(fullfile(crossdir,'SCE.mat'),'SCE');
 end
-
 
 %% Number of neurons in each SCE
 for ss=sessionSelect
@@ -484,18 +494,43 @@ for ss=sessionSelect
 end
 legend(name_cell);
 
-%% Save SCE struct for all sessions
-%export session performance data
-save(fullfile(crossdir,'SCE.mat'),'SCE');
-
 %% SCE onset order
 
 [SCE] = sce_onset_order(session_vars,SCE,options);
 
+%% Assign SCEs by trial type
+
+[SCE] = assign_SCE_trials(session_vars,SCE,options);
+
+%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+options.sessionSelect = [1 2 3 4 5 6 7];
+options.selectSes = [1 2 ];
+%learning or recall datasets
+options.learning_data = 0;
+[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
+
+%save to output file for cumulative analysis
+save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
+
+%% Make SCE ROI participation matrix
+%get SCE onset normalized position here as well
+%
+[SCE] = SCE_participation(session_vars,SCE,PV_TC_corr,options);
+
+
+%% Save SCE struct for all sessions
+%export session performance data
+save(fullfile(crossdir,'SCE.mat'),'SCE');
+
+
+
 %% Plot sorted SCE event spirals for each ROI involved in SCE
 
 %% Decicated two session spiral plotter with categorical type display
-
+%keep working on this split out other functionalities in other functions
 plot_spiral_raster_SCE(plot_raster_vars,session_vars,registered,cat_registered_cell,SCE,options)
 
 
@@ -533,11 +568,6 @@ set(gca,'FontSize',16)
 set(gca,'LineWidth',2)
 legend([p(1) p(2) p(3)],'All','A','B','Location','southeast')
 
-%% Make SCE ROI participation matrix
-%get SCE onset normalized position here as well
-%
-[SCE] = SCE_participation(session_vars,SCE,PV_TC_corr,options);
-
 
 %% Assign number of SCE involved for for each matching neuron
 
@@ -545,42 +575,43 @@ match_list = registered.multi.assigned_filtered;
 %make copy
 SCE_count_all_match = match_list;
 
-for ss=1:7
+for ss=sessionSelect
     ROI_idx{ss} = find(~isnan(match_list(:,ss))==1);
     ROI_log{ss} = ~isnan(match_list(:,ss));
-%count all
-ROI_SCE_count_all{ss} = SCE{ss}.ROI_SCE_count(match_list(ROI_idx{ss},ss),3);
-SCE_count_all_match(ROI_log{ss},ss) = ROI_SCE_count_all{ss}
+    %count all
+    ROI_SCE_count_all{ss} = SCE{ss}.ROI_SCE_count(match_list(ROI_idx{ss},ss),3);
+    SCE_count_all_match(ROI_log{ss},ss) = ROI_SCE_count_all{ss}
 end
 
+%% Construct day matched assemblies
+%filtered match matrix
+match_mat = registered.multi.assigned_filtered;
 
+%which days to compare
+comp_days = [4 5];
 
+%take d1 and d2 matching ROIs
+matching_ROI_idxs = match_mat(find(sum(~isnan(match_mat(:,comp_days)),2)==2),comp_days);
 
+%make combined matrix
+combined_day_SCE_mat = [SCE{comp_days(1)}.sce_activity.A(matching_ROI_idxs(:,1),:),...
+SCE{comp_days(2)}.sce_activity.A(matching_ROI_idxs(:,2),:)];
 
-%% Assign SCEs by trial type
+%combined_day_SCE_mat = SCE{1}.sce_activity_matrix;
+%combined_day_SCE_mat = SCE{1}.sce_activity.B
 
-[SCE] = assign_SCE_trials(session_vars,SCE,options);
+%replace 0's with -1's and see if clustering works better
+combined_day_SCE_mat(combined_day_SCE_mat == 0) = -1;
+
+%invert 1's with -1s
+combined_day_SCE_mat = combined_day_SCE_mat.*(-1);
 
 %% Detect SCE assemblies 
 %max number of clusters in k-means
 %doesn't cluster in sub trials either
-options.clust_max = 10;
+options.clust_max = 15;
 %try clustering A and B trials independently
-detect_SCE_assembly(SCE{3}.sce_activity.B,options)
-
-
-%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 7];
-options.selectSes = [1 2 ];
-%learning or recall datasets
-options.learning_data = 0;
-[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
-
-%save to output file for cumulative analysis
-save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
+detect_SCE_assembly(combined_day_SCE_mat,options)
 
 %% All neuron (at least 2 match between sessions) raster (non_norm)
 

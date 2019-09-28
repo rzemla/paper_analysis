@@ -15,8 +15,8 @@ sessionSelect = options.sessionSelect;
 %% Plot event maps one lap before and lap ahead of SCE got each SCE neuron
 %% Organize to give a number that tells whether frame is correct A or B
 
-ss=1
-ses=1
+ss=2
+ses=2
 
 %calcium traces - input into get_SCE_order (all trials)
 traces = session_vars{ss}.Imaging.trace_restricted;
@@ -56,7 +56,7 @@ end
 
 %find events for each neuron with the 3 lap frame range
 %for each ROI in SCE find frame event onset
-for cc=1:137
+for cc=1:37
  sce_nb = cc;
         start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(sce_nb,1));
     
@@ -80,33 +80,33 @@ end
 
 % %2 - 3 - 3
 
-lap_start_idxs(1)
+%lap_start_idxs(1)
 
-%define A and B reward zone edges
-pos_norm_3_lap_clipped = pos_norm(st_idx:end_idx);
-%logical vector of run on state clipped
-run_ones_clip = session_vars{ss}.Behavior.run_ones(st_idx:end_idx);
+% %define A and B reward zone edges
+% pos_norm_3_lap_clipped = pos_norm(st_idx:end_idx);
+% %logical vector of run on state clipped
+% run_ones_clip = session_vars{ss}.Behavior.run_ones(st_idx:end_idx);
 
 %all onsets
-run_onset_loc = find(diff(run_ones_clip) == 1)+1;
-
-%find all idxs within specified position
-reward_B_3lap_loc = find(diff(pos_norm_3_lap_clipped >= 0.29 & pos_norm_3_lap_clipped <= 0.30) == 1)+1;
-reward_A_3lap_loc = find(diff(pos_norm_3_lap_clipped >= 0.70 & pos_norm_3_lap_clipped <= 0.71) == 1)+1;
-
-%for each reward B location find frame or first run epoch following
-for ii=1:size(reward_B_3lap_loc,1)
-    first_B_frame_epochs_idxs(ii) = find(run_onset_loc > reward_B_3lap_loc(ii),1);
-end
-
-run_on_after_B = run_onset_loc(first_B_frame_epochs_idxs)
-
-%last frame mod for cont run
-run_on_after_B(3) = 4114;
+% run_onset_loc = find(diff(run_ones_clip) == 1)+1;
+% 
+% %find all idxs within specified position
+% reward_B_3lap_loc = find(diff(pos_norm_3_lap_clipped >= 0.29 & pos_norm_3_lap_clipped <= 0.30) == 1)+1;
+% reward_A_3lap_loc = find(diff(pos_norm_3_lap_clipped >= 0.70 & pos_norm_3_lap_clipped <= 0.71) == 1)+1;
+% 
+% %for each reward B location find frame or first run epoch following
+% for ii=1:size(reward_B_3lap_loc,1)
+%     first_B_frame_epochs_idxs(ii) = find(run_onset_loc > reward_B_3lap_loc(ii),1);
+% end
+% 
+% run_on_after_B = run_onset_loc(first_B_frame_epochs_idxs)
+% 
+% %last frame mod for cont run
+% run_on_after_B(3) = 4114;
 
 %% Figure out lap that event occurred on
 figure;
-for cc=75:137
+for cc=2:37
     sce_nb = cc;
     
     %absolute time frame of SCE start (all trials)
@@ -123,6 +123,10 @@ for cc=75:137
     %frame range for plotting
     frame_range = diff(surr_lap_start_end);
     
+    %start and end laps idx
+    st_idx =surr_lap_start_end(1);
+    end_idx = surr_lap_start_end(2);
+
     %get lap start indices
     lap_start_idxs =find(diff(frame_trial_assign(st_idx:end_idx)) ==1 | diff(frame_trial_assign(st_idx:end_idx)) == -1)+1;
 
@@ -151,7 +155,7 @@ for cc=75:137
     imagesc(traces(st_idx:end_idx,SCE{ss}.SCE_unique_ROIs_sorted{sce_nb})')
     hold on;
     xlim([0 frame_range])
-    title('SCE ROIs traces sorted by onset time')
+    title(['SCE ROIs traces sorted by onset time ','SCE: ',num2str(cc)])
     colormap('hot')
     caxis([0 1])
     
@@ -192,16 +196,20 @@ for cc=75:137
         plot(traces(st_idx:end_idx,SCE{ss}.SCE_unique_ROIs_sorted{sce_nb}(ii))'+step, 'Color',0*[1 1 1], 'LineWidth', 1.5)
         %plot individual run events
         scatter(sce_event_onsets{cc}{ii}-st_idx,ones(1,size(sce_event_onsets{cc}{ii},1))+step ,14,'filled','MarkerFaceColor',...
-        [0,128,0]/255)  
+            [0,128,0]/255)
         step = step - stepSize;
     end
     %mark 50 frames around SCE with dotted gray line
     plot([start_SCE_frame-st_idx-50,start_SCE_frame-st_idx-50],[step 5],'Color',[1 1 1]*0.5,'LineStyle','--');
     plot([start_SCE_frame-st_idx+50,start_SCE_frame-st_idx+50],[step 5],'Color',[1 1 1]*0.5,'LineStyle','--');
-
+    
     %plot lap start and stop
     %get lap start indices
-    plot(repmat(lap_start_idxs,1,2)',repmat([step 5]',1,2),'k--')
+    if ~isempty(lap_start_idxs)
+        plot(repmat(lap_start_idxs,1,2)',repmat([step 5]',1,2),'k--')
+    else
+        disp('Empty lap start idxs')
+    end
 
     %plot B reward zone start
     %plot(repmat(reward_B_3lap_loc,1,2)',repmat([step 5]',1,3),'r--')
@@ -209,7 +217,7 @@ for cc=75:137
     %plot A reward zone start
     %plot(repmat(reward_A_3lap_loc,1,2)',repmat([step 5]',1,3),'b--')
 
-    plot(repmat(run_on_after_B,1,2)',repmat([step 5]',1,3),'g--')
+    %plot(repmat(run_on_after_B,1,2)',repmat([step 5]',1,3),'g--')
 
     %imagesc(events(st_idx:end_idx,SCE{ss}.SCE_unique_ROIs_sorted{sce_nb})')
     %hold on;
@@ -233,7 +241,7 @@ reward_A_vector = exp(i*2*pi*0.70);
 reward_B_vector = exp(i*2*pi*0.30);
 lap_start_vector = exp(i*2*pi*0);
 
-for cc=75
+for cc=21
     
     sce_nb = cc;
     %list of ROIs to plot on given session

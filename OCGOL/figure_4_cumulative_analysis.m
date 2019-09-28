@@ -1,5 +1,38 @@
 %% Load  data from learn and recall animals
-[CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning] = figure4_load_data();
+tic;
+[CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning,...
+          SCE_recall, SCE_learning,session_vars_learn,session_vars_recall] = figure4_load_data();
+toc;
+
+%% SCE rate scatter plots and cdfs
+SCE_rate_plots(session_vars_learn,session_vars_recall,SCE_learning,SCE_recall, perf_learning,perf_recall)
+
+%% SCE participation vs. TC score
+
+matching_ROI_matrix = reg_learn{1, 1}.registered.multi.assigned_filtered;
+
+%create matching A neuron SCE participation matrix
+SCE_A_ROI_engage = zeros(size(matching_ROI_matrix,1), size(matching_ROI_matrix,2));
+
+for ss=1:6
+    assign_counts = SCE_part_A{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_A_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_A_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
+end
+
+
+%for each session 
+for ss=1:6
+    SCE_part_A{ss} = sum(SCE_learning{1, 1}.SCE{ss}.sce_activity.A,2)
+end
+
+figure
+hold on
+for ss=1:6
+    plot(SCE_part_A{ss})
+pause
+end
+legend();
 
 %% Plot learning and recall TC correlation relative to day 1 on same plot
 

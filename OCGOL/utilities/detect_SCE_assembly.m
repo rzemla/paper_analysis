@@ -8,9 +8,26 @@ assembly_mat = sce_activity_matrix;
 %% Normalized covariance matrix and squared Euclidean distance between columns
 
 %normalized covariance matrix on SCEs
-norm_cov_SCE = corr(assembly_mat);
+norm_cov_SCE = corr(assembly_mat,'Rows','complete');
 %covariance matrix on SCEs
 cov_SCE = cov(assembly_mat);
+
+%% Remove NaN rows from normalized covariance matrix
+
+%create copy
+norm_cov_SCE_nonan = norm_cov_SCE;
+%remove rows and columns that are nan
+remove_norm_cov_idx = find(isnan(norm_cov_SCE_nonan(1,:)) ==1);
+norm_cov_SCE_nonan(remove_norm_cov_idx,:) =[];
+norm_cov_SCE_nonan(:,remove_norm_cov_idx) =[];
+
+%replace no-nan'd version as the input
+norm_cov_SCE = norm_cov_SCE_nonan;
+
+figure
+imagesc(cov_SCE)
+hold on
+colorbar
 
 %calculated squared euclidean distance between columns of norm cov matrix
 sqE = pdist2(norm_cov_SCE, norm_cov_SCE,'squaredeuclidean');

@@ -1,4 +1,5 @@
-function [CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning] = figure4_load_data()
+function [CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning,...
+          SCE_recall, SCE_learning,session_vars_learn,session_vars_recall] = figure4_load_data()
 
 %% Load in pre-defined experiments directories for all animals -learning and recall
 
@@ -15,9 +16,25 @@ for ii=1:size(path_dir_learn,2)
     %input directories (.mat CNMF, .XML, .CSV)
     %for each session for that animal
     for ss =1:size(path_dir_learn{ii},2)
+        %get input dir names learn
         inputfiles_learn{ii}{ss} = dir([path_dir_learn{ii}{ss},'\input','\*.mat']);
+        %get output dir names learn
+        outputfiles_learn{ii}{ss} = dir([path_dir_learn{ii}{ss},'\output','\*.mat']);
         %removed ROI directory
         removeROIfiles_learn{ii}{ss} = dir([path_dir_learn{ii}{ss},'\removedROI','\*.mat']);
+    end
+end
+
+%learn session variables
+%for each animal
+for ii=1:size(path_dir_learn,2)
+    disp(ii)
+    %load in session varaibles
+    for ss =1:size(path_dir_learn{ii},2)
+        disp(ss)
+        %decide which variables here do not need to be loaded
+        session_vars_learn{ii}{ss} = load(fullfile(outputfiles_learn{ii}{ss}.folder, outputfiles_learn{ii}{ss}.name),...
+            'Behavior_split', 'Imaging_split');
     end
 end
 
@@ -28,9 +45,26 @@ for ii=1:size(path_dir_recall,2)
     %input directories (.mat CNMF, .XML, .CSV)
     %for each session for that animal
     for ss =1:size(path_dir_recall{ii},2)
+        %input files for recall 
         inputfiles_recall{ii}{ss} = dir([path_dir_recall{ii}{ss},'\input','\*.mat']);
+        %output files for recall
+        outputfiles_recall{ii}{ss} = dir([path_dir_recall{ii}{ss},'\output','\*.mat']);
         %removed ROI directory
         removeROIfiles_recall{ii}{ss} = dir([path_dir_recall{ii}{ss},'\removedROI','\*.mat']);
+    end
+end
+
+
+%recall session variables
+%for each animal
+for ii=1:size(path_dir_recall,2)
+    disp(ii)
+    %load in session varaibles
+    for ss =1:size(path_dir_recall{ii},2)
+        disp(ss)
+        %decide which variables here do not need to be loaded
+        session_vars_recall{ii}{ss} = load(fullfile(outputfiles_recall{ii}{ss}.folder, outputfiles_recall{ii}{ss}.name),...
+            'Behavior_split', 'Imaging_split');
     end
 end
 
@@ -86,6 +120,10 @@ for ss=1:size(crossdir_recall,2)
     PV_TC_corr_recall(ss) = load(fullfile(crossdir_recall{ss},'PV_TC_corr.mat'));
     %performance data
     perf_recall{ss} = load(fullfile(crossdir_recall{ss},'ses_perf.mat'));
+    %load SCE related data
+    SCE_recall{ss} = load(fullfile(crossdir_recall{ss},'SCE.mat'));
+    %load Behavior and Behavior_split and Imaging struct
+    
     
 end
 
@@ -95,6 +133,8 @@ for ss=1:size(crossdir_learn,2)
  PV_TC_corr_learning(ss) = load(fullfile(crossdir_learn{ss},'PV_TC_corr.mat'));
      %performance data
     perf_learning{ss} = load(fullfile(crossdir_learn{ss},'ses_perf.mat'));
+    %load SCE related data
+    SCE_learning{ss} = load(fullfile(crossdir_learn{ss},'SCE.mat'));
 end
 
 
