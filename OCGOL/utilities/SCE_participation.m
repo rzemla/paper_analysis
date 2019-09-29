@@ -71,10 +71,20 @@ end
 %compare side-by-side
 
 for ss=sessionSelect
-    % %create A vs. B paritcipation matrix (all corr and incorr)
-    SCE{ss}.sce_activity.A = SCE{ss}.sce_activity_matrix(:,(SCE{ss}.sce_assign_log ==2));
-    SCE{ss}.sce_activity.B = SCE{ss}.sce_activity_matrix(:,(SCE{ss}.sce_assign_log ==3));
+    %check if in learning session or recall session
+    if selectTrial(1) == 1
+        %for recall take in only correct and incorrect trials
+        SCE{ss}.sce_activity.A = SCE{ss}.sce_activity_matrix(:,(SCE{ss}.sce_assign_log ==2));
+        SCE{ss}.sce_activity.B = SCE{ss}.sce_activity_matrix(:,(SCE{ss}.sce_assign_log ==3));
+    %for learning take both correct and incorrect A/B trials
+    elseif selectTrial(1) == 4
+        SCE{ss}.sce_activity.A = SCE{ss}.sce_activity_matrix(:,(SCE{ss}.sce_assign_log ==2 | SCE{ss}.sce_assign_log ==20));
+        SCE{ss}.sce_activity.B = SCE{ss}.sce_activity_matrix(:,(SCE{ss}.sce_assign_log ==3 | SCE{ss}.sce_assign_log ==30));        
+        
+    end
 end
+
+
 
 %counts of how many SCEs each ROI is involved in
 for ss=sessionSelect
