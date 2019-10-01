@@ -11,11 +11,71 @@ x = plot_raster_vars.x;
 selectTrial = options.selectTrial;
 sessionSelect = options.sessionSelect;
 
+%% 
 
-%% Plot event maps one lap before and lap ahead of SCE got each SCE neuron
-%% Organize to give a number that tells whether frame is correct A or B
-
+%session to look
 ss=2
+
+
+%norm_position for given session
+norm_pos = session_vars{ss}.Behavior.resampled.normalizedposition;
+
+%% Collect all run events for each neuron on correct A or B laps
+%get normalized position of events, %calclate non zone segregated median
+
+%onset frame (global - 3 related)
+for rr=1:size(session_vars{ss}.Events_split{1}.Run.run_onset_offset,2)
+    A_onset_frames{rr} = session_vars{ss}.Events_split{selectTrial(1)}.Run.run_onset_offset{rr}(:,1);
+    B_onset_frames{rr} = session_vars{ss}.Events_split{selectTrial(2)}.Run.run_onset_offset{rr}(:,1);
+end
+
+%get normalized postion for each event (frame of onset)
+for rr=1:size(session_vars{ss}.Events_split{1}.Run.run_onset_offset,2)
+    A_all_pos{rr} = norm_pos(A_onset_frames{rr});
+    B_all_pos{rr} = norm_pos(B_onset_frames{rr});
+end
+
+%get median of onsets (not split into zones)
+A_pos_med = cellfun(@nanmedian, A_all_pos);
+B_pos_med = cellfun(@nanmedian, B_all_pos);
+
+%get indices of position events for each zone
+%A
+%zone I
+zones_idx_all_A{1} = cellfun(@(x) find(x >= 0 & x < reward_B_pos), A_all_pos,'UniformOutput',false);
+%zone II
+zones_idx_all_A{2} = cellfun(@(x) find(x >= reward_B_pos & x < reward_A_pos),  A_all_pos,'UniformOutput',false);
+%zone III
+zones_idx_all_A{3} = cellfun(@(x) find(x >= reward_A_pos & x <1),  A_all_pos,'UniformOutput',false);
+%B
+zones_idx_all_B{1} = cellfun(@(x) find(x >= 0 & x < reward_B_pos), B_all_pos,'UniformOutput',false);
+%zone II
+zones_idx_all_B{2} = cellfun(@(x) find(x >= reward_B_pos & x < reward_A_pos),  B_all_pos,'UniformOutput',false);
+%zone III
+zones_idx_all_B{3} = cellfun(@(x) find(x >= reward_A_pos & x <1),  B_all_pos,'UniformOutput',false);
+
+
+%get position of events in respective zones
+for rr=1:size(A_all_pos,2)
+    zones_pos_all_A{1}{rr} = A_all_pos{rr}(zones_idx_all_A{1}{rr});
+    zones_pos_all_A{2}{rr} = A_all_pos{rr}(zones_idx_all_A{2}{rr});
+    zones_pos_all_A{3}{rr} = A_all_pos{rr}(zones_idx_all_A{3}{rr});
+    
+    zones_pos_all_B{1}{rr} = B_all_pos{rr}(zones_idx_all_B{1}{rr});
+    zones_pos_all_B{2}{rr} = B_all_pos{rr}(zones_idx_all_B{2}{rr});
+    zones_pos_all_B{3}{rr} = B_all_pos{rr}(zones_idx_all_B{3}{rr});
+end
+
+%take median position in each zone
+med_zoned_pos_A(:,1) = cellfun(@nanmedian,zones_pos_all_A{1});
+med_zoned_pos_A(:,2) = cellfun(@nanmedian,zones_pos_all_A{2});
+med_zoned_pos_A(:,3) = cellfun(@nanmedian,zones_pos_all_A{3});
+
+med_zoned_pos_B(:,1) = cellfun(@nanmedian,zones_pos_all_B{1});
+med_zoned_pos_B(:,2) = cellfun(@nanmedian,zones_pos_all_B{2});
+med_zoned_pos_B(:,3) = cellfun(@nanmedian,zones_pos_all_B{3});
+
+%% Organize to give a number that tells whether frame is correct A or B
 
 %Trial Order
 trialOrder = session_vars{ss}.Behavior.performance.trialOrder;
@@ -60,9 +120,6 @@ lap_start_binary(lap_start_idx) = 1;
 %find norm position intervals or reward A and reward B zones
 pos_A_start = mean(session_vars{ss}.Behavior.rewards{2}.position_norm);
 pos_B_start = mean(session_vars{ss}.Behavior.rewards{1}.position_norm);
-
-%norm_position
-norm_pos = session_vars{ss}.Behavior.resampled.normalizedposition;
 
 %logical vector or A and B rew zone
 rew_A_zone_log = norm_pos>=pos_A_start & norm_pos<= (pos_A_start+0.05);
@@ -165,14 +222,248 @@ end
 
 
 %get frame onset of every neuron in SCE by lap (nearby 3 laps)
-%session_vars{ss}.Events_split{1}.Run.run_onset_offset{1, 1}  
+%session_vars{ss}.Events_split{1}.Run.run_onset_offset{1, 1}
 
+%% Check which SCEs exhibit replay (median of all positions on each lap)
+
+%if p less than 0.05 and positive --> forward replay; 
+%if spearman correlation negative --> reverse replay;
+
+%get median onset position on each lap in surrounding laps (all event
+%positions
+tic;
+%preallocate for speed
+rho = cell(1, SCE{ss}.nbSCE);
+p = cell(1, SCE{ss}.nbSCE);
+
+for cc=1:SCE{ss}.nbSCE
+    %for each neuron
+    for rc=1:size(sce_event_onsets_lap_pos{cc},2)
+        %for each lap
+        median_onset_pos{cc}(rc,:) = cellfun(@nanmedian,sce_event_onsets_lap_pos{cc}{rc});
+        
+    end
+    %correlate SCE onsets with median position of firing (check replay)
+    [rho{cc},p{cc}] =  corr(SCE{ss}.sorted_onset_times{cc}', median_onset_pos{cc} ,'Type','Spearman','rows','complete');
+end
+toc;
+
+
+%% Find replay SCEs
+
+p_sig_SCE = cellfun(@(x) sum(x <0.05),p);
+sig_SCEs = find(p_sig_SCE ~= 0)
+sigRho = rho(sig_SCEs)
+sig_p = p(sig_SCEs)
+
+
+%% Check which SCEs exhibit replay (median of split positions on each lap)
+%start - first reward zone
+%first reward zone to second reward zone
+%second reward zone to end
+%create matrix with norm positions for each animal
+
+reward_B_pos = nanmedian(session_vars{ss}.Behavior.rewards{1}.position_norm);
+reward_A_pos= nanmedian(session_vars{ss}.Behavior.rewards{2}.position_norm);
+
+%position ranges
+pos_range = [0 reward_B_pos reward_A_pos 1];
+
+%if p less than 0.05 and positive --> forward replay; 
+%if spearman correlation negative --> reverse replay;
+
+%get median onset position on each lap in surrounding laps (all event
+%positions
+tic;
+%preallocate for speed
+rho = cell(1, SCE{ss}.nbSCE);
+p = cell(1, SCE{ss}.nbSCE);
+
+zones_idx = cell(1, SCE{ss}.nbSCE);
+zone_pos = cell(1, SCE{ss}.nbSCE);
+
+tic;
+for cc=1:SCE{ss}.nbSCE
+    %for each neuron
+    for rc=1:size(sce_event_onsets_lap_pos{cc},2)
+        %for each lap
+        %median_onset_pos{cc}(rc,:) = sce_event_onsets_lap_pos{cc}{rc};
+        %zone I
+        zones_idx{cc}{rc}{1} = cellfun(@(x) find(x >= 0 & x<reward_B_pos), sce_event_onsets_lap_pos{cc}{rc},'UniformOutput',false);
+        %zone II
+        zones_idx{cc}{rc}{2} = cellfun(@(x) find(x >= reward_B_pos & x<reward_A_pos), sce_event_onsets_lap_pos{cc}{rc},'UniformOutput',false);
+        %zone III
+        zones_idx{cc}{rc}{3} = cellfun(@(x) find(x >= reward_A_pos & x <1), sce_event_onsets_lap_pos{cc}{rc},'UniformOutput',false);
+    end
+end
+toc;
+
+tic;
+%get all position onsets in each zone of track
+for cc=1:SCE{ss}.nbSCE
+    %for each neuron
+    for rc=1:size(sce_event_onsets_lap_pos{cc},2)
+        %for each lap
+        for ll=1:size(sce_event_onsets_lap_pos{cc}{rc},2)
+            zones_pos{cc}{rc}{1}{ll} = sce_event_onsets_lap_pos{cc}{rc}{ll}(zones_idx{cc}{rc}{1}{ll});
+            zones_pos{cc}{rc}{2}{ll} = sce_event_onsets_lap_pos{cc}{rc}{ll}(zones_idx{cc}{rc}{2}{ll});
+            zones_pos{cc}{rc}{3}{ll} = sce_event_onsets_lap_pos{cc}{rc}{ll}(zones_idx{cc}{rc}{3}{ll});
+        end
+    end
+end
+toc;
+
+%get median of onset in each zone
+for cc=1:SCE{ss}.nbSCE
+    %for each neuron
+    for rc=1:size(sce_event_onsets_lap_pos{cc},2)
+        %zone I
+        med_pos_zone{cc}{rc}{1} = cellfun(@nanmedian, zones_pos{cc}{rc}{1});
+        %zone II
+        med_pos_zone{cc}{rc}{2} =cellfun(@nanmedian, zones_pos{cc}{rc}{2});
+        %zone III
+        med_pos_zone{cc}{rc}{3} =cellfun(@nanmedian, zones_pos{cc}{rc}{3});
+    end
+end
+
+%combine into 1 matrix SCE (all ROI with med position in each zone)
+for cc=1:SCE{ss}.nbSCE
+    for rc=1:size(sce_event_onsets_lap_pos{cc},2)
+        %zone I
+        med_pos_comb{cc}{1}(rc,:) = med_pos_zone{cc}{rc}{1};
+        %zone II
+        med_pos_comb{cc}{2}(rc,:) = med_pos_zone{cc}{rc}{2};
+        %zone III
+        med_pos_comb{cc}{3}(rc,:) = med_pos_zone{cc}{rc}{3};
+    end
+end
+
+%[rho_zone{cc},p_zone{cc}] =  corr(SCE{ss}.sorted_onset_times{cc}', med_pos_comb{cc}{2},'Type','Spearman','rows','complete')
+
+ %[rho_test, p_test] =corr(SCE{ss}.sorted_onset_times{cc}', med_pos_comb{cc}{2},'Type','Spearman','rows','complete')
+
+ 
+ %% Plot individual SCE as scatter on lines across all laps (A vs. B trials) - all positions
+%number of distinct colors equal to the number of ROIs in SCE
+cmap_distinct = distinguishable_colors(70);
+figure
+for cc=1:SCE{ss}.nbSCE%sig_SCEs%1:SCE{ss}.nbSCE
+    %absolute start frame of sync event
+    start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
+    
+    start_SCE_pos = norm_pos(start_SCE_frame);
+    
+    
+    for tt= 1:2
+        subplot(1,2,tt)
+        hold on
+        %title(trials_text{cc}{ll})
+        xlim([-0.2 1.2])
+        ylim([(-1)*size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2) 0])
+        %for each ROI in SCE
+        step = -1;
+        for rc=1:size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)
+            %plot flat line
+            %plot([0 1],[step step],'k-','LineWidth',1)
+            %plot scatter of points along line
+            if tt==1
+            scatter(A_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},ones(1,size(A_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},1)).*step,...
+                21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+            elseif tt==2
+            scatter(B_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},ones(1,size(B_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},1)).*step,...
+                21,'filled','MarkerFaceColor',cmap_distinct(rc,:))                
+            end
+            step = step -1;
+        end
+        %add SCE position
+        plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
+    end
+    pause
+    clf
+end
+ 
+%% Plot individual SCE as scatter on lines across all laps (A vs. B trials) - median of all laps
+cmap_distinct = distinguishable_colors(70);
+figure
+for cc=1:SCE{ss}.nbSCE
+    %absolute start frame of sync event
+    start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
+    
+    start_SCE_pos = norm_pos(start_SCE_frame);
+    
+    
+    for tt= 1:2
+        subplot(1,2,tt)
+        hold on
+        %title(trials_text{cc}{ll})
+        xlim([-0.2 1.2])
+        ylim([(-1)*size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2) 0])
+        %for each ROI in SCE
+        step = -1;
+        for rc=1:size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)
+            %plot flat line
+            %plot([0 1],[step step],'k-','LineWidth',1)
+            %plot scatter of points along line
+            if tt==1
+            scatter(A_pos_med(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)),ones(1,size(A_pos_med(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)),1)).*step,...
+                21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+            elseif tt==2
+            scatter(B_pos_med(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)),ones(1,size(B_pos_med(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)),1)).*step,...
+                21,'filled','MarkerFaceColor',cmap_distinct(rc,:))                
+            end
+            step = step -1;
+        end
+        %add SCE position
+        plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
+    end
+    pause
+    clf
+end
+
+%% Plot individual SCE as scatter on lines across all laps (A vs. B trials) - median onset in each zone
+cmap_distinct = distinguishable_colors(70);
+figure
+for cc=1:SCE{ss}.nbSCE
+    %absolute start frame of sync event
+    start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
+    
+    start_SCE_pos = norm_pos(start_SCE_frame);
+    
+    
+    for tt= 1:2
+        subplot(1,2,tt)
+        hold on
+        %title(trials_text{cc}{ll})
+        xlim([-0.2 1.2])
+        ylim([(-1)*size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2) 0])
+        %for each ROI in SCE
+        step = -1;
+        for rc=1:size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)
+            %plot flat line
+            %plot([0 1],[step step],'k-','LineWidth',1)
+            %plot scatter of points along line
+            if tt==1
+            scatter(med_zoned_pos_A(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc),:),ones(1,size(med_zoned_pos_A(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc),:),2)).*step,...
+                21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+            elseif tt==2
+            scatter(med_zoned_pos_B(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc),:),ones(1,size(med_zoned_pos_B(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc),:),2)).*step,...
+                21,'filled','MarkerFaceColor',cmap_distinct(rc,:))                
+            end
+            step = step -1;
+        end
+        %add SCE position
+        plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
+    end
+    pause
+    clf
+end
+ 
 
 %% Plot individual SCE as scatter on lines across neighboring laps
 %number of distinct colors equal to the number of ROIs in SCE
 cmap_distinct = distinguishable_colors(70);
 figure
-for cc=1:SCE{ss}.nbSCE
+for cc=14%sig_SCEs%1:SCE{ss}.nbSCE
     %absolute start frame of sync event
     start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
     
@@ -198,13 +489,13 @@ for cc=1:SCE{ss}.nbSCE
         %add SCE position
         plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
     end
-    pause
-    clf
+    %pause
+    %clf
 end
 
 %% Figure out lap that event occurred on
 figure;
-for cc=59
+for cc=14
     sce_nb = cc;
     
     %absolute time frame of SCE start (all trials)

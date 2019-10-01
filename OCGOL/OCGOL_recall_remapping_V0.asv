@@ -283,25 +283,6 @@ options.tuning_criterion = 'both';
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize_multi_ses(tunedLogical,session_vars, max_transient_peak,options);
 
-
-%quick look at fractions
-% for ss=sessionSelect
-% counts_task_sel_each(1,ss) = length(task_selective_ROIs{ss}.A.idx)/size(session_vars{ss}.Place_cell{selectTrial(1)}.Spatial_Info.ROI_pvalue,2)
-% counts_task_sel_each(2,ss) = length(task_selective_ROIs{ss}.B.idx)/size(session_vars{ss}.Place_cell{selectTrial(2)}.Spatial_Info.ROI_pvalue,2)
-% end
-% 
-% figure;
-% subplot(1,2,1)
-% hold on
-% ylim([0 0.4])
-% % plot(both_count')
-% % plot(sum(both_count,1))
-% subplot(1,2,2)
-% hold on
-% ylim([0 0.4])
-% plot(counts_task_sel_each')
-% plot(sum(counts_task_sel_each,1))
-
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
 
@@ -501,6 +482,26 @@ legend(name_cell);
 %% SCE onset order
 
 [SCE] = sce_onset_order(session_vars,SCE,options);
+
+%%%% Correlate SCE activation onset time with median (try mean)
+
+%median normalized position onset across laps (run epochs)
+median_run_seq_onset
+%indices of RUN sequence neurons
+recurring_neuron_idx
+%neuron idxs of those involved in SCE and RUN sequence
+run_SCE_ROIs
+
+%relative onsets of neurons in SCEs (that are also in RUN sequence)
+run_SCE_onsets
+
+[~,~,recur_idx_pos] = intersect(run_SCE_ROIs,recurring_neuron_idx,'stable');
+
+%correlate SCE onsets with median position of firing
+[rho,p] =  corr(run_SCE_onsets', median_run_seq_onset(recur_idx_pos)','Type','Spearman')
+%if p less than 0.05 and positive --> forward replay; 
+%if spearman correlation negative --> reverse replay;
+
 
 %% Assign SCEs by trial type
 

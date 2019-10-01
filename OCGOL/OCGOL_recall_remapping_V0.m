@@ -483,6 +483,7 @@ legend(name_cell);
 
 [SCE] = sce_onset_order(session_vars,SCE,options);
 
+
 %% Assign SCEs by trial type
 
 [SCE] = assign_SCE_trials(session_vars,SCE,options);
