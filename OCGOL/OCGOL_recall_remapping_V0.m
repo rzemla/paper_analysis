@@ -44,15 +44,15 @@ sessionSelect = options.sessionSelect;
 % crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
 
 % 
-%  path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d3_062218_3',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d6_062518_4',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d7_062618_5',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d8_062718_6',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
+ path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d3_062218_3',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d6_062518_4',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d7_062618_5',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d8_062718_6',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
+%cross session directory
+crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
 
 %  path_dir = {'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d1_062018_1',...
 %      'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d2_062118_2',...
@@ -64,15 +64,15 @@ sessionSelect = options.sessionSelect;
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I45_RT\crossSession';
 % 
- path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
-%cross session directory
-crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
+%  path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
 % 
 
 %% Load place cell variables for each session
@@ -283,25 +283,6 @@ options.tuning_criterion = 'both';
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize_multi_ses(tunedLogical,session_vars, max_transient_peak,options);
 
-
-%quick look at fractions
-% for ss=sessionSelect
-% counts_task_sel_each(1,ss) = length(task_selective_ROIs{ss}.A.idx)/size(session_vars{ss}.Place_cell{selectTrial(1)}.Spatial_Info.ROI_pvalue,2)
-% counts_task_sel_each(2,ss) = length(task_selective_ROIs{ss}.B.idx)/size(session_vars{ss}.Place_cell{selectTrial(2)}.Spatial_Info.ROI_pvalue,2)
-% end
-% 
-% figure;
-% subplot(1,2,1)
-% hold on
-% ylim([0 0.4])
-% % plot(both_count')
-% % plot(sum(both_count,1))
-% subplot(1,2,2)
-% hold on
-% ylim([0 0.4])
-% plot(counts_task_sel_each')
-% plot(sum(counts_task_sel_each,1))
-
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
 
@@ -370,6 +351,10 @@ for ss=sessionSelect
 end
 
 save(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
+
+%% Load task selective/remapping ROIs
+
+load(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
 
 
 %% Assign each matching neuron to remapping category
@@ -525,6 +510,65 @@ save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
 %export session performance data
 save(fullfile(crossdir,'SCE.mat'),'SCE');
 
+%% Plot meanTC histogram for all SCEs across days of learning
+
+%norm histogams
+% figure
+% for ss=1:6
+%     subplot(1,6,ss)
+%     hold on
+%     ylim([0 0.25])
+%     histogram(SCE{ss}.meanTC,[0:0.05:1],'Normalization','probability')
+% end
+% 
+% %plot cdf
+% figure
+% hold on
+% for ss=1:6
+%     ecdf(SCE{ss}.meanTC)
+% pause
+% end
+
+%match matrix
+matching_ROI_matrix = registered.multi.assigned_filtered(:,1:7);
+
+%create matching A neuron SCE participation matrix
+SCE_A_ROI_engage = zeros(size(matching_ROI_matrix,1), size(matching_ROI_matrix,2));
+
+%create matching B neuron SCE participation matrix
+SCE_B_ROI_engage = zeros(size(matching_ROI_matrix,1), size(matching_ROI_matrix,2));
+
+%ROI participation in A or B trials
+for ss=1:7
+    SCE_part_A{ss} = sum(SCE{ss}.sce_activity.A,2);
+    SCE_part_B{ss} = sum(SCE{ss}.sce_activity.B,2);
+    SCE_part_all{ss} = sum(SCE{ss}.sce_activity_matrix  ,2);
+end
+
+%A 
+for ss=1:7
+    assign_counts = SCE_part_A{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_A_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_A_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
+end
+
+%B
+for ss=1:7
+    assign_counts = SCE_part_B{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_B_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_B_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
+end
+
+%all
+for ss=1:7
+    assign_counts = SCE_part_all{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_all_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_all_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
+end
+
+multi_ses_SCE_data.SCE_A_ROI_engage = SCE_A_ROI_engage;
+multi_ses_SCE_data.SCE_B_ROI_engage = SCE_B_ROI_engage;
+multi_ses_SCE_data.SCE_all_ROI_engage = SCE_all_ROI_engage;
 
 
 %% Plot sorted SCE event spirals for each ROI involved in SCE
@@ -532,7 +576,6 @@ save(fullfile(crossdir,'SCE.mat'),'SCE');
 %% Decicated two session spiral plotter with categorical type display
 %keep working on this split out other functionalities in other functions
 plot_spiral_raster_SCE(plot_raster_vars,session_vars,registered,cat_registered_cell,SCE,options)
-
 
 %% SCE plots against session performance
 

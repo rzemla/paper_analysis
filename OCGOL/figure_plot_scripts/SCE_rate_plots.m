@@ -246,7 +246,7 @@ plot(Xnew, Ypred,'-','Color',[139,0,139]./255,'LineWidth',2)
 
 set(gca,'FontSize',16)
 set(gca,'LineWidth',1.5)
-legend([s1 s2],{'A','B'},'Location','southeast')
+legend([s1 s2],{'A','B'},'Location','northeast')
 
 
 

@@ -16,7 +16,22 @@ sessionSelect = options.sessionSelect;
 %% Organize to give a number that tells whether frame is correct A or B
 
 ss=2
-ses=2
+
+%Trial Order
+trialOrder = session_vars{ss}.Behavior.performance.trialOrder;
+
+%convert trial order to letter order
+for ii=1:size(trialOrder,1)
+    if trialOrder(ii) == 2
+        trialOrder_text{ii} = 'A';
+    elseif trialOrder(ii) == 3
+        trialOrder_text{ii} = 'B';
+    elseif trialOrder(ii) == 30
+         trialOrder_text{ii} = 'Wrong B';
+    elseif trialOrder(ii) == 20
+        trialOrder_text{ii} = 'Wrong A';
+    end
+end
 
 %calcium traces - input into get_SCE_order (all trials)
 traces = session_vars{ss}.Imaging.trace_restricted;
@@ -30,6 +45,28 @@ lap_frame = session_vars{ss}.Behavior.resampled.lapNb;
 frame_count = size(traces,1);
 %preallocate
 frame_trial_assign = zeros(frame_count,1);
+
+%lap number to which each frame belongs
+lap_nb_frame = session_vars{ss}.Behavior.resampled.lapNb;
+
+%get binary lap onset vector
+lap_start_idx = find(diff(lap_nb_frame) ==1)+1;
+
+%create empty
+lap_start_binary = zeros(1,size(session_vars{ss}.Behavior.resampled.lapNb,1));
+%populate
+lap_start_binary(lap_start_idx) = 1;
+
+%find norm position intervals or reward A and reward B zones
+pos_A_start = mean(session_vars{ss}.Behavior.rewards{2}.position_norm);
+pos_B_start = mean(session_vars{ss}.Behavior.rewards{1}.position_norm);
+
+%norm_position
+norm_pos = session_vars{ss}.Behavior.resampled.normalizedposition;
+
+%logical vector or A and B rew zone
+rew_A_zone_log = norm_pos>=pos_A_start & norm_pos<= (pos_A_start+0.05);
+rew_B_zone_log = norm_pos>=pos_B_start & norm_pos<= (pos_B_start+0.05);
 
 %assign trial type
 for ll=1:lap_count
@@ -60,7 +97,7 @@ end
 
 %find events for each neuron with the 3 lap frame range
 %for each ROI in SCE find frame event onset
-for cc=1:168
+for cc=1:SCE{ss}.nbSCE  
  sce_nb = cc;
         start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(sce_nb,1));
     
@@ -74,43 +111,100 @@ for cc=1:168
 
     st_idx =surr_lap_start_end(1);
     end_idx = surr_lap_start_end(2);
+    
+    %extract run state fragment
+    run_ones{cc}  =session_vars{ss}.Behavior.run_ones(surr_lap_start_end(1):surr_lap_start_end(2));
 
+    %vector with lap starts
+    lap_start{cc} = lap_start_binary(surr_lap_start_end(1):surr_lap_start_end(2));
+
+    %reward zones
+    rew_A_pos{cc} = rew_A_zone_log(surr_lap_start_end(1):surr_lap_start_end(2));
+    rew_B_pos{cc} = rew_B_zone_log(surr_lap_start_end(1):surr_lap_start_end(2));
+    
+    %extract the lap indices involved in SCE
+    laps_involved{cc} = unique(lap_nb_frame(st_idx:end_idx));
+    
+    %which trial surround the SCE
+    trials_text{cc} = trialOrder_text(laps_involved{cc});
+
+    %frame range of each lap
+    %preallocate
+    abs_lap_idx_st_end{cc} =[];
+    for ll=1:size(laps_involved{cc},1)
+        abs_lap_idx_st_end{cc}(ll,1) = find(lap_nb_frame == laps_involved{cc}(ll),1,'first');
+        abs_lap_idx_st_end{cc}(ll,2) = find(lap_nb_frame == laps_involved{cc}(ll),1,'last');
+    end
+    
+    %GLOBAL EXTRACTION
+    %for each ROI within the SCE
     for rc = 1:size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)
+        %get event onsets within the ~3 laps surround (-1/+1) lap around the SCE onset 
         extract_onset_idx_temp = find(session_vars{ss}.Events.Run.run_onset_offset{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)}(:,1)  > st_idx &...
             session_vars{ss}.Events.Run.run_onset_offset{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)}(:,1) < end_idx);
+        
         sce_event_onsets{cc}{rc} = session_vars{ss}.Events.Run.run_onset_offset{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)}(extract_onset_idx_temp,1);
     end
+    
+    %PERI-LAP EXTRACTION
+        %for each ROI within the SCE
+        for rc = 1:size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)
+            for ll=1:size(laps_involved{cc},1)
+                %get event onsets within the ~3 laps surround (-1/+1) lap around the SCE onset
+                extract_onset_idx_temp = find(session_vars{ss}.Events.Run.run_onset_offset{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)}(:,1)  > abs_lap_idx_st_end{cc}(ll,1) &...
+                    session_vars{ss}.Events.Run.run_onset_offset{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)}(:,1) < abs_lap_idx_st_end{cc}(ll,2));
+                
+                %absolute frame onsets by lap
+                sce_event_onsets_lap{cc}{rc}{ll} = session_vars{ss}.Events.Run.run_onset_offset{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)}(extract_onset_idx_temp,1);
+                %get normalized position of onset
+                sce_event_onsets_lap_pos{cc}{rc}{ll} = norm_pos(sce_event_onsets_lap{cc}{rc}{ll});
+                
+            end
+        end
 end
 
-% %2 - 3 - 3
 
-%lap_start_idxs(1)
+%get frame onset of every neuron in SCE by lap (nearby 3 laps)
+%session_vars{ss}.Events_split{1}.Run.run_onset_offset{1, 1}  
 
-% %define A and B reward zone edges
-% pos_norm_3_lap_clipped = pos_norm(st_idx:end_idx);
-% %logical vector of run on state clipped
-% run_ones_clip = session_vars{ss}.Behavior.run_ones(st_idx:end_idx);
 
-%all onsets
-% run_onset_loc = find(diff(run_ones_clip) == 1)+1;
-% 
-% %find all idxs within specified position
-% reward_B_3lap_loc = find(diff(pos_norm_3_lap_clipped >= 0.29 & pos_norm_3_lap_clipped <= 0.30) == 1)+1;
-% reward_A_3lap_loc = find(diff(pos_norm_3_lap_clipped >= 0.70 & pos_norm_3_lap_clipped <= 0.71) == 1)+1;
-% 
-% %for each reward B location find frame or first run epoch following
-% for ii=1:size(reward_B_3lap_loc,1)
-%     first_B_frame_epochs_idxs(ii) = find(run_onset_loc > reward_B_3lap_loc(ii),1);
-% end
-% 
-% run_on_after_B = run_onset_loc(first_B_frame_epochs_idxs)
-% 
-% %last frame mod for cont run
-% run_on_after_B(3) = 4114;
+%% Plot individual SCE as scatter on lines across neighboring laps
+%number of distinct colors equal to the number of ROIs in SCE
+cmap_distinct = distinguishable_colors(70);
+figure
+for cc=1:SCE{ss}.nbSCE
+    %absolute start frame of sync event
+    start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
+    
+    start_SCE_pos = norm_pos(start_SCE_frame);
+    
+    
+    for ll= 1:size(sce_event_onsets_lap_pos{cc}{1},2)
+        subplot(1,3,ll)
+        hold on
+        title(trials_text{cc}{ll})
+        xlim([-0.2 1.2])
+        ylim([(-1)*size(sce_event_onsets_lap_pos{cc},2) 0])
+        %for each ROI in SCE
+        step = -1;
+        for rc=1:size(sce_event_onsets_lap_pos{cc},2)
+            %plot flat line
+            %plot([0 1],[step step],'k-','LineWidth',1)
+            %plot scatter of points along line
+            scatter(sce_event_onsets_lap_pos{cc}{rc}{ll},ones(1,size(sce_event_onsets_lap_pos{cc}{rc}{ll},1)).*step,...
+                21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+            step = step -1;
+        end
+        %add SCE position
+        plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
+    end
+    pause
+    clf
+end
 
 %% Figure out lap that event occurred on
 figure;
-for cc=54:168
+for cc=59
     sce_nb = cc;
     
     %absolute time frame of SCE start (all trials)
@@ -134,6 +228,7 @@ for cc=54:168
     %get lap start indices
     lap_start_idxs =find(diff(frame_trial_assign(st_idx:end_idx)) ==1 | diff(frame_trial_assign(st_idx:end_idx)) == -1)+1;
 
+    lap_start_idx2 = find(diff(lap_start_binary(st_idx:end_idx))==1)+1;
 
     % Plot example SCE - move to separate script
     
@@ -195,24 +290,49 @@ for cc=54:168
     xlim([0 frame_range])
     stepSize = 2;
     step = 0;
+    
+    %number of distinct colors equal to the number of ROIs in SCE
+    cmap_distinct = distinguishable_colors(size(SCE{ss}.SCE_unique_ROIs_sorted{sce_nb},2));
+    
     %first 30 ROIs
     for ii=1:size(SCE{ss}.SCE_unique_ROIs_sorted{sce_nb},2)
         plot(traces(st_idx:end_idx,SCE{ss}.SCE_unique_ROIs_sorted{sce_nb}(ii))'+step, 'Color',0*[1 1 1], 'LineWidth', 1.5)
         %plot individual run events
         scatter(sce_event_onsets{cc}{ii}-st_idx,ones(1,size(sce_event_onsets{cc}{ii},1))+step ,14,'filled','MarkerFaceColor',...
-            [0,128,0]/255)
+            cmap_distinct(ii,:)) %dark green[0,128,0]/255
+        
+        %plot run state across all neuron traces
+        plot((run_ones{cc}*0.5)+step, '-','Color',[34,139,34]./255,'LineWidth',0.5)
+        
+        % A reward pos
+        plot((rew_A_pos{cc}*0.3)+step, '-','Color','b','LineWidth',0.5)
+        plot((rew_B_pos{cc}*0.3)+step, '-','Color','r','LineWidth',0.5) 
+
         step = step - stepSize;
     end
+    
+    %label the y with relevant ROIs
+    y_ticks = 0:-2:(step+2);
+    y_labels = cell(1,size(y_ticks,2));
+
+    for lab_idx=1:size(y_ticks,2)
+        y_labels{lab_idx} = num2str(size(y_ticks,2)-lab_idx+1);
+    end
+
+    yticks(fliplr(y_ticks));
+    yticklabels(y_labels)
+    
     %mark 50 frames around SCE with dotted gray line
     plot([start_SCE_frame-st_idx-50,start_SCE_frame-st_idx-50],[step 5],'Color',[1 1 1]*0.5,'LineStyle','--');
     plot([start_SCE_frame-st_idx+50,start_SCE_frame-st_idx+50],[step 5],'Color',[1 1 1]*0.5,'LineStyle','--');
     
     %plot lap start and stop
     %get lap start indices
-    if ~isempty(lap_start_idxs)
-        plot(repmat(lap_start_idxs,1,2)',repmat([step 5]',1,2),'k--')
+       
+    if size(lap_start_idx2,2) == 1
+        plot(repmat(lap_start_idx2,1,size(lap_start_idx2,2)*2)',repmat([step 5]',1,size(lap_start_idx2,2)),'k--')
     else
-        disp('Empty lap start idxs')
+        plot(repmat(lap_start_idx2',1,size(lap_start_idx2,2))',repmat([step 5]',1,size(lap_start_idx2,2)),'k--')
     end
 
     %plot B reward zone start
@@ -245,18 +365,18 @@ reward_A_vector = exp(i*2*pi*0.70);
 reward_B_vector = exp(i*2*pi*0.30);
 lap_start_vector = exp(i*2*pi*0);
 
-for cc=78
+for cc=14
     
     sce_nb = cc;
     %list of ROIs to plot on given session
-    sce_rois = SCE{ses}.SCE_unique_ROIs_sorted{sce_nb};
+    sce_rois = SCE{ss}.SCE_unique_ROIs_sorted{sce_nb};
     
     for ii=1:size(sce_rois,2) %with nans where no match
         
-        disp(['Trial type: ', num2str(SCE{ses}.sce_assign_log(sce_nb))])
+        disp(['Trial type: ', num2str(SCE{ss}.sce_assign_log(sce_nb))])
         
         %for each session
-        for ss=ses
+        for ss=ss
             
             ROI = sce_rois(ii);
             %skip of nan value
@@ -339,7 +459,7 @@ subplot_counter = 1;
                 'SCE position start: ', num2str(SCE{1, 1}.SCE_pos_start(sce_nb))])
         
         %for each session
-        for ss=ses
+        for ss=ss
             
             ROI = neuron_list(ii);
             %skip of nan value

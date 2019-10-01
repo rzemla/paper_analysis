@@ -7,6 +7,24 @@ toc;
 %% SCE rate scatter plots and cdfs
 SCE_rate_plots(session_vars_learn,session_vars_recall,SCE_learning,SCE_recall, perf_learning,perf_recall)
 
+%% Mean TC histograms across time during learning
+
+%combine mean TC scores for each session from each animal
+
+for ss=1:6
+        meanTC_SCE_combined{ss} =[];
+    for aa=1:3
+        meanTC_SCE_combined{ss} = [meanTC_SCE_combined{ss}, SCE_learning{aa}.SCE{ss}.meanTC];
+    end
+end
+
+figure
+hold on
+for ss=1:6
+    ecdf(meanTC_SCE_combined{ss})
+pause
+end
+
 %% SCE participation vs. TC score
 
 matching_ROI_matrix = reg_learn{1, 1}.registered.multi.assigned_filtered;

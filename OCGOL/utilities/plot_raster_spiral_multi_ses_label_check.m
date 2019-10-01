@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,options)
+function [outputArg1,outputArg2] = plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
 
 
 %% Load variables
@@ -20,7 +20,7 @@ sessionSelect = options.sessionSelect;
 match_mat = registered.multi.assigned_filtered;
 
 figure('Position',[2230 30 780 960]);
-for ii=82%1:size(match_mat,1) %with nans where no match
+for ii=1:381%1:size(match_mat,1) %with nans where no match
 
     %for each session
     for ss=sessionSelect
@@ -33,7 +33,7 @@ for ii=82%1:size(match_mat,1) %with nans where no match
             subplot(1,size(sessionSelect,2),ss)
             polarplot(x{ss},r_scaled{ss},'k','Linewidth',1.5)
             hold on
-            title(cat_registered_cell{ii,ss});
+            title([cat_registered_cell{ii,ss}, '\newline','SCE all: ',num2str(multi_ses_SCE_data.SCE_all_ROI_engage(ii,ss))]);
             %plot A (2) trial events
             for ll=1:size(idxMin{ss}{1},2)
                 polarscatter(angle(posVectorApprox{ss}{1}{ll}{ROI}),r_scaled{ss}(idxMin{ss}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')

@@ -19,7 +19,7 @@ end
 %% Plot involved traces as line plot 
 figure;
 %first 5 for show
-for cc=1%1:5%size(sync_idx,1)
+for cc=202%1:5%size(sync_idx,1)
  subplot(2,1,1)
 hold on
 title('All transients involved in SCE')
@@ -41,8 +41,8 @@ step = 0;
     %plot first transient in series
     plot(SCE_traces{cc}(:,1),'b')
     
-    %pause;
-    %clf
+    pause;
+    clf
 end
 
 %% Calculate normalized covariance (correlation) for delay between -200ms and 200 ms) (cross-correlation)
@@ -146,7 +146,7 @@ end
 %% Plot time sorted transients
 figure;
 %first 5 for show
-for cc=1:5%size(sync_idx,1)
+for cc=202%1:5%size(sync_idx,1)
  subplot(2,1,1)
 hold on
 title('All transients involved in SCE')
@@ -157,7 +157,6 @@ step = 0;
         plot(SCE_traces_sorted{cc}(:,ii), 'LineWidth', 1.5)
         %plot(dur_filtered_event(:,ii)-step, 'r', 'LineWidth', 1.5)
         step = step - stepSize;
-        %pause;
     end
     
 %     subplot(2,1,2)
@@ -169,8 +168,8 @@ step = 0;
 %     %plot first transient in series
 %     plot(SCE_traces{cc}(:,1),'b')
 %     
-    
-    %clf
+    pause;
+    clf
 end
 
 

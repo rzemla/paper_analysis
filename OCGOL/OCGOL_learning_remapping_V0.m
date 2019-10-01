@@ -26,14 +26,14 @@ sessionSelect = options.sessionSelect;
 
 %lab workstation
 %input directories to matching function
- path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
-%cross session directory
-crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+%  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
 
 % %I57_RTLS
 %  path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
@@ -49,13 +49,13 @@ crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
 
 
 %I57_LT
-%  path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
-%  crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
+ path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
+ crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
 
 % %  %,...
 % %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
@@ -368,6 +368,9 @@ end
 
 save(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
 
+%% Load selective neurons
+load(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
+
 %% Assign each matching neuron to remapping category
 
 match_mat = registered.multi.assigned_filtered;
@@ -527,6 +530,7 @@ save(fullfile(crossdir,'SCE.mat'),'SCE');
 %keep working on this split out other functionalities in other functions
 plot_spiral_raster_SCE(plot_raster_vars,session_vars,registered,cat_registered_cell,SCE,options)
 
+
 %% Plot meanTC histogram for all SCEs across days of learning
 
 %norm histogams
@@ -546,30 +550,50 @@ for ss=1:6
 pause
 end
 
-matching_ROI_matrix = registered.multi.assigned_filtered;
+%match matrix
+matching_ROI_matrix = registered.multi.assigned_filtered(:,1:6);
 
 %create matching A neuron SCE participation matrix
 SCE_A_ROI_engage = zeros(size(matching_ROI_matrix,1), size(matching_ROI_matrix,2));
 
+%create matching B neuron SCE participation matrix
+SCE_B_ROI_engage = zeros(size(matching_ROI_matrix,1), size(matching_ROI_matrix,2));
+
+%ROI participation in A or B trials
+for ss=1:6
+    SCE_part_A{ss} = sum(SCE{ss}.sce_activity.A,2);
+    SCE_part_B{ss} = sum(SCE{ss}.sce_activity.B,2);
+    SCE_part_all{ss} = sum(SCE{ss}.sce_activity_matrix  ,2);
+end
+
+%A 
 for ss=1:6
     assign_counts = SCE_part_A{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
     SCE_A_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
     SCE_A_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
 end
 
-
-%for each session 
+%B
 for ss=1:6
-    SCE_part_A{ss} = sum(SCE_learning{1, 1}.SCE{ss}.sce_activity.A,2)
+    assign_counts = SCE_part_B{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_B_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_B_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
 end
 
-figure
-hold on
+%all
 for ss=1:6
-    plot(SCE_part_A{ss})
-pause
+    assign_counts = SCE_part_all{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_all_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_all_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
 end
-legend();
+
+multi_ses_SCE_data.SCE_A_ROI_engage = SCE_A_ROI_engage;
+multi_ses_SCE_data.SCE_B_ROI_engage = SCE_B_ROI_engage;
+multi_ses_SCE_data.SCE_all_ROI_engage = SCE_all_ROI_engage;
+
+%% Decicated two session spiral plotter with categorical type display
+
+plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
 
 %% SCE plots against session performance
 
