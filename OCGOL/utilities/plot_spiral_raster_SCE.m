@@ -14,7 +14,7 @@ sessionSelect = options.sessionSelect;
 %% 
 
 %session to look
-ss=2
+ss=3
 
 
 %norm_position for given session
@@ -39,6 +39,45 @@ end
 A_pos_med = cellfun(@nanmedian, A_all_pos);
 B_pos_med = cellfun(@nanmedian, B_all_pos);
 
+%reward start position (median; norm pos.)
+reward_B_pos = nanmedian(session_vars{ss}.Behavior.rewards{1}.position_norm);
+reward_A_pos= nanmedian(session_vars{ss}.Behavior.rewards{2}.position_norm);
+
+%get indices of position events for each zone
+%A
+%zone I
+zones_idx_all_A{1} = cellfun(@(x) find(x >= 0 & x < reward_B_pos), A_all_pos,'UniformOutput',false);
+%zone II
+zones_idx_all_A{2} = cellfun(@(x) find(x >= reward_B_pos & x < reward_A_pos),  A_all_pos,'UniformOutput',false);
+%zone III
+zones_idx_all_A{3} = cellfun(@(x) find(x >= reward_A_pos & x <1),  A_all_pos,'UniformOutput',false);
+%B
+zones_idx_all_B{1} = cellfun(@(x) find(x >= 0 & x < reward_B_pos), B_all_pos,'UniformOutput',false);
+%zone II
+zones_idx_all_B{2} = cellfun(@(x) find(x >= reward_B_pos & x < reward_A_pos),  B_all_pos,'UniformOutput',false);
+%zone III
+zones_idx_all_B{3} = cellfun(@(x) find(x >= reward_A_pos & x <1),  B_all_pos,'UniformOutput',false);
+
+
+%get position of events in respective zones
+for rr=1:size(A_all_pos,2)
+    zones_pos_all_A{1}{rr} = A_all_pos{rr}(zones_idx_all_A{1}{rr});
+    zones_pos_all_A{2}{rr} = A_all_pos{rr}(zones_idx_all_A{2}{rr});
+    zones_pos_all_A{3}{rr} = A_all_pos{rr}(zones_idx_all_A{3}{rr});
+    
+    zones_pos_all_B{1}{rr} = B_all_pos{rr}(zones_idx_all_B{1}{rr});
+    zones_pos_all_B{2}{rr} = B_all_pos{rr}(zones_idx_all_B{2}{rr});
+    zones_pos_all_B{3}{rr} = B_all_pos{rr}(zones_idx_all_B{3}{rr});
+end
+
+%take median position in each zone
+med_zoned_pos_A(:,1) = cellfun(@nanmedian,zones_pos_all_A{1});
+med_zoned_pos_A(:,2) = cellfun(@nanmedian,zones_pos_all_A{2});
+med_zoned_pos_A(:,3) = cellfun(@nanmedian,zones_pos_all_A{3});
+
+med_zoned_pos_B(:,1) = cellfun(@nanmedian,zones_pos_all_B{1});
+med_zoned_pos_B(:,2) = cellfun(@nanmedian,zones_pos_all_B{2});
+med_zoned_pos_B(:,3) = cellfun(@nanmedian,zones_pos_all_B{3});
 
 %% Organize to give a number that tells whether frame is correct A or B
 
@@ -209,7 +248,7 @@ for cc=1:SCE{ss}.nbSCE
         
     end
     %correlate SCE onsets with median position of firing (check replay)
-    [rho{cc},p{cc}] =  corr(SCE{ss}.sorted_onset_times{cc}', median_onset_pos{cc} ,'Type','Spearman','rows','complete');
+    [rho{cc},p{cc}] =  corr(SCE{ss}.sorted_onset_times{cc}', median_onset_pos{cc} ,'Type','Spearman','rows','pairwise');
 end
 toc;
 
@@ -227,9 +266,6 @@ sig_p = p(sig_SCEs)
 %first reward zone to second reward zone
 %second reward zone to end
 %create matrix with norm positions for each animal
-
-reward_B_pos = nanmedian(session_vars{ss}.Behavior.rewards{1}.position_norm);
-reward_A_pos= nanmedian(session_vars{ss}.Behavior.rewards{2}.position_norm);
 
 %position ranges
 pos_range = [0 reward_B_pos reward_A_pos 1];
@@ -307,46 +343,74 @@ end
 
  %[rho_test, p_test] =corr(SCE{ss}.sorted_onset_times{cc}', med_pos_comb{cc}{2},'Type','Spearman','rows','complete')
 
+%% Choose SCE to plot 
+for cc_cycle=1:SCE{ss}.nbSCE
+select_SCE =cc_cycle;
  
- %% Plot individual SCE as scatter on lines across all laps (A vs. B trials)
+ %% Plot individual SCE as scatter on lines across all laps (A vs. B trials) - all positions
 %number of distinct colors equal to the number of ROIs in SCE
 cmap_distinct = distinguishable_colors(70);
 figure
-for cc=369%sig_SCEs%1:SCE{ss}.nbSCE
+for cc=select_SCE %1:SCE{ss}.nbSCE%sig_SCEs%1:SCE{ss}.nbSCE
     %absolute start frame of sync event
     start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
-    
     start_SCE_pos = norm_pos(start_SCE_frame);
-    
     
     for tt= 1:2
         subplot(1,2,tt)
         hold on
-        %title(trials_text{cc}{ll})
+        if tt==1
+            title('A')
+        elseif tt==2
+            title('B')
+        end
+        
         xlim([-0.2 1.2])
-        ylim([(-1)*size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2) 0])
+        ylim([(-1)*(size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)+1) 0])
         %for each ROI in SCE
         step = -1;
         for rc=1:size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)
             %plot flat line
             %plot([0 1],[step step],'k-','LineWidth',1)
             %plot scatter of points along line
-            scatter(A_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},ones(1,size(A_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},1)).*step,...
-                21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+            if tt==1
+                scatter(A_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},ones(1,size(A_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},1)).*step,...
+                    21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+            elseif tt==2
+                scatter(B_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},ones(1,size(B_all_pos{SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)},1)).*step,...
+                    21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+            end
             step = step -1;
         end
+        
+        %label the y with relevant ROIs
+        y_ticks = -1:-1:(step+1);
+        y_labels = cell(1,size(y_ticks,2));
+        
+        for lab_idx=1:size(y_ticks,2)
+            y_labels{lab_idx} = num2str(size(y_ticks,2)-lab_idx+1);
+        end
+        
+        yticks(fliplr(y_ticks));
+        yticklabels(y_labels)
+        
+        %x label 
+        xticks([0 1])
+        xlabel('Norm. position')
+        
         %add SCE position
-        plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
+        plot([start_SCE_pos, start_SCE_pos],[0 step],'k--')
     end
     %pause
     %clf
 end
- 
+
+
 %% Plot individual SCE as scatter on lines across neighboring laps
 %number of distinct colors equal to the number of ROIs in SCE
 cmap_distinct = distinguishable_colors(70);
 figure
-for cc=369%sig_SCEs%1:SCE{ss}.nbSCE
+for cc=select_SCE%sig_SCEs%1:SCE{ss}.nbSCE
     %absolute start frame of sync event
     start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
     
@@ -358,7 +422,7 @@ for cc=369%sig_SCEs%1:SCE{ss}.nbSCE
         hold on
         title(trials_text{cc}{ll})
         xlim([-0.2 1.2])
-        ylim([(-1)*size(sce_event_onsets_lap_pos{cc},2) 0])
+        ylim([(-1)*(size(sce_event_onsets_lap_pos{cc},2)+1) 0])
         %for each ROI in SCE
         step = -1;
         for rc=1:size(sce_event_onsets_lap_pos{cc},2)
@@ -369,8 +433,24 @@ for cc=369%sig_SCEs%1:SCE{ss}.nbSCE
                 21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
             step = step -1;
         end
+        
+            %label the y with relevant ROIs
+            y_ticks = -1:-1:(step+1);
+            y_labels = cell(1,size(y_ticks,2));
+            
+            for lab_idx=1:size(y_ticks,2)
+                y_labels{lab_idx} = num2str(size(y_ticks,2)-lab_idx+1);
+            end
+            
+            yticks(fliplr(y_ticks));
+            yticklabels(y_labels)
+            
+            %x label
+            xticks([0 1])
+            xlabel('Norm. position')
+            
         %add SCE position
-        plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
+        plot([start_SCE_pos, start_SCE_pos],[0 step],'k--')
     end
     %pause
     %clf
@@ -378,7 +458,7 @@ end
 
 %% Figure out lap that event occurred on
 figure;
-for cc=14
+for cc=select_SCE
     sce_nb = cc;
     
     %absolute time frame of SCE start (all trials)
@@ -524,10 +604,13 @@ for cc=14
     %colormap('hot')
     %caxis([0 1])
     
-    pause
-    clf;
+    %pause
+    %clf;
     
 end
+pause
+end
+
 
 %% Plot raster , spiral, ROI FOV across  - 2 session comparison
 
@@ -535,11 +618,11 @@ figure('Position',[2230 30 780 960]);
 hold on
 
 %reward A/B vector
-reward_A_vector = exp(i*2*pi*0.70);
-reward_B_vector = exp(i*2*pi*0.30);
-lap_start_vector = exp(i*2*pi*0);
+reward_A_vector = exp(1i*2*pi*0.70);
+reward_B_vector = exp(1i*2*pi*0.30);
+lap_start_vector = exp(1i*2*pi*0);
 
-for cc=14
+for cc=select_SCE
     
     sce_nb = cc;
     %list of ROIs to plot on given session
@@ -596,6 +679,113 @@ for cc=14
     %pause()
     %clf;
 end
+
+
+
+%% Plot individual SCE as scatter on lines across all laps (A vs. B trials) - median of all laps
+if 0
+    cmap_distinct = distinguishable_colors(70);
+    figure
+    for cc=1:SCE{ss}.nbSCE
+        %absolute start frame of sync event
+        start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
+        
+        start_SCE_pos = norm_pos(start_SCE_frame);
+        
+        
+        for tt= 1:2
+            subplot(1,2,tt)
+            hold on
+            %title(trials_text{cc}{ll})
+            xlim([-0.2 1.2])
+            ylim([(-1)*size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2) 0])
+            %for each ROI in SCE
+            step = -1;
+            for rc=1:size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)
+                %plot flat line
+                %plot([0 1],[step step],'k-','LineWidth',1)
+                %plot scatter of points along line
+                if tt==1
+                    scatter(A_pos_med(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)),ones(1,size(A_pos_med(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)),1)).*step,...
+                        21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+                elseif tt==2
+                    scatter(B_pos_med(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)),ones(1,size(B_pos_med(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc)),1)).*step,...
+                        21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+                end
+                step = step -1;
+            end
+            
+            %label the y with relevant ROIs
+            y_ticks = -1:-1:(step+1);
+            y_labels = cell(1,size(y_ticks,2));
+            
+            for lab_idx=1:size(y_ticks,2)
+                y_labels{lab_idx} = num2str(size(y_ticks,2)-lab_idx+1);
+            end
+            
+            yticks(fliplr(y_ticks));
+            yticklabels(y_labels)
+            %add SCE position
+            plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
+        end
+        pause
+        clf
+    end
+    
+    %% Plot individual SCE as scatter on lines across all laps (A vs. B trials) - median onset in each zone
+    cmap_distinct = distinguishable_colors(70);
+    figure
+    for cc=1:SCE{ss}.nbSCE
+        %absolute start frame of sync event
+        start_SCE_frame = SCE{ss}.sync_idx(SCE{ss}.sync_range(cc,1));
+        
+        start_SCE_pos = norm_pos(start_SCE_frame);
+        
+        
+        for tt= 1:2
+            subplot(1,2,tt)
+            hold on
+            %title(trials_text{cc}{ll})
+            xlim([-0.2 1.2])
+            ylim([(-1)*size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2) 0])
+            %for each ROI in SCE
+            step = -1;
+            for rc=1:size(SCE{ss}.SCE_unique_ROIs_sorted{cc},2)
+                %plot flat line
+                %plot([0 1],[step step],'k-','LineWidth',1)
+                %plot scatter of points along line
+                if tt==1
+                    scatter(med_zoned_pos_A(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc),:),ones(1,size(med_zoned_pos_A(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc),:),2)).*step,...
+                        21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+                elseif tt==2
+                    scatter(med_zoned_pos_B(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc),:),ones(1,size(med_zoned_pos_B(SCE{ss}.SCE_unique_ROIs_sorted{cc}(rc),:),2)).*step,...
+                        21,'filled','MarkerFaceColor',cmap_distinct(rc,:))
+                end
+                step = step -1;
+            end
+            
+            %label the y with relevant ROIs
+            y_ticks = -1:-1:(step+1);
+            y_labels = cell(1,size(y_ticks,2));
+            
+            for lab_idx=1:size(y_ticks,2)
+                y_labels{lab_idx} = num2str(size(y_ticks,2)-lab_idx+1);
+            end
+            
+            yticks(fliplr(y_ticks));
+            yticklabels(y_labels)
+            
+            %add SCE position
+            plot([start_SCE_pos, start_SCE_pos],[0 step+1],'k--')
+        end
+        pause
+        clf
+    end
+    
+end
+
+
+
 
 
 %% Plot any arbitrary set of of neurons from list

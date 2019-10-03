@@ -426,9 +426,56 @@ plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms,
 %all added no run epochs
 [session_vars] = AUC_rate(session_vars,options);
 
+%% Plot meanTC histogram for all SCEs across days of learning
+
+%match matrix
+matching_ROI_matrix = registered.multi.assigned_filtered(:,1:6);
+
+%create matching A neuron SCE participation matrix
+SCE_A_ROI_engage = zeros(size(matching_ROI_matrix,1), size(matching_ROI_matrix,2));
+
+%create matching B neuron SCE participation matrix
+SCE_B_ROI_engage = zeros(size(matching_ROI_matrix,1), size(matching_ROI_matrix,2));
+
+%ROI participation in A or B trials
+for ss=1:6
+    SCE_part_A{ss} = sum(SCE{ss}.sce_activity.A,2);
+    SCE_part_B{ss} = sum(SCE{ss}.sce_activity.B,2);
+    SCE_part_all{ss} = sum(SCE{ss}.sce_activity_matrix  ,2);
+end
+
+%A 
+for ss=1:6
+    assign_counts = SCE_part_A{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_A_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_A_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
+end
+
+%B
+for ss=1:6
+    assign_counts = SCE_part_B{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_B_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_B_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
+end
+
+%all
+for ss=1:6
+    assign_counts = SCE_part_all{ss}(matching_ROI_matrix(~isnan(matching_ROI_matrix(:,ss)),ss));
+    SCE_all_ROI_engage(~isnan(matching_ROI_matrix(:,ss)),ss) = assign_counts
+    SCE_all_ROI_engage(isnan(matching_ROI_matrix(:,ss)),ss) = nan;
+end
+
+multi_ses_SCE_data.SCE_A_ROI_engage = SCE_A_ROI_engage;
+multi_ses_SCE_data.SCE_B_ROI_engage = SCE_B_ROI_engage;
+multi_ses_SCE_data.SCE_all_ROI_engage = SCE_all_ROI_engage;
+
+figure
+hold on
+plot(SCE_A_ROI_engage')
+
 %% Decicated two session spiral plotter with categorical type display
 
-plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,options)
+plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
 
 
 %% Visualize place fields and events for each neurons
@@ -678,14 +725,13 @@ non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,cross
 
 
 
-%% Define tuned logical vectors
+%% S.I. score for matching neurons across days
+%resume later
+track_si_score_change(session_vars,registered,options)
 
-%flag to all A or B trial or only correct A or B trials
-options.allCorrect = 0;
-%select which session to use
-options.sessionSelect = [1 2 3 4 5 6];
-%returns struct of structs
-[tunedLogical] = defineTunedLogicals(session_vars,options);
+%% TC correlation for matching (+/-) tuned ROIs
+
+[tc_corr_match] = tc_corr_matching_neurons(session_vars,registered,options);
 
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
