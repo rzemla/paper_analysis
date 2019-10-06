@@ -52,22 +52,22 @@ end
 nbROI_match_list = size(registered.multi.assigned_filtered,1);
 
 %ROIs for A and B trials (TS)
-matchROI_ts_event.A = registered.multi.matching_list_filtered.ts_Aall_filt_event_filt(:,1:6);
-matchROI_ts_event.B = registered.multi.matching_list_filtered.ts_Ball_filt_event_filt(:,1:6);
+matchROI_ts_event.A = registered.multi.matching_list_filtered.ts_Aall_filt_event_filt(:,1:sessionSelect(end));
+matchROI_ts_event.B = registered.multi.matching_list_filtered.ts_Ball_filt_event_filt(:,1:sessionSelect(end));
 
 %ROIs for A and B trials (SI)
-matchROI_si_event.A = registered.multi.matching_list_filtered.si_Aall_filt_event_filt(:,1:6);
-matchROI_si_event.B = registered.multi.matching_list_filtered.si_Ball_filt_event_filt(:,1:6);
+matchROI_si_event.A = registered.multi.matching_list_filtered.si_Aall_filt_event_filt(:,1:sessionSelect(end));
+matchROI_si_event.B = registered.multi.matching_list_filtered.si_Ball_filt_event_filt(:,1:sessionSelect(end));
 
 %construct ROI matrix for both A and B tuned  (TS)
-A_filt_log = ~isnan(registered.multi.matching_list_filtered.ts_Aall_filt_event_filt(:,1:6));
-B_filt_log = ~isnan(registered.multi.matching_list_filtered.ts_Ball_filt_event_filt(:,1:6));
+A_filt_log = ~isnan(registered.multi.matching_list_filtered.ts_Aall_filt_event_filt(:,1:sessionSelect(end)));
+B_filt_log = ~isnan(registered.multi.matching_list_filtered.ts_Ball_filt_event_filt(:,1:sessionSelect(end)));
 
 %combined A and B filtered logical
 AB_filt_log = A_filt_log & B_filt_log;
 
 %create empty with nan
-matchROI_ts_event.AB = nan(nbROI_match_list, 6);
+matchROI_ts_event.AB = nan(nbROI_match_list, sessionSelect(end));
 %populate
 matchROI_ts_event.AB(find(AB_filt_log == 1)) = matchROI_ts_event.A(find(AB_filt_log == 1));
 
@@ -259,7 +259,7 @@ end
 
 %% Plot A vs. A anfigure
 for ii=sessionSelect
-    subplot(6,1,ii)
+    subplot(sessionSelect(end),1,ii)
     hold on
     title('all A and all B tuned matching neurons')
     ylim([-0.1 0.8])
@@ -287,7 +287,7 @@ y_lim_range = [-0.2 1];
 
 figure
 for ii=sessionSelect
-    subplot(6,1,ii)
+    subplot(sessionSelect(end),1,ii)
     hold on
     title('A&B tuned matching neurons')
     ylim(y_lim_range)
@@ -313,7 +313,7 @@ y_lim_range = [-0.2 1];
 
 figure
 for ii=sessionSelect
-    subplot(6,1,ii)
+    subplot(sessionSelect(end),1,ii)
     hold on
     title('A vs. B TC correlation for A&B tuned across days');
     xlabel('Position')

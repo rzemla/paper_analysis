@@ -1,11 +1,16 @@
 %% Load  data from learn and recall animals
 tic;
 [CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning,...
-          SCE_recall, SCE_learning,session_vars_learn,session_vars_recall] = figure4_load_data();
+          SCE_recall, SCE_learning,session_vars_learn,session_vars_recall,...
+           TC_corr_match_learning,TC_corr_match_recall] = figure4_load_data();
 toc;
 
 %% SCE rate scatter plots and cdfs
 SCE_rate_plots(session_vars_learn,session_vars_recall,SCE_learning,SCE_recall, perf_learning,perf_recall)
+
+%% STC comparison for matching neurons across days
+
+check_STC_AB_comparison(TC_corr_match_learning,TC_corr_match_recall)
 
 %% Mean TC histograms across time during learning
 
@@ -149,6 +154,7 @@ f = figure('Position', [2045 231 945 431]);
 set(f,'color','w');
 subplot(1,2,1)
 hold on
+axis square
 title('PV correlation')
 ylim([0 1])
 xlim([0 9])
@@ -156,7 +162,7 @@ xticks(1:2:8)
 ylabel('Correlation coef.')
 xlabel('Days since first session')
 set(gca,'Linewidth',2)
-set(gca,'FontSize', 16)
+set(gca,'FontSize', 20)
 %recall data
 for ss = 1:size(PV_TC_corr_recall,2)
     %A
@@ -177,6 +183,7 @@ end
 %TC
 subplot(1,2,2)
 hold on
+axis square
 title('TC correlation')
 ylim([0 1])
 xlim([0 9])
@@ -184,7 +191,7 @@ xticks(1:2:8)
 %ylabel('Correlation coef.')
 xlabel('Days since first session')
 set(gca,'Linewidth',2)
-set(gca,'FontSize', 16)
+set(gca,'FontSize', 20)
 for ss = 1:size(PV_TC_corr_recall,2)
     %A
     errorbar([1 2 5 6 7 8],TC_rel_d1.recall.A.mean,TC_rel_d1.recall.A.sem,'Color', color_vec(2,:), 'LineStyle', '-','LineWidth',1.5)
@@ -266,22 +273,24 @@ sem_learning_perf = std_learning_perf./size(PV_TC_corr_learning,2);
 %recall - dash
 %learning - solid
 f = figure('Position',[2210 350 510 470]);
+hold on
 set(f,'color','w');
+axis square
 %combined - change color for each type
 for tt=1
     %subplot(1,3,tt)
-    hold on
+    
     xlim([0.5 6.5])
     ylim([0 1.1])
     set(gca,'linewidth',2)
-    set(gca,'FontSize',16)
+    set(gca,'FontSize',21)
 yticks(0:0.2:1)
 ylabel('Fraction of correct trials')
 xticks((1:6))
 xticklabels({'5A5B','5A5B','3A3B','3A3B','Random','Random'})
 xtickangle(45)
 %plot performance line (85%)
-plot([0.5 6.5],[0.85 0.85],'k--','LineWidth',2);
+%plot([0.5 6.5],[0.85 0.85],'k--','LineWidth',2);
 %plot([1 2 3 6 7 8 9],mean_recall_perf(1,:),'m-')
 
     if tt ==1
