@@ -2,7 +2,8 @@
 tic;
 [CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning,...
           SCE_recall, SCE_learning,session_vars_learn,session_vars_recall,...
-           TC_corr_match_learning,TC_corr_match_recall] = figure4_load_data();
+           TC_corr_match_learning,TC_corr_match_recall,...
+           tuned_frac_learning,tuned_frac_recall] = figure4_load_data();
 toc;
 
 %% SCE rate scatter plots and cdfs
@@ -11,6 +12,15 @@ SCE_rate_plots(session_vars_learn,session_vars_recall,SCE_learning,SCE_recall, p
 %% STC comparison for matching neurons across days
 
 check_STC_AB_comparison(TC_corr_match_learning,TC_corr_match_recall)
+
+%% Examine spatial trajectories for across time
+
+trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)
+
+%% Plot A/B/AB/neither distributions for learning/recall across sessions
+
+plot_fraction_tuned(tuned_frac_learning,tuned_frac_recall)
+
 
 %% Mean TC histograms across time during learning
 
@@ -130,17 +140,17 @@ TC_rel_d1.recall.A.mean = nanmean(TC_rel_d1.recall.A.all,1);
 TC_rel_d1.recall.B.mean = nanmean(TC_rel_d1.recall.B.all,1);
 
 %get sem - learn
-PV_rel_d1.learn.A.sem = nanstd(PV_rel_d1.learn.A.all,0,1)./size(PV_TC_corr_learning,2);
-PV_rel_d1.learn.B.sem = nanstd(PV_rel_d1.learn.B.all,0,1)./size(PV_TC_corr_learning,2);
+PV_rel_d1.learn.A.sem = nanstd(PV_rel_d1.learn.A.all,0,1)./sqrt(size(PV_TC_corr_learning,2));
+PV_rel_d1.learn.B.sem = nanstd(PV_rel_d1.learn.B.all,0,1)./sqrt(size(PV_TC_corr_learning,2));
 %recall
-PV_rel_d1.recall.A.sem = nanstd(PV_rel_d1.recall.A.all,0,1)./size(PV_TC_corr_recall,2);
-PV_rel_d1.recall.B.sem = nanstd(PV_rel_d1.recall.B.all,0,1)./size(PV_TC_corr_recall,2);
+PV_rel_d1.recall.A.sem = nanstd(PV_rel_d1.recall.A.all,0,1)./sqrt(size(PV_TC_corr_recall,2));
+PV_rel_d1.recall.B.sem = nanstd(PV_rel_d1.recall.B.all,0,1)./sqrt(size(PV_TC_corr_recall,2));
 
-TC_rel_d1.learn.A.sem = nanstd(TC_rel_d1.learn.A.all,0,1)./size(PV_TC_corr_learning,2);
-TC_rel_d1.learn.B.sem = nanstd(TC_rel_d1.learn.B.all,0,1)./size(PV_TC_corr_learning,2);
+TC_rel_d1.learn.A.sem = nanstd(TC_rel_d1.learn.A.all,0,1)./sqrt(size(PV_TC_corr_learning,2));
+TC_rel_d1.learn.B.sem = nanstd(TC_rel_d1.learn.B.all,0,1)./sqrt(size(PV_TC_corr_learning,2));
 %recall
-TC_rel_d1.recall.A.sem = nanstd(TC_rel_d1.recall.A.all,0,1)./size(PV_TC_corr_recall,2);
-TC_rel_d1.recall.B.sem = nanstd(TC_rel_d1.recall.B.all,0,1)./size(PV_TC_corr_recall,2);
+TC_rel_d1.recall.A.sem = nanstd(TC_rel_d1.recall.A.all,0,1)./sqrt(size(PV_TC_corr_recall,2));
+TC_rel_d1.recall.B.sem = nanstd(TC_rel_d1.recall.B.all,0,1)./sqrt(size(PV_TC_corr_recall,2));
 
 %% Plot learning and recall PV correlation relative to day 1 on same plot
 
@@ -150,7 +160,7 @@ color_vec(2,:) = [65,105,225]/255;
 color_vec(3,:) = [ 220,20,60]/255;
 
 
-f = figure('Position', [2045 231 945 431]);
+f = figure('Position', [2011 321 1154 556]);
 set(f,'color','w');
 subplot(1,2,1)
 hold on
@@ -160,25 +170,27 @@ ylim([0 1])
 xlim([0 9])
 xticks(1:2:8)
 ylabel('Correlation coef.')
-xlabel('Days since first session')
+xlabel('Sessions since first session')
 set(gca,'Linewidth',2)
 set(gca,'FontSize', 20)
 %recall data
 for ss = 1:size(PV_TC_corr_recall,2)
     %A
-    errorbar([1 2 5 6 7 8],PV_rel_d1.recall.A.mean,PV_rel_d1.recall.A.sem,'Color', color_vec(2,:), 'LineStyle', '-','LineWidth',1.5)
+    rA = errorbar([1 2 5 6 7 8],PV_rel_d1.recall.A.mean,PV_rel_d1.recall.A.sem,'Color', color_vec(2,:), 'LineStyle', '-','LineWidth',1.5)
     %B
-    errorbar([1 2 5 6 7 8],PV_rel_d1.recall.B.mean,PV_rel_d1.recall.B.sem,'Color', color_vec(3,:), 'LineStyle', '-','LineWidth',1.5)
+    rB = errorbar([1 2 5 6 7 8],PV_rel_d1.recall.B.mean,PV_rel_d1.recall.B.sem,'Color', color_vec(3,:), 'LineStyle', '-','LineWidth',1.5)
         
 end
 
 %learning data
 for ss = 1:size(PV_TC_corr_learning,2)
     %A
-    errorbar([1:5],PV_rel_d1.learn.A.mean,PV_rel_d1.learn.A.sem,'Color', color_vec(2,:), 'LineStyle', '--','LineWidth',1.5)
+    lA = errorbar([1:5],PV_rel_d1.learn.A.mean,PV_rel_d1.learn.A.sem,'Color', color_vec(2,:), 'LineStyle', '--','LineWidth',1.5)
     %B
-    errorbar([1:5],PV_rel_d1.learn.B.mean,PV_rel_d1.learn.B.sem,'Color', color_vec(3,:), 'LineStyle', '--','LineWidth',1.5)
+    lB = errorbar([1:5],PV_rel_d1.learn.B.mean,PV_rel_d1.learn.B.sem,'Color', color_vec(3,:), 'LineStyle', '--','LineWidth',1.5)
 end
+
+legend([lA lB rA rB], {'Learning A','Learning B','Recall A','Recall B'},'Location','northeast')
 
 %TC
 subplot(1,2,2)
@@ -189,24 +201,25 @@ ylim([0 1])
 xlim([0 9])
 xticks(1:2:8)
 %ylabel('Correlation coef.')
-xlabel('Days since first session')
+xlabel('Sessions since first session')
 set(gca,'Linewidth',2)
 set(gca,'FontSize', 20)
 for ss = 1:size(PV_TC_corr_recall,2)
     %A
-    errorbar([1 2 5 6 7 8],TC_rel_d1.recall.A.mean,TC_rel_d1.recall.A.sem,'Color', color_vec(2,:), 'LineStyle', '-','LineWidth',1.5)
+    rA = errorbar([1 2 5 6 7 8],TC_rel_d1.recall.A.mean,TC_rel_d1.recall.A.sem,'Color', color_vec(2,:), 'LineStyle', '-','LineWidth',1.5)
     %B
-    errorbar([1 2 5 6 7 8],TC_rel_d1.recall.B.mean,TC_rel_d1.recall.B.sem,'Color', color_vec(3,:), 'LineStyle', '-','LineWidth',1.5)
+    rB = errorbar([1 2 5 6 7 8],TC_rel_d1.recall.B.mean,TC_rel_d1.recall.B.sem,'Color', color_vec(3,:), 'LineStyle', '-','LineWidth',1.5)
         
 end
 
 %learning data
 for ss = 1:size(PV_TC_corr_learning,2)
     %A
-    errorbar([1:5],TC_rel_d1.learn.A.mean,TC_rel_d1.learn.A.sem,'Color', color_vec(2,:), 'LineStyle', '--','LineWidth',1.5)
+    lA = errorbar([1:5],TC_rel_d1.learn.A.mean,TC_rel_d1.learn.A.sem,'Color', color_vec(2,:), 'LineStyle', '--','LineWidth',1.5)
     %B
-    errorbar([1:5],TC_rel_d1.learn.B.mean,TC_rel_d1.learn.B.sem,'Color', color_vec(3,:), 'LineStyle', '--','LineWidth',1.5)
+    lB = errorbar([1:5],TC_rel_d1.learn.B.mean,TC_rel_d1.learn.B.sem,'Color', color_vec(3,:), 'LineStyle', '--','LineWidth',1.5)
 end
+legend([lA lB rA rB], {'Learning A','Learning B','Recall A','Recall B'},'Location','northeast')
 
 %save performance figure
 disp('Saving PV/TC correlation relative to D1 figure ')
@@ -267,7 +280,7 @@ std_recall_perf = std(perf_recall_comb,0,3);
 std_learning_perf = std(perf_learning_comb,0,3);
 %get sems
 sem_recall_perf = std_recall_perf./sqrt(size(PV_TC_corr_recall,2));
-sem_learning_perf = std_learning_perf./size(PV_TC_corr_learning,2);
+sem_learning_perf = std_learning_perf./sqrt(size(PV_TC_corr_learning,2));
 
 %plot
 %recall - dash

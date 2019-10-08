@@ -117,8 +117,18 @@ for ss =sessionSelect
         task_sel{ss}.B.field_bin_width{pp} = task_sel{ss}.B.width{pp}(task_sel{ss}.B.field_select{pp});
     end
     %convert to cm and vector from all ROIs
-    task_sel{ss}.A.width_cm = cell2mat(task_sel{ss}.A.field_bin_width)*binToCm;
-    task_sel{ss}.B.width_cm = cell2mat(task_sel{ss}.B.field_bin_width)*binToCm;
+    %check if any fields detected (is field count empty) 
+    if ~isempty(task_sel{ss}.A.field_count)
+        task_sel{ss}.A.width_cm = cell2mat(task_sel{ss}.A.field_bin_width)*binToCm;
+    else
+        task_sel{ss}.A.width_cm = [];
+    end
+    
+    if ~isempty(task_sel{ss}.B.field_count)
+        task_sel{ss}.B.width_cm = cell2mat(task_sel{ss}.B.field_bin_width)*binToCm;
+    else
+        task_sel{ss}.B.width_cm = [];
+    end
 end
 
 %% Parse place field properties for task-selective place cells

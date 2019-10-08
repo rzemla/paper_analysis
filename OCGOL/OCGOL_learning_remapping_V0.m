@@ -303,6 +303,7 @@ options.dispFigure = 0;
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
 
+%doesn;t matter
 options.tuning_criterion = 'si'; %si or ts
 %A correct/B correct or all
 options.selectTrial = [4 5];
@@ -310,6 +311,14 @@ options.sessionSelect = [1 2 3 4 5 6];
 [placeField_dist, pf_count_filtered_log, pf_count_filtered] = placeField_properties_multi_ses(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
 %save the place field distributions output data
 %save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
+
+
+%% Calculate fraction tuned S.I. vs T.S for every session
+
+[tuned_fractions] = fractionTuned_multi_ses(tunedLogical,pf_count_filtered_log,options);
+
+%save fractional count
+save(fullfile(crossdir,'tuned_fractions.mat'),'tuned_fractions');
 
 %% Look at spatial information scores in matching neurons between days in A trials and B trials
 %put into separate script
