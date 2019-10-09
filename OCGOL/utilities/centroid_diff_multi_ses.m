@@ -1,4 +1,4 @@
-function [cent_diff] = centroid_diff_multi_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,registered,options)
+function [cent_diff,pf_vector_max] = centroid_diff_multi_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,registered,options)
 
 %% Import variables
 
@@ -170,7 +170,6 @@ end
 for ss=options.sessionSelect
     %between A and B in first  session
     [theta{ss}] = centroid_angle_diff_btw_ROIs(uCar{ss}{options.selectTrial(1)},uCar{ss}{options.selectTrial(2)},pf_vector_max{ss});
-    
 end
 
 %% Plot the differences as histograms

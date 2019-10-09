@@ -1,7 +1,8 @@
 function [CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning,...
           SCE_recall, SCE_learning,session_vars_learn,session_vars_recall,...
           TC_corr_match_learning,TC_corr_match_recall,...
-          tuned_frac_learning,tuned_frac_recall] = figure4_load_data()
+          tuned_frac_learning,tuned_frac_recall,...
+          learn_comb_data,recall_comb_data] = figure4_load_data()
 
 %% Load in pre-defined experiments directories for all animals -learning and recall
 
@@ -131,7 +132,14 @@ for ss=1:size(crossdir_recall,2)
     
     %fractions of neurons tuned in each cateogory across learning
     tuned_frac_recall{ss} = load(fullfile(crossdir_recall{ss},'tuned_fractions.mat'));
+
+    %tuned logicals - which neurons are tuned by each category on given
+    %session
+    tuned_log_recall{ss} = load(fullfile(crossdir_recall{ss},'tuned_logicals.mat'));
+    %pf vector max - vector of maximum firing place field for each neuron
+    pf_vector_max_recall{ss} = load(fullfile(crossdir_recall{ss},'pf_vector_max.mat'));
     
+
 end
 
 %% read in recall data
@@ -148,9 +156,25 @@ for ss=1:size(crossdir_learn,2)
     
     %fractions of neurons tuned in each cateogory across learning
     tuned_frac_learning{ss} = load(fullfile(crossdir_learn{ss},'tuned_fractions.mat'));
+    
+    %tuned logicals - which neurons are tuned by each category on given
+    %session
+    tuned_log_learning{ss} = load(fullfile(crossdir_learn{ss},'tuned_logicals.mat'));
+    %pf vector max - vector of maximum firing place field for each neuron
+    pf_vector_max_learning{ss} = load(fullfile(crossdir_learn{ss},'pf_vector_max.mat'));
+    
+    
 end
 
+%% Bundle learning and recall data into structs for export and analysis
 
+%logical of tuned neurons (A/B/AB for TS/SI with min 5 events)
+learn_comb_data.tuned_log_learning = tuned_log_learning;
+recall_comb_data.tuned_log_recall = tuned_log_recall;
+
+%max tuning vectors
+learn_comb_data.pf_vector_max_learning = pf_vector_max_learning;
+recall_comb_data.pf_vector_max_recall = pf_vector_max_recall;
 
 
 end

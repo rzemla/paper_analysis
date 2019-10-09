@@ -3,7 +3,8 @@ tic;
 [CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning,...
           SCE_recall, SCE_learning,session_vars_learn,session_vars_recall,...
            TC_corr_match_learning,TC_corr_match_recall,...
-           tuned_frac_learning,tuned_frac_recall] = figure4_load_data();
+           tuned_frac_learning,tuned_frac_recall,...
+           learn_comb_data,recall_comb_data] = figure4_load_data();
 toc;
 
 %% SCE rate scatter plots and cdfs
@@ -20,6 +21,11 @@ trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)
 %% Plot A/B/AB/neither distributions for learning/recall across sessions
 
 plot_fraction_tuned(tuned_frac_learning,tuned_frac_recall)
+
+
+%% Centroid difference across sessions
+
+centroid_diff_sessions(learn_comb_data,recall_comb_data,reg_learn, reg_recall);
 
 
 %% Mean TC histograms across time during learning
