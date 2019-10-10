@@ -4,9 +4,13 @@ function [outputArg1,outputArg2] = centroid_diff_sessions(learn_comb_data,recall
 
 %% Set up variables
 
+%learning
 tuned_log_learning = learn_comb_data.tuned_log_learning;
 pf_vector_max_learning = learn_comb_data.pf_vector_max_learning;
 
+%recall
+tuned_log_recall = recall_comb_data.tuned_log_recall;
+pf_vector_max_recall = recall_comb_data.pf_vector_max_recall;
 
 %% Make assignments based on tuning state 
 %Calculate difference relative to D1 (for A, for B, for A vs.B - TS tuned/ min 5 events)
@@ -15,82 +19,188 @@ pf_vector_max_learning = learn_comb_data.pf_vector_max_learning;
 %and B neurons
 
 %LEARNING SETS
-aa=2;
-match_ROI.all = reg_learn{aa}.registered.multi.assigned_filtered(:,1:6);
-
-%create separate A, B, AB matrices for TS filtering -duplicate
-%match_ROI.all
-match_ROI.allA = match_ROI.all;
-match_ROI.allB = match_ROI.all;
-match_ROI.AB = match_ROI.all;
-
-%blank logical
-blank_log = zeros(size(match_ROI.all,1),size(match_ROI.all,2));
-
-for ss=1:6
-    %get tuned indices for each session
-    tuned_idx.allA = find(tuned_log_learning{aa}.tuned_logicals.tuned_log_filt_ts{ss}.allA  ==1 );
-    [match_idx_A, column_match_idx{ss},~]  =  intersect(match_ROI.allA(:,ss),tuned_idx.allA);
-    disp(length(match_idx_A))
-    %translate match to logical value
-    blank_log(column_match_idx{ss},ss) = 1;
-    %nan non-matching ROIs
-    match_ROI.allA(~blank_log(:,ss),ss) = nan;
+%for each animal
+options.selectTrial = [4,5];
+options.sessionSelect = 1:6;
+for aa =1:3
+    [theta_learn{aa}] = A_B_angle_diff_across_sessions(reg_learn,tuned_log_learning,pf_vector_max_learning,aa,options);
 end
 
-%% Extract the tuning vectors for each class across days
+%merge outputs into 1 cell
+merge_theta_learn.A = [];
+merge_theta_learn.B = [];
 
-%holder for each category vectors
-max_vectors.A = nan(size(match_ROI.all,1),size(match_ROI.all,2));
-
-%do for learning A first
-for ss=1:6
-    max_vectors.A(column_match_idx{ss},ss) = pf_vector_max_learning{aa}.pf_vector_max{ss}{4}( match_ROI.allA(column_match_idx{ss},ss));
+%for each animal
+for aa=1:3
+    merge_theta_learn.A = [merge_theta_learn.A ; theta_learn{aa}.A];
+    merge_theta_learn.B = [merge_theta_learn.B ; theta_learn{aa}.B];
 end
 
-%% Calculate anglular difference relative to d1 for all A
+%merge across session
+for ss=1:6
+    theta_learn_merge.A{ss} = cell2mat(merge_theta_learn.A(:,ss)');
+    theta_learn_merge.B{ss} = cell2mat(merge_theta_learn.B(:,ss)');
+end
 
-%get the vectors for both sessions
-for ss=2:6
-    compare_vectors.A{1,ss} = max_vectors.A(find(sum(~isnan(max_vectors.A(:,[1,ss])),2) ==2),[1,ss])
+%RECALL SETS
+options.selectTrial = [1,2];
+options.sessionSelect = 1:7;
+for aa =1:4
+    [theta_recall{aa}] = A_B_angle_diff_across_sessions(reg_recall,tuned_log_recall,pf_vector_max_recall,aa,options);
+end
+
+%arrange the angles to match relative to d1..d9 for recall
+[merge_theta_learn_days] = arrange_learning_session_days(theta_learn);
+
+%arrange the angles to match relative to d1..d9 for recall
+[merge_theta_recall_days] = arrange_recall_session_days(theta_recall);
+
+
+%merge across all animals for learning
+for dd=1:6
+    merge_theta_learn_days_all.A{dd} = cell2mat(merge_theta_learn_days.A(:,dd)');
+    merge_theta_learn_days_all.B{dd} = cell2mat(merge_theta_learn_days.B(:,dd)');
+end
+
+%merge across all animals for recall
+for dd=1:9
+    merge_theta_recall_days_all.A{dd} = cell2mat(merge_theta_recall_days.A(:,dd)');
+    merge_theta_recall_days_all.B{dd} = cell2mat(merge_theta_recall_days.B(:,dd)');
+end
+
+%% A 
+%get mean
+mean_learn.A = cellfun(@nanmean, merge_theta_learn_days_all.A(2:end));
+mean_recall.A = cellfun(@nanmean, merge_theta_recall_days_all.A(2:6));
+
+%number of neurons
+nb_learn.A = cellfun(@(x) size(x,2), merge_theta_learn_days_all.A);
+nb_recall.A = cellfun(@(x) size(x,2), merge_theta_recall_days_all.A);
+
+%sem
+sem_learn.A = cellfun(@nanstd, merge_theta_learn_days_all.A(2:end))./sqrt(nb_learn.A(2:end));
+sem_recall.A = cellfun(@nanstd, merge_theta_recall_days_all.A(2:6))./sqrt(nb_recall.A(2:6));
+
+%% B 
+%mean
+mean_learn.B = cellfun(@nanmean, merge_theta_learn_days_all.B(2:end));
+mean_recall.B = cellfun(@nanmean, merge_theta_recall_days_all.B(2:6));
+
+%number of neurons
+nb_learn.B = cellfun(@(x) size(x,2), merge_theta_learn_days_all.B);
+nb_recall.B = cellfun(@(x) size(x,2), merge_theta_recall_days_all.B);
+
+%sem
+sem_learn.B = cellfun(@nanstd, merge_theta_learn_days_all.B(2:end))./sqrt(nb_learn.B(2:end));
+sem_recall.B = cellfun(@nanstd, merge_theta_recall_days_all.B(2:6))./sqrt(nb_recall.B(2:6));
+
+%% Mann Whitney comp for each session - learning vs. recall 
+
+for dd=2:6
+    %learn vs. recall Mann Whitney U - A
+    [pA(dd),~,~] = ranksum(merge_theta_learn_days_all.A{dd},merge_theta_recall_days_all.A{dd});
     
+    %learn vs. recall Mann Whitney U - B
+    [pB(dd),~,~] = ranksum(merge_theta_learn_days_all.B{dd},merge_theta_recall_days_all.B{dd});
 end
 
-%convert complex vector to Cartesian coordinates
-for ss=2:6
-    for rr=1:size(compare_vectors.A{1, ss},1)
-        %first ses
-        compare_vec_cart.A{1,ss}{rr,1} = [real(compare_vectors.A{1, ss}(rr,1)), imag(compare_vectors.A{1, ss}(rr,1))];
-        %second ses
-        compare_vec_cart.A{1,ss}{rr,2} = [real(compare_vectors.A{1, ss}(rr,2)), imag(compare_vectors.A{1, ss}(rr,2))];
-    end
-end
+%% Plot bar charts for learn A vs learn B comparison
 
-for ss=2:6
-    %calculate difference between each vector pair
-    %for each ROI get difference between ts vector and reward vector
-    for rr = 1:size(compare_vec_cart.A{1,ss},1)
-        
-        uCar = compare_vec_cart.A{1,ss}{rr,1};
-        vCar = compare_vec_cart.A{1,ss}{rr,2};
-        
-        %get smallest angle between vectors
-        theta{ss}(rr) = atan2(uCar(1)*vCar(2) - uCar(2)*vCar(1), uCar(1)*vCar(1) + uCar(2)*vCar(2));
-        theta_abs{ss}(rr) = abs(theta{ss}(rr));
-    end
-end
+%rad to cm - ~196 = 2*pi 
+cm2rad = (2*pi)./196;
+%rad ticks that correspond to 0 25 50 cm
+rad_ticks = [0 25 50].*cm2rad;
 
-%get mean and run paired wilcoxon
-cellfun(@nanmean, theta_abs)
-
-
-ranksum(theta_abs{2},theta_abs{3})
-
-%plot cdf -test
-figure
+figure('Position',[2055 79 480 724])
+subplot(2,1,1)
 hold on
-for ss=2:6
-ecdf(theta_abs{ss})
-pause
+ylim([0 1.7])
+yticks(rad_ticks)
+yticklabels({'0','25','50'});
+xticks(1:5)
+xlabel('Days since first session')
+ylabel('Centroid diff. [cm]')
+
+title('Centroid difference - A')
+hb = bar([mean_learn.A(1:5)',  mean_recall.A(1:5)'],'BarWidth', 1);
+pause(0.1)
+for ib = 1:numel(hb)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    xData = hb(ib).XData+hb(ib).XOffset;
+    if ib ==1
+    errorbar(xData,mean_learn.A,sem_learn.A,'k.','linewidth',1.5)
+    %color
+    hb(ib).FaceColor =  [65,105,225]./255;
+    %transparency
+    hb(ib).FaceAlpha =  0.3;    
+    
+    elseif ib==2
+      errorbar(xData,mean_recall.A,sem_recall.A,'k.','linewidth',1.5) 
+      %color
+      hb(ib).FaceColor =  [65,105,225]./255;
+      %transparency
+      hb(ib).FaceAlpha =  1;
+    end
 end
 
+set(gca,'Fontsize',16)
+set(gca,'LineWidth',1.5)
+
+legend([hb(1),hb(2)],{'Learning','Recall'},'location','northwest');
+
+subplot(2,1,2)
+hold on
+ylim([0 1.7])
+yticks(rad_ticks)
+yticklabels({'0','25','50'});
+xticks(1:5)
+xlabel('Days since first session')
+ylabel('Centroid diff. [cm]')
+title('Centroid difference - B')
+hb = bar([mean_learn.B(1:5)',  mean_recall.B(1:5)'],'BarWidth', 1);
+
+pause(0.1)
+for ib = 1:numel(hb)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    xData = hb(ib).XData+hb(ib).XOffset;
+    if ib ==1
+    errorbar(xData,mean_learn.B,sem_learn.B,'k.','linewidth',1.5)
+    %color
+    hb(ib).FaceColor =  [220,20,60]./255;
+    %transparency
+    hb(ib).FaceAlpha =  0.3;    
+    
+    elseif ib==2
+      errorbar(xData,mean_recall.B,sem_recall.B,'k.','linewidth',1.5) 
+      %color
+      hb(ib).FaceColor =  [220,20,60]./255;
+      %transparency
+      hb(ib).FaceAlpha =  1;
+    end
+end
+
+set(gca,'Fontsize',16)
+set(gca,'LineWidth',1.5)
+
+legend([hb(1),hb(2)],{'Learning','Recall'},'location','northwest');
+
+%% OLD
+%{
+%merge outputs into 1 cell
+merge_theta_recall.A = [];
+merge_theta_recall.B = [];
+
+%for each animal
+for aa=1:4
+    merge_theta_recall.A = [merge_theta_recall.A ; theta_recall{aa}.A];
+    merge_theta_recall.B = [merge_theta_recall.B ; theta_recall{aa}.B];
+end
+
+%merge across session
+for ss=1:7
+    theta_recall_merge.A{ss} = cell2mat(merge_theta_recall.A(:,ss)');
+    theta_recall_merge.B{ss} = cell2mat(merge_theta_recall.B(:,ss)');
+end
+%}
