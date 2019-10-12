@@ -12,6 +12,17 @@ pf_vector_max_learning = learn_comb_data.pf_vector_max_learning;
 tuned_log_recall = recall_comb_data.tuned_log_recall;
 pf_vector_max_recall = recall_comb_data.pf_vector_max_recall;
 
+
+%% Compare the distance to start of reward zone A and reward zone B for learning/recall
+%LEARNING SETS
+%for each animal
+options.selectTrial = [4,5];
+options.sessionSelect = 1:6;
+
+for aa=1:3
+A_B_angle_diff_across_sessions_reward_zones(reg_learn,tuned_log_learning,pf_vector_max_learning,aa,options)
+end
+
 %% Make assignments based on tuning state 
 %Calculate difference relative to D1 (for A, for B, for A vs.B - TS tuned/ min 5 events)
 
