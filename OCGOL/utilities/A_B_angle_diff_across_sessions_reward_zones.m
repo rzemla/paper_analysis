@@ -5,6 +5,32 @@ function [theta] = A_B_angle_diff_across_sessions_reward_zones(reg_learn,tuned_l
 selectTrial = options.selectTrial;
 sessionSelect = options.sessionSelect;
 
+%% Define reward start vectors in complex form as well cartesian coordinates for calculating angles below
+
+%unit vectors
+%reward A - ~0.7 - get specific from mean norm start position of animal
+%later
+rewardA_vec = exp(i*deg2rad(0.7*360));
+%0.3
+rewardB_vec =  exp(i*deg2rad(0.3*360));
+
+%convert to cartesian points
+rewardA_cart = [real(rewardA_vec), imag(rewardA_vec)];
+rewardB_cart = [real(rewardB_vec), imag(rewardB_vec)];
+
+%check complex vectors on compass plot
+% figure
+% compass(rewardA_vec)
+% hold on
+% pause
+% compass(rewardB_vec)
+%check complex vectors with scatter plot
+% figure
+% hold on
+% scatter(rewardA_cart(1), rewardA_cart(2))
+% scatter(rewardB_cart(1), rewardB_cart(2))
+
+
 %% Calculate rad angle diff for between A tuned ROI and B tuned ROI across sessions
 match_ROI.all = reg_learn{aa}.registered.multi.assigned_filtered(:,1:sessionSelect(end));
 
@@ -87,26 +113,63 @@ for ss=sessionSelect
         end
     end
 end
-
+%% Get angular distance to start of reward zone A and start of reward zone B
 for ss=sessionSelect
     for ss2=sessionSelect
         %calculate difference between each vector pair
         %for each ROI get difference between ts vector and reward vector
         %all A
+        %for each set of vectors compare distance to start of reward zone A and B
         for rr = 1:size(compare_vec_cart.A{ss, ss2},1)
             %define input vectors
+            %RELATIVE TO START OF A REWARD ZONE
+            %first vector calculate distance to reward A
             uCar = compare_vec_cart.A{ss, ss2}{rr,1};
-            vCar = compare_vec_cart.A{ss, ss2}{rr,2};
+            vCar = rewardA_cart;
             %calculate angle for each match
-            theta.A{ss, ss2}(rr) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            theta.A.rewA{ss, ss2}(rr,1) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            %second vector match, calculate distance to reward A
+            uCar = compare_vec_cart.A{ss, ss2}{rr,2};
+            vCar = rewardA_cart;
+            theta.A.rewA{ss, ss2}(rr,2) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            
+            %RELATIVE TO START OF B REWARD ZONE
+            uCar = compare_vec_cart.A{ss, ss2}{rr,1};
+            vCar = rewardB_cart;
+            %calculate angle for each match
+            theta.A.rewB{ss, ss2}(rr,1) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            %second vector match, calculate distance to reward A
+            uCar = compare_vec_cart.A{ss, ss2}{rr,2};
+            vCar = rewardB_cart;
+            theta.A.rewB{ss, ss2}(rr,2) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            
         end
+        
         %all B
         for rr = 1:size(compare_vec_cart.B{ss, ss2},1)
+            
             %define input vectors
+            %RELATIVE TO START OF A REWARD ZONE
+            %first vector calculate distance to reward A
             uCar = compare_vec_cart.B{ss, ss2}{rr,1};
-            vCar = compare_vec_cart.B{ss, ss2}{rr,2};
+            vCar = rewardA_cart;
             %calculate angle for each match
-            theta.B{ss, ss2}(rr) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            theta.B.rewA{ss, ss2}(rr,1) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            %second vector match, calculate distance to reward A
+            uCar = compare_vec_cart.B{ss, ss2}{rr,2};
+            vCar = rewardA_cart;
+            theta.B.rewA{ss, ss2}(rr,2) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            
+            %RELATIVE TO START OF B REWARD ZONE
+            uCar =compare_vec_cart.B{ss, ss2}{rr,1};
+            vCar = rewardB_cart;
+            %calculate angle for each match
+            theta.B.rewB{ss, ss2}(rr,1) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            %second vector match, calculate distance to reward A
+            uCar = compare_vec_cart.B{ss, ss2}{rr,2};
+            vCar = rewardB_cart;
+            theta.B.rewB{ss, ss2}(rr,2) = compute_abs_rad_angle_btw_cart_vectors(uCar,vCar);
+            
         end
     end
 end
