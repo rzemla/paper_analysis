@@ -24,13 +24,13 @@ for dd=2:6 %for day 1 vs 2 3 4... or equivalent day distance
                 merge_theta_learn_days.A.rewA{aa,dd} = abs(diff(theta_reward_zone_learn{aa}.A.rewA{1,3},1,2));
                 merge_theta_learn_days.B.rewB{aa,dd} = abs(diff(theta_reward_zone_learn{aa}.B.rewB{1,3},1,2));
             end
-        case 4 %session 4 vs. 7; session 3 vs. 4
+        case 4 
             for aa=1:3 %all animals
                 %extract all the days that correspond to the time duration
                 merge_theta_learn_days.A.rewA{aa,dd} = abs(diff(theta_reward_zone_learn{aa}.A.rewA{1,4},1,2));
                 merge_theta_learn_days.B.rewB{aa,dd} = abs(diff(theta_reward_zone_learn{aa}.B.rewB{1,4},1,2));
             end
-        case 5 %session 2 vs. 6; session 3 vs. 5
+        case 5 
             for aa=1:3 %all animals
                 %extract all the days that correspond to the time duration
                 if aa==1 %skip
