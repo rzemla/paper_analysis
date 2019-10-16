@@ -1,4 +1,4 @@
-function [mean_mean_PV_recall_neighbor_all,sem_PV_recall_neighbor_all] = PV_corr_learn_neighbor_all_neurons(neighbor_STC_recall_days_all)
+function [mean_PV_recall_neighbor_all,sem_PV_recall_neighbor_all] = PV_corr_learn_neighbor_all_neurons(neighbor_STC_recall_days_all)
 
 %% Calculate TC correlation neighbor recall
 
@@ -39,10 +39,23 @@ nb_animals_by_ses = sum(~isnan(mean_PV_recall_neighbor_each.A),1);
 %% Get sem - neighbor RECALL 
 %A
 %can't calculate in one shot b/c 0 empty vectors returned by std func
-sem_PV_recall_neighbor_all.A = nanstd(mean_PV_recall_neighbor_each.A,0,1)./sqrt(nb_animals_by_ses);
+std_PV_recall_neighbor_all.A = nanstd(mean_PV_recall_neighbor_each.A,0,1);
+%days missing (to fill with nan for consistency of numbering
+%nb_missing = sum(cellfun(@isempty,std_PV_recall_neighbor_all.A));
+%set empty cells to nan
+std_PV_recall_neighbor_all.A(cellfun(@isempty,std_PV_recall_neighbor_all.A))= num2cell(nan(1,nb_missing));
+%calculate sem
+sem_TC_recall_neighbor_all.A = cell2mat(std_PV_recall_neighbor_all.A)./sqrt(cellfun(@(x) size(x,1),PV_neighbor_STC_recall_days_all.A,'UniformOutput',true));
 
 %B
-sem_PV_recall_neighbor_all.B = nanstd(mean_PV_recall_neighbor_each.B,0,1)./sqrt(nb_animals_by_ses);
+%can't calculate in one shot b/c 0 empty vectors returned by std func
+std_PV_recall_neighbor_all.B = cellfun(@(x) std(x,0,1), PV_neighbor_STC_recall_days_all.B,'UniformOutput',false);
+%days missing (to fill with nan for consistency of numbering
+nb_missing = sum(cellfun(@isempty,std_PV_recall_neighbor_all.B));
+%set empty cells to nan
+std_PV_recall_neighbor_all.B(cellfun(@isempty,std_PV_recall_neighbor_all.B))= num2cell(nan(1,nb_missing));
+%calculate sem
+sem_TC_recall_neighbor_all.B = cell2mat(std_PV_recall_neighbor_all.B)./sqrt(cellfun(@(x) size(x,1),PV_neighbor_STC_recall_days_all.B,'UniformOutput',true));
 
 
 end

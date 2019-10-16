@@ -392,8 +392,11 @@ end
 
 
 %% Get mean and sem for TC on neighboring LEARNING days (uses names defined for learn - works the same)
+%across all pooled neurons
 [mean_TC_learn_neighbor_all,sem_TC_learn_neighbor_all] = TC_corr_learn_neighbor_all_neurons(neighbor_STC_learn_days_all);
 
+%do per animal (uncollapsed input - need separate out from each animal) -
+[mean_mean_PV_learn_neighbor_all,sem_PV_learn_neighbor_all] = PV_corr_learn_neighbor_all_neurons(neighbor_STC_learn_days);
 
 %% Collapse day-matched STCs for TS tuned neurons across days (rel D1) - RECALL
 
@@ -443,10 +446,11 @@ end
 %% Get mean and sem for TC on neighboring RECALL days
 [mean_TC_recall_neighbor_all,sem_TC_recall_neighbor_all] = TC_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days_all);
 
-
+%do per animal (uncollapsed input - need separate out from each animal) -
+[mean_mean_PV_recall_neighbor_all,sem_PV_recall_neighbor_all] = PV_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days);
                   
                     
-%% Split TC and PV calculation by animal (rather than neuron pool) - seems necessary for PV - RECALL
+%% Split TC and PV calculation by ANIMAL (rather than neuron pool) - seems necessary for PV - RECALL
 
 %calculate PV/TC correlation for each relative session for each animal
 for aa=1:nb_animal_recall
@@ -685,6 +689,29 @@ rB = errorbar(1:8,mean_TC_recall_neighbor_all.B,sem_TC_recall_neighbor_all.B,'Li
 %Learn
 lA = errorbar(1:6,mean_TC_learn_neighbor_all.A,sem_TC_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
 lB = errorbar(1:6,mean_TC_learn_neighbor_all.B,sem_TC_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+set(gca,'FontSize',16)
+set(gca,'Linewidth',2)
+
+legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','southeast')
+
+%% Plot NEIGHBOR P.V. correlation for learning/recall - by animals
+
+figure
+hold on 
+title('PV correlation - T.S. - neighbors')
+ylim([0 1])
+xlim([0 9])
+xticks(1:8)
+xticklabels({'1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'})
+%yticks(0:0.2:1)
+xlabel('Neighboring days')
+ylabel('Correlation score')
+%Recall
+rA = errorbar(1:8,mean_mean_PV_recall_neighbor_all.A,sem_PV_recall_neighbor_all.A,'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
+rB = errorbar(1:8,mean_mean_PV_recall_neighbor_all.B,sem_PV_recall_neighbor_all.B,'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
+%Learn
+lA = errorbar(1:6,mean_mean_PV_learn_neighbor_all.A,sem_PV_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+lB = errorbar(1:6,mean_mean_PV_learn_neighbor_all.B,sem_PV_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
