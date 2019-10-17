@@ -2,7 +2,7 @@
 
 options.defineDir = 1;
 
-setDir = 'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_5A5B_080519_2';
+setDir = 'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d7_062618_5';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -10,14 +10,16 @@ setDir = 'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_5A5B_080519_2';
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 0;
+options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
 options.loadImagingData = 0;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
-options.BehaviorType = 'OCGOL';
+%options.BehaviorType = 'OCGOL';
+%technical fix - mostly for I47_LP who ran fast (run std OCGOL for others)
+options.BehaviorType = 'OCGOL-tech';
 
 %type of calcium data
 options.calcium_data_input = 'CNMF';
@@ -107,6 +109,8 @@ if options.textures == true
             [Behavior] = extractTextures_GOL(CSV, Behavior, options);
         case 'OCGOL'
             [Behavior] = extractTextures_OCGOL(CSV, Behavior, options);
+        case 'OCGOL-tech' %run same script for now for technical fix of laps (inactive reward zone or lap skip)
+            [Behavior] = extractTextures_OCGOL_technical_fix(CSV, Behavior, options);
     end
 end
 
@@ -130,6 +134,9 @@ switch options.BehaviorType
         %in licks plot shade the reward zones
         %for reward collected as well
         [Behavior] = OCGOL_performance_new_inputs(Behavior);
+        
+    case 'OCGOL-tech'
+       [Behavior] =OCGOL_performance_new_inputs_technical_fix(Behavior);
 end
 
 %% Save Behavior struct temporarily here - later do at end
