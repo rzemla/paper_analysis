@@ -11,7 +11,7 @@ for ss = options.sessionSelect
     nb_laps_adj_tech(ss) = sum((session_vars{ss}.Behavior.performance.trialCorrect == 0) | (session_vars{ss}.Behavior.performance.trialCorrect == 1));
     
     %all performance
-    performance(1,ss) = length(find(session_vars{ss}.Behavior.performance.trialCorrect ==1))/nb_laps_adj_tech(ss);
+    performance(1,ss) = length(find(session_vars{ss}.Behavior.performance.trialCorrect ==1))/size(session_vars{ss}.Behavior.performance.trialCorrect,1);
     
     %fraction of A trials correct - 2nd row
     performance(2,ss) = length(find(session_vars{ss}.Behavior.performance.trialOrder == 2))/...
@@ -22,7 +22,7 @@ for ss = options.sessionSelect
         size(find(session_vars{ss}.Behavior.performance.trialOrder == 3 | session_vars{ss}.Behavior.performance.trialOrder == 30),1);
     
     %all lap count
-    session_lap_ct(1,ss) =nb_laps_adj_tech(ss);
+    session_lap_ct(1,ss) = size(session_vars{ss}.Behavior.performance.trialCorrect,1);
     %all A lap count
     session_lap_ct(2,ss) = size(find(session_vars{ss}.Behavior.performance.trialOrder == 2 | session_vars{ss}.Behavior.performance.trialOrder == 20),1);
     %all B lap count
@@ -32,3 +32,5 @@ end
 
 
 end
+
+find(session_vars{5}.Behavior.performance.trialCorrect ==0
