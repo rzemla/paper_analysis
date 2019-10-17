@@ -7,6 +7,9 @@ position_norm = Behavior.normalizedposition;
 time = Behavior.time;
 lap = Behavior.lap;
 
+%lap distance thres for cutoff (cm)
+lap_tech_ex_dist = 205;  
+
 %% find idx's of start of first complete lap and end of last complete lap
 start_lap_idx = find(time == lap{1}(1));
 end_lap_idx = find(time == lap{end}(2));
@@ -138,8 +141,8 @@ late_reward_onsets = pks_final_indexes{reward_cue_tex_idx}(~reward_early_on);
 %check early and late reward onsets for which fall represent false laps
 %(missed) and adjust
 %B trials and A trials
-B_missed_log = position(early_reward_onsets)>200;
-A_missed_log = position(late_reward_onsets)>200;
+B_missed_log = position(early_reward_onsets)>lap_tech_ex_dist;
+A_missed_log = position(late_reward_onsets)>lap_tech_ex_dist;
 
 %create blank vector equal to size with reward_early_on and populate
 reward_early_correction = zeros(size(reward_early_on,1),1);

@@ -28,6 +28,9 @@ reward_coll = Behavior.reward_coll;
 start_lap_idx = find(time == lap{1}(1));
 end_lap_idx = find(time == lap{end}(2));
 
+%lap distance thres for cutoff (cm)
+lap_tech_ex_dist = 205;  
+
 %% Set parameters
 
 %reward zone size (cm)
@@ -228,7 +231,7 @@ end
 
 %% Make technical exclusion for missed lap (tag not registered due to speed of animal)
 %check which end position exceeds 200 cm ab
-exclude_lap = find(Behavior.position_lap(:,2) > 200);
+exclude_lap = find(Behavior.position_lap(:,2) > lap_tech_ex_dist);
 
 %for each lap, exclude the following lap as well
 exclude_lap = sort([exclude_lap; exclude_lap+1]);
