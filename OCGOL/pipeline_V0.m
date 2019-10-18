@@ -2,7 +2,7 @@
 
 options.defineDir = 1;
 
-setDir = 'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d7_062618_5';
+setDir = 'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d30_071818_6';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -13,7 +13,7 @@ setDir = 'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d7_062618_5';
 options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 0;
+options.loadImagingData = 1;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
@@ -136,7 +136,7 @@ switch options.BehaviorType
         [Behavior] = OCGOL_performance_new_inputs(Behavior);
         
     case 'OCGOL-tech'
-       [Behavior] =OCGOL_performance_new_inputs_technical_fix(Behavior);
+       [Behavior] = OCGOL_performance_new_inputs_technical_fix(Behavior);
 end
 
 %% Save Behavior struct temporarily here - later do at end

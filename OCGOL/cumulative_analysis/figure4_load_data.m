@@ -4,6 +4,11 @@ function [CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_c
           tuned_frac_learning,tuned_frac_recall,...
           learn_comb_data,recall_comb_data] = figure4_load_data()
 
+      %% Skip loading of SCE data for now
+      %assign dummy outputs for now
+      SCE_recall = [];
+      SCE_learning = [];
+      
 %% Load in pre-defined experiments directories for all animals -learning and recall
 
 %return struct with paths of individual sessions as well as crossSession
@@ -124,7 +129,7 @@ for ss=1:size(crossdir_recall,2)
     %performance data
     perf_recall{ss} = load(fullfile(crossdir_recall{ss},'ses_perf.mat'));
     %load SCE related data
-    SCE_recall{ss} = load(fullfile(crossdir_recall{ss},'SCE.mat'));
+    %SCE_recall{ss} = load(fullfile(crossdir_recall{ss},'SCE.mat'));
     %load Behavior and Behavior_split and Imaging struct
     
     %TC correlation for TS-event tuned/matched ROIs
@@ -149,7 +154,7 @@ for ss=1:size(crossdir_learn,2)
     %performance data
     perf_learning{ss} = load(fullfile(crossdir_learn{ss},'ses_perf.mat'));
     %load SCE related data
-    SCE_learning{ss} = load(fullfile(crossdir_learn{ss},'SCE.mat'));
+    %SCE_learning{ss} = load(fullfile(crossdir_learn{ss},'SCE.mat'));
     
     %TC correlation for TS-event tuned/matched ROIs
     TC_corr_match_learning{ss} = load(fullfile(crossdir_learn{ss},'tc_corr_match.mat'));

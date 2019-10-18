@@ -4,10 +4,10 @@
 options.register = 0;
 
 %whether to load place field data processed below
-options.loadPlaceField_data = 0;
+options.loadPlaceField_data = 1;
 
 %load extracted ROI zooms/outlines
-options.load_ROI_zooms_outlines = 0;
+options.load_ROI_zooms_outlines = 1;
 
 %visualize ROI outlines of matches across sessions
 options.visualize_match = 0;
@@ -452,6 +452,7 @@ save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
 
 %% Detect SCEs and measure number of SCE in each session A or B
 
+%throws error if no SCEs detected (I47)
 %load or run shuffle to determine SCEs
 if options.loadSCE == 0
     %how many shuffles to perform

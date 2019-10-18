@@ -2,8 +2,11 @@ function [outputArg1,outputArg2] = check_STC_AB_comparison(TC_corr_match_learnin
 
 
 %day 1
-TC_corr_match_learning{1, 1}.tc_corr_match.STC_mat_AB_A{1, 1}
-TC_corr_match_learning{1, 1}.tc_corr_match.STC_mat_AB_B{1, 1}
+%TC_corr_match_learning{1, 1}.tc_corr_match.STC_mat_AB_A{1, 1}
+%TC_corr_match_learning{1, 1}.tc_corr_match.STC_mat_AB_B{1, 1}
+
+nb_recall_animals = size(TC_corr_match_recall,2);
+nb_learn_animals = size(TC_corr_match_learning,2);
 
 %% Merge D1 STCS for learning
 
@@ -160,7 +163,7 @@ end
 
 %% Relative to D1 comparison - recall
 
-for aa=1:4
+for aa=1:nb_recall_animals
     
     for day_sel=2:7
         

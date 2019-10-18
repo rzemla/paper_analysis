@@ -248,18 +248,16 @@ trialCorrect(exclude_lap) = -1;
 
 %% Exclude lap is missed reward signal(i.e. odor signal was missed/not off) id'd in texture search 
 
-%check if technical exclusion is on from previous texture detection script
-%if yes treat only that lap as technically excluded (not following one like
-%for lap tag miss)
 if Behavior.tech_rew_odor_rem == 1
-    disp('Technical exclusion of reward/odor zone misses')
+    disp('Technical exclusion of 
     trialOrder(Behavior.lap_rm) = -1;
     %create cells for T names where technical exclusion is made
     technical_ex_names = cell(1,size(Behavior.lap_rm ,1));
     technical_ex_names(:) = {'T'};
-    trialCorrName(Behavior.lap_rm) = technical_ex_names;
+    trialCorrName(exclude_lap) = technical_ex_names;
     %where correct or not
-    trialCorrect(Behavior.lap_rm) = -1;
+    trialCorrect(exclude_lap) = -1;
+    
 end
 
 %% Check that at least 1 reward was collected in 
@@ -328,13 +326,8 @@ fprintf('Total B trials: %d \n', B_nb);
 
 %% Display fraction correct trials in command line
 
-%adjusted number of laps with technical exclusion (and reward exclusion if
-%flagged)
-if Behavior.tech_rew_odor_rem == 1 %if flagged
-    lap_nb_adj = lap_nb - size(exclude_lap,1) - size(Behavior.lap_rm,1);
-else %just use # of excluded laps
-    lap_nb_adj = lap_nb - size(exclude_lap,1);
-end
+%adjusted number of laps with technical exclusion
+lap_nb_adj = lap_nb - size(exclude_lap,1);
 
 %all
 frac_correct_adj = sum(trialCorrect(trialCorrect ~= -1))./lap_nb_adj;

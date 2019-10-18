@@ -1,6 +1,8 @@
 function [outputArg1,outputArg2] = combine_STC_plot_multi_animal(TC_corr_match_learning,TC_corr_match_recall)
 
 
+nb_animal_learn = 3;
+nb_animal_recall = 5;
 
 %% Combine relative to d1 STCs from multiple animals between any 2
 %sessions/days
@@ -62,7 +64,7 @@ for ss=1:7
 end
 
 for ss=1:7
-    for aa=1:4
+    for aa=1:nb_animal_recall
         comb_STC_recall.A{1,ss} = [comb_STC_recall.A{1,ss} ; cell2mat(TC_corr_match_recall{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{1, ss}')'];
         comb_STC_recall.B{1,ss} = [comb_STC_recall.B{1,ss} ; cell2mat(TC_corr_match_recall{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{1, ss}')'];
     end
@@ -107,7 +109,7 @@ end
 
 %% Align relative to D1 (Figure 4F) - as a function of day distance - RECALL
 %number of recall animals
-nb_animal_recall = 4;
+%nb_animal_recall = 4;
 
 %place into function
 for dd=2:9
@@ -178,7 +180,7 @@ end
 
 
 %number of recall animals
-nb_animal_recall = 4;
+%nb_animal_recall = 4;
 
 %place into function - number by previous day correlation
 for dd=[1,2 6 7 8]
@@ -218,7 +220,7 @@ end
 
 %% Align relative to D1 (Figure 4F) - as a function of day distance - LEARN
 
-nb_animal_learn = 3;
+%nb_animal_learn = 3;
 
 %place into function
 for dd=2:6
@@ -307,7 +309,7 @@ comb_STC_learn_days.B{3,2} = [];
 
 
 %number of recall animals
-nb_animal_learn = 3;
+%nb_animal_learn = 3;
 
 %place into function
 for dd=[1 2 3 4 5 6]
@@ -718,7 +720,7 @@ set(gca,'Linewidth',2)
 legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','southeast')
 
 
-%% Plots
+%% Plots - OLD CODE BELOW
 %Plot TS tuned matching place cells for A and B trials
 figure
 for ss=2:7

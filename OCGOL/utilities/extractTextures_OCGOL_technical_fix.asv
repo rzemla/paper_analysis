@@ -419,14 +419,7 @@ end
 %reward misses - remove only that lap; does not affect neighbors
 if ~isempty(reward_lap_missed) ==1
     %set Behavior flag
-    Behavior.tech_rew_odor_rem = 1;
-    %which laps to remove (technically exclude)
-    Behavior.lap_rm = reward_lap_missed;
-    %which trial the lap is associated with
-    Behavior.trial_rm = reward_trial_missed;
-else
-    Behavior.tech_rew_odor_rem = 0;
-end
+    tech_rew_odor_rem = 1
 
 
 %% Plot summary plot
