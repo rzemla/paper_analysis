@@ -2,7 +2,7 @@
 
 options.defineDir = 1;
 
-setDir = 'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7';
+setDir = 'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d30_071818_6';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -10,16 +10,16 @@ setDir = 'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7';
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 0;
+options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 0;
+options.loadImagingData = 1;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
 %options.BehaviorType = 'OCGOL';
 %technical fix - mostly for I47_LP who ran fast (run std OCGOL for others)
-%options.BehaviorType = 'OCGOL-tech';
+options.BehaviorType = 'OCGOL-tech';
 
 options.BehaviorType = 'OCGOL-punish';
 
@@ -113,8 +113,6 @@ if options.textures == true
             [Behavior] = extractTextures_OCGOL(CSV, Behavior, options);
         case 'OCGOL-tech' %run same script for now for technical fix of laps (inactive reward zone or lap skip)
             [Behavior] = extractTextures_OCGOL_technical_fix(CSV, Behavior, options);
-        case 'OCGOL-punish'
-            [Behavior] = extractTextures_OCGOL_punish(CSV, Behavior, options);
     end
 end
 
@@ -141,9 +139,6 @@ switch options.BehaviorType
         
     case 'OCGOL-tech'
        [Behavior] = OCGOL_performance_new_inputs_technical_fix(Behavior);
-       
-   case 'OCGOL-punish'
-       [Behavior] = OCGOL_performance_new_inputs_punish(Behavior);
 end
 
 %% Save Behavior struct temporarily here - later do at end

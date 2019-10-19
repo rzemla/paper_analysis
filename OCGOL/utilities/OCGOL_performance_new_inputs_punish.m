@@ -1,4 +1,4 @@
-function [Behavior] = OCGOL_performance_new_inputs_technical_fix(Behavior)
+function [Behavior] = OCGOL_performance_new_inputs_punish(Behavior)
 %Get performance of the animal on the OCGOL trials
 
 %% Assign variables
@@ -28,9 +28,6 @@ reward_coll = Behavior.reward_coll;
 start_lap_idx = find(time == lap{1}(1));
 end_lap_idx = find(time == lap{end}(2));
 
-%lap distance thres for cutoff (cm)
-lap_tech_ex_dist = 205;  
-
 %% Set parameters
 
 %reward zone size (cm)
@@ -50,18 +47,12 @@ end
 %QC of licks across plots
 figure;
 for ll=1:size(lap,2)
-    %make sure enough subplots (50 laps)
-    subplot(6,8,ll)
-    hold on
-    title(['Licks \newline lap: ', num2str(ll)])
-    xlim([0,200])
-    %check if animal make at least 1 lick across the entire lap
-    if ~isempty(lick_lap{ll}.position)
-        stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
-    else
-        disp(['No licks on lap: ', num2str(ll)])
-    end
-    hold off
+subplot(5,8,ll)
+hold on
+title(['Licks \newline lap: ', num2str(ll)])
+xlim([0,200])
+%stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
+hold off
 end
 
 %% reward location (not collection)
@@ -70,37 +61,32 @@ end
 reward_position = zeros(size(lap,2),1);
 reward_pos_idx = zeros(size(lap,2),1);
 
-%find clipped lap positions and eliminate
-% %for B trials
-% if sum(rewards{1}.position > 200) ~= 0
-%     %take out that reward position
-%     rewards{1}.position(rewards{1}.position > 200) = [];
-%     rewards{1}.idx(rewards{1}.position > 200) = [];
-%     reward_idx.reward_early(rewards{1}.position > 200) = [];
-% end
-% 
-% %for A trials
-% if sum(rewards{2}.position > 200) ~= 0
-%     %take out that reward position
-%     rewards{2}.position(rewards{2}.position > 200) = [];
-%     rewards{2}.idx(rewards{2}.position > 200) = [];
-%     reward_idx.reward_late(rewards{2}.position > 200) = [];
-% end
-
-
 %early rewards - B trials
-reward_position(reward_idx.reward_early) = rewards{1}.position;
-%idxs of associated reward positions
-reward_pos_idx(reward_idx.reward_early) = rewards{1}.idx;
+% reward_position(reward_idx.reward_early) = rewards{1}.position;
+% %idxs of associated reward positions
+% reward_pos_idx(reward_idx.reward_early) = rewards{1}.idx;
+% %late rewards - A trials
+% reward_position(reward_idx.reward_late) = rewards{2}.position;
+% %idxs of associated reward positions
+% reward_pos_idx(reward_idx.reward_late) = rewards{2}.idx;
+% 
+% %filter rewards that occur within full laps
+% reward_position((reward_pos_idx < start_lap_idx) | (reward_pos_idx > end_lap_idx)) = [];
 
-%late rewards - A trials
-reward_position(reward_idx.reward_late) = rewards{2}.position;
-%idxs of associated reward positions
-reward_pos_idx(reward_idx.reward_late) = rewards{2}.idx;
+%revision of above code for complete laps
+%set logicals of complete laps for rewards on B and rewards on A
+rewB_log = rewards{1}.lapNb > 0 & rewards{1}.lapNb <= lap_nb;
+rewA_log = rewards{2}.lapNb > 0 & rewards{2}.lapNb <= lap_nb;
 
-%filter rewards that occur within full laps
-reward_position((reward_pos_idx < start_lap_idx) | (reward_pos_idx > end_lap_idx)) = [];
+%population position and pos_idx (B)
+reward_position(rewards{1}.lapNb(rewB_log)) = rewards{1}.position(rewB_log);
+reward_pos_idx(rewards{1}.lapNb(rewB_log)) = rewards{1}.idx(rewB_log);
 
+%population position and pos_idx (A)
+reward_position(rewards{2}.lapNb(rewA_log)) = rewards{2}.position(rewA_log);
+reward_pos_idx(rewards{2}.lapNb(rewA_log)) = rewards{2}.idx(rewA_log);
+
+%leave punish position as 0
 
 %calulate mean and median of A and B trial reward zones onsets
 %median
@@ -130,14 +116,12 @@ end
 %QC of reward collected across plots
 figure;
 for ll=1:size(lap,2)
-    subplot(6,8,ll)
+    subplot(5,8,ll)
     hold on
     title(['Rew col \newline lap: ', num2str(ll)])
     xlim([0,200])
     if ~isempty(reward_coll_lap{ll}.time)
         stem(reward_coll_lap{ll}.position, ones(1,size(reward_coll_lap{ll}.position,1)),'r')
-    else
-         disp(['No rewards collected on lap: ', num2str(ll)])
     end
     hold off
 end
@@ -162,16 +146,10 @@ for ii=1:size(trialOrder,1)
         trialName{ii} = 'A';
     elseif (trialOrder(ii) == 3)
         trialName{ii} = 'B';
+    elseif (trialOrder(ii) == 1)
+        trialName{ii} = 'P';
     end
 end
-
-%check if trial order vector equal to total number of complete laps
-if size(trialOrder,1) == lap_nb
-    disp('Number of laps equal to number of trials detected')
-else
-    disp('Number of laps NOT equal to number of trial detected !!!')
-end
-
 
 %% performance calculations - based on reward zone onset and lick signal
 
@@ -225,39 +203,23 @@ for ii = 1:size(lap,2)
             trialCorrName{ii} = 'N';
             trialOrder(ii) = 30;
         end
-        
+    elseif trialOrder(ii) == 1
+        trialCorrect(ii) = -2;
+        trialCorrName{ii} = 'P';
+        trialOrder(ii) = -10;
     end
 end
 
-%% Make technical exclusion for missed lap (tag not registered due to speed of animal)
-%check which end position exceeds 200 cm ab
-exclude_lap = find(Behavior.position_lap(:,2) > lap_tech_ex_dist);
-
-%for each lap, exclude the following lap as well
-exclude_lap = sort([exclude_lap; exclude_lap+1]);
-
-%adjust trialCorrect, trialCorrName, trialOrder
-%set technical exclusion lap to -1
-trialOrder(exclude_lap) = -1;
-%create cells for T names where technical exclusion is made
-technical_ex_names = cell(1,size(exclude_lap,1));
-technical_ex_names(:) = {'T'};
-trialCorrName(exclude_lap) = technical_ex_names;
-%where correct or not
-trialCorrect(exclude_lap) = -1;
-
-%% Exclude lap is missed reward signal(i.e. odor signal was missed/not off) id'd in texture search 
-
-if Behavior.tech_rew_odor_rem == 1
-    disp('Technical exclusion of 
-    trialOrder(Behavior.lap_rm) = -1;
-    %create cells for T names where technical exclusion is made
-    technical_ex_names = cell(1,size(Behavior.lap_rm ,1));
-    technical_ex_names(:) = {'T'};
-    trialCorrName(exclude_lap) = technical_ex_names;
-    %where correct or not
-    trialCorrect(exclude_lap) = -1;
-    
+%% Set the previous laps to false (in case microcontroller detection slightly off from post-hoc calculation above
+%for each punish lap, set previous lap to error
+for pp=1:size(Behavior.punish_laps,2)
+    %change binary correct vector
+    trialCorrect(Behavior.punish_laps(pp)-1) = 0;
+    if lap_id.trial_based(Behavior.punish_laps(pp)-1) == 2
+        trialOrder(Behavior.punish_laps(pp)-1) = 20;
+    elseif lap_id.trial_based(Behavior.punish_laps(pp)-1) == 3
+        trialOrder(Behavior.punish_laps(pp)-1) = 30;
+    end
 end
 
 %% Check that at least 1 reward was collected in 
@@ -299,8 +261,11 @@ end
 
 %% Missed lap == wrong lap (possible change in future)
 
-%% Adjusted performance was technical lap exclusions are made
-frac_correct = sum(trialCorrect)./lap_nb;
+%% Display fraction correct trials in command line
+disp('Adjusted performance calculation for punish laps')
+
+%all
+frac_correct = sum((trialOrder == 2 | trialOrder == 3))./(lap_nb - size(Behavior.punish_laps,2)) ;
 %A trials
 A_trial_idx = find(lap_id.trial_based == 2);
 A_nb = length(A_trial_idx);
@@ -322,38 +287,9 @@ fprintf('Fraction of correct A trials: %0.2f \n', frac_A);
 fprintf('Total A trials: %d \n', A_nb);
 fprintf('Fraction of correct B trials: %0.2f \n', frac_B);
 fprintf('Total B trials: %d \n', B_nb); 
+fprintf('Number of punish laps: %d \n', size(Behavior.punish_laps,2)); 
 
-
-%% Display fraction correct trials in command line
-
-%adjusted number of laps with technical exclusion
-lap_nb_adj = lap_nb - size(exclude_lap,1);
-
-%all
-frac_correct_adj = sum(trialCorrect(trialCorrect ~= -1))./lap_nb_adj;
-%A trials
-A_trial_idx_adj = find(trialOrder == 2 | trialOrder == 20);
-A_nb_adj = length(A_trial_idx_adj);
-
-A_corr_adj = trialCorrect(A_trial_idx_adj);
-frac_A_adj = sum(A_corr_adj)./A_nb_adj;
-
-%B trials
-B_trial_idx_adj = find(trialOrder == 3 | trialOrder == 30);
-B_nb_adj = length(B_trial_idx_adj);
-
-B_corr_adj = trialCorrect(B_trial_idx_adj);
-frac_B_adj = sum(B_corr_adj)./B_nb_adj;
-
-%print resutls to command line
-fprintf('Adjusted Fraction of correct laps/trials: %0.2f \n', frac_correct_adj);
-fprintf('Adjusted Total laps/trials: %d \n', lap_nb_adj);
-fprintf('Adjusted Fraction of correct A trials: %0.2f \n', frac_A_adj);
-fprintf('Adjusted Total A trials: %d \n', A_nb_adj);
-fprintf('Adjusted Fraction of correct B trials: %0.2f \n', frac_B_adj);
-fprintf('Adjusted Total B trials: %d \n', B_nb_adj); 
-
-%% Plot
+%% plot
 %as single plot with trials increase along y axis
 
 %raster plot indicating trial type and whether correct or not
@@ -375,8 +311,7 @@ hold off
 %% Save to structure
 %performance.trialOrder = column vector with 3 (B),2 (A) corresponding to correct trials
 %30 - (first number is trial type 3 - B trial, 2 - A trial, 0 - wrong, 1 - missed)
-%performance.trialCorrect = columns vector 1 if correct, 0 = if wrong, -1 =
-%techical error
+%performance.trialCorrect = columns vector 1 if correct, 0 = if wrong, -1 = missed
 
 Behavior.performance.trialOrder = trialOrder;
 Behavior.performance.trialCorrect = trialCorrect';

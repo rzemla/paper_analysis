@@ -1,4 +1,4 @@
-function [Behavior] = extractTextures_OCGOL_technical_fix(CSV, Behavior,options)
+function [Behavior] = extractTextures_OCGOL_punish(CSV, Behavior,options)
 
 %% Assign variables from Behavior struct
 
@@ -7,11 +7,9 @@ position_norm = Behavior.normalizedposition;
 time = Behavior.time;
 lap = Behavior.lap;
 lap_nb = Behavior.lapNb;
+
 %behavior indices (raw, not downsampled or restricted) by lap index
 time_idx_lap = Behavior.time_idx_lap;
-
-%lap distance thres for cutoff (cm)
-lap_tech_ex_dist = 205;  
 
 %% find idx's of start of first complete lap and end of last complete lap
 start_lap_idx = find(time == lap{1}(1));
@@ -140,23 +138,6 @@ early_reward_onsets = pks_final_indexes{reward_cue_tex_idx}(reward_early_on);
 
 late_reward_onsets = pks_final_indexes{reward_cue_tex_idx}(~reward_early_on);
 
-%TECHNICAL FIX FOR MISSED LAP RFID SIGNAL
-%check early and late reward onsets for which fall represent false laps
-%(missed) and adjust
-%B trials and A trials
-B_missed_log = position(early_reward_onsets)>lap_tech_ex_dist;
-A_missed_log = position(late_reward_onsets)>lap_tech_ex_dist;
-
-%create blank vector equal to size with reward_early_on and populate
-reward_early_correction = zeros(size(reward_early_on,1),1);
-reward_early_correction(reward_early_on) = B_missed_log;
-reward_early_correction(~reward_early_on) = A_missed_log;
-
-%correct (remove false reading due to lap miss) reward_early on 
-reward_early_on(logical(reward_early_correction)) = [];
-early_reward_onsets(B_missed_log) = [];
-late_reward_onsets(A_missed_log) = [];
-
 %% Get the indices of each class of signal
 
 %place all texture indices on behavior into cells
@@ -268,11 +249,11 @@ stem(sound.time, sound.position, 'g','LineStyle','none')
 trialTypeCh = CSV(:,2);
 
 %run discovery of trial types
-[trialRanges] = discoverTrialType(trialTypeCh, position);
+[trialRanges] = discoverTrialType_punish(trialTypeCh, position);
 
 %get time and position of trial textures (may change to findpeaks approach
 %like done above depending on stability)
-[trialType] = defineTrialSignal(trialRanges, trialTypeCh, Behavior);
+[trialType] = defineTrialSignal_punish(trialRanges, trialTypeCh, Behavior);
 
 %% Lick signal onsets, position, norm_position, time, idx
 
@@ -330,16 +311,17 @@ reward_coll.idx = reward_on;
 % stem(reward_on, 2*ones(1,size(reward_on,1)), 'r');
 
 %% OCGOL quality control
-if strcmpi(options.BehaviorType,'OCGOL-tech')
+if strcmpi(options.BehaviorType,'OCGOL-punish')
     
     %runs several QC checks to make sure that important signals were not missed
     %displays alerts when signals are missed or don't match to what is
     %expected
-    [lap_id] = OCGOL_QC(Behavior,textures, rewards, trialType, sound);
+    [lap_id] = OCGOL_QC_punish(Behavior,textures, rewards, trialType, sound);
 
 end
 
-%% Fix missing reward signal to prevent misalignment with trial signal
+
+%% Fix missing reward signal to prevent misalignment with trial signal - used missed reward code to fix reward assignment
 %trial signal is independent of RFID recognition - software generated and
 %is always generated along a position early in track
 %reward signal is RFID dependent - if mouse runs too fast may rarely be
@@ -351,76 +333,75 @@ reward_lap_missed = find(lap_id.reward_based == 0);
 %which trial was it missed on
 reward_trial_missed = lap_id.trial_based(reward_lap_missed);
 
-%mean reward onset position for A and B trials before extrapolating values
-mean_pos(1) = mean(rewards{1}.position);
-mean_pos(2) = mean(rewards{2}.position);
+%filter out A trials that are treated as punished based on old code
 
-%update rewards struct and insert extrapolated position of reward so that
-%performance code runs correctly
-%for each  missed reward
-%if missed reward found
-if ~isempty(reward_lap_missed) ==1
-    disp('Correcting for missing reward signals!!')
-    for rr=1:size(reward_lap_missed,1)
-        %choose an adjusted index to prevent code redundancy
-        %if missed on A trial
-        if reward_trial_missed(rr) == 2
-            sel_tr_idx = 2;
-            %if missed B trial
-        elseif reward_trial_missed(rr) == 3
-            sel_tr_idx =1;
-        end
-        
-        idx_to_add_lap = find(rewards{sel_tr_idx}.lapNb < reward_lap_missed(rr),1,'last');
-        %correct lap position vector
-        
-        rewards{sel_tr_idx}.position = ...
-            [rewards{sel_tr_idx}.position(1:idx_to_add_lap); mean_pos(sel_tr_idx); rewards{sel_tr_idx}.position((idx_to_add_lap+1):end)];
-        %correct lap count vector
-        rewards{sel_tr_idx}.lapNb = ...
-            [rewards{sel_tr_idx}.lapNb(1:idx_to_add_lap); reward_lap_missed(rr); rewards{sel_tr_idx}.lapNb((idx_to_add_lap+1):end)];
-        %adjust idx (extrapolated idx)
-        adjust_idx_temp = find(position(time_idx_lap{reward_lap_missed(rr)}(1):end) >= mean_pos(sel_tr_idx),1,'first')...
-            + time_idx_lap{reward_lap_missed(rr)}(1);
-        %insert adjusted (extrapolated) index into vector
-        rewards{sel_tr_idx}.idx = ...
-            [rewards{sel_tr_idx}.idx(1:idx_to_add_lap); adjust_idx_temp; rewards{sel_tr_idx}.idx((idx_to_add_lap+1):end)];
-        %insert extrapolated time (from extrap. index)
-        rewards{sel_tr_idx}.time = ...
-            [rewards{sel_tr_idx}.time(1:idx_to_add_lap); time(adjust_idx_temp); rewards{sel_tr_idx}.time((idx_to_add_lap+1):end)];
-        %insert extrapolated norm position (from extrap. index)
-        rewards{sel_tr_idx}.position_norm = ...
-            [rewards{sel_tr_idx}.position_norm(1:idx_to_add_lap); position_norm(adjust_idx_temp); rewards{sel_tr_idx}.position_norm((idx_to_add_lap+1):end)];
-        
-        %update reward onsets (early_reward_onsets and late_reward_onsets)
-        if sel_tr_idx == 2 %if A
-            late_reward_onsets = [late_reward_onsets(1:idx_to_add_lap); adjust_idx_temp; late_reward_onsets((idx_to_add_lap+1):end)];
-        elseif sel_tr_idx == 1 %if B
-            early_reward_onsets = [early_reward_onsets(1:idx_to_add_lap); adjust_idx_temp; early_reward_onsets((idx_to_add_lap+1):end)];
-        end
-        
-    end
-end
+% 
+% %mean reward onset position for A and B trials before extrapolating values
+% mean_pos(1) = mean(rewards{1}.position);
+% mean_pos(2) = mean(rewards{2}.position);
+% 
+% %update rewards struct and insert extrapolated position of reward so that
+% %performance code runs correctly
+% %for each  missed reward
+% %if missed reward found
+% % %no clearance necessary, just adjust reward_on_logical
+% if ~isempty(reward_lap_missed) ==1
+%     disp('Correcting for missing reward signals!!')
+%     for rr=1:size(reward_lap_missed,1)
+%         %choose an adjusted index to prevent code redundancy
+%         %if missed on A trial
+%         if reward_trial_missed(rr) == 1 %if punish signal, clear out B 
+%             sel_tr_idx = 2;
+%             %if missed B trial
+%         %elseif reward_trial_missed(rr) == 3
+%             %sel_tr_idx =1;
+%         end
+%         
+%         idx_to_add_lap = find(rewards{sel_tr_idx}.lapNb < reward_lap_missed(rr),1,'last');
+%         %correct lap position vector
+%         
+%         rewards{sel_tr_idx}.position = ...
+%             [rewards{sel_tr_idx}.position(1:idx_to_add_lap); mean_pos(sel_tr_idx); rewards{sel_tr_idx}.position((idx_to_add_lap+1):end)];
+%         %correct lap count vector
+%         rewards{sel_tr_idx}.lapNb = ...
+%             [rewards{sel_tr_idx}.lapNb(1:idx_to_add_lap); reward_lap_missed(rr); rewards{sel_tr_idx}.lapNb((idx_to_add_lap+1):end)];
+%         %adjust idx (extrapolated idx)
+%         adjust_idx_temp = find(position(time_idx_lap{reward_lap_missed(rr)}(1):end) >= mean_pos(sel_tr_idx),1,'first')...
+%             + time_idx_lap{reward_lap_missed(rr)}(1);
+%         %insert adjusted (extrapolated) index into vector
+%         rewards{sel_tr_idx}.idx = ...
+%             [rewards{sel_tr_idx}.idx(1:idx_to_add_lap); adjust_idx_temp; rewards{sel_tr_idx}.idx((idx_to_add_lap+1):end)];
+%         %insert extrapolated time (from extrap. index)
+%         rewards{sel_tr_idx}.time = ...
+%             [rewards{sel_tr_idx}.time(1:idx_to_add_lap); time(adjust_idx_temp); rewards{sel_tr_idx}.time((idx_to_add_lap+1):end)];
+%         %insert extrapolated norm position (from extrap. index)
+%         rewards{sel_tr_idx}.position_norm = ...
+%             [rewards{sel_tr_idx}.position_norm(1:idx_to_add_lap); position_norm(adjust_idx_temp); rewards{sel_tr_idx}.position_norm((idx_to_add_lap+1):end)];
+%         
+%         %update reward onsets (early_reward_onsets and late_reward_onsets)
+%         if sel_tr_idx == 2 %if A
+%             late_reward_onsets = [late_reward_onsets(1:idx_to_add_lap); adjust_idx_temp; late_reward_onsets((idx_to_add_lap+1):end)];
+%         elseif sel_tr_idx == 1 %if B
+%             early_reward_onsets = [early_reward_onsets(1:idx_to_add_lap); adjust_idx_temp; early_reward_onsets((idx_to_add_lap+1):end)];
+%         end
+%         
+%     end
+% end
 
 %% Adjust reward_early_on logical that is used in performance determination - only if misses are detected
 if ~isempty(reward_lap_missed) ==1
     
     %generate empty column vector that corresponds to the number of rewards
     %non-restricted by laps
-    reward_early_on = zeros(sum([size(rewards{1}.idx,1), size(rewards{2}.idx,1)]),1);
+    reward_early_on = zeros(size(lap,2)+2,1);
     %populate for on for B rewards; add 1 since count starts from 0 (0 is
-    %incomplete lap before first complete lap)
+    %incomplete lap before first complete lap) - 1 B
     reward_early_on((rewards{1}.lapNb+1)) = 1;
-    %convert to logical
-    reward_early_on = logical(reward_early_on);
+    %assign A with 2
+    reward_early_on((rewards{2}.lapNb+1)) = 2;
+    %assign P with 3
+    reward_early_on(reward_lap_missed) = 3;
 end
-
-%% Add a technical exclusion flag for these to be removed in the performance calculation code
-%reward misses - remove only that lap; does not affect neighbors
-if ~isempty(reward_lap_missed) ==1
-    %set Behavior flag
-    tech_rew_odor_rem = 1
-
 
 %% Plot summary plot
 
@@ -442,7 +423,7 @@ stem(rewards{2}.time, rewards{2}.position, 'b','LineStyle','none')
 colorRange = cbrewer('qual', 'Dark2',8);
 %textures
 for ii=1:size(textures,2)
-stem(textures{ii}.time, textures{ii}.position,'Color',colorRange(ii+2,:),'LineStyle','none');
+    stem(textures{ii}.time, textures{ii}.position,'Color',colorRange(ii+2,:),'LineStyle','none');
 end
 %sound
 stem(sound.time, sound.position, 'g','LineStyle','none')
@@ -524,9 +505,11 @@ Behavior.textures = textures;
   
  %laps with respective A or B rewards/trials
  %B trials (3); early;
- Behavior.reward.reward_early = find(reward_early_on);
+ Behavior.reward.reward_early = find(reward_early_on == 1);
  %A trials; (2) late reward indices
- Behavior.reward.reward_late =  find(~reward_early_on);
+ Behavior.reward.reward_late =  find(reward_early_on == 2);
+ %punish laps
+ Behavior.punish_laps = reward_lap_missed;
  
  %% Testing code that is related
  
