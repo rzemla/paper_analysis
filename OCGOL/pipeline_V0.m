@@ -137,8 +137,7 @@ switch options.BehaviorType
         %fault with missed reward (I53LT AB PSEM/sal 113018)
         %in licks plot shade the reward zones
         %for reward collected as well
-        [Behavior] = OCGOL_performance_new_inputs(Behavior);
-        
+        [Behavior] = OCGOL_performance_new_inputs(Behavior);  
     case 'OCGOL-tech'
        [Behavior] = OCGOL_performance_new_inputs_technical_fix(Behavior);
        
@@ -268,6 +267,10 @@ switch options.BehaviorType
     case 'GOL' %work on this
         
     case 'OCGOL'
+        [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
+    case 'OCGOL-tech'
+        [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
+    case 'OCGOL-punish'
         [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
 end
 

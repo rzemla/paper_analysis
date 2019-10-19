@@ -217,8 +217,10 @@ for pp=1:size(Behavior.punish_laps,2)
     trialCorrect(Behavior.punish_laps(pp)-1) = 0;
     if lap_id.trial_based(Behavior.punish_laps(pp)-1) == 2
         trialOrder(Behavior.punish_laps(pp)-1) = 20;
+        trialCorrName{Behavior.punish_laps(pp)-1} = 'N';
     elseif lap_id.trial_based(Behavior.punish_laps(pp)-1) == 3
         trialOrder(Behavior.punish_laps(pp)-1) = 30;
+         trialCorrName{Behavior.punish_laps(pp)-1} = 'N';
     end
 end
 
