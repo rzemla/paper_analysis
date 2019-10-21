@@ -1,23 +1,23 @@
 %% Import variables and define options
 
 %run componenet registration across sessions
-options.register = 0;
+options.register = 1;
 
 %whether to load place field data processed below
-options.loadPlaceField_data = 1;
+options.loadPlaceField_data = 0;
 
 %load extracted ROI zooms/outlines
-options.load_ROI_zooms_outlines = 1;
+options.load_ROI_zooms_outlines = 0;
 
 %visualize ROI outlines of matches across sessions
 options.visualize_match = 0;
 
 %load SCE data shuffled n=50/100 (re-shuffle later on cluster with n =1000)
-options.loadSCE = 1;
+options.loadSCE = 0;
 
 options.selectTrial = [4 5];
 %which session to include in calculation
-options.sessionSelect = [1 2 3 4 5 6];
+options.sessionSelect = [1 2 3 4 5 6 7 8 9];
 
 %for use in workspace
 selectTrial = options.selectTrial;
@@ -26,14 +26,14 @@ sessionSelect = options.sessionSelect;
 
 %lab workstation
 %input directories to matching function
- path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
-     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
-%cross session directory
-crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+%  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
+%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
 
 % %I57_RTLS
 %  path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
@@ -61,6 +61,20 @@ crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
 % %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
 % %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
 % % %cross session directory
+
+%I58 RT
+%input directories to matching function
+ path_dir = {'E:\OCGOL_learning_short_term\I58_RT\I58_RT_5A5B_073019_1',...
+     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_5A5B_073119_2',...
+     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_3A3B_080119_3',...
+     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_3A3B_080219_4',...
+     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_no_punish_080319_5',...
+     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_no_punish_080419_6',...
+     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_ABrand_punish_080519_7',...
+     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_punish_080619_8',...
+     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_punish_080719_9'};
+%cross session directory
+crossdir = 'E:\OCGOL_learning_short_term\I58_RT\crossSession';
 
 
 %% Load place cell variables for each session
