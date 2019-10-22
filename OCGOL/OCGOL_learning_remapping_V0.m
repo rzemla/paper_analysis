@@ -1,7 +1,7 @@
 %% Import variables and define options
 
 %run componenet registration across sessions
-options.register = 1;
+options.register = 0;
 
 %whether to load place field data processed below
 options.loadPlaceField_data = 0;
@@ -17,14 +17,14 @@ options.loadSCE = 0;
 
 options.selectTrial = [4 5];
 %which session to include in calculation
-options.sessionSelect = [1 2 3 4 5 6 7 8 9];
+options.sessionSelect = [1 2 3 4 5 6 7 8 ];
 
 %for use in workspace
 selectTrial = options.selectTrial;
 sessionSelect = options.sessionSelect;
 
 
-%lab workstation
+%I56_RTLS
 %input directories to matching function
 %  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
 %      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
@@ -49,32 +49,32 @@ sessionSelect = options.sessionSelect;
 
 
 %I57_LT
-%  path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
-%      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6'};
-%  crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
+ path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041819_3',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_3A3B_041919_4',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042019_5',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_no_punish_042119_6',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
+     'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
+ 
+ crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
 
-% %  %,...
-% %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
-% %      %'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
-% % %cross session directory
+
 
 %I58 RT
 %input directories to matching function
- path_dir = {'E:\OCGOL_learning_short_term\I58_RT\I58_RT_5A5B_073019_1',...
-     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_5A5B_073119_2',...
-     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_3A3B_080119_3',...
-     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_3A3B_080219_4',...
-     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_no_punish_080319_5',...
-     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_no_punish_080419_6',...
-     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_ABrand_punish_080519_7',...
-     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_punish_080619_8',...
-     'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_punish_080719_9'};
-%cross session directory
-crossdir = 'E:\OCGOL_learning_short_term\I58_RT\crossSession';
+%  path_dir = {'E:\OCGOL_learning_short_term\I58_RT\I58_RT_5A5B_073019_1',...
+%      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_5A5B_073119_2',...
+%      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_3A3B_080119_3',...
+%      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_3A3B_080219_4',...
+%      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_no_punish_080319_5',...
+%      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_no_punish_080419_6',...
+%      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_ABrand_punish_080519_7',...
+%      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_punish_080619_8',...
+%      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_punish_080719_9'};
+% %cross session directory
+% crossdir = 'E:\OCGOL_learning_short_term\I58_RT\crossSession';
 
 
 %% Load place cell variables for each session
@@ -235,7 +235,7 @@ end
 %all correct = 1 ==> uses trials 1,2
 options.allCorrect = 0;
 %select which session to use
-options.sessionSelect = [1 2 3 4 5 6];
+%options.sessionSelect = [1 2 3 4 5 6];
 %returns struct of structs
 [tunedLogical] = defineTunedLogicals(session_vars,options);
 
@@ -252,9 +252,9 @@ options.sessionSelect = [1 2 3 4 5 6];
 %[1 2] - only correct A B trials
 %[4 5] - all A B trials
 %A correct/B correct or all
-options.selectTrial = [4 5];
+%options.selectTrial = [4 5];
 %which sessions to run
-options.sessionSelect = [1 2 3 4 5 6];
+%options.sessionSelect = [1 2 3 4 5 6];
 %continue to modify 
 [field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
 
@@ -266,9 +266,9 @@ options.sessionSelect = [1 2 3 4 5 6];
 %% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in firld
 
 %which trials to use to calculate the in field transient rate
-options.selectTrial = [4 5];
+%options.selectTrial = [4 5];
 %which session to include in calculation
-options.sessionSelect = [1 2 3 4 5 6];
+%options.sessionSelect = [1 2 3 4 5 6];
 %select fields has logical 1 for whichever neurons has a place field at at
 %least 5 events on distinct laps within that PF - otherwise not PF
 [registered] = filter_matching_components(registered,tunedLogical,select_fields,options);
@@ -323,8 +323,8 @@ options.dispFigure = 0;
 %doesn;t matter
 options.tuning_criterion = 'si'; %si or ts
 %A correct/B correct or all
-options.selectTrial = [4 5];
-options.sessionSelect = [1 2 3 4 5 6];
+%options.selectTrial = [4 5];
+%options.sessionSelect = [1 2 3 4 5 6];
 [placeField_dist, pf_count_filtered_log, pf_count_filtered] = placeField_properties_multi_ses(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
 %save the place field distributions output data
 %save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
@@ -520,7 +520,7 @@ activity_distributions(session_vars,task_selective_ROIs,options)
 %turn into table with future code upgrade
 
 %which sessions to use
-options.sessionSelect = [1 2 3 4 5 6];
+%options.sessionSelect = [1 2 3 4 5 6];
 
 [ses_perf,ses_lap_ct] = session_performance(session_vars,options);
 
@@ -582,7 +582,7 @@ legend(name_cell);
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 ];
+%options.sessionSelect = [1 2 3 4 5 6 ];
 options.selectSes = [4 5];
 %learning or recall datasets
 options.learning_data = 0;
@@ -727,7 +727,7 @@ detect_SCE_assembly(sce_activity_matrix,options)
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 ];
+%options.sessionSelect = [1 2 3 4 5 6 ];
 options.selectSes = [4 5];
 %learning or recall datasets
 options.learning_data = 1;
@@ -740,7 +740,7 @@ save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6];
+%options.sessionSelect = [1 2 3 4 5 6];
 %chose all A/B (learning) vs. only correct A/B (recall)
 options.selectTrial = [4,5];
 %is it a learning set (for plot/raster annotation)

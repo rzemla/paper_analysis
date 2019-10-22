@@ -26,8 +26,8 @@ d1_STC_AB_sort_A = d1_STC_AB(test_sortOrder,1:100);
 
 d1_STC_AB_sort_B = d1_STC_AB(test_sortOrder,101:200);
 
-%% Relative to D1 comparison - learning - relative to day 1 only
-for aa=1:3
+%% Relative to D1 comparison - LEARN - relative to day 1 only
+for aa=1:nb_learn_animals
     
     %session relative to session 1 (d1)
     for day_sel=2:6
@@ -93,7 +93,7 @@ for aa=1:3
 end
 
 %% Cross-comparison to all other sessions -learning 
-for aa=1:3
+for aa=1:nb_learn_animals
     
     %session relative to session 1st
     for day_sel = 1:6
@@ -245,7 +245,7 @@ TC_recall_late_sem = nanstd(TC_corr_AB_matching_recall_late,[],1)./sqrt(size(TC_
 for ii=1:6
     for jj=1:6
         mean_corr_learn_early(ii,jj) = nanmean(cell2mat(TC_corr_AB_matching_learning_early_diag_all(:,ii,jj)))
-         mean_corr_learn_late(ii,jj) = nanmean(cell2mat(TC_corr_AB_matching_learning_late_diag_all(:,ii,jj)))
+        mean_corr_learn_late(ii,jj) = nanmean(cell2mat(TC_corr_AB_matching_learning_late_diag_all(:,ii,jj)))
     end
 end
 
