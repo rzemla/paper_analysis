@@ -3,7 +3,7 @@ function [mean_TC_recall_neighbor_all,sem_TC_recall_neighbor_all] = TC_corr_lear
 %% Calculate TC correlation neighbor recall
 
 %correlation coefcient for each neuron
-for dd=1:6
+for dd=1:8
     %check if empty
     if ~isempty(neighbor_STC_recall_days_all.A{dd})
         %A

@@ -366,7 +366,6 @@ end
 comb_STC_learn_days.A{3,2} = [];
 comb_STC_learn_days.B{3,2} = [];
 
-
 %% Align by neighboring days LEARN
 %all animals treat the same
 %D1 vs. D2 - ses 1 vs. 2
@@ -377,10 +376,6 @@ comb_STC_learn_days.B{3,2} = [];
 
 %construct neighboring day equivalent session match for learn (for current
 %sets)
-
-
-%number of recall animals
-%nb_animal_learn = 3;
 
 %place into function
 for dd=[1 2 3 4 5 6 7 8]
@@ -468,11 +463,11 @@ for dd=[1 2 3 4 5 6 7 8]
                     neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{6, 7}')'];
                     neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{6, 7}')'];
                 elseif aa==3
-                    neighbor_STC_learn_days.A{aa,dd} = [];
-                    neighbor_STC_learn_days.B{aa,dd} = [];
+                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{7, 8}')'];
+                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{7, 8}')'];
                 elseif aa==4
-                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{6, 7}')'];
-                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{6, 7}')'];
+                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{7, 8}')'];
+                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{7, 8}')'];
                 elseif aa==5
                     neighbor_STC_learn_days.A{aa,dd} = [];
                     neighbor_STC_learn_days.B{aa,dd} = [];    
@@ -480,7 +475,29 @@ for dd=[1 2 3 4 5 6 7 8]
                     neighbor_STC_learn_days.A{aa,dd} = [];
                     neighbor_STC_learn_days.B{aa,dd} = [];                    
                 end
-            end            
+            end
+        case 8 %8 vs day 9
+            for aa=1:nb_animal_learn
+                if aa==1
+                    neighbor_STC_learn_days.A{aa,dd} = [];
+                    neighbor_STC_learn_days.B{aa,dd} = []; 
+                elseif aa==2
+                    neighbor_STC_learn_days.A{aa,dd} = [];
+                    neighbor_STC_learn_days.B{aa,dd} = []; 
+                elseif aa==3
+                    neighbor_STC_learn_days.A{aa,dd} = [];
+                    neighbor_STC_learn_days.B{aa,dd} = []; 
+                elseif aa==4
+                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{8, 9}')'];
+                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{8, 9}')'];
+                elseif aa==5
+                    neighbor_STC_learn_days.A{aa,dd} = [];
+                    neighbor_STC_learn_days.B{aa,dd} = [];    
+                elseif aa==6
+                    neighbor_STC_learn_days.A{aa,dd} = [];
+                    neighbor_STC_learn_days.B{aa,dd} = [];                    
+                end
+            end             
     end
 end
 
@@ -490,10 +507,10 @@ neighbor_STC_learn_days.A{3,1} = [];
 %2 vs. 3
 neighbor_STC_learn_days.A{3,2} = [];
 
-%% Collapse day-matched STCs for TS tuned neurons across days neighbor - RECALL
+%% Collapse day-matched STCs for TS tuned neurons across days neighbor - LEARN
 
 %for each day relative to dd index (dd=1 --> 1 vs. 2; dd=2 --> 
-for dd=1:6
+for dd=1:8 %1 day short of max for neighbor
     %A trials
     neighbor_STC_learn_days_all.A{dd} = cell2mat(neighbor_STC_learn_days.A(:,dd));
     %B trials
@@ -608,7 +625,7 @@ end
 
 %calculate PV/TC correlation for each relative session for each animal
 for aa=1:nb_animal_learn
-    for dd=2:6
+    for dd=2:9
         %A
         if ~isempty(comb_STC_learn_days.A{aa,dd})
             %get diagonal of correlation
@@ -648,7 +665,7 @@ end
 %number of animals adjusted for by day (can use A only)
 nb_animals_per_day_adj_learn = sum(~cellfun(@isempty,comb_STC_learn_days.A),1);
 
-for dd=2:6
+for dd=2:9
     %A
     %get sem TC score for each animal/day
     sem_TC_learn_days_ind.A(:,dd) = nanstd(mean_TC_learn_days_ind.A(:,dd))./sqrt(nb_animals_per_day_adj_learn(dd));
@@ -670,7 +687,7 @@ end
 %% Collapse day-matched STCs for TS tuned neurons across days (rel D1)
 
 %for each day relative to 1 (1 vs. 2. 1 vs. 3...)
-for dd=2:6
+for dd=2:9
     %A trials
     comb_STC_learn_days_all.A{dd} = cell2mat(comb_STC_learn_days.A(:,dd));
     %B trials
@@ -680,7 +697,7 @@ end
 %% Calculate TC/PV correlation relative to day 1
 
 %correlation coefcient for each neuron
-for dd=2:6
+for dd=2:9
     %A
     TC_comb_STC_learn_days_all.A{dd} = diag(corr(comb_STC_learn_days_all.A{dd}(:,1:100)',comb_STC_learn_days_all.A{dd}(:,101:200)'));
     %B
@@ -705,17 +722,17 @@ mean_PV_learn_all.B = cellfun(@mean,PV_comb_STC_learn_days_all.B);
 
 %% Get sem
 %TC
-sem_TC_learn_all.A = [nan, cellfun(@(x) std(x,0,1), TC_comb_STC_learn_days_all.A(2:6),'UniformOutput',true)./...
-    sqrt(cellfun(@(x) size(x,1), TC_comb_STC_learn_days_all.A(2:6),'UniformOutput',true))];
+sem_TC_learn_all.A = [nan, cellfun(@(x) std(x,0,1), TC_comb_STC_learn_days_all.A(2:9),'UniformOutput',true)./...
+    sqrt(cellfun(@(x) size(x,1), TC_comb_STC_learn_days_all.A(2:9),'UniformOutput',true))];
 
-sem_TC_learn_all.B = [nan, cellfun(@(x) std(x,0,1), TC_comb_STC_learn_days_all.B(2:6),'UniformOutput',true)./...
-    sqrt(cellfun(@(x) size(x,1), TC_comb_STC_learn_days_all.B(2:6),'UniformOutput',true))];
+sem_TC_learn_all.B = [nan, cellfun(@(x) std(x,0,1), TC_comb_STC_learn_days_all.B(2:9),'UniformOutput',true)./...
+    sqrt(cellfun(@(x) size(x,1), TC_comb_STC_learn_days_all.B(2:9),'UniformOutput',true))];
 %PV
-sem_PV_learn_all.A = [nan, cellfun(@(x) nanstd(x,0,1), PV_comb_STC_learn_days_all.A(2:6),'UniformOutput',true)./...
-    sqrt(cellfun(@(x) size(x,1), PV_comb_STC_learn_days_all.A(2:6),'UniformOutput',true))];
+sem_PV_learn_all.A = [nan, cellfun(@(x) nanstd(x,0,1), PV_comb_STC_learn_days_all.A(2:9),'UniformOutput',true)./...
+    sqrt(cellfun(@(x) size(x,1), PV_comb_STC_learn_days_all.A(2:9),'UniformOutput',true))];
 
-sem_PV_learn_all.B = [nan, cellfun(@(x) nanstd(x,0,1), PV_comb_STC_learn_days_all.B(2:6),'UniformOutput',true)./...
-    sqrt(cellfun(@(x) size(x,1), PV_comb_STC_learn_days_all.B(2:6),'UniformOutput',true))];
+sem_PV_learn_all.B = [nan, cellfun(@(x) nanstd(x,0,1), PV_comb_STC_learn_days_all.B(2:9),'UniformOutput',true)./...
+    sqrt(cellfun(@(x) size(x,1), PV_comb_STC_learn_days_all.B(2:9),'UniformOutput',true))];
                     
 %% Plot line plot with errorbars - all neurons - T.C.
 
@@ -732,8 +749,8 @@ ylabel('Correlation score')
 rA = errorbar(2:9,mean_TC_recall_all.A(2:9),sem_TC_recall_all.A(2:9),'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
 rB = errorbar(2:9,mean_TC_recall_all.B(2:9),sem_TC_recall_all.B(2:9),'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
 %Learn
-lA = errorbar(2:6,mean_TC_learn_all.A(2:6),sem_TC_learn_all.A(2:6),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-lB = errorbar(2:6,mean_TC_learn_all.B(2:6),sem_TC_learn_all.B(2:6),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+lA = errorbar(2:9,mean_TC_learn_all.A(2:9),sem_TC_learn_all.A(2:9),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+lB = errorbar(2:9,mean_TC_learn_all.B(2:9),sem_TC_learn_all.B(2:9),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
@@ -753,8 +770,8 @@ ylabel('Correlation score')
 rA = errorbar(2:9,mean_mean_TC_recall_days_ind.A(2:9),sem_TC_recall_days_ind.A(2:9),'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
 rB = errorbar(2:9,mean_mean_TC_recall_days_ind.B(2:9),sem_TC_recall_days_ind.B(2:9),'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
 %Learn
-lA = errorbar(2:6,mean_mean_TC_learn_days_ind.A(2:6),sem_TC_learn_days_ind.A(2:6),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-rB = errorbar(2:6,mean_mean_TC_learn_days_ind.B(2:6),sem_TC_learn_days_ind.B(2:6),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+lA = errorbar(2:9,mean_mean_TC_learn_days_ind.A(2:9),sem_TC_learn_days_ind.A(2:9),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+rB = errorbar(2:9,mean_mean_TC_learn_days_ind.B(2:9),sem_TC_learn_days_ind.B(2:9),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
 
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
@@ -774,8 +791,8 @@ ylabel('Correlation score')
 rA = errorbar(2:9,mean_mean_PV_recall_days_ind.A(2:9),sem_PV_recall_days_ind.A(2:9),'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
 rB = errorbar(2:9,mean_mean_PV_recall_days_ind.B(2:9),sem_PV_recall_days_ind.B(2:9),'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
 %Learn
-lA = errorbar(2:6,mean_mean_PV_learn_days_ind.A(2:6),sem_PV_learn_days_ind.A(2:6),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-lB = errorbar(2:6,mean_mean_PV_learn_days_ind.B(2:6),sem_PV_learn_days_ind.B(2:6),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+lA = errorbar(2:9,mean_mean_PV_learn_days_ind.A(2:9),sem_PV_learn_days_ind.A(2:9),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+lB = errorbar(2:9,mean_mean_PV_learn_days_ind.B(2:9),sem_PV_learn_days_ind.B(2:9),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
 
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
@@ -797,8 +814,8 @@ ylabel('Correlation score')
 rA = errorbar(1:8,mean_TC_recall_neighbor_all.A,sem_TC_recall_neighbor_all.A,'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
 rB = errorbar(1:8,mean_TC_recall_neighbor_all.B,sem_TC_recall_neighbor_all.B,'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
 %Learn
-lA = errorbar(1:6,mean_TC_learn_neighbor_all.A,sem_TC_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-lB = errorbar(1:6,mean_TC_learn_neighbor_all.B,sem_TC_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+lA = errorbar(1:8,mean_TC_learn_neighbor_all.A,sem_TC_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+lB = errorbar(1:8,mean_TC_learn_neighbor_all.B,sem_TC_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
@@ -820,8 +837,8 @@ ylabel('Correlation score')
 rA = errorbar(1:8,mean_mean_PV_recall_neighbor_all.A,sem_PV_recall_neighbor_all.A,'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
 rB = errorbar(1:8,mean_mean_PV_recall_neighbor_all.B,sem_PV_recall_neighbor_all.B,'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
 %Learn
-lA = errorbar(1:6,mean_mean_PV_learn_neighbor_all.A,sem_PV_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-lB = errorbar(1:6,mean_mean_PV_learn_neighbor_all.B,sem_PV_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+lA = errorbar(1:8,mean_mean_PV_learn_neighbor_all.A,sem_PV_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+lB = errorbar(1:8,mean_mean_PV_learn_neighbor_all.B,sem_PV_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
