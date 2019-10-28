@@ -1,4 +1,5 @@
-function [path_dir_learn,path_dir_recall,crossdir_learn,crossdir_recall] = figure4_input_data()
+function [path_dir_learn,path_dir_recall,crossdir_learn,crossdir_recall,...
+    path_dir_recall_long, crossdir_recall_long] = figure4_input_data()
 
 %% List session directories for each animal (cells) - learning
  path_dir_learn{1} = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
