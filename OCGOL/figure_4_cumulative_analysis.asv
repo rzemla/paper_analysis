@@ -4,7 +4,7 @@
 tic;
 [CNMF_learn,reg_learn,reg_recall,reg_recall_long,session_vars_learn,...
         session_vars_recall,session_vars_recall_long,...
-        short_term_learn,short_term_recall,long_term_recall] = figure4_load_data();
+        short_term_learn,short_term_recall,short_term_recall_long] = figure4_load_data();
 toc;
 
 %% SCE rate scatter plots and cdfs
@@ -15,17 +15,14 @@ end
 
 %% STC comparison for matching neurons across days
 
-check_STC_AB_comparison(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
+check_STC_AB_comparison(TC_corr_match_learning,TC_corr_match_recall)
 
 
 %% Combine STC matches across time relative to D1 (all animals into 1)
 %also orient maps by day (T.S.) only tuned for now for learning and recall
 
-%short term learning vs recall
-combine_STC_plot_multi_animal(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
+combine_STC_plot_multi_animal(TC_corr_match_learning,TC_corr_match_recall)
 
-%vs long term data
-combine_STC_plot_multi_animal(short_term_learn.TC_corr_match,long_term_recall.TC_corr_match)
 
 %% Examine spatial trajectories for across time
 

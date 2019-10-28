@@ -1,6 +1,6 @@
 function [CNMF_learn,reg_learn,reg_recall,reg_recall_long,session_vars_learn,...
         session_vars_recall,session_vars_recall_long,...
-        short_term_learn,short_term_recall,short_term_recall_long] = figure4_load_data()
+        short_term_learn,short_term_recall,long_term_recall] = figure4_load_data()
 
       %% Skip loading of SCE data for now
       %assign dummy outputs for now

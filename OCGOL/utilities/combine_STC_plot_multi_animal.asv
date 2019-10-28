@@ -430,9 +430,8 @@ for dd=[1 2 3 4 5 6 7 8]
                 elseif aa==3
                     neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{5, 6}')'];
                     neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{5, 6}')'];
-                elseif aa>=4
-                     neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{5, 6}')'];
-                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{5, 6}')'];
+                elseif aa==4
+                    
                 end
             end
             
@@ -446,39 +445,8 @@ for dd=[1 2 3 4 5 6 7 8]
                     neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{5, 6}')'];
                     neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{5, 6}')'];
                 elseif aa==3
-                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{6, 7}')'];
-                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{6, 7}')'];
-                elseif aa==4
-                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{6, 7}')'];
-                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{6, 7}')'];
-                elseif aa==5
-                    neighbor_STC_learn_days.A{aa,dd} = [];
-                    neighbor_STC_learn_days.B{aa,dd} = [];    
-                elseif aa==6
-                    neighbor_STC_learn_days.A{aa,dd} = [];
-                    neighbor_STC_learn_days.B{aa,dd} = [];                    
-                end
-            end
-        case 7
-            for aa=1:nb_animal_learn
-                if aa==1
-                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{6, 7}')'];
-                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{6, 7}')'];
-                elseif aa==2
-                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{6, 7}')'];
-                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{6, 7}')'];
-                elseif aa==3
                     neighbor_STC_learn_days.A{aa,dd} = [];
                     neighbor_STC_learn_days.B{aa,dd} = [];
-                elseif aa==4
-                    neighbor_STC_learn_days.A{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.A{6, 7}')'];
-                    neighbor_STC_learn_days.B{aa,dd} = [cell2mat(TC_corr_match_learning{aa}.tc_corr_match.matching_ROI_all_day_STC.ts.B{6, 7}')'];
-                elseif aa==5
-                    neighbor_STC_learn_days.A{aa,dd} = [];
-                    neighbor_STC_learn_days.B{aa,dd} = [];    
-                elseif aa==6
-                    neighbor_STC_learn_days.A{aa,dd} = [];
-                    neighbor_STC_learn_days.B{aa,dd} = [];                    
                 end
             end            
     end
