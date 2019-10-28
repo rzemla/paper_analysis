@@ -109,7 +109,7 @@ for ii=1:size(path_dir_recall_long,2)
     end
 end
 
-%% CNMF component outlines and templates - just learning for Figure 4 display
+%% CNMF component outlines and templates - just learning for Figure 4 display (match components FOV)
 for ii = 1:size(path_dir_learn,2)
     %load in relevant CNMF variables for visualization purposes
     %CNMF_vars{ii} = load(fullfile(inputfiles{ii}.folder,inputfiles{ii}.name),'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
@@ -246,6 +246,14 @@ for ss=1:size(crossdir_learn,2)
 end
 
 %% Bundle learning and recall data into structs for export and analysis
+short_term_learn.PV_TC_corr = PV_TC_corr_learning;
+short_term_learn.perf = perf_learning;
+short_term_learn.TC_corr_match = TC_corr_match_learning;
+short_term_learn.tuned_frac = tuned_frac_learning
+
+short_term_recall
+long_term_recall
+
 
 %logical of tuned neurons (A/B/AB for TS/SI with min 5 events)
 learn_comb_data.tuned_log_learning = tuned_log_learning;

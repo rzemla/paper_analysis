@@ -1,8 +1,6 @@
-function [CNMF_learn,reg_learn,reg_recall,PV_TC_corr_recall, perf_recall,PV_TC_corr_learning,perf_learning,...
-          SCE_recall, SCE_learning,session_vars_learn,session_vars_recall,...
-          TC_corr_match_learning,TC_corr_match_recall,...
-          tuned_frac_learning,tuned_frac_recall,...
-          learn_comb_data,recall_comb_data] = figure4_load_data()
+function [CNMF_learn,reg_learn,reg_recall,reg_recall_long,session_vars_learn,...
+        session_vars_recall,session_vars_recall_long,...
+        short_term_learn,short_term_recall,short_term_recall_long] = figure4_load_data()
 
       %% Skip loading of SCE data for now
       %assign dummy outputs for now
@@ -109,7 +107,7 @@ for ii=1:size(path_dir_recall_long,2)
     end
 end
 
-%% CNMF component outlines and templates - just learning for Figure 4 display
+%% CNMF component outlines and templates - just learning for Figure 4 display (match components FOV)
 for ii = 1:size(path_dir_learn,2)
     %load in relevant CNMF variables for visualization purposes
     %CNMF_vars{ii} = load(fullfile(inputfiles{ii}.folder,inputfiles{ii}.name),'A_keep','C_keep','Cn','Coor_kp','expDffMedZeroed','dims');
@@ -246,14 +244,44 @@ for ss=1:size(crossdir_learn,2)
 end
 
 %% Bundle learning and recall data into structs for export and analysis
-
+%short term learning struct
+short_term_learn.PV_TC_corr = PV_TC_corr_learning;
+short_term_learn.perf = perf_learning;
+short_term_learn.TC_corr_match = TC_corr_match_learning;
+short_term_learn.tuned_frac = tuned_frac_learning;
 %logical of tuned neurons (A/B/AB for TS/SI with min 5 events)
-learn_comb_data.tuned_log_learning = tuned_log_learning;
-recall_comb_data.tuned_log_recall = tuned_log_recall;
-
+short_term_learn.tuned_log = tuned_log_learning;
 %max tuning vectors
-learn_comb_data.pf_vector_max_learning = pf_vector_max_learning;
-recall_comb_data.pf_vector_max_recall = pf_vector_max_recall;
+short_term_learn.pf_vector_max = pf_vector_max_learning;
+
+%short term recall struct
+short_term_recall.PV_TC_corr = PV_TC_corr_recall;
+short_term_recall.perf = perf_recall;
+short_term_recall.TC_corr_match = TC_corr_match_recall;
+short_term_recall.tuned_frac = tuned_frac_recall;
+%logical of tuned neurons (A/B/AB for TS/SI with min 5 events)
+short_term_recall.tuned_log = tuned_log_recall;
+%max tuning vectors
+short_term_recall.pf_vector_max = pf_vector_max_recall;
+
+%long term recall struct
+long_term_recall.PV_TC_corr = PV_TC_corr_recall_long;
+long_term_recall.perf = perf_recall_long;
+long_term_recall.TC_corr_match = TC_corr_match_recall_long;
+long_term_recall.tuned_frac = tuned_frac_recall_long;
+%logical of tuned neurons (A/B/AB for TS/SI with min 5 events)
+long_term_recall.tuned_log = tuned_log_recall_long;
+%max tuning vectors
+long_term_recall.pf_vector_max = pf_vector_max_recall_long;
+
+
+
+% learn_comb_data.tuned_log_learning = tuned_log_learning;
+% recall_comb_data.tuned_log_recall = tuned_log_recall;
+% 
+% %max tuning vectors
+% learn_comb_data.pf_vector_max_learning = pf_vector_max_learning;
+% recall_comb_data.pf_vector_max_recall = pf_vector_max_recall;
 
 
 end
