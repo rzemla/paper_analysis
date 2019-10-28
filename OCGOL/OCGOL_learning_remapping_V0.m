@@ -1,7 +1,7 @@
 %% Import variables and define options
 
 %run componenet registration across sessions
-options.register = 1;
+options.register = 0;
 
 %whether to load place field data processed below
 options.loadPlaceField_data = 0;
@@ -60,8 +60,6 @@ sessionSelect = options.sessionSelect;
 %  
 %  crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
 
-
-
 %I58 RT
 %input directories to matching function
 %  path_dir = {'E:\OCGOL_learning_short_term\I58_RT\I58_RT_5A5B_073019_1',...
@@ -77,7 +75,7 @@ sessionSelect = options.sessionSelect;
 % crossdir = 'E:\OCGOL_learning_short_term\I58_RT\crossSession';
 
 %I58 LT
-%  path_dir = {'E:\OCGOL_learning_short_term\I58_LT\I58_LT_5A5B_080419_1',...
+% path_dir = {'E:\OCGOL_learning_short_term\I58_LT\I58_LT_5A5B_080419_1',...
 %      'E:\OCGOL_learning_short_term\I58_LT\I58_LT_5A5B_080519_2',...
 %      'E:\OCGOL_learning_short_term\I58_LT\I58_LT_3A3B_080619_3',...
 %      'E:\OCGOL_learning_short_term\I58_LT\I58_LT_3A3B_080719_4',...
@@ -386,6 +384,7 @@ options.AUC_test = 'ranksum';
 options.p_sig = 0.05;
 %make sure that this function does not overwrite the the previous
 %task_selective_ROIs structure
+
 [task_remapping_ROIs,partial_field_idx] = remapping_categorize_multi_ses(cent_diff, tunedLogical ,pf_vector, session_vars,...
                         max_transient_peak, pf_count_filtered,select_fields,options);
 
@@ -408,6 +407,7 @@ hold on
 plot(fraction_rel_AB(:,6))
 
 %% Save task-selective and task remapping neurons into struct neurons 
+
 
 %get # of ROIs in each session
 for ss=sessionSelect
@@ -539,6 +539,7 @@ activity_distributions(session_vars,task_selective_ROIs,options)
 %% Extract performance fractions across sessions (respective laps)
 %check if agree with manual analysis
 %turn into table with future code upgrade
+
 
 %which sessions to use
 %options.sessionSelect = [1 2 3 4 5 6];

@@ -1,13 +1,13 @@
 %% Import variables and define options
 
 %run componenet registration across sessions
-options.register = 1;
+options.register = 0;
 
 %whether to load place field data processed below
-options.loadPlaceField_data = 1;
+options.loadPlaceField_data = 0;
 
 %load extracted ROI zooms/outlines
-options.load_ROI_zooms_outlines = 1;
+options.load_ROI_zooms_outlines = 0;
 
 %visualize ROI outlines of matches across sessions
 options.visualize_match = 0;
@@ -184,7 +184,7 @@ end
 %% Visualize the matching ROIs that were matched above (match on every session only!)
 %number of ROIs (rows) by sessions (cols)
 rows = 20;
-cols = 7; %take # of sessions as input
+cols = 6; %take # of sessions as input
 
 %number of sessions to look at
 nb_ses = cols;
@@ -538,7 +538,7 @@ legend(name_cell);
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 7];
+options.sessionSelect = [1 2 3 4 5 6];
 options.selectSes = [1 2 ];
 %learning or recall datasets
 options.learning_data = 0;
@@ -690,7 +690,7 @@ detect_SCE_assembly(combined_day_SCE_mat,options)
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'si'; %si or ts
-options.sessionSelect = [1 2 3 4 5 6 7];
+options.sessionSelect = [1 2 3 4 5 6 ];
 %chose all A/B (learning) vs. only correct A/B (recall)
 options.selectTrial = [1,2];
 %is it a learning set (for plot/raster annotation)
@@ -703,7 +703,7 @@ non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,cross
 %turn into table with future code upgrade
 
 %which sessions to use
-options.sessionSelect = [1 2 3 4 5 6 7];
+options.sessionSelect = [1 2 3 4 5 6];
 %chose all A/B (learning) vs. only correct A/B (recall)
 options.selectTrial = [1,2];
 

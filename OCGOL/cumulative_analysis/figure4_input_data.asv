@@ -158,7 +158,7 @@ path_dir_recall_long{3} = {'D:\OCGOL_learning_long_term\I46\I46_AB_d1_062018_1',
      'D:\OCGOL_learning_long_term\I46\I46_AB_d30_071818_6'};
  
 %cross session directory
-crossdir_recall_long{3} = 'D:\OCGOL_learning_long_term\I46\crossSession';
+crossdir_recall_long{3} = 'D:\OCGOL_learning_long_term\I45_RT\crossSession';
 
 
 end
