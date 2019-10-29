@@ -715,8 +715,9 @@ figure
 hold on 
 title('TC correlation - T.S.')
 ylim([0 1])
-xlim([1 10])
-xticks(2:9)
+xlim([1 7])
+xticks(2:6)
+xticklabels({'6','16','20','25','30'})
 yticks(0:0.2:1)
 xlabel('Days')
 ylabel('Correlation score')
@@ -729,15 +730,16 @@ rB = errorbar(2:6,mean_TC_recall_all.B(2:6),sem_TC_recall_all.B(2:6),'LineStyle'
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
-legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
+%legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
 
 %% Plot line plot with errorbars - by animal - T.C.
 figure
 hold on 
 title('TC correlation - T.S.')
 ylim([0 1])
-xlim([1 10])
-xticks(2:9)
+xlim([1 7])
+xticks(2:6)
+xticklabels({'6','16','20','25','30'})
 yticks(0:0.2:1)
 xlabel('Days')
 ylabel('Correlation score')
@@ -745,20 +747,22 @@ ylabel('Correlation score')
 rA = errorbar(2:6,mean_mean_TC_recall_days_ind.A(2:6),sem_TC_recall_days_ind.A(2:6),'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
 rB = errorbar(2:6,mean_mean_TC_recall_days_ind.B(2:6),sem_TC_recall_days_ind.B(2:6),'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
 %Learn
-lA = errorbar(2:9,mean_mean_TC_learn_days_ind.A(2:9),sem_TC_learn_days_ind.A(2:9),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-rB = errorbar(2:9,mean_mean_TC_learn_days_ind.B(2:9),sem_TC_learn_days_ind.B(2:9),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+% lA = errorbar(2:9,mean_mean_TC_learn_days_ind.A(2:9),sem_TC_learn_days_ind.A(2:9),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+% rB = errorbar(2:9,mean_mean_TC_learn_days_ind.B(2:9),sem_TC_learn_days_ind.B(2:9),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
 
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
-legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
+
+%legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
 
 %% Plot line plot with errorbars - by animal - P.V.
 figure
 hold on 
 title('PV correlation - T.S.')
 ylim([0 1])
-xlim([1 10])
-xticks(2:9)
+xlim([1 7])
+xticks(2:6)
+xticklabels({'6','16','20','25','30'})
 yticks(0:0.2:1)
 xlabel('Days')
 ylabel('Correlation score')
@@ -771,7 +775,7 @@ rB = errorbar(2:6,mean_mean_PV_recall_days_ind.B(2:6),sem_PV_recall_days_ind.B(2
 
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
-legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
+%legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
 
 %% Plot NEIGHBOR T.C correlation for learning/recall - individual neurons pooled
 
@@ -779,9 +783,9 @@ figure
 hold on 
 title('TC correlation - T.S. - neighbors')
 ylim([0 1])
-xlim([0 9])
-xticks(1:8)
-xticklabels({'1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'})
+xlim([0 6])
+xticks(1:5)
+xticklabels({'1-6','6-16','16-20','20-25','25-30'})
 %yticks(0:0.2:1)
 xlabel('Neighboring days')
 ylabel('Correlation score')
@@ -802,9 +806,9 @@ figure
 hold on 
 title('PV correlation - T.S. - neighbors')
 ylim([0 1])
-xlim([0 9])
-xticks(1:6)
-xticklabels({'1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'})
+xlim([0 6])
+xticks(1:5)
+xticklabels({'1-6','6-16','16-20','20-25','25-30'})
 %yticks(0:0.2:1)
 xlabel('Neighboring days')
 ylabel('Correlation score')
