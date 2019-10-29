@@ -803,7 +803,7 @@ hold on
 title('PV correlation - T.S. - neighbors')
 ylim([0 1])
 xlim([0 9])
-xticks(1:8)
+xticks(1:6)
 xticklabels({'1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'})
 %yticks(0:0.2:1)
 xlabel('Neighboring days')
