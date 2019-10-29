@@ -18,14 +18,14 @@ end
 check_STC_AB_comparison(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
 
 
-%% Combine STC matches across time relative to D1 (all animals into 1)
+%% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)
 %also orient maps by day (T.S.) only tuned for now for learning and recall
 
 %short term learning vs recall
 combine_STC_plot_multi_animal(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
 
 %vs long term data
-combine_STC_plot_multi_animal(short_term_learn.TC_corr_match,long_term_recall.TC_corr_match)
+combine_STC_plot_multi_animal_short_vs_long_term(short_term_learn.TC_corr_match,long_term_recall.TC_corr_match)
 
 %% Examine spatial trajectories for across time
 
