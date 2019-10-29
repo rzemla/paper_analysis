@@ -23,6 +23,7 @@ options.sessionSelect = [1 2 3 4 5 6 7];
 selectTrial = options.selectTrial;
 sessionSelect = options.sessionSelect;
 
+%I47 LP
 % path_dir = {'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d1_062018_1',...
 %      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d2_062118_2',...
 %      'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d3_062218_3',...
@@ -33,6 +34,8 @@ sessionSelect = options.sessionSelect;
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I47_LP\crossSession';
 % 
+
+%I42 R
 % path_dir = {'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d1_032118_1',...
 %     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d2_032218_2',...
 %     'G:\OCGOL_stability_recall\I42R_1\I42R_AB_d3_032318_3',...
@@ -53,7 +56,8 @@ sessionSelect = options.sessionSelect;
      'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
 %cross session directory
 crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
-% 
+
+%I45
 % path_dir = {'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d1_062018_1',...
 %     'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d2_062118_2',...
 %     'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d3_062218_3',...
@@ -63,7 +67,8 @@ crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
 %     'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d9_062818_7'};
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I45_RT\crossSession';
-% 
+
+%I42L 1
 %  path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
 %      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
 %      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
@@ -298,6 +303,9 @@ options.allCorrect = 1;
 
 [recurr,frac_active] = recurrence_analysis(registered,options);
 
+%save recurrence and fraction active of neurons
+
+save(fullfile(crossdir,'recurrence.mat'),'recurr','frac_active');
 
 %% Centroid difference (max transient rate) - also returns vector of max angle (of place field) - pf_vector_max
 %MODIFY TO BEHAVE LIKE FOR SINGLE SESSIONS
@@ -481,10 +489,10 @@ activity_distributions(session_vars,task_selective_ROIs,options)
 %which sessions to use
 %options.sessionSelect = [1 2 3 4 5 6];
 
-[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
+[ses_perf,ses_lap_ct,ses_lap_corr_ct] = session_performance(session_vars,options);
 
 %export session performance data
-save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
+save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct','ses_lap_corr_ct');
 
 %% Detect SCEs and measure number of SCE in each session A or B
 
@@ -712,10 +720,10 @@ options.sessionSelect = [1 2 3 4 5 6];
 %chose all A/B (learning) vs. only correct A/B (recall)
 options.selectTrial = [1,2];
 
-[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
+[ses_perf,ses_lap_ct, session_lap_ct_corr] = session_performance(session_vars,options);
 
 %export session performance data
-save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
+save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct','session_lap_ct_corr');
 
 
 %% Centroid difference (max transient rate)

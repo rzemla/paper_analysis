@@ -37,6 +37,7 @@ for ii=1:nb_ses
         %TS A or B
         recurr.ts.AorB(ii,jj) =length(find(sum(match_bin.ts.AorB(:,[ii jj]),2) == 2))/...
             (length(find(sum(match_bin.ts.AorB(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.ts.AorB(:,[ii jj]),2) == 2)));
+        
         %SI A / B
         recurr.si.A(ii,jj) =length(find(sum(match_bin.si.A(:,[ii jj]),2) == 2))/...
             (length(find(sum(match_bin.si.A(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.si.A(:,[ii jj]),2) == 2)));
@@ -44,7 +45,7 @@ for ii=1:nb_ses
             (length(find(sum(match_bin.si.B(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.si.B(:,[ii jj]),2) == 2)));
         %SI A or B
         recurr.si.AorB(ii,jj) =length(find(sum(match_bin.si.AorB(:,[ii jj]),2) == 2))/...
-            (length(find(sum(match_bin.si.AorB(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.si.AorB(:,[ii jj]),2) == 2)));        
+            (length(find(sum(match_bin.si.AorB(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.si.AorB(:,[ii jj]),2) == 2)));
     end
 end
 
