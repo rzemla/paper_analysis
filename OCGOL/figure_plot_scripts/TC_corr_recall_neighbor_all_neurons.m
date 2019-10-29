@@ -1,9 +1,11 @@
-function [mean_TC_recall_neighbor_all,sem_TC_recall_neighbor_all] = TC_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days_all)
+function [mean_TC_recall_neighbor_all,sem_TC_recall_neighbor_all] = TC_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days_all,nb_ses)
 
 %% Calculate TC correlation neighbor recall
-%MAKE THIS ADJUSTABLE
+%added nb_ses parameters to calculate over how many sessions to run
+%analysis
+
 %correlation coefcient for each neuron
-for dd=1:5
+for dd=1:nb_ses
     %check if empty
     if ~isempty(neighbor_STC_recall_days_all.A{dd})
         %A

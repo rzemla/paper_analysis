@@ -546,10 +546,12 @@ for dd=1:5
 end
 
 %% Get mean and sem for TC on neighboring RECALL days
-[mean_TC_recall_neighbor_all,sem_TC_recall_neighbor_all] = TC_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days_all);
+%1 less for long-term recall sessions 
+nb_ses = 5;
+[mean_TC_recall_neighbor_all,sem_TC_recall_neighbor_all] = TC_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days_all,nb_ses);
 
 %do per animal (uncollapsed input - need separate out from each animal) -
-[mean_mean_PV_recall_neighbor_all,sem_PV_recall_neighbor_all] = PV_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days);
+[mean_mean_PV_recall_neighbor_all,sem_PV_recall_neighbor_all] = PV_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days,nb_ses);
                   
                     
 %% Split TC and PV calculation by ANIMAL (rather than neuron pool) - seems necessary for PV - RECALL
@@ -798,7 +800,7 @@ rB = errorbar(1:5,mean_TC_recall_neighbor_all.B,sem_TC_recall_neighbor_all.B,'Li
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
-legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','southeast')
+%legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','southeast')
 
 %% Plot NEIGHBOR P.V. correlation for learning/recall - by animals
 
@@ -821,7 +823,7 @@ rB = errorbar(1:5,mean_mean_PV_recall_neighbor_all.B,sem_PV_recall_neighbor_all.
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
-legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','southeast')
+%legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','southeast')
 
 
 %% Plots - OLD CODE BELOW

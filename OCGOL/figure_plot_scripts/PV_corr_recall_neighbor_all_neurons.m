@@ -1,9 +1,9 @@
-function [mean_mean_PV_recall_neighbor_all,sem_PV_recall_neighbor_all] = PV_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days_all)
+function [mean_mean_PV_recall_neighbor_all,sem_PV_recall_neighbor_all] = PV_corr_recall_neighbor_all_neurons(neighbor_STC_recall_days_all,nb_ses)
 
 %% Calculate TC correlation neighbor recall
 
 %correlation coefcient for each neuron
-for dd=1:5
+for dd=1:nb_ses
     %for every animal
     for aa=1:size(neighbor_STC_recall_days_all.A,1)
         %check if empty
