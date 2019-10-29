@@ -294,10 +294,9 @@ options.allCorrect = 1;
 %least 5 events on distinct laps within that PF - otherwise not PF
 [registered] = filter_matching_components(registered,tunedLogical,select_fields,options);
 
-%% Recurrence and fraction matched analysis
+%% Recurrence and fraction active analysis
 
-
-recurrence_analysis(registered,options)
+[recurr,frac_active] = recurrence_analysis(registered,options);
 
 
 %% Centroid difference (max transient rate) - also returns vector of max angle (of place field) - pf_vector_max
