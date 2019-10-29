@@ -4,10 +4,10 @@
 options.register = 0;
 
 %whether to load place field data processed below
-options.loadPlaceField_data = 0;
+options.loadPlaceField_data = 1;
 
 %load extracted ROI zooms/outlines
-options.load_ROI_zooms_outlines = 0;
+options.load_ROI_zooms_outlines = 1;
 
 %visualize ROI outlines of matches across sessions
 options.visualize_match = 0;
@@ -17,7 +17,7 @@ options.loadSCE = 0;
 
 options.selectTrial = [1 2];
 %which session to include in calculation
-options.sessionSelect = [1 2 3 4 5 6];
+options.sessionSelect = [1 2 3 4 5 6 7];
 
 %for use in workspace
 selectTrial = options.selectTrial;
@@ -43,16 +43,16 @@ sessionSelect = options.sessionSelect;
 % %cross session directory
 % crossdir = 'G:\OCGOL_stability_recall\I42R_1\crossSession';
 
-% 
-%  path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d3_062218_3',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d6_062518_4',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d7_062618_5',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d8_062718_6',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
+% I46
+ path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d3_062218_3',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d6_062518_4',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d7_062618_5',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d8_062718_6',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
+%cross session directory
+crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
 % 
 % path_dir = {'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d1_062018_1',...
 %     'G:\OCGOL_stability_recall\I45_RT\I45_RT_AB_d2_062118_2',...
@@ -75,7 +75,7 @@ sessionSelect = options.sessionSelect;
 % crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
 % 
 
-%LONG-TERM (30 day sessions)
+                            %%%%% LONG-TERM (30 day sessions) %%%%
 %I47_LP
 % path_dir = {'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d1_062018_1',...
 %      'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d6_062518_2',...
@@ -97,14 +97,14 @@ sessionSelect = options.sessionSelect;
 % crossdir = 'D:\OCGOL_learning_long_term\I45_RT\crossSession';
 
 %I46
-path_dir = {'D:\OCGOL_learning_long_term\I46\I46_AB_d1_062018_1',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d6_062518_2',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d16_070518_3',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d20_070918_4',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d25_071318_5',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d30_071818_6'};
-%cross session directory
-crossdir = 'D:\OCGOL_learning_long_term\I46\crossSession';
+% path_dir = {'D:\OCGOL_learning_long_term\I46\I46_AB_d1_062018_1',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d6_062518_2',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d16_070518_3',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d20_070918_4',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d25_071318_5',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d30_071818_6'};
+% %cross session directory
+% crossdir = 'D:\OCGOL_learning_long_term\I46\crossSession';
 
 %% Load place cell variables for each session
 %get mat directories in each output folder
@@ -293,6 +293,12 @@ options.allCorrect = 1;
 %select fields has logical 1 for whichever neurons has a place field at at
 %least 5 events on distinct laps within that PF - otherwise not PF
 [registered] = filter_matching_components(registered,tunedLogical,select_fields,options);
+
+%% Recurrence and fraction matched analysis
+
+
+recurrence_analysis(registered,options)
+
 
 %% Centroid difference (max transient rate) - also returns vector of max angle (of place field) - pf_vector_max
 %MODIFY TO BEHAVE LIKE FOR SINGLE SESSIONS

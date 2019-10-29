@@ -1,0 +1,53 @@
+function [outputArg1,outputArg2] = recurrence_analysis(registered,options)
+
+%all active assigned
+all_active_match = registered.multi.assigned_filtered;
+
+%convert to binary
+all_active_match_bin = ~isnan(all_active_match);
+
+%SI binary match matrices for A and B trials
+%SI
+match_bin.si.A = ~isnan(registered.multi.matching_list_filtered.si_Aall_filt_event_filt);
+match_bin.si.B = ~isnan(registered.multi.matching_list_filtered.si_Ball_filt_event_filt);
+%TS
+match_bin.ts.A = ~isnan(registered.multi.matching_list_filtered.ts_Aall_filt_event_filt);
+match_bin.ts.B = ~isnan(registered.multi.matching_list_filtered.ts_Ball_filt_event_filt);
+
+%calculate recurrence
+%for given 2 sessions, find neurons that are tuned in both divided by
+%neurons that are tuned in either or both sessions
+% (1/1)/(1/0 or 0/1 or 1/1)
+
+%for session against the other
+for ii=1:7
+    for jj=1:7
+        %TS A / B
+        recurr.ts.A(ii,jj) =length(find(sum(match_bin.ts.A(:,[ii jj]),2) == 2))/...
+            (length(find(sum(match_bin.ts.A(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.ts.A(:,[ii jj]),2) == 2)));
+        recurr.ts.B(ii,jj) =length(find(sum(match_bin.ts.B(:,[ii jj]),2) == 2))/...
+            (length(find(sum(match_bin.ts.B(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.ts.B(:,[ii jj]),2) == 2)));
+        %SI A / B
+        recurr.si.A(ii,jj) =length(find(sum(match_bin.si.A(:,[ii jj]),2) == 2))/...
+            (length(find(sum(match_bin.si.A(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.si.A(:,[ii jj]),2) == 2)));
+        recurr.si.B(ii,jj) =length(find(sum(match_bin.si.B(:,[ii jj]),2) == 2))/...
+            (length(find(sum(match_bin.si.B(:,[ii jj]),2) == 1)) + length(find(sum(match_bin.si.B(:,[ii jj]),2) == 2)));
+    end
+end
+
+
+%% Plot recurrence rate across time (relative to D1)
+figure
+hold on
+title('T.S. tuned match rel D1')
+plot(recurr.ts.A(1,:),'b')
+plot(recurr.ts.B(1,:),'r')
+
+figure
+hold on
+title('S.I. tuned match rel D1')
+plot(recurr.si.A(1,:),'b')
+plot(recurr.si.B(1,:),'r')
+
+end
+
