@@ -130,9 +130,9 @@ for ii = options.sessionSelect%1:size(path_dir,2)
     session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
         'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split');
     
-    %read in cleaned soma ROIs from day 1 (only first session)
+    %read in cleaned soma ROIs from day 1
     if ii == 1
-        load(fullfile(rm_d1_files.folder,rm_d1_files.name),'removedROI_clean')
+        load(fullfile(rm_d1_files.folderrm_d1_files.name))
     end
 end
 
@@ -310,7 +310,7 @@ options.allCorrect = 1;
 
 %% Recurrence and fraction active analysis
 
-[recurr,frac_active] = recurrence_analysis(registered,removedROI_clean,session_vars,tunedLogical,select_fields,options);
+[recurr,frac_active] = recurrence_analysis(registered,options);
 
 %save recurrence and fraction active of neurons
 

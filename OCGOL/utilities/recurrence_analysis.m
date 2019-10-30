@@ -1,8 +1,9 @@
-function [recurr,frac_active] = recurrence_analysis(registered,options)
-
+function [recurr,frac_active] = recurrence_analysis(registered,removedROI_clean,session_vars,tunedLogical,select_fields,options)
 
 %set the number of sessions based on number of sessions imageed
 nb_ses = size(options.sessionSelect,2);
+
+%% Get all active neurons that are matched and post-match manually filtered
 
 %all active assigned
 all_active_match = registered.multi.assigned_filtered;
@@ -10,6 +11,54 @@ all_active_match = registered.multi.assigned_filtered;
 %convert to binary
 all_active_match_bin = ~isnan(all_active_match);
 
+%% Add all neurons from each session that have no matching partner to end of match matrix
+%take into account soma cleaning from d1 where non-somatic point
+%componenets were also included, but not in later sessions)
+
+%day 1 cleaned components
+%check if any i
+d1_cleaned_ROIs = find(removedROI_clean ==1);
+
+%check if any of the removed components have a match on d1/ses 1
+if ~isempty(intersect(all_active_match(:,1),d1_cleaned_ROIs))
+    
+else
+    %remove those ROI from the removed components
+end
+
+%get nb ROIs from each session
+for ii=1:nb_ses
+    %number ROIs
+    nbROI(ii) = size(session_vars{ii}.Imaging.trace_restricted,2);
+    %construct list of sequential ROIs from each ses from comp below
+    ROI_list_ses{ii} = 1:nbROI(ii);
+end
+
+%get ROIs that do not have any matches to the other days
+for ii=1:nb_ses
+    % get all neurons that have no matches
+    no_match_ROIs{ii} = setdiff(ROI_list_ses{ii},all_active_match(:,ii));
+    %remove cleaned up soma from D1
+    if ii==1
+       no_match_ROIs{ii} = setdiff(no_match_ROIs{ii},d1_cleaned_ROIs);
+    end
+    
+end
+
+%% Extent the match matrix to include never matching neurons
+%create extension matrix
+unmatched_ROI_nb = cellfun(@(x) size(x,2),no_match_ROIs,'UniformOutput',true);
+%blank matrix
+extension_matrix = zeros(sum(unmatched_ROI_nb),nb_ses);
+
+%define fill indices
+end_fill_idx = cumsum(unmatched_ROI_nb);
+start_fill_idx = [1,end_fill_idx(1:end-1)+1];
+
+%fill the blank matrix with 
+
+
+%% 
 %SI binary match matrices for A and B trials
 %SI
 match_bin.si.A = ~isnan(registered.multi.matching_list_filtered.si_Aall_filt_event_filt);
@@ -20,6 +69,8 @@ match_bin.si.AorB = match_bin.si.A | match_bin.si.B;
 match_bin.ts.A = ~isnan(registered.multi.matching_list_filtered.ts_Aall_filt_event_filt);
 match_bin.ts.B = ~isnan(registered.multi.matching_list_filtered.ts_Ball_filt_event_filt);
 match_bin.ts.AorB = match_bin.ts.A | match_bin.ts.B;
+
+%% 
 
 %calculate recurrence
 %for given 2 sessions, find neurons that are tuned in both divided by
