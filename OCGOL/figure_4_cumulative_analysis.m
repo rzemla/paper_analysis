@@ -1,10 +1,12 @@
 %% Load  data from learn and recall animals
 
-%add option to skip loading centrain variable types
+%skip loading of session var data
+options.skipSesVars = 1;
+
 tic;
 [CNMF_learn,reg_learn,reg_recall,reg_recall_long,session_vars_learn,...
         session_vars_recall,session_vars_recall_long,...
-        short_term_learn,short_term_recall,long_term_recall] = figure4_load_data();
+        short_term_learn,short_term_recall,long_term_recall] = figure4_load_data(options);
 toc;
 
 %% SCE rate scatter plots and cdfs
@@ -26,6 +28,10 @@ combine_STC_plot_multi_animal(short_term_learn.TC_corr_match,short_term_recall.T
 
 %vs long term data
 combine_STC_plot_multi_animal_short_vs_long_term(short_term_learn.TC_corr_match,long_term_recall.TC_corr_match)
+
+%% Recurrence analysis
+
+recurrence_cum_analysis(short_term_recall,long_term_recall)
 
 %% Examine spatial trajectories for across time
 

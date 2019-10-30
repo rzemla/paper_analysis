@@ -1,11 +1,12 @@
 function [CNMF_learn,reg_learn,reg_recall,reg_recall_long,session_vars_learn,...
         session_vars_recall,session_vars_recall_long,...
-        short_term_learn,short_term_recall,long_term_recall] = figure4_load_data()
+        short_term_learn,short_term_recall,long_term_recall] = figure4_load_data(options)
 
       %% Skip loading of SCE data for now
       %assign dummy outputs for now
       SCE_recall = [];
       SCE_learning = [];
+      
       
 %% Load in pre-defined experiments directories for all animals -learning and recall
 
@@ -32,17 +33,23 @@ for ii=1:size(path_dir_learn,2)
     end
 end
 
-%learn session variables
-%for each animal
-for ii=1:size(path_dir_learn,2)
-    disp(ii)
-    %load in session varaibles
-    for ss =1:size(path_dir_learn{ii},2)
-        disp(ss)
-        %decide which variables here do not need to be loaded
-        session_vars_learn{ii}{ss} = load(fullfile(outputfiles_learn{ii}{ss}.folder, outputfiles_learn{ii}{ss}.name),...
-            'Behavior_split', 'Imaging_split');
+
+if options.skipSesVars == 0
+    
+    %learn session variables
+    %for each animal
+    for ii=1:size(path_dir_learn,2)
+        disp(ii)
+        %load in session varaibles
+        for ss =1:size(path_dir_learn{ii},2)
+            disp(ss)
+            %decide which variables here do not need to be loaded
+            session_vars_learn{ii}{ss} = load(fullfile(outputfiles_learn{ii}{ss}.folder, outputfiles_learn{ii}{ss}.name),...
+                'Behavior_split', 'Imaging_split');
+        end
     end
+else %set blank variable for session vars
+    session_vars_learn = [];
 end
 
 %for each recall animal
@@ -61,6 +68,7 @@ for ii=1:size(path_dir_recall,2)
     end
 end
 
+if options.skipSesVars == 0
 
 %recall session variables
 %for each animal
@@ -73,6 +81,11 @@ for ii=1:size(path_dir_recall,2)
         session_vars_recall{ii}{ss} = load(fullfile(outputfiles_recall{ii}{ss}.folder, outputfiles_recall{ii}{ss}.name),...
             'Behavior_split', 'Imaging_split');
     end
+end
+
+else %set blank variable for session vars
+    session_vars_recall = [];
+
 end
 
 %% Long term session load variables
@@ -93,18 +106,24 @@ for ii=1:size(path_dir_recall_long,2)
     end
 end
 
-
-%recall session variables
-%for each animal
-for ii=1:size(path_dir_recall_long,2)
-    disp(ii)
-    %load in session varaibles
-    for ss =1:size(path_dir_recall_long{ii},2)
-        disp(ss)
-        %decide which variables here do not need to be loaded
-        session_vars_recall_long{ii}{ss} = load(fullfile(outputfiles_recall_long{ii}{ss}.folder, outputfiles_recall_long{ii}{ss}.name),...
-            'Behavior_split', 'Imaging_split');
+if options.skipSesVars == 0
+    
+    %recall session variables
+    %for each animal
+    for ii=1:size(path_dir_recall_long,2)
+        disp(ii)
+        %load in session varaibles
+        for ss =1:size(path_dir_recall_long{ii},2)
+            disp(ss)
+            %decide which variables here do not need to be loaded
+            session_vars_recall_long{ii}{ss} = load(fullfile(outputfiles_recall_long{ii}{ss}.folder, outputfiles_recall_long{ii}{ss}.name),...
+                'Behavior_split', 'Imaging_split');
+        end
     end
+    
+else %set blank variable for session vars
+    session_vars_recall_long = [];
+    
 end
 
 %% CNMF component outlines and templates - just learning for Figure 4 display (match components FOV)
@@ -192,9 +211,12 @@ for ss=1:size(crossdir_recall,2)
     %pf vector max - vector of maximum firing place field for each neuron
     pf_vector_max_recall{ss} = load(fullfile(crossdir_recall{ss},'pf_vector_max.mat'));
     
+    %recurrence data
+    recur_recall{ss} = load(fullfile(crossdir_recall{ss},'recurrence.mat'));
+    
 end
 
-%% read in short term recall data
+%% read in long term recall data
 for ss=1:size(crossdir_recall_long,2)
     %TC/PV correlations
     PV_TC_corr_recall_long(ss) = load(fullfile(crossdir_recall_long{ss},'PV_TC_corr.mat'));
@@ -215,6 +237,9 @@ for ss=1:size(crossdir_recall_long,2)
     tuned_log_recall_long{ss} = load(fullfile(crossdir_recall_long{ss},'tuned_logicals.mat'));
     %pf vector max - vector of maximum firing place field for each neuron
     pf_vector_max_recall_long{ss} = load(fullfile(crossdir_recall_long{ss},'pf_vector_max.mat'));
+    
+    %recurrence data
+    recur_recall_long{ss} = load(fullfile(crossdir_recall_long{ss},'recurrence.mat'));
     
 end
 
@@ -263,6 +288,8 @@ short_term_recall.tuned_frac = tuned_frac_recall;
 short_term_recall.tuned_log = tuned_log_recall;
 %max tuning vectors
 short_term_recall.pf_vector_max = pf_vector_max_recall;
+%recurrence
+short_term_recall.recurr = recur_recall;
 
 %long term recall struct
 long_term_recall.PV_TC_corr = PV_TC_corr_recall_long;
@@ -273,6 +300,8 @@ long_term_recall.tuned_frac = tuned_frac_recall_long;
 long_term_recall.tuned_log = tuned_log_recall_long;
 %max tuning vectors
 long_term_recall.pf_vector_max = pf_vector_max_recall_long;
+%recurrence
+long_term_recall.recurr = recur_recall_long;
 
 
 
