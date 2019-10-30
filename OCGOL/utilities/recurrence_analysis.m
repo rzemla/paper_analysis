@@ -20,11 +20,17 @@ all_active_match_bin = ~isnan(all_active_match);
 d1_cleaned_ROIs = find(removedROI_clean ==1);
 
 %check if any of the removed components have a match on d1/ses 1
-if ~isempty(intersect(all_active_match(:,1),d1_cleaned_ROIs))
-    
+if isempty(intersect(all_active_match(:,1),d1_cleaned_ROIs))
+    disp('None of cleaned neurons from day 1 are in match')
 else
-    disp('Need to modify this')
     %remove those ROI from the removed components
+    disp('Adjust removed neurons');
+    nb_removed = size(d1_cleaned_ROIs,1);
+    nb_overlap = size(intersect(all_active_match(:,1),d1_cleaned_ROIs),1);
+    
+    %remove the matching neurons (overwrite vector)
+    d1_cleaned_ROIs = setdiff(d1_cleaned_ROIs,intersect(all_active_match(:,1),d1_cleaned_ROIs));
+    
 end
 
 %get nb ROIs from each session

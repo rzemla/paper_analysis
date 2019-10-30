@@ -17,7 +17,7 @@ options.loadSCE = 0;
 
 options.selectTrial = [1 2];
 %which session to include in calculation
-options.sessionSelect = [1 2 3 4 5 6 7];
+options.sessionSelect = [1 2 3 4 5 6];
 
 %for use in workspace
 selectTrial = options.selectTrial;
@@ -69,15 +69,15 @@ sessionSelect = options.sessionSelect;
 % crossdir = 'G:\OCGOL_stability_recall\I45_RT\crossSession';
 
 %I42L 1
- path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
-     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
-%cross session directory
-crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
+%  path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
+%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
+% %cross session directory
+% crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
 
                             %%%%% LONG-TERM (30 day sessions) %%%%
 %I47_LP
@@ -130,9 +130,9 @@ for ii = options.sessionSelect%1:size(path_dir,2)
     session_vars{ii} = load(fullfile(matfiles{ii}.folder,matfiles{ii}.name),'Place_cell', 'Behavior',...
         'Behavior_split_lap','Behavior_split','Events_split','Events_split_lap', 'Imaging_split');
     
-    %read in cleaned soma ROIs from day 1
+    %read in cleaned soma ROIs from day 1 (only first session)
     if ii == 1
-        load(fullfile(rm_d1_files.folderrm_d1_files.name))
+        load(fullfile(rm_d1_files.folder,rm_d1_files.name),'removedROI_clean')
     end
 end
 
@@ -310,11 +310,11 @@ options.allCorrect = 1;
 
 %% Recurrence and fraction active analysis
 
-[recurr,frac_active] = recurrence_analysis(registered,options);
+[recurr,frac_active,recurr_ex,frac_active_ex] = recurrence_analysis(registered,removedROI_clean,session_vars,tunedLogical,select_fields,options);
 
 %save recurrence and fraction active of neurons
 
-save(fullfile(crossdir,'recurrence.mat'),'recurr','frac_active');
+save(fullfile(crossdir,'recurrence.mat'),'recurr','frac_active','recurr_ex','frac_active_ex');
 
 %% Centroid difference (max transient rate) - also returns vector of max angle (of place field) - pf_vector_max
 %MODIFY TO BEHAVE LIKE FOR SINGLE SESSIONS

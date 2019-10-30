@@ -1,4 +1,4 @@
-function [recurr,frac_active,rec] = recurrence_analysis(registered,removedROI_clean,session_vars,tunedLogical,select_fields,options)
+function [recurr,frac_active,recurr_ex,frac_active_ex] = recurrence_analysis(registered,removedROI_clean,session_vars,tunedLogical,select_fields,options)
 
 %set the number of sessions based on number of sessions imageed
 nb_ses = size(options.sessionSelect,2);
@@ -20,10 +20,17 @@ all_active_match_bin = ~isnan(all_active_match);
 d1_cleaned_ROIs = find(removedROI_clean ==1);
 
 %check if any of the removed components have a match on d1/ses 1
-if ~isempty(intersect(all_active_match(:,1),d1_cleaned_ROIs))
-    
+if isempty(intersect(all_active_match(:,1),d1_cleaned_ROIs))
+    disp('None of cleaned neurons from day 1 are in match')
 else
     %remove those ROI from the removed components
+    disp('Adjust removed neurons');
+    nb_removed = size(d1_cleaned_ROIs,1);
+    nb_overlap = size(intersect(all_active_match(:,1),d1_cleaned_ROIs),1);
+    
+    %remove the matching neurons
+    d1_cleaned_ROIs = setdiff(d1_cleaned_ROIs,intersect(all_active_match(:,1),d1_cleaned_ROIs));
+    
 end
 
 %get nb ROIs from each session
