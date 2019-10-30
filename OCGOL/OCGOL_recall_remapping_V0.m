@@ -310,11 +310,11 @@ options.allCorrect = 1;
 
 %% Recurrence and fraction active analysis
 
-[recurr,frac_active] = recurrence_analysis(registered,removedROI_clean,session_vars,tunedLogical,select_fields,options);
+[recurr,frac_active,recurr_ex,frac_active_ex]  = recurrence_analysis(registered,removedROI_clean,session_vars,tunedLogical,select_fields,options);
 
 %save recurrence and fraction active of neurons
 
-save(fullfile(crossdir,'recurrence.mat'),'recurr','frac_active');
+save(fullfile(crossdir,'recurrence.mat'),'recurr','frac_active','recurr_ex','frac_active_ex');
 
 %% Centroid difference (max transient rate) - also returns vector of max angle (of place field) - pf_vector_max
 %MODIFY TO BEHAVE LIKE FOR SINGLE SESSIONS
