@@ -49,11 +49,46 @@ end
 %create extension matrix
 unmatched_ROI_nb = cellfun(@(x) size(x,2),no_match_ROIs,'UniformOutput',true);
 %blank matrix
-extension_matrix = zeros(sum(unmatched_ROI_nb),nb_ses);
+extension_matrix = nan(sum(unmatched_ROI_nb),nb_ses);
 
 %define fill indices
 end_fill_idx = cumsum(unmatched_ROI_nb);
-start_
+start_fill_idx = [1,end_fill_idx(1:end-1)+1];
+
+%fill the blank matrix with 
+for ii=1:nb_ses
+    extension_matrix(start_fill_idx(ii):end_fill_idx(ii),ii) = no_match_ROIs{ii};
+end
+
+%extend active match matrix with no match ROIS
+all_active_match_ex = [all_active_match; extension_matrix];
+
+%% Create logicals for TS and SI tuning for the extended component
+
+%find A,sig T.S tuned and 5 min event with defined PF
+%convert select_fields to logical - include or not include
+for ss=1:nb_ses
+    for tt=1:2 %for A vs.B
+        %replace empty cells withs with 0
+        empty_idx = find(cellfun(@isempty,select_fields{ss}{tt})==1);
+        %equivalenet number of 0 cells to fill empty cells with
+        zero_fill_cell(1,1:size(empty_idx,2)) = {0};
+        select_fields{ss}{tt}(empty_idx) = zero_fill_cell;
+        
+        clear sig_field_sum empty_idx zero_fill_cell
+    end
+    
+end
+
+%check which fields are significant
+for ss=1:nb_ses
+    for tt=1:2 %for A vs.B
+        sig_field_sum = cellfun(@(x)sum(x,2), select_fields{ss}{tt},'UniformOutput',false);
+    end
+end
+
+%no_match_ROI
+%extension_matrix
 
 
 %% 
