@@ -144,8 +144,8 @@ figure
 hold on 
 title('Recurrence - T.S. - Long recall')
 ylim([0 1.2])
-xlim([0 8])
-xticks(1:7)
+xlim([0 7])
+xticks(1:6)
 xticklabels({'1','6','16','20','25','30'})
 yticks(0:0.2:1)
 xlabel('Days')
@@ -166,8 +166,8 @@ figure
 hold on 
 title('Recurrence - S.I. - Long recall')
 ylim([0 1.2])
-xlim([0 8])
-xticks(1:7)
+xlim([0 7])
+xticks(1:6)
 xticklabels({'1','6','16','20','25','30'})
 yticks(0:0.2:1)
 xlabel('Days')
