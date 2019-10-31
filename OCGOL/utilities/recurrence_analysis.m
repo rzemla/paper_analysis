@@ -1,5 +1,8 @@
 function [recurr,frac_active,recurr_ex,frac_active_ex] = recurrence_analysis(registered,removedROI_clean,session_vars,tunedLogical,select_fields,options)
 
+%assign select trial
+selectTrial = options.selectTrial;
+
 %set the number of sessions based on number of sessions imageed
 nb_ses = size(options.sessionSelect,2);
 
@@ -77,7 +80,7 @@ all_active_match_bin_ex = ~isnan(all_active_match_ex);
 %find A,sig T.S tuned and 5 min event with defined PF
 %convert select_fields to logical - include or not include
 for ss=1:nb_ses
-    for tt=1:2 %for A vs.B
+    for tt=options.selectTrial   %for A vs.B
         %replace empty cells withs with 0
         empty_idx = find(cellfun(@isempty,select_fields{ss}{tt})==1);
         %equivalenet number of 0 cells to fill empty cells with
@@ -91,7 +94,7 @@ end
 
 %check which fields are significant
 for ss=1:nb_ses
-    for tt=1:2 %for A vs.B
+    for tt=options.selectTrial   %for A vs.B
         %get logical output for neurons that have sig place fields
         select_field_log{ss}{tt} = logical(cell2mat(cellfun(@(x)sum(x,2), select_fields{ss}{tt},'UniformOutput',false)));
     end
@@ -103,12 +106,12 @@ end
 
 for ss=1:nb_ses
     %A
-    tuned_ROI_sig_idxs{ss}.ts.allA = find((select_field_log{ss}{1} & tunedLogical(ss).ts.Atuned)==1);
-    tuned_ROI_sig_idxs{ss}.si.allA = find((select_field_log{ss}{1} & tunedLogical(ss).si.Atuned)==1);
+    tuned_ROI_sig_idxs{ss}.ts.allA = find((select_field_log{ss}{selectTrial(1)} & tunedLogical(ss).ts.Atuned)==1);
+    tuned_ROI_sig_idxs{ss}.si.allA = find((select_field_log{ss}{selectTrial(1)} & tunedLogical(ss).si.Atuned)==1);
     
     %B 
-    tuned_ROI_sig_idxs{ss}.ts.allB = find((select_field_log{ss}{2} & tunedLogical(ss).ts.Btuned)==1);
-    tuned_ROI_sig_idxs{ss}.si.allB = find((select_field_log{ss}{2} & tunedLogical(ss).si.Btuned)==1);
+    tuned_ROI_sig_idxs{ss}.ts.allB = find((select_field_log{ss}{selectTrial(2)} & tunedLogical(ss).ts.Btuned)==1);
+    tuned_ROI_sig_idxs{ss}.si.allB = find((select_field_log{ss}{selectTrial(2)} & tunedLogical(ss).si.Btuned)==1);
 end
 
 %% Construct extended match_bin for TS/SI A/B
