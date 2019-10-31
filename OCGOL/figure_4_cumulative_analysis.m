@@ -33,6 +33,9 @@ combine_STC_plot_multi_animal_short_vs_long_term(short_term_learn.TC_corr_match,
 
 recurrence_cum_analysis(short_term_recall,long_term_recall)
 
+%learning
+recurrence_cum_analysis_learn(short_term_learn)
+
 %% Examine spatial trajectories for across time
 
 trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)

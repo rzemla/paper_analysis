@@ -265,6 +265,9 @@ for ss=1:size(crossdir_learn,2)
     %pf vector max - vector of maximum firing place field for each neuron
     pf_vector_max_learning{ss} = load(fullfile(crossdir_learn{ss},'pf_vector_max.mat'));
     
+    %recurrence data
+    recur_learn{ss} = load(fullfile(crossdir_learn{ss},'recurrence.mat'));
+    
     
 end
 
@@ -278,6 +281,9 @@ short_term_learn.tuned_frac = tuned_frac_learning;
 short_term_learn.tuned_log = tuned_log_learning;
 %max tuning vectors
 short_term_learn.pf_vector_max = pf_vector_max_learning;
+%recurrence
+short_term_learn.recurr = recur_learn;
+
 
 %short term recall struct
 short_term_recall.PV_TC_corr = PV_TC_corr_recall;
