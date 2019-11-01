@@ -416,7 +416,7 @@ sem_active.ST.recall = nanstd(active_day_order,0,1)./sqrt(nb_sem_active.ST.recal
 
 figure
 hold on 
-title('Recurrence - S.I.')
+title('Recurrence Learning - S.I.')
 ylim([0 1.2])
 xlim([0 10])
 xticks(1:9)
@@ -436,25 +436,29 @@ set(gca,'Linewidth',2)
 
 legend([rA,rB, ac],{'Learning A','Learning B','Active cells'},'location','northeast')
 
-% figure
-% hold on 
-% title('Recurrence - S.I.')
-% ylim([0 1.2])
-% xlim([0 8])
-% xticks(1:7)
-% xticklabels({'1','2','3','6','7','8','9'})
-% yticks(0:0.2:1)
-% xlabel('Days')
-% ylabel('Recurrence probability')
-% %Recall
-% rA = errorbar(1:7,recurr_short_mean.si.A,recurr_short_sem.si.A,'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
-% rB = errorbar(1:7,recurr_short_mean.si.B,recurr_short_sem.si.B,'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
-% %Active cells
-% ac = errorbar(1:7,mean_active.ST.recall,sem_active.ST.recall,'LineStyle','-','Linewidth',2,'Color',[34,139,34]/255);
-% %lA = errorbar(1:8,mean_mean_PV_learn_neighbor_all.A,sem_PV_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-% %lB = errorbar(1:8,mean_mean_PV_learn_neighbor_all.B,sem_PV_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
-% set(gca,'FontSize',16)
-% set(gca,'Linewidth',2)
+%% Recurrence learning T.S.
+
+figure
+hold on 
+title('Recurrence Learning - T.S.')
+ylim([0 1.2])
+xlim([0 10])
+xticks(1:9)
+xticklabels({'1','2','3','4','5','6','7','8','9'})
+yticks(0:0.2:1)
+xlabel('Days')
+ylabel('Recurrence probability')
+%Recall
+rA = errorbar(1:9,recurr_short_mean.ts.A,recurr_short_sem.ts.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+rB = errorbar(1:9,recurr_short_mean.ts.B,recurr_short_sem.ts.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+%Active cells
+ac = errorbar(1:9,mean_active.ST.recall,sem_active.ST.recall,'LineStyle','-','Linewidth',2,'Color',[34,139,34]/255);
+%lA = errorbar(1:8,mean_mean_PV_learn_neighbor_all.A,sem_PV_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+%lB = errorbar(1:8,mean_mean_PV_learn_neighbor_all.B,sem_PV_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
+set(gca,'FontSize',16)
+set(gca,'Linewidth',2)
+
+legend([rA,rB, ac],{'Learning A','Learning B','Active cells'},'location','northeast')
 
 
 end
