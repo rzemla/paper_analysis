@@ -15,10 +15,10 @@ if 0
     SCE_rate_plots(session_vars_learn,session_vars_recall,SCE_learning,SCE_recall, perf_learning,perf_recall)
 end
 
-%% STC comparison for matching neurons across days
+%% Tuning curve correlation for A&B tuned neurons across days
 
-check_STC_AB_comparison(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
-
+ AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
+ 
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)
 %also orient maps by day (T.S.) only tuned for now for learning and recall

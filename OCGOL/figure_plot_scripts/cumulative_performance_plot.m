@@ -97,7 +97,7 @@ errorbar(1:9,mean_learn_perf(tt,:),sem_learn_perf(tt,:),'Color', color_vec, 'Lin
 %save performance figure
 disp('Saving performance figure ')
 export_fig(f ,fullfile('G:\Google_drive\task_selective_place_paper\input_figures_to_illustrator\Figure_4_figures',...
-    'learning_performance.png'),'-r300')
+    'learning_performance.svg'),'-r600')
 
 %plot([1:6],mean_learning_perf(1,:),'LineStyle','--','LineWidth',2,'Color', [139, 0, 139]/255)
 
