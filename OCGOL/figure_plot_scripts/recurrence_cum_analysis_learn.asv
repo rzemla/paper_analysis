@@ -60,54 +60,151 @@ for dd=1:9
     switch dd
         case 1
             for aa=1:6
-                recur_day_order.si.A(aa,dd) = recurr_ex_short.si.A(aa,1);
+                recur_day_order.si.A(aa,1) = recurr_ex_short.si.A(aa,1);
             end
+        case 2
+            for aa=1:6
+                recur_day_order.si.A(aa,2) = recurr_ex_short.si.A(aa,2);
+            end
+        case 3
+            for aa=1:6
+                recur_day_order.si.A(aa,3) = recurr_ex_short.si.A(aa,3);
+            end
+        case 4
+            for aa=1:6
+                recur_day_order.si.A(aa,4) = recurr_ex_short.si.A(aa,4);
+            end            
+        case 5
+            for aa=1:6
+                if aa==1
+                    recur_day_order.si.A(aa,5) = nan;
+                elseif aa==2
+                    recur_day_order.si.A(aa,5) = nan;
+                elseif aa==3
+                    recur_day_order.si.A(aa,5) =  recurr_ex_short.si.A(aa,5);
+                elseif aa==4
+                    recur_day_order.si.A(aa,5) =  recurr_ex_short.si.A(aa,5);
+                elseif aa ==5
+                    recur_day_order.si.A(aa,5) =  recurr_ex_short.si.A(aa,5);
+                elseif aa==6
+                    recur_day_order.si.A(aa,5) =  recurr_ex_short.si.A(aa,5);
+                end
+            end
+        case 6
+            for aa=1:6
+                %for each animal
+                if aa==1
+                    recur_day_order.si.A(aa,6) = recurr_ex_short.si.A(aa,5);
+                elseif aa==2
+                    recur_day_order.si.A(aa,6) = recurr_ex_short.si.A(aa,5);
+                elseif aa==3
+                    recur_day_order.si.A(aa,6) =  recurr_ex_short.si.A(aa,6);
+                elseif aa==4
+                    recur_day_order.si.A(aa,6) =  recurr_ex_short.si.A(aa,6);
+                elseif aa ==5
+                    recur_day_order.si.A(aa,6) =  recurr_ex_short.si.A(aa,6);
+                elseif aa==6
+                    recur_day_order.si.A(aa,6) =  recurr_ex_short.si.A(aa,6);
+                end
+            end
+            
+        case 7
+            for aa=1:6
+                %for each animal
+                if aa==1
+                    recur_day_order.si.A(aa,7) = recurr_ex_short.si.A(aa,6);
+                elseif aa==2
+                    recur_day_order.si.A(aa,7) = recurr_ex_short.si.A(aa,6);
+                elseif aa==3
+                    recur_day_order.si.A(aa,7) =  recurr_ex_short.si.A(aa,7);
+                elseif aa==4
+                    recur_day_order.si.A(aa,7) =  recurr_ex_short.si.A(aa,7);
+                elseif aa ==5
+                    recur_day_order.si.A(aa,7) =  nan;
+                elseif aa==6
+                    recur_day_order.si.A(aa,7) =  nan;
+                end
+            end            
+        case 8
+            for aa=1:6
+                %for each animal
+                if aa==1
+                    recur_day_order.si.A(aa,8) = recurr_ex_short.si.A(aa,7);
+                elseif aa==2
+                    recur_day_order.si.A(aa,8) = recurr_ex_short.si.A(aa,7);
+                elseif aa==3
+                    recur_day_order.si.A(aa,8) =  recurr_ex_short.si.A(aa,8);
+                elseif aa==4
+                    recur_day_order.si.A(aa,8) =  recurr_ex_short.si.A(aa,8);
+                elseif aa ==5
+                    recur_day_order.si.A(aa,8) =  recurr_ex_short.si.A(aa,7);
+                elseif aa==6
+                    recur_day_order.si.A(aa,8) =  nan;
+                end
+            end               
+        case 9
+            for aa=1:6
+                %for each animal
+                if aa==1
+                    recur_day_order.si.A(aa,9) = nan;
+                elseif aa==2
+                    recur_day_order.si.A(aa,9) = nan;
+                elseif aa==3
+                    recur_day_order.si.A(aa,9) =  nan;
+                elseif aa==4
+                    recur_day_order.si.A(aa,9) =  recurr_ex_short.si.A(aa,9);
+                elseif aa ==5
+                    recur_day_order.si.A(aa,9) =  nan;
+                elseif aa==6
+                    recur_day_order.si.A(aa,9) =  nan;
+                end
+            end             
             
     end
 end
 
 %% Get mean and sem and plot - short term recall
-recurr_short_mean.ts.A = nanmean(recurr_ex_short.ts.A,1);
-recurr_short_mean.ts.B = nanmean(recurr_ex_short.ts.B,1);
+%recurr_short_mean.ts.A = nanmean(recurr_ex_short.ts.A,1);
+%recurr_short_mean.ts.B = nanmean(recurr_ex_short.ts.B,1);
 
-recurr_short_mean.si.A = nanmean(recurr_ex_short.si.A,1);
-recurr_short_mean.si.B = nanmean(recurr_ex_short.si.B,1);
+recurr_short_mean.si.A = nanmean(recur_day_order.si.A,1);
+%recurr_short_mean.si.B = nanmean(recurr_ex_short.si.B,1);
 
 %number of points for sem calculation - use either si or ts, but check both
 %A and B trials
-nb_sem_ST_recall.A = sum(~isnan(recurr_ex_short.ts.A),1);
-nb_sem_ST_recall.B = sum(~isnan(recurr_ex_short.ts.B),1);
+nb_sem_ST_recall.A = sum(~isnan(recurr_ex_short.si.A),1);
+%nb_sem_ST_recall.B = sum(~isnan(recurr_ex_short.ts.B),1);
 
 %get sem from std using numbers above
-recurr_short_sem.ts.A = nanstd(recurr_ex_short.ts.A,0,1)./sqrt(nb_sem_ST_recall.A);
+%recurr_short_sem.ts.A = nanstd(recurr_ex_short.ts.A,0,1)./sqrt(nb_sem_ST_recall.A);
 recurr_short_sem.si.A = nanstd(recurr_ex_short.si.A,0,1)./sqrt(nb_sem_ST_recall.A);
 
-recurr_short_sem.ts.B = nanstd(recurr_ex_short.ts.B,0,1)./sqrt(nb_sem_ST_recall.B);
-recurr_short_sem.si.B = nanstd(recurr_ex_short.si.B,0,1)./sqrt(nb_sem_ST_recall.B);
+%recurr_short_sem.ts.B = nanstd(recurr_ex_short.ts.B,0,1)./sqrt(nb_sem_ST_recall.B);
+%recurr_short_sem.si.B = nanstd(recurr_ex_short.si.B,0,1)./sqrt(nb_sem_ST_recall.B);
 
 %% Get mean sem of frac active (short term recall)
-mean_active.ST.recall = nanmean(frac_active_short,1);
-nb_sem_active.ST.recall = sum(~isnan(frac_active_short),1);
-sem_active.ST.recall = nanstd(frac_active_short,0,1)./sqrt(nb_sem_active.ST.recall);
+%mean_active.ST.recall = nanmean(frac_active_short,1);
+%nb_sem_active.ST.recall = sum(~isnan(frac_active_short),1);
+%sem_active.ST.recall = nanstd(frac_active_short,0,1)./sqrt(nb_sem_active.ST.recall);
 
 
 %% Plot SHORT term recall recurrence and fraction active - TS
 
 figure
 hold on 
-title('Recurrence - T.S.')
+title('Recurrence - S.I.')
 ylim([0 1.2])
-xlim([0 8])
-xticks(1:7)
+xlim([0 10])
+xticks(1:9)
 xticklabels({'1','2','3','6','7','8','9'})
 yticks(0:0.2:1)
 xlabel('Days')
 ylabel('Recurrence probability')
 %Recall
-rA = errorbar(1:7,recurr_short_mean.ts.A,recurr_short_sem.ts.A,'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
-rB = errorbar(1:7,recurr_short_mean.ts.B,recurr_short_sem.ts.B,'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
+rA = errorbar(1:9,recurr_short_mean.si.A,recurr_short_sem.si.A,'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
+%rB = errorbar(1:7,recurr_short_mean.ts.B,recurr_short_sem.ts.B,'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
 %Active cells
-ac = errorbar(1:7,mean_active.ST.recall,sem_active.ST.recall,'LineStyle','-','Linewidth',2,'Color',[34,139,34]/255);
+%ac = errorbar(1:7,mean_active.ST.recall,sem_active.ST.recall,'LineStyle','-','Linewidth',2,'Color',[34,139,34]/255);
 %lA = errorbar(1:8,mean_mean_PV_learn_neighbor_all.A,sem_PV_learn_neighbor_all.A,'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
 %lB = errorbar(1:8,mean_mean_PV_learn_neighbor_all.B,sem_PV_learn_neighbor_all.B,'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
 set(gca,'FontSize',16)
