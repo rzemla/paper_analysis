@@ -290,79 +290,9 @@ for aa = 1:size(PV_TC_corr_recall,2)
 end
 
 %% Performance plot
-%make one 3-D matrix with fractional performance from all animals
-%recall
-for aa = 1:size(PV_TC_corr_recall,2)
-    perf_recall_comb(:,:,aa) = perf_recall{aa}.ses_perf;
-end
 
-%learning
-for aa = 1:size(PV_TC_corr_learning,2)
-    perf_learning_comb(:,:,aa) = perf_learning{aa}.ses_perf;
-end
+cumulative_performance_plot(short_term_learn,short_term_recall)
 
-%get means
-mean_recall_perf = mean(perf_recall_comb,3);
-mean_learning_perf = mean(perf_learning_comb,3);
-%get stds
-std_recall_perf = std(perf_recall_comb,0,3);
-std_learning_perf = std(perf_learning_comb,0,3);
-%get sems
-sem_recall_perf = std_recall_perf./sqrt(size(PV_TC_corr_recall,2));
-sem_learning_perf = std_learning_perf./sqrt(size(PV_TC_corr_learning,2));
-
-%plot
-%recall - dash
-%learning - solid
-f = figure('Position',[2210 350 510 470]);
-hold on
-set(f,'color','w');
-axis square
-%combined - change color for each type
-for tt=1
-    %subplot(1,3,tt)
-    
-    xlim([0.5 6.5])
-    ylim([0 1.1])
-    set(gca,'linewidth',2)
-    set(gca,'FontSize',21)
-yticks(0:0.2:1)
-ylabel('Fraction of correct trials')
-xticks((1:6))
-xticklabels({'5A5B','5A5B','3A3B','3A3B','Random','Random'})
-xtickangle(45)
-%plot performance line (85%)
-%plot([0.5 6.5],[0.85 0.85],'k--','LineWidth',2);
-%plot([1 2 3 6 7 8 9],mean_recall_perf(1,:),'m-')
-
-    if tt ==1
-        %all
-        color_vec = [139, 0, 139]/255;
-    elseif tt ==2
-        %A
-        color_vec = [65,105,225]/255;
-    elseif tt==3
-        %B
-        color_vec = [ 220,20,60]/255;
-    end
-    %errorbar + mean  - learning
-    errorbar([1:6],mean_learning_perf(tt,:),sem_learning_perf(tt,:),'Color', color_vec, 'LineStyle', '-','LineWidth',1.5)
-    %errorbar + mean - recall
-    %errorbar([1 2 3 6 7 8 9],mean_recall_perf(tt,:),sem_recall_perf(tt,:),'Color', color_vec, 'LineStyle', '-','LineWidth',1.5)
-end
-
-%save performance figure
-disp('Saving performance figure ')
-export_fig(f ,fullfile('G:\Figure_4_figures','learning_performance.png'),'-r300')
-
-%plot([1:6],mean_learning_perf(1,:),'LineStyle','--','LineWidth',2,'Color', [139, 0, 139]/255)
-
-%shaded plot parameters
-% s = shadedErrorBar(1:6,squeeze(perf_learning_comb(1,:,:))',{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
-% set(s.edge,'LineWidth',1,'LineStyle','-','Color',[[139, 0, 139]/255, 0.2]) %last value add transparency value
-% s.mainLine.LineWidth = 2;
-% s.mainLine.Color = [139, 0, 139]/255;
-% s.patch.FaceColor = [139, 0, 139]/255;
 
 %% Experiment with linear regression and confidence intervals
 
