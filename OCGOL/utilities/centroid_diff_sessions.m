@@ -138,8 +138,8 @@ for aa =1:5
 end
 
 %% Filter sessions relative to session 1 based on field shift/trial count - LEARN
-%animal 1, session 3,4 - A/B both trials - means
 if 1
+%animal 1, session 3,4 - A/B both trials - means
     %both row and column cross matches
     theta_learn{1}.A(:,4) = {[]};
     theta_learn{1}.A(:,3) = {[]};
