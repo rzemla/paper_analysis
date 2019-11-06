@@ -41,7 +41,6 @@ plot_fraction_tuned(short_term_learn.tuned_frac,short_term_recall.tuned_frac)
 
 centroid_diff_sessions(short_term_learn,short_term_recall,reg_learn, reg_recall)
 
-
 %% Recurrence analysis
 
 %short and long recall
@@ -49,7 +48,6 @@ recurrence_cum_analysis(short_term_recall,long_term_recall)
 
 %learning only
 recurrence_cum_analysis_learn(short_term_learn)
-
 
 %% Show outlines of neightboring day matching componenets (1 vs. 3) - learning
 

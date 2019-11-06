@@ -6,7 +6,6 @@ selectTrial = options.selectTrial;
 %set range of sessions to process for each animal
 sessionSelect = 1:size(reg{aa}.registered.multi.assigned_filtered,2);
 
-
 %% Define reward start vectors in complex form as well cartesian coordinates for calculating angles below
 
 %unit vectors
@@ -31,7 +30,6 @@ rewardB_cart = [real(rewardB_vec), imag(rewardB_vec)];
 % hold on
 % scatter(rewardA_cart(1), rewardA_cart(2))
 % scatter(rewardB_cart(1), rewardB_cart(2))
-
 
 %% Calculate rad angle diff for between A tuned ROI and B tuned ROI across sessions
 match_ROI.all = reg{aa}.registered.multi.assigned_filtered(:,1:sessionSelect(end));
