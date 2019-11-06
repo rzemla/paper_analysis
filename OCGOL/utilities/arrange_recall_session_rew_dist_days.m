@@ -21,7 +21,7 @@ for dd=2:9 %for day 1 vs 2 3 4... or equivalent day distance
                 merge_theta_recall_days.B.rewB{aa,dd} = abs(diff(theta_reward_zone_recall{aa}.B.rewB{1,3},1,2));
             end
         case 4 %session 4 vs. 7; session 3 vs. 4 - equivalent day 1 distance (not from start day 1 for recall)
-            for aa=1:5 %all animals
+            for aa=1:5 %all animals - only select 1 of the two (earlier)
                 %extract all the days that correspond to the time duration              
                 merge_theta_recall_days.A.rewA{aa,dd} = [abs(diff(theta_reward_zone_recall{aa}.A.rewA{4,7},1,2));...
                                                         abs(diff(theta_reward_zone_recall{aa}.A.rewA{3,4},1,2))];

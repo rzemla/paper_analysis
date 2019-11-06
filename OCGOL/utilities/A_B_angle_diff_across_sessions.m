@@ -1,13 +1,13 @@
-function [theta] = A_B_angle_diff_across_sessions(reg_learn,tuned_log_learning,pf_vector_max_learning,aa,options)
+function [theta] = A_B_angle_diff_across_sessions(reg,tuned_log_learning,pf_vector_max_learning,aa,options)
 
 %% 
-
-
 selectTrial = options.selectTrial;
-sessionSelect = options.sessionSelect;
+%set the range of sessions for each animal
+sessionSelect = 1:size(reg{aa}.registered.multi.assigned_filtered,2);
+
 
 %% Calculate rad angle diff for between A tuned ROI and B tuned ROI across sessions
-match_ROI.all = reg_learn{aa}.registered.multi.assigned_filtered(:,1:sessionSelect(end));
+match_ROI.all = reg{aa}.registered.multi.assigned_filtered(:,1:sessionSelect(end));
 
 %create separate A, B, AB matrices for TS filtering -duplicate
 match_ROI.allA = match_ROI.all;
