@@ -50,6 +50,7 @@ recurrence_cum_analysis(short_term_recall,long_term_recall)
 recurrence_cum_analysis_learn(short_term_learn)
 
 %% Show outlines of neightboring day matching componenets (1 vs. 3) - learning
+%modify this to show discarded matches
 
 show_component_match(CNMF_learn,reg_learn)
 
