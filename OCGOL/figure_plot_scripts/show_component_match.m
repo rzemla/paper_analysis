@@ -190,8 +190,8 @@ end
 for ROI = vis_match_matrix_excl(:,2)'
     %plot componenet outline
     %plot(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m-', 'LineWidth',1);
-f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m','EdgeColor','none')
- alpha(f2,0.5)
+    f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m','EdgeColor','none')
+    alpha(f2,0.5)
 end
 
 %save figure 4a component match example learning

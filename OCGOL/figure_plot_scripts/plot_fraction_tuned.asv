@@ -2,25 +2,24 @@ function [outputArg1,outputArg2] = plot_fraction_tuned(tuned_frac_learning,tuned
 
 %% Get number of session in learning and recall
 
-nb_learn_animals = size(tuned_frac_learning,2);
-nb_recall_animals = size(tuned_frac_recall,2);
-
-for aa=1:nb_learn_animals
-    nb_ses_learn(aa) = size(tuned_frac_learning{aa}.tuned_fractions.tuned_count_filt,2);
+for aa=1:size(tuned_frac_learning,2)
+nb_ses_learn
 end
 
-for aa=1:nb_recall_animals
-    nb_ses_recall(aa) = size(tuned_frac_recall{aa}.tuned_fractions.tuned_count_filt,2);
-end
 
-%% Get mean and sem for fractions learned and recall - combine fractions into one matrix
+nb_ses_recall
+
+
+%% Get mean and sem for fractions learned and recall
+
 
 %preallocation with nans given variable number of sessions for each animal
-frac_learning_all_si = nan(max(nb_ses_learn),4,nb_learn_animals);
-frac_learning_all_ts = nan(max(nb_ses_learn),4,nb_learn_animals);
+frac_learning_all_si = nan(
+
+%combined all animals into 1 matrix
 
 %learning
-for aa=1:nb_learn_animals
+for aa=1:size(tuned_frac_learning,2)
     frac_learning_all_si(:,:,aa) = tuned_frac_learning{aa}.tuned_fractions.fracTuned_si_filt;
     frac_learning_all_ts(:,:,aa) = tuned_frac_learning{aa}.tuned_fractions.fracTuned_ts_filt;
 end
