@@ -5,6 +5,7 @@ function [outputArg1,outputArg2] = plot_fraction_tuned(tuned_frac_learning,tuned
 
 %combined all animals into 1 matrix
 
+%preallocation
 %learning
 for aa=1:size(tuned_frac_learning,2)
     frac_learning_all_si(:,:,aa) = tuned_frac_learning{aa}.tuned_fractions.fracTuned_si_filt;

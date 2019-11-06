@@ -4,12 +4,8 @@ function [theta] = A_B_angle_diff_across_sessions_reward_zones(reg,tuned_log_lea
 
 selectTrial = options.selectTrial;
 %set range of sessions to process for each animal
-%if options.learnSet == 1
-    sessionSelect = 1:size(reg{aa}.registered.multi.assigned_filtered,2);
-% %end
-% elseif options.learnSet == 0
-%         sessionSelect = 1:size(reg_recall{aa}.registered.multi.assigned_filtered,2);
-% end
+sessionSelect = 1:size(reg{aa}.registered.multi.assigned_filtered,2);
+
 
 %% Define reward start vectors in complex form as well cartesian coordinates for calculating angles below
 

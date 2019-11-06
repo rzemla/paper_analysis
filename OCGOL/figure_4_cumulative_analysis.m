@@ -9,15 +9,13 @@ tic;
         short_term_learn,short_term_recall,long_term_recall] = figure4_load_data(options);
 toc;
 
-%% SCE rate scatter plots and cdfs
-%create blank entries for SCE related data for now
-if 0
-    SCE_rate_plots(session_vars_learn,session_vars_recall,SCE_learning,SCE_recall, perf_learning,perf_recall)
-end
+%% Learning performance line plot
+
+cumulative_performance_plot(short_term_learn,short_term_recall)
 
 %% Tuning curve correlation for A&B tuned neurons across days
 
- AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
+AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
  
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)
@@ -29,6 +27,21 @@ combine_STC_plot_multi_animal(short_term_learn.TC_corr_match,short_term_recall.T
 %vs long term data
 combine_STC_plot_multi_animal_short_vs_long_term(short_term_learn.TC_corr_match,long_term_recall.TC_corr_match)
 
+
+%% Examine spatial trajectories for across time
+
+trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)
+
+%% Plot A/B/AB/neither distributions for learning/recall across sessions
+
+plot_fraction_tuned(short_term_learn.tuned_frac,short_term_recall.tuned_frac)
+
+
+%% Centroid difference across sessions
+
+centroid_diff_sessions(short_term_learn,short_term_recall,reg_learn, reg_recall)
+
+
 %% Recurrence analysis
 
 %short and long recall
@@ -37,19 +50,10 @@ recurrence_cum_analysis(short_term_recall,long_term_recall)
 %learning only
 recurrence_cum_analysis_learn(short_term_learn)
 
-%% Examine spatial trajectories for across time
 
-trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)
+%% Show outlines of neightboring day matching componenets (1 vs. 3) - learning
 
-%% Plot A/B/AB/neither distributions for learning/recall across sessions
-
-plot_fraction_tuned(tuned_frac_learning,tuned_frac_recall)
-
-
-%% Centroid difference across sessions
-
-centroid_diff_sessions(short_term_learn,short_term_recall,reg_learn, reg_recall)
-
+show_component_match(CNMF_learn,reg_learn)
 
 %% Mean TC histograms across time during learning
 
@@ -289,11 +293,6 @@ for aa = 1:size(PV_TC_corr_recall,2)
     PV_corr_vs_perf.recall.fracPerf(:,aa) = perf_recall{aa}.ses_perf(1,:)';
 end
 
-%% Performance plot
-
-cumulative_performance_plot(short_term_learn,short_term_recall)
-
-
 %% Experiment with linear regression and confidence intervals
 
 [r,p] = corrcoef(PV_corr_vs_perf.learn.fracPerf(:),PV_corr_vs_perf.learn.meanPV(:))
@@ -408,8 +407,8 @@ disp('Saving match ROIs STC ')
 export_fig(f ,fullfile('G:\Figure_4_figures','PV_across_track_raster.png'),'-r300')
 
 
-%% Show outlines of neightboring day matching componenets (1 vs. 3) - learning
-
-show_component_match(CNMF_learn,reg_learn)
-
-
+%% SCE rate scatter plots and cdfs
+%create blank entries for SCE related data for now
+if 0
+    SCE_rate_plots(session_vars_learn,session_vars_recall,SCE_learning,SCE_recall, perf_learning,perf_recall)
+end

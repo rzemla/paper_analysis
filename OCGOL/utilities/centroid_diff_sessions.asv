@@ -15,7 +15,6 @@ pf_vector_max_recall = short_term_recall.pf_vector_max;
 
 %% Compare the distance to start of reward zone A and reward zone B for learning/recall
 %% LEARNING SETS
-%ADD SELECTOR FOR TS AND SI TUNED HERE
 %for each animal
 options.selectTrial = [4,5];
 %flag to indicate if this is a learning or recall set
