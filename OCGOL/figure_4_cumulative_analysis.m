@@ -48,7 +48,7 @@ plot_fraction_tuned(tuned_frac_learning,tuned_frac_recall)
 
 %% Centroid difference across sessions
 
-centroid_diff_sessions(learn_comb_data,recall_comb_data,reg_learn, reg_recall);
+centroid_diff_sessions(short_term_learn,short_term_recall,reg_learn, reg_recall)
 
 
 %% Mean TC histograms across time during learning

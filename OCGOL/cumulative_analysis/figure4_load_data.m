@@ -178,7 +178,7 @@ end
 disp('Load in registration data for LONG term recall animals')
 %recall (short term 9 days)
 for ii = 1:size(path_dir_recall_long,2)
-    reg_recall{ii} = load(fullfile(crossdir_recall_long{ii},'registered.mat'),'registered');
+    reg_recall_long{ii} = load(fullfile(crossdir_recall_long{ii},'registered.mat'),'registered');
         %get dir path with wildcard match to .mat files
     filtered_ROI_dir_path_recall_long{ii} = subdir(fullfile(crossdir_recall_long{ii},'filtered_match_ROI','*.mat'));
     %load in temp var

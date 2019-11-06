@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = centroid_diff_sessions(learn_comb_data,recall_comb_data,reg_learn, reg_recall)
+function [outputArg1,outputArg2] = centroid_diff_sessions(short_term_learn,short_term_recall,reg_learn, reg_recall)
 %% Get all A/allB A&B
 
 
@@ -14,20 +14,23 @@ pf_vector_max_recall = short_term_recall.pf_vector_max;
 
 
 %% Compare the distance to start of reward zone A and reward zone B for learning/recall
-%LEARNING SETS
+%% LEARNING SETS
 %for each animal
 options.selectTrial = [4,5];
-options.sessionSelect = 1:6;
-
-for aa=1:3
+%flag to indicate if this is a learning or recall set
+options.learnSet = 1;
+%for each animal
+for aa=1:6
     [theta_reward_zone_learn{aa}] = A_B_angle_diff_across_sessions_reward_zones(reg_learn,tuned_log_learning,pf_vector_max_learning,aa,options);
 end
 
 
-%RECALL SETS
+%% RECALL SETS
 options.selectTrial = [1,2];
-options.sessionSelect = 1:7;
-for aa =1:4
+%flag to indicate if this is a learning or recall set
+options.learnSet = 0;
+
+for aa =1:5
     [theta_reward_zone_recall{aa}] = A_B_angle_diff_across_sessions_reward_zones(reg_recall,tuned_log_recall,pf_vector_max_recall,aa,options);
 end
 
