@@ -5,12 +5,12 @@ function [outputArg1,outputArg2] = centroid_diff_sessions(learn_comb_data,recall
 %% Set up variables
 
 %learning
-tuned_log_learning = learn_comb_data.tuned_log_learning;
-pf_vector_max_learning = learn_comb_data.pf_vector_max_learning;
+tuned_log_learning = short_term_learn.tuned_log;
+pf_vector_max_learning = short_term_learn.pf_vector_max;
 
 %recall
-tuned_log_recall = recall_comb_data.tuned_log_recall;
-pf_vector_max_recall = recall_comb_data.pf_vector_max_recall;
+tuned_log_recall = short_term_recall.tuned_log;
+pf_vector_max_recall = short_term_recall.pf_vector_max;
 
 
 %% Compare the distance to start of reward zone A and reward zone B for learning/recall

@@ -546,12 +546,16 @@ end
  
 %% Statistics - do Paired Mann Whitnney U comp on collapsed cells (all neurons)
 
-%learning
+%learning - all neurons by session order
 for ss=2:9
     [p_learn(ss),~] = signrank(cell2mat(TC_corr_AB_matching_learning_early_diag(:,ss)),cell2mat(TC_corr_AB_matching_learning_late_diag(:,ss)));
 end
 
-%recall
+for ss=2:9
+    [p_learn_day(ss),~] = signrank(cell2mat(TC_corr_AB_matching_learning_early_diag_day(:,ss)),cell2mat(TC_corr_AB_matching_learning_late_diag_day(:,ss)));
+end
+
+%recall - all neurons by session/day order
 for ss = 2:7
     [p_recall(ss),~] = signrank(cell2mat(TC_corr_AB_matching_recall_early_diag(:,ss)),cell2mat(TC_corr_AB_matching_recall_late_diag(:,ss)));
 end
