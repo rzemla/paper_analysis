@@ -17,7 +17,6 @@ cumulative_performance_plot(short_term_learn,short_term_recall)
 
 AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
  
-
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)
 %also orient maps by day (T.S.) only tuned for now for learning and recall
 
@@ -27,7 +26,6 @@ combine_STC_plot_multi_animal(short_term_learn.TC_corr_match,short_term_recall.T
 %vs long term data
 combine_STC_plot_multi_animal_short_vs_long_term(short_term_learn.TC_corr_match,long_term_recall.TC_corr_match)
 
-
 %% Examine spatial trajectories for across time
 
 trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)
@@ -35,7 +33,6 @@ trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)
 %% Plot A/B/AB/neither distributions for learning/recall across sessions
 
 plot_fraction_tuned(short_term_learn.tuned_frac,short_term_recall.tuned_frac)
-
 
 %% Centroid difference across sessions
 
@@ -59,7 +56,7 @@ show_component_match(CNMF_learn,reg_learn)
 %combine mean TC scores for each session from each animal
 
 for ss=1:6
-        meanTC_SCE_combined{ss} =[];
+        meanTC_SCE_combined{ss} = [];
     for aa=1:3
         meanTC_SCE_combined{ss} = [meanTC_SCE_combined{ss}, SCE_learning{aa}.SCE{ss}.meanTC];
     end

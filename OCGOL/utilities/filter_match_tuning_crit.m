@@ -43,6 +43,19 @@ for ss=options.sessionSelect
 
 end
 
+%for TS AB Filt
+%for each session
+for ss=options.sessionSelect
+    %get idxs
+    idx_temp = find(tunedLogical(ss).si.AandB_tuned ==1);
+    %get logical with values that are si tuned
+    keep_idx_log = ismember(matching_list.si_AB_filt(:,ss),idx_temp);
+    %set the negative of the log to nan (no match based on tuning criterion
+    matching_list.si_AB_filt(~keep_idx_log,ss) = nan;
+
+end
+
+
 %for TS A filt (any A regardless of B tuning)
 for ss=options.sessionSelect
     %get idxs

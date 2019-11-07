@@ -15,11 +15,14 @@ options.visualize_match = 0;
 %load SCE data shuffled n=50/100 (re-shuffle later on cluster with n =1000)
 options.loadSCE = 0;
 
-%all A and B trials used for learning (sessions determined below)
 options.selectTrial = [4 5];
+%which session to include in calculation
+options.sessionSelect = [1 2 3 4 5 6];
 
-%for use in global workspace
+%for use in workspace
 selectTrial = options.selectTrial;
+sessionSelect = options.sessionSelect;
+
 
 %I56_RTLS
 %input directories to matching function
@@ -91,14 +94,6 @@ crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 %      'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_randAB_no_punish_080919_6'};
 % %cross session directory
 % crossdir = 'E:\OCGOL_learning_short_term\I58_RTLP\crossSession';
-
-%% Determine number of sessions to analyze for animal
-
-%which session to include in calculation
-options.sessionSelect = 1:size(path_dir,2);
-
-%for use as var in global workspace
-sessionSelect = options.sessionSelect;
 
 
 %% Load place cell variables for each session
@@ -425,9 +420,10 @@ plot(fraction_rel_AB(:,6))
 
 %% Save task-selective and task remapping neurons into struct neurons 
 
+
 %get # of ROIs in each session
 for ss=sessionSelect
-    ses_nbROI(ss) = size(session_vars{ss}.Place_cell{selectTrial(1)}.Tuned_ROI_mask,2);
+    ses_nbROI(ss) = size(session_vars{ss}.Place_cell{selectTrial(1)}.Tuned_ROI_mask,2)
 end
 
 save(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
@@ -475,7 +471,7 @@ options.spiral_width = 0.1;
 
 
 %% Plot spiral raster using inputs
-%ploy 
+
 ROI_categories.task_selective_ROIs = task_selective_ROIs;
 
 %works with inputs
@@ -489,92 +485,6 @@ plot_raster_spiral_multi_ses(plot_raster_vars,session_vars,registered,ROI_zooms,
 %AUC/min and frequency of events events/min in run epoch for A or B trials
 %all added no run epochs
 [session_vars] = AUC_rate(session_vars,options);
-
-%% Decicated two session spiral plotter with categorical type display
-
-plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
-
-%% Visualize place fields and events for each neurons
-%use this to check code detection accuracy
-
-visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session_vars,task_selective_ROIs,cat_registered_cell,select_fields,options)
-
-%% Task-selective neurons - AUC/min and event freq distributions
-
-%code for rose plot like event density is here
-activity_distributions(session_vars,task_selective_ROIs,options)
-
-%% S.I. score for matching neurons across days
-%resume later
-track_si_score_change(session_vars,registered,options)
-
-%% Decicated two session spiral plotter with categorical type display
-
-plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
-
-
-%% Decicated two session spiral plotter with categorical type display
-%keep working on this split out other functionalities in other functions
-plot_spiral_raster_SCE(plot_raster_vars,session_vars,registered,cat_registered_cell,SCE,options)
-
-
-%% TC correlation for matching (+/-) tuned ROIs
-
-[tc_corr_match] = tc_corr_matching_neurons(session_vars,registered,options);
-
-%save to output file for cumulative analysis
-save(fullfile(crossdir,'tc_corr_match.mat'),'tc_corr_match')
-
-%% Extract performance fractions across sessions (respective laps)
-%check if agree with manual analysis
-%turn into table with future code upgrade
-
-%which sessions to use
-%options.sessionSelect = [1 2 3 4 5 6];
-
-[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
-
-%export session performance data
-save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
-
-%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
-%options.sessionSelect = [1 2 3 4 5 6 ];
-options.selectSes = [4 5];
-%learning or recall datasets
-options.learning_data = 1;
-[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
-
-%save to output file for cumulative analysis
-save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
-
-%% Raster plot across days (FIGURE 4) (at least 2 match between sessions) raster (non_norm)
-%this generates the figure rasters in 4
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
-%options.sessionSelect = [1 2 3 4 5 6];
-%chose all A/B (learning) vs. only correct A/B (recall)
-options.selectTrial = [4,5];
-%is it a learning set (for plot/raster annotation)
-options.learning_data = 1;
-non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
-
-
-%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
-%options.sessionSelect = [1 2 3 4 5 6 ];
-options.selectSes = [4 5];
-%learning or recall datasets (used for tick labels)
-options.learning_data = 0;
-[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
-
-%save to output file for cumulative analysis
-save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
 
 %% Plot meanTC histogram for all SCEs across days of learning
 
@@ -623,6 +533,34 @@ figure
 hold on
 plot(SCE_A_ROI_engage')
 
+%% Decicated two session spiral plotter with categorical type display
+
+plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
+
+
+%% Visualize place fields and events for each neurons
+%use this to check code detection accuracy
+
+visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session_vars,task_selective_ROIs,cat_registered_cell,select_fields,options)
+
+%% Task-selective neurons - AUC/min and event freq distributions
+
+%code for rose plot like event density is here
+activity_distributions(session_vars,task_selective_ROIs,options)
+
+%% Extract performance fractions across sessions (respective laps)
+%check if agree with manual analysis
+%turn into table with future code upgrade
+
+
+%which sessions to use
+%options.sessionSelect = [1 2 3 4 5 6];
+
+[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
+
+%export session performance data
+save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
+
 %% Detect SCEs and measure number of SCE in each session A or B
 
 %load or run shuffle to determine SCEs
@@ -657,6 +595,7 @@ for ss=sessionSelect
     name_cell{ss} = ['',num2str(ss)];
 end
 
+
 %get 
 figure
 hold on
@@ -673,6 +612,19 @@ legend(name_cell);
 %MODIFY TO TAKE IN wrong trials on learning sessions
 [SCE] = assign_SCE_trials(session_vars,SCE,options);
 
+%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+%options.sessionSelect = [1 2 3 4 5 6 ];
+options.selectSes = [4 5];
+%learning or recall datasets (used for tick labels)
+options.learning_data = 0;
+[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
+
+%save to output file for cumulative analysis
+save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
+
 
 %% Make SCE ROI participation matrix
 %get SCE onset normalized position here as well
@@ -681,6 +633,11 @@ legend(name_cell);
 %% Save SCE struct for all sessions
 %export session performance data
 save(fullfile(crossdir,'SCE.mat'),'SCE');
+
+%% Decicated two session spiral plotter with categorical type display
+%keep working on this split out other functionalities in other functions
+plot_spiral_raster_SCE(plot_raster_vars,session_vars,registered,cat_registered_cell,SCE,options)
+
 
 %% Plot meanTC histogram for all SCEs across days of learning
 
@@ -742,6 +699,10 @@ multi_ses_SCE_data.SCE_A_ROI_engage = SCE_A_ROI_engage;
 multi_ses_SCE_data.SCE_B_ROI_engage = SCE_B_ROI_engage;
 multi_ses_SCE_data.SCE_all_ROI_engage = SCE_all_ROI_engage;
 
+%% Decicated two session spiral plotter with categorical type display
+
+plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
+
 %% SCE plots against session performance
 
 %color maps -total, A, B
@@ -796,9 +757,70 @@ end
 options.clust_max = 20;
 detect_SCE_assembly(sce_activity_matrix,options)
 
+%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+%options.sessionSelect = [1 2 3 4 5 6 ];
+options.selectSes = [4 5];
+%learning or recall datasets
+options.learning_data = 1;
+[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
+
+%save to output file for cumulative analysis
+save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
+
+%% All neuron (at least 2 match between sessions) raster (non_norm)
+%this generates the figure rasters in 4
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+%options.sessionSelect = [1 2 3 4 5 6];
+%chose all A/B (learning) vs. only correct A/B (recall)
+options.selectTrial = [4,5];
+%is it a learning set (for plot/raster annotation)
+options.learning_data = 1;
+non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
+
+
+%% Plot smoothed event rate across track (function)
+
+
+
+%% S.I. score for matching neurons across days
+%resume later
+track_si_score_change(session_vars,registered,options)
+
+%% TC correlation for matching (+/-) tuned ROIs
+
+[tc_corr_match] = tc_corr_matching_neurons(session_vars,registered,options);
+
+%save to output file for cumulative analysis
+save(fullfile(crossdir,'tc_corr_match.mat'),'tc_corr_match')
+
+%% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
+
+%funtion to calculate transient rate in field
+%take raw event rate and divide by occupancy (s) transients/s
+% TODO: see ifrecalculate to see if dividing by normalized occupancy (fractional 0-1)
+%yields different result
+%[field_event_rates,pf_vector] = transient_rate_in_field(session_vars);
+
+options.selectSes = [4 5];
+%continue to modify 
+[field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
+
+
 %% Tuning specificity differences pre-learning vs. post-learning (matching neurons)
 
 TS_score_diff(session_vars,tunedLogical,registered)
+
+%% Plot spatial tuning curves according to transient rate 
+
+options.tuning_criterion = 'ts'; %si or ts
+plot_STC_transient_rate(session_vars,tunedLogical,registered,field_event_rates, pf_vector,options)
+
+
 
 %% Generate dF/F maps of neurons tuned in either session and plot side by side
 %customize to add options
@@ -842,26 +864,6 @@ non_norm_matching_STC_rasters_learning(session_vars,tunedLogical,registered,opti
 %% Place field width for A or B trials early vs late (all neurons vs matching neurons)
 
 
-%% Plot spatial tuning curves according to transient rate 
-
-% options.tuning_criterion = 'ts'; %si or ts
-% plot_STC_transient_rate(session_vars,tunedLogical,registered,field_event_rates, pf_vector,options)
-
-
-%% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
-
-%funtion to calculate transient rate in field
-%take raw event rate and divide by occupancy (s) transients/s
-% TODO: see ifrecalculate to see if dividing by normalized occupancy (fractional 0-1)
-%yields different result
-%[field_event_rates,pf_vector] = transient_rate_in_field(session_vars);
-
-% options.selectSes = [4 5];
-% %continue to modify 
-% [field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
-
-
-
 %% Learning pre and post event spiral
 %display event spiral
 %dF/F across laps between unlearned and learned day
@@ -890,26 +892,26 @@ non_norm_matching_STC_rasters_learning(session_vars,tunedLogical,registered,opti
 
 %% Plot mean centroid diff to reward for each session against performance (D vs. P) 
 
-% %fraction of licks in reward zone for each session
-% for ss=1:size(session_vars,2)
-%     frac_rew(ss) = session_vars{ss}.Behavior.performance.frac_rew;
-% end
-% 
-% %mean of centroid diff to reward of each session for TS sig neurons
-% for ss=1:size(session_vars,2)
-%     mean_Distance_TS_sig(ss) = nanmean(centroids.TS_sig.angleDiffReward{ss});
-% end
-% 
-% %make scatter plot
-% figure;
-% hold on
-% %ylim([0 0.8]);
-% %xlim([0.5 2.25]);
-% ylabel('Fraction of licks in reward zone')
-% xticks([0.7854, 1.1781,1.5708, 1.9635])
-% xticklabels({'\pi/4','3\pi/8','\pi/2','5\pi/8'})
-% xlabel('Mean distance to reward');
-% scatter(mean_Distance_TS_sig,frac_rew,'b');
+%fraction of licks in reward zone for each session
+for ss=1:size(session_vars,2)
+    frac_rew(ss) = session_vars{ss}.Behavior.performance.frac_rew;
+end
+
+%mean of centroid diff to reward of each session for TS sig neurons
+for ss=1:size(session_vars,2)
+    mean_Distance_TS_sig(ss) = nanmean(centroids.TS_sig.angleDiffReward{ss});
+end
+
+%make scatter plot
+figure;
+hold on
+%ylim([0 0.8]);
+%xlim([0.5 2.25]);
+ylabel('Fraction of licks in reward zone')
+xticks([0.7854, 1.1781,1.5708, 1.9635])
+xticklabels({'\pi/4','3\pi/8','\pi/2','5\pi/8'})
+xlabel('Mean distance to reward');
+scatter(mean_Distance_TS_sig,frac_rew,'b');
 
 %% Bar graph of distance to reward on 1st vs last day
 %only tuned cells according to TS tuning criteria
