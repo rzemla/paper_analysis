@@ -241,16 +241,79 @@ else
     end
 end
 
+%% Calculate relevant place fields (normalized)
+
+if options.loadPlaceField_data == 0
+    %use rate map - number of event onsets/ occupancy across all laps
+    options.gSigma = 3;
+    %which place cell struct to do placefield extraction on
+    %iterate through place_cell cells of interest
+    %4 - all A regardless if correct
+    %5 - all B regardless if correct
+    %I57 RTLS - problem with 4,4 - fixed
+    %I57 LT - problem with ses 4, trial 5 adjust (set to -2) - narrow as opposed to
+    %extend field - apply to rest of animals
+    
+    %current param:
+    %normalize each curve to 1; get 50 max of curve as edge; merge any
+    %overlap at 0.05 (5%) intersection - check how data looks
+
+    
+    %consider discard analysis on ROIs that are neither SI nor TS tuned
+    
+    for ss =options.sessionSelect%1:size(session_vars,2) %1,2,3,4,5,6 OK
+        %for ss= [4]
+        disp(['Running session: ', num2str(ss)]);
+        for ii = options.selectTrial
+            %for ii = 5
+            options.place_struct_nb = ii;
+            disp(['Running trial type: ', num2str(ii)]);
+            [session_vars{ss}.Place_cell] = place_field_finder_gaussian_norm(session_vars{ss}.Place_cell,options);
+        end
+    end
+    
+    %save whole place cell struct and load in and replace for each session in
+    %the future
+    %make post-processing directory (postProcess)
+    mkdir(crossdir,'postProcess')
+    
+    %for each Place_cell session extract placeField struct
+    %use trial types here
+    if 0
+    for ss = options.sessionSelect
+        for tt=options.selectTrial
+            session_pf{ss}(tt).placeField = session_vars{ss}.Place_cell{tt}.placeField;
+        end
+    end
+    end
+    
+    %save Place_cell struct in that directory (normalized analysis)
+    save(fullfile(crossdir,'postProcess','placeField_upd_struct_norm.mat'),'session_pf')
+    
+else
+    tic;
+    disp('Loading place field data')
+    load(fullfile(crossdir,'postProcess','placeField_upd_struct_norm.mat'));
+    toc
+    %replace the Place_cell struct in the session_vars cell
+    for ss = options.sessionSelect
+        %all A and all B
+        for tt=options.selectTrial
+            session_vars{ss}.Place_cell{tt}.placeField = session_pf{ss}(tt).placeField;
+        end
+    end
+end
+
 
 %% Insert save checkpoint here to avoid re-preprocessing above data
-if 0
-%create cross session processed/loaded data directory
-mkdir(fullfile(crossdir,'cross_data'))
-
-%save the loaded and processed componenet/place cell data
-disp('Saving place field, session variables, and component matching data');
-save(fullfile(crossdir,'cross_data','cross_loaded.mat'),'session_vars','ROI_outlines','ROI_zooms','registered','-v7.3');
-end
+% if 0
+% %create cross session processed/loaded data directory
+% mkdir(fullfile(crossdir,'cross_data'))
+% 
+% %save the loaded and processed componenet/place cell data
+% disp('Saving place field, session variables, and component matching data');
+% save(fullfile(crossdir,'cross_data','cross_loaded.mat'),'session_vars','ROI_outlines','ROI_zooms','registered','-v7.3');
+% end
 
 %% Define tuned logical vectors
 
@@ -306,7 +369,7 @@ removedROI_clean = [];
 
 %save recurrence and fraction active of neurons
 
-save(fullfile(crossdir,'recurrence.mat'),'recurr','frac_active','recurr_ex','frac_active_ex');
+%save(fullfile(crossdir,'recurrence.mat'),'recurr','frac_active','recurr_ex','frac_active_ex');
 
 
 %% Centroid difference (max transient rate)
@@ -321,7 +384,7 @@ options.tuning_criterion = 'ts';
 
 %save pf_vector_max and cent_diff for angle difference analysis
 
-save(fullfile(crossdir,'pf_vector_max.mat'),'pf_vector_max');
+%save(fullfile(crossdir,'pf_vector_max.mat'),'pf_vector_max');
 
 %% Split neurons by A or B task selective category - A or B selective (exclusive)
 %which criterion to use for task-selective ROIs
@@ -370,9 +433,9 @@ options.tuning_criterion = 'si'; %si or ts
 [tuned_fractions,tuned_logicals] = fractionTuned_multi_ses(tunedLogical,pf_count_filtered_log,options);
 
 %save fractional count
-save(fullfile(crossdir,'tuned_fractions.mat'),'tuned_fractions');
+%save(fullfile(crossdir,'tuned_fractions.mat'),'tuned_fractions');
 %save tuned logicals
-save(fullfile(crossdir,'tuned_logicals.mat'),'tuned_logicals');
+%save(fullfile(crossdir,'tuned_logicals.mat'),'tuned_logicals');
 
 %% Look at spatial information scores in matching neurons between days in A trials and B trials
 %put into separate script
@@ -430,7 +493,7 @@ for ss=sessionSelect
     ses_nbROI(ss) = size(session_vars{ss}.Place_cell{selectTrial(1)}.Tuned_ROI_mask,2);
 end
 
-save(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
+%save(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
 
 %% Load selective neurons
 load(fullfile(crossdir,'task_neurons.mat'),'task_selective_ROIs','task_remapping_ROIs','ses_nbROI');
