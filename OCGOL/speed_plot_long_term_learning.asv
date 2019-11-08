@@ -263,15 +263,7 @@ B_speed_relA
 
 
 %% Generate supplementary plots with slope change -1s to 1s in reward zone (try -1 to 0s)
-%reward/peri-reward zone speeds
-%animal index,then session; then lap x reward zone velocity - event split - 76 fr - 0 s
-%76  30  = 46
-%1s prior range: 47-76   
-%1s post range: 77-106
 
-A_speed{1}{1}
-
-%1 - RF; %2 - 5A5B; %3 - 3A3B; %4 - rand AB
 
 
 %% Plot individual traces by lap

@@ -475,12 +475,22 @@ toc;
 %% Get AUC/min calculation for each ROI in A vs. B
 %AUC/min and frequency of events events/min in run epoch for A or B trials
 %all added no run epochs
+
 [session_vars] = AUC_rate(session_vars,options);
+
+%% Raster spiral - prepare inputs for multi session display
+% save this in the future as well and load
+options.spiral_width = 0.1;
+[plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars,options);
+
+%% Raster, STC, ROI image across days
+%insert dummy SCE data
+
+plot_raster_spiral_STC_ROI_multi_ses(plot_raster_vars,session_vars,registered,cat_registered_cell,ROI_zooms,ROI_outlines,options)
 
 %% Decicated ALL session spiral plotter with categorical type display
 
-%insert dummy SCE data
-multi_ses_SCE_data = [];
+
 plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
 
 
@@ -488,7 +498,6 @@ plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registere
 
 %insert dummy SCE data
 multi_ses_SCE_data = [];
-
 plot_raster_spiral_multi_ses_label_check(plot_raster_vars,session_vars,registered,cat_registered_cell,multi_ses_SCE_data,options)
 
 
@@ -504,10 +513,6 @@ plot_spiral_raster_SCE(plot_raster_vars,session_vars,registered,cat_registered_c
 visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session_vars,task_selective_ROIs,cat_registered_cell,select_fields,options)
 
 
-%% Raster spiral - prepare multi session
-% save this in the future as well and load
-options.spiral_width = 0.1;
-[plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars,options);
 
 %% Plot spiral raster using inputs
 %ploy 
