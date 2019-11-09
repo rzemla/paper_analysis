@@ -255,22 +255,201 @@ end
 
 %% Generate mean velocity 2s prior and 2s post entry to reward zone
 
-A_speed
-A_speed_relB
-
-B_speed
-B_speed_relA
-
-
-%% Generate supplementary plots with slope change -1s to 1s in reward zone (try -1 to 0s)
 %reward/peri-reward zone speeds
 %animal index,then session; then lap x reward zone velocity - event split - 76 fr - 0 s
 %76  30  = 46
+%2s prior range: 17-76   
+%2s post range: 77-136
+
+%for each animal, for each animal
+for aa=1:4
+    for ss=1:4
+        pre_speed{aa}{ss}.A = A_speed{aa}{ss}(:,17:76);
+        post_speed{aa}{ss}.A = A_speed{aa}{ss}(:,77:136);
+
+        pre_speed{aa}{ss}.B = B_speed{aa}{ss}(:,17:76);
+        post_speed{aa}{ss}.B = B_speed{aa}{ss}(:,77:136);
+        
+        %no first session (RF) in relative zones (1 lap category)
+        if ss~=1
+            pre_speed{aa}{ss}.ArelB = A_speed_relB{aa}{ss}(:,17:76);
+            post_speed{aa}{ss}.ArelB = A_speed_relB{aa}{ss}(:,77:136);
+            
+            pre_speed{aa}{ss}.BrelA = B_speed_relA{aa}{ss}(:,17:76);
+            post_speed{aa}{ss}.BrelA = B_speed_relA{aa}{ss}(:,77:136);
+            
+        end
+        
+        %mean on each lap
+        pre_post_speed_mean{aa}{ss}.A = [mean(pre_speed{aa}{ss}.A,2),mean(post_speed{aa}{ss}.A,2)];
+        
+        pre_post_speed_mean{aa}{ss}.B = [mean(pre_speed{aa}{ss}.B,2),mean(post_speed{aa}{ss}.B,2)];
+        
+        if ss~=1 %no input for RF
+            pre_post_speed_mean{aa}{ss}.ArelB = [mean(pre_speed{aa}{ss}.ArelB,2),mean(post_speed{aa}{ss}.ArelB,2)];
+            
+            pre_post_speed_mean{aa}{ss}.BrelA = [mean(pre_speed{aa}{ss}.BrelA,2),mean(post_speed{aa}{ss}.BrelA,2)];
+        end
+        
+        %get across lap mean and sem for each animal session, pre,post,
+        %animal
+        pre_post_speed_mean_lap.A(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.A,1);
+        pre_post_speed_sem_lap.A(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.A,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.A,1));
+
+        pre_post_speed_mean_lap.B(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.B,1);
+        pre_post_speed_sem_lap.B(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.B,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.B,1));   
+        
+        if ss~=1 %no input for RF
+            pre_post_speed_mean_lap.ArelB(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.ArelB,1);
+            pre_post_speed_sem_lap.ArelB(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.ArelB,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.ArelB,1));
+            
+            pre_post_speed_mean_lap.BrelA(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.BrelA,1);
+            pre_post_speed_sem_lap.BrelA(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.BrelA,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.BrelA,1));
+        end
+        
+    end
+end
+
+%% Statistics - paired wilcoxon on animal means - pre vs post for all trial (all animals)
+
+%fewer than 5 pairs - don't use wilcoxon; reasonable to assume normality
+%and use simple paired t-test
+%for each session type
+for ss=1:4
+    [h.A(ss),p.A(ss),ci.A(:,ss),stats.A(ss)] = ttest(squeeze(pre_post_speed_mean_lap.A(ss,1,:)), squeeze(pre_post_speed_mean_lap.A(ss,2,:)));
+    [h.B(ss),p.B(ss),ci.B(:,ss),stats.B(ss)] = ttest(squeeze(pre_post_speed_mean_lap.B(ss,1,:)), squeeze(pre_post_speed_mean_lap.B(ss,2,:)));
+    if ss~=1
+        [h.ArelB(ss),p.ArelB(ss),ci.ArelB(:,ss),stats.ArelB(ss)] = ttest(squeeze(pre_post_speed_mean_lap.ArelB(ss,1,:)), squeeze(pre_post_speed_mean_lap.ArelB(ss,2,:)));
+        [h.BrelA(ss),p.BrelA(ss),ci.BrelA(:,ss),stats.BrelA(ss)] = ttest(squeeze(pre_post_speed_mean_lap.BrelA(ss,1,:)), squeeze(pre_post_speed_mean_lap.BrelA(ss,2,:)));
+    end
+end
+
+%get 0,1,2,3 star significance level
+%-1 - ns - >= 0.05
+%1 * - <0.05, >= 0.01
+%2 ** - <0.01 >= 0.001
+%3 *** - <0.001
+p_sig_level.A = get_star_sig(p.A);
+p_sig_level.B = get_star_sig(p.B);
+p_sig_level.ArelB = get_star_sig(p.ArelB);
+p_sig_level.BrelA = get_star_sig(p.BrelA);
+
+%set RF session (1) to nan in zone sig on opposing laps (since there are
+%non)
+p_sig_level.ArelB(1) = nan;
+p_sig_level.BrelA(1) = nan;
+
+%% Plot zone data
+
+%A zones in A laps
+%plot
+figure('Position',[769   223   758   684])
+subplot(2,2,1)
+hold on
+title('A laps - A reward zone')
+idx_skip= 0;
+xticks([1 2 3.5 4.5 6.0 7.0 8.5 9.5]);
+xticklabels({'Pre','Post','Pre','Post','Pre','Post','Pre','Post'})
+xtickangle(45)
+for ss=1:4
+    
+    
+    ylabel('Speed [cm/s]')
+    ylim([0  25])
+    xlim([0 10.5])
+    %pre A rew on A laps
+    errorbar([0.85, 0.95, 1.05, 1.15]+idx_skip,squeeze(pre_post_speed_mean_lap.A(ss,1,:)),squeeze(pre_post_speed_sem_lap.A(ss,1,:))'.','LineStyle','none','Color',[65,105,225]./255,'LineWidth',1.5)
+    %post A rew on A laps
+    errorbar([0.85, 0.95, 1.05, 1.15]+1+idx_skip,squeeze(pre_post_speed_mean_lap.A(ss,2,:)),squeeze(pre_post_speed_sem_lap.A(ss,2,:))'.','LineStyle','none','Color',[65,105,225]./255,'LineWidth',1.5)
+    %connecting line
+    plot([0.85, 0.95, 1.05, 1.15; [0.85, 0.95, 1.05, 1.15]+1]+idx_skip,[squeeze(pre_post_speed_mean_lap.A(ss,1,:)), squeeze(pre_post_speed_mean_lap.A(ss,2,:))]','Color',[65,105,225]./255,'LineWidth',1.5)
+    
+    idx_skip=  idx_skip+2.5;
+end
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+
+%B zones in B laps
+subplot(2,2,2)
+hold on
+title('B laps - B reward zone')
+idx_skip= 0;
+xticks([1 2 3.5 4.5 6.0 7.0 8.5 9.5]);
+xticklabels({'Pre','Post','Pre','Post','Pre','Post','Pre','Post'})
+xtickangle(45)
+for ss=1:4
+    
+    
+    ylabel('Speed [cm/s]')
+    ylim([0  25])
+    xlim([0 10.5])
+    %pre A rew on A laps
+    errorbar([0.85, 0.95, 1.05, 1.15]+idx_skip,squeeze(pre_post_speed_mean_lap.B(ss,1,:)),squeeze(pre_post_speed_sem_lap.B(ss,1,:))'.','LineStyle','none','Color',[220,20,60]./255,'LineWidth',1.5)
+    %post A rew on A laps
+    errorbar([0.85, 0.95, 1.05, 1.15]+1+idx_skip,squeeze(pre_post_speed_mean_lap.B(ss,2,:)),squeeze(pre_post_speed_sem_lap.B(ss,2,:))'.','LineStyle','none','Color',[220,20,60]./255,'LineWidth',1.5)
+    %connecting line
+    plot([0.85, 0.95, 1.05, 1.15; [0.85, 0.95, 1.05, 1.15]+1]+idx_skip,[squeeze(pre_post_speed_mean_lap.B(ss,1,:)), squeeze(pre_post_speed_mean_lap.B(ss,2,:))]','Color',[220,20,60]./255,'LineWidth',1.5)
+    
+    idx_skip=  idx_skip+2.5;
+end
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+
+%A zones in B laps
+subplot(2,2,3)
+hold on
+title('B laps - A reward zone')
+idx_skip= 2.5;
+xticks([3.5 4.5 6.0 7.0 8.5 9.5]);
+xticklabels({'Pre','Post','Pre','Post','Pre','Post','Pre','Post'})
+xtickangle(45)
+for ss=2:4
+    
+    ylabel('Speed [cm/s]')
+    ylim([0  25])
+    xlim([0 10.5])
+    %pre A rew on A laps
+    errorbar([0.85, 0.95, 1.05, 1.15]+idx_skip,squeeze(pre_post_speed_mean_lap.ArelB(ss,1,:)),squeeze(pre_post_speed_sem_lap.ArelB(ss,1,:))'.','LineStyle','none','Color',[65,105,225]./255,'LineWidth',1.5)
+    %post A rew on A laps
+    errorbar([0.85, 0.95, 1.05, 1.15]+1+idx_skip,squeeze(pre_post_speed_mean_lap.ArelB(ss,2,:)),squeeze(pre_post_speed_sem_lap.ArelB(ss,2,:))'.','LineStyle','none','Color',[65,105,225]./255,'LineWidth',1.5)
+    %connecting line
+    plot([0.85, 0.95, 1.05, 1.15; [0.85, 0.95, 1.05, 1.15]+1]+idx_skip,[squeeze(pre_post_speed_mean_lap.ArelB(ss,1,:)), squeeze(pre_post_speed_mean_lap.ArelB(ss,2,:))]','Color',[65,105,225]./255,'LineWidth',1.5)
+    
+    idx_skip=  idx_skip+2.5;
+end
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+
+%B zones in A laps
+subplot(2,2,4)
+hold on
+title('A laps - B reward zone')
+idx_skip= 2.5;
+xticks([3.5 4.5 6.0 7.0 8.5 9.5]);
+xticklabels({'Pre','Post','Pre','Post','Pre','Post','Pre','Post'})
+xtickangle(45)
+for ss=2:4
+    
+    ylabel('Speed [cm/s]')
+    ylim([0  25])
+    xlim([0 10.5])
+    %pre A rew on A laps
+    errorbar([0.85, 0.95, 1.05, 1.15]+idx_skip,squeeze(pre_post_speed_mean_lap.BrelA(ss,1,:)),squeeze(pre_post_speed_sem_lap.BrelA(ss,1,:))'.','LineStyle','none','Color',[220,20,60]./255,'LineWidth',1.5)
+    %post A rew on A laps
+    errorbar([0.85, 0.95, 1.05, 1.15]+1+idx_skip,squeeze(pre_post_speed_mean_lap.BrelA(ss,2,:)),squeeze(pre_post_speed_sem_lap.BrelA(ss,2,:))'.','LineStyle','none','Color',[220,20,60]./255,'LineWidth',1.5)
+    %connecting line
+    plot([0.85, 0.95, 1.05, 1.15; [0.85, 0.95, 1.05, 1.15]+1]+idx_skip,[squeeze(pre_post_speed_mean_lap.BrelA(ss,1,:)), squeeze(pre_post_speed_mean_lap.BrelA(ss,2,:))]','Color',[220,20,60]./255,'LineWidth',1.5)
+    
+    idx_skip=  idx_skip+2.5;
+end
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+
+
+
+%% Generate supplementary plots with slope change -1s to 1s in reward zone (try -1 to 0s)
 %1s prior range: 47-76   
 %1s post range: 77-106
-
-A_speed{1}{1}
-
 %1 - RF; %2 - 5A5B; %3 - 3A3B; %4 - rand AB
 
 
