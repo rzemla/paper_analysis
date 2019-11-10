@@ -8,9 +8,19 @@ options.defineDir = 1;
 
 
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_rand_d1_052918';
-setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_5A5B_060118';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_5A5B_060118';
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_3A3B_060718';
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518';
+
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_rand_d2_051518';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_3AB_d8_052418';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_AB_061418';
+
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_rand_d2_051518';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
+setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -29,8 +39,8 @@ options.loadImagingData = 0;
 %technical fix - mostly for I47_LP who ran fast (run std OCGOL for others)
 %options.BehaviorType = 'OCGOL-tech';
 
-%options.BehaviorType = 'OCGOL';
-options.BehaviorType = 'GOL-RF-hack';
+options.BehaviorType = 'OCGOL';
+%options.BehaviorType = 'GOL-RF-hack';
 
 %type of calcium data
 options.calcium_data_input = 'CNMF';
