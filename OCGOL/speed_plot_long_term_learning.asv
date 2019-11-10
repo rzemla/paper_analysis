@@ -329,16 +329,15 @@ end
 %1 * - <0.05, >= 0.01
 %2 ** - <0.01 >= 0.001
 %3 *** - <0.001
+p_sig_level.A = get_star_sig(p.A);
+p_sig_level.B = get_star_sig(p.B);
+p_sig_level.ArelB = get_star_sig(p.ArelB);
+p_sig_level.BrelA = get_star_sig(p.BrelA);
 
-
-p_sig_level.A(find(p.A >= 0.05)) = -1;
-p_sig_level.A(find(p.A < 0.05 & p.A >= 0.01)) = 1; 
-p_sig_level.A(find(p.A < 0.01 & p.A >= 0.001)) = 2;
-p_sig_level.A(find(p.A < 0.001 )) = 3;
-
-get_star_sig(p.A)
-
-
+%set RF session (1) to nan in zone sig on opposing laps (since there are
+%non)
+p_sig_level.ArelB(1) = nan;
+p_sig_level.BrelA(1) = nan;
 
 %% Plot zone data
 
@@ -454,6 +453,63 @@ set(gca,'LineWidth',1.5)
 %1 - RF; %2 - 5A5B; %3 - 3A3B; %4 - rand AB
 
 
+%% Generate mean velocity 2s prior and 2s post entry to reward zone
+
+%reward/peri-reward zone speeds
+%animal index,then session; then lap x reward zone velocity - event split - 76 fr - 0 s
+%76  30  = 46
+%2s prior range: 17-76   
+%2s post range: 77-136
+
+%for each animal, for each animal
+for aa=1:4
+    for ss=1:4
+        pre_speed{aa}{ss}.A = A_speed{aa}{ss}(:,17:76);
+        post_speed{aa}{ss}.A = A_speed{aa}{ss}(:,77:136);
+
+        pre_speed{aa}{ss}.B = B_speed{aa}{ss}(:,17:76);
+        post_speed{aa}{ss}.B = B_speed{aa}{ss}(:,77:136);
+        
+        %no first session (RF) in relative zones (1 lap category)
+        if ss~=1
+            pre_speed{aa}{ss}.ArelB = A_speed_relB{aa}{ss}(:,17:76);
+            post_speed{aa}{ss}.ArelB = A_speed_relB{aa}{ss}(:,77:136);
+            
+            pre_speed{aa}{ss}.BrelA = B_speed_relA{aa}{ss}(:,17:76);
+            post_speed{aa}{ss}.BrelA = B_speed_relA{aa}{ss}(:,77:136);
+            
+        end
+        
+        %mean on each lap
+        pre_post_speed_mean{aa}{ss}.A = [mean(pre_speed{aa}{ss}.A,2),mean(post_speed{aa}{ss}.A,2)];
+        
+        pre_post_speed_mean{aa}{ss}.B = [mean(pre_speed{aa}{ss}.B,2),mean(post_speed{aa}{ss}.B,2)];
+        
+        if ss~=1 %no input for RF
+            pre_post_speed_mean{aa}{ss}.ArelB = [mean(pre_speed{aa}{ss}.ArelB,2),mean(post_speed{aa}{ss}.ArelB,2)];
+            
+            pre_post_speed_mean{aa}{ss}.BrelA = [mean(pre_speed{aa}{ss}.BrelA,2),mean(post_speed{aa}{ss}.BrelA,2)];
+        end
+        
+        %get across lap mean and sem for each animal session, pre,post,
+        %animal
+        pre_post_speed_mean_lap.A(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.A,1);
+        pre_post_speed_sem_lap.A(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.A,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.A,1));
+
+        pre_post_speed_mean_lap.B(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.B,1);
+        pre_post_speed_sem_lap.B(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.B,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.B,1));   
+        
+        if ss~=1 %no input for RF
+            pre_post_speed_mean_lap.ArelB(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.ArelB,1);
+            pre_post_speed_sem_lap.ArelB(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.ArelB,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.ArelB,1));
+            
+            pre_post_speed_mean_lap.BrelA(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.BrelA,1);
+            pre_post_speed_sem_lap.BrelA(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.BrelA,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.BrelA,1));
+        end
+        
+    end
+end
+
 %% Plot individual traces by lap
 %30 frames/s 
 
@@ -475,15 +531,6 @@ for aa=2%1:4
     end
 end
 
-%%
-function sig_lvl = get_star_sig(p_struct)
-sig_lvl = [0 0 0 0];
 
-sig_lvl(find((p_struct >= 0.05)) = -1;
-sig_lvl(find((p_struct < 0.05 & (p_struct >= 0.01)) = 1;
-sig_lvl(find((p_struct < 0.01 & (p_struct >= 0.001)) = 2;
-sig_lvl(find((p_struct < 0.001 )) = 3;
-
-end
 
 

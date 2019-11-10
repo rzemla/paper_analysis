@@ -447,11 +447,113 @@ set(gca,'LineWidth',1.5)
 
 
 
+%% 
+
+
 %% Generate supplementary plots with slope change -1s to 1s in reward zone (try -1 to 0s)
+
 %1s prior range: 47-76   
 %1s post range: 77-106
 %1 - RF; %2 - 5A5B; %3 - 3A3B; %4 - rand AB
 
+%reward/peri-reward zone speeds
+%animal index,then session; then lap x reward zone velocity - event split - 76 fr - 0 s
+%76  30  = 46
+%2s prior range: 17-76   
+%2s post range: 77-136
+
+%for each animal, for each animal
+for aa=1:4
+    for ss=1:4
+        speed_sl{aa}{ss}.A = A_speed{aa}{ss}(:,47:76);
+        %post_speed_sl{aa}{ss}.A = A_speed{aa}{ss}(:,77:136);
+
+        speed_sl{aa}{ss}.B = B_speed{aa}{ss}(:,47:76);
+        %post_speed_sl{aa}{ss}.B = B_speed{aa}{ss}(:,77:136);
+        
+        %no first session (RF) in relative zones (1 lap category)
+        if ss~=1
+            speed_sl{aa}{ss}.ArelB = A_speed_relB{aa}{ss}(:,47:76);
+            %speed_sl{aa}{ss}.ArelB = A_speed_relB{aa}{ss}(:,77:136);
+            
+            speed_sl{aa}{ss}.BrelA = B_speed_relA{aa}{ss}(:,47:76);
+            %post_speed_sl{aa}{ss}.BrelA = B_speed_relA{aa}{ss}(:,77:136);
+            
+        end
+    end
+end
+
+% Get slopes for each lap with interval
+for aa=1:4
+    for ss=1:4
+        %for each lap
+        for ll=1:size(speed_sl{aa}{ss}.A,1)
+            slopes{aa}{ss}.A(ll,:) =  polyfit(linspace(-1,0,30),speed_sl{aa}{ss}.A(ll,:),1);
+        end
+        
+        for ll=1:size(speed_sl{aa}{ss}.B,1)
+            slopes{aa}{ss}.B(ll,:) =  polyfit(linspace(-1,0,30),speed_sl{aa}{ss}.B(ll,:),1);
+        end
+        
+    end
+    
+    for ss=2:4
+        %for each lap
+        for ll=1:size(speed_sl{aa}{ss}.ArelB,1)
+            slopes{aa}{ss}.ArelB(ll,:) =  polyfit(linspace(-1,0,30),speed_sl{aa}{ss}.ArelB(ll,:),1);
+        end
+        
+        for ll=1:size(speed_sl{aa}{ss}.BrelA,1)
+            slopes{aa}{ss}.BrelA(ll,:) =  polyfit(linspace(-1,0,30),speed_sl{aa}{ss}.BrelA(ll,:),1);
+        end
+        
+    end
+end
+
+%for each animal and each session, get mean slope
+for aa=1:4
+    for ss=1:4
+        mean_slope.A(ss,aa) = mean(slopes{aa}{ss}.A(:,1));
+        mean_slope.B(ss,aa) = mean(slopes{aa}{ss}.B(:,1));
+    end
+    
+    for ss=2:4
+        mean_slope.ArelB(ss,aa) = mean(slopes{aa}{ss}.ArelB(:,1));
+        mean_slope.BrelA(ss,aa) = mean(slopes{aa}{ss}.BrelA(:,1));
+    end
+end
+
+
+
+%         %mean on each lap
+          %speed_sl_mean{aa}{ss}.A = mean(pre_speed{aa}{ss}.A,2),mean(post_speed{aa}{ss}.A,2)];
+%         
+%         pre_post_speed_mean{aa}{ss}.B = [mean(pre_speed{aa}{ss}.B,2),mean(post_speed{aa}{ss}.B,2)];
+%         
+%         if ss~=1 %no input for RF
+%             pre_post_speed_mean{aa}{ss}.ArelB = [mean(pre_speed{aa}{ss}.ArelB,2),mean(post_speed{aa}{ss}.ArelB,2)];
+%             
+%             pre_post_speed_mean{aa}{ss}.BrelA = [mean(pre_speed{aa}{ss}.BrelA,2),mean(post_speed{aa}{ss}.BrelA,2)];
+%         end
+%         
+%         %get across lap mean and sem for each animal session, pre,post,
+%         %animal
+%         pre_post_speed_mean_lap.A(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.A,1);
+%         pre_post_speed_sem_lap.A(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.A,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.A,1));
+% 
+%         pre_post_speed_mean_lap.B(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.B,1);
+%         pre_post_speed_sem_lap.B(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.B,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.B,1));   
+%         
+%         if ss~=1 %no input for RF
+%             pre_post_speed_mean_lap.ArelB(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.ArelB,1);
+%             pre_post_speed_sem_lap.ArelB(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.ArelB,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.ArelB,1));
+%             
+%             pre_post_speed_mean_lap.BrelA(ss,:,aa) = mean(pre_post_speed_mean{aa}{ss}.BrelA,1);
+%             pre_post_speed_sem_lap.BrelA(ss,:,aa) = std(pre_post_speed_mean{aa}{ss}.BrelA,0,1)./sqrt(size(pre_post_speed_mean{aa}{ss}.BrelA,1));
+%         end
+        
+  %  end
+%end
 
 %% Plot individual traces by lap
 %30 frames/s 
