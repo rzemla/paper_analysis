@@ -283,5 +283,14 @@ hold off
 Behavior.performance.trialOrder = trialOrder;
 Behavior.performance.trialCorrect = trialCorrect';
 
+
+%export lick data for histogram figures
+%number of licks = binned position (100 bins; 0-1 position)
+Behavior.lick.bin_licks_lap = N_licks;
+%position and time of licks on each lap
+Behavior.lick.lick_lap = lick_lap;
+
+
+
 end
 

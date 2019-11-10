@@ -1,8 +1,16 @@
 %% Set parameters for the pipeline
 
 options.defineDir = 1;
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418';
 
-setDir = 'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7';
+
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_rand_d1_052918';
+setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_5A5B_060118';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_3A3B_060718';
+%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -10,7 +18,7 @@ setDir = 'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7';
 %whether to load in existing XML and CSV behavioral data save in workspace
 %1 - load from saved workspace
 %0 - read and load from raw XML and CSV files
-options.loadBehaviorData = 0;
+options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
 options.loadImagingData = 0;
@@ -21,7 +29,8 @@ options.loadImagingData = 0;
 %technical fix - mostly for I47_LP who ran fast (run std OCGOL for others)
 %options.BehaviorType = 'OCGOL-tech';
 
-options.BehaviorType = 'OCGOL-punish';
+%options.BehaviorType = 'OCGOL';
+options.BehaviorType = 'GOL-RF-hack';
 
 %type of calcium data
 options.calcium_data_input = 'CNMF';
@@ -104,7 +113,8 @@ if options.textures == true
     %[Behavior] = extractTextures(CSV, Behavior, options);
     %all signals, not just texture related signals
     switch options.BehaviorType
-        
+        case 'GOL-RF-hack' %used to get RF data not related to GOL task
+            [Behavior] = extractTextures_GOL_RF_hack(CSV, Behavior, options);
         case 'GOL-RF' %special case for day 1 of GOL
             [Behavior] = extractTextures_GOL_RF(CSV, Behavior, options);
         case 'GOL'
@@ -126,6 +136,8 @@ end
 switch options.BehaviorType
     case 'RF' %same as GOL for now
         [Behavior] = GOL_performance(Behavior, CSV);
+    case 'GOL-RF-hack'
+        [Behavior] = GOL_RF_performance_new_inputs(Behavior);
     case 'GOL-RF'
         [Behavior] = GOL_RF_performance_new_inputs(Behavior);
     case 'GOL'
@@ -145,11 +157,13 @@ switch options.BehaviorType
        [Behavior] = OCGOL_performance_new_inputs_punish(Behavior);
 end
 
-%% Save Behavior struct temporarily here - later do at end
+%% Save Behavior struct temporarily here for Figure 1 analysis
 
-% fprintf('Saving behavioral data...');
-% save(fullfile(directory_name,'output','Behavior.mat'),'Behavior');
-% fprintf('Done\n');
+fprintf('Saving behavioral data...');
+cd(directory_name)
+mkdir('output')
+save(fullfile(directory_name,'output','Behavior.mat'),'Behavior');
+fprintf('Done\n');
 
 %% Restrict data to complete laps
 

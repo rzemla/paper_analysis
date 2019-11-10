@@ -366,5 +366,13 @@ Behavior.performance.frac_rew = frac_reward_zone_licks;
 %fraction of licks in the anticipatory zone
 Behavior.performance.frac_ant = frac_ant_zone_licks;
 
+%additional lick data for figure analysis
+%number of licks = binned position (100 bins; 0-1 position)
+Behavior.lick.bin_licks_lap = N_licks;
+%position and time of licks on each lap
+Behavior.lick.lick_lap = lick_lap;
+
+
+
 end
 

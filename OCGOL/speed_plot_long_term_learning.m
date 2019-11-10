@@ -1,23 +1,23 @@
 %% File directories
-%I45_RT
+%I45_RT  (1,1,1,1)
 pathDir{1}{1} = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
 pathDir{1}{2} = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018';
 pathDir{1}{3} = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518';
 pathDir{1}{4} = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418';
 
-%I46
+%I46 (1,1,1,1)
 pathDir{2}{1} = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_rand_d1_052918';
 pathDir{2}{2} = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_5A5B_060118';
 pathDir{2}{3} = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_3A3B_060718';
 pathDir{2}{4} = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518';
 
-%I47_RS
+%I47_RS (1,0,1,1)
 pathDir{3}{1} = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_rand_d2_051518';
 pathDir{3}{2} = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218';
 pathDir{3}{3} = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_3AB_d8_052418';
 pathDir{3}{4} = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_AB_061418';
 
-%I47_LP
+%I47_LP (1,1,1,1)
 pathDir{4}{1} = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_rand_d2_051518';
 pathDir{4}{2} = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
 pathDir{4}{3} = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
