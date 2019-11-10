@@ -3,59 +3,92 @@
 %% load in licks, behavior (trial order from each day) into struct 
 %list directories
 
-distList{1} = {'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218',...
+%I45 LT (1,1,1,1)
+dirList{1} = {'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218',...
             'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_5A5B_053018',...
             'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_3A3B_060518',...
-            'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418'}
-
-distList{1} = 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_rand_d1_052918',...
-'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_5A5B_060118',...
- 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_3A3B_060718';
- 'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518';
-
-%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_rand_d2_051518';
-%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218';
-%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_3AB_d8_052418';
-%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_AB_061418';
-
-%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_rand_d2_051518';
-%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
-%setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
-setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
-
-
-%I45 LT (1,1,1,1)
-dirlist = {'E:\I45_RT_rand_d1_052218_lick\output',...
-            'E:\I45_RT_5A5B_053018_lick\output',...
-            'E:\I45_RT_3A3B_060518_lick\output',...
-            'E:\I45_RT_AB_061418_lick\output'};
-
+            'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_AB_061418'};
 %I46 (1,1,1,1)
-dirlist = {'E:\I46_rand_d1_052918_lick\output',...
-            'E:\I46_5A5B_060118_lick\output',...
-            'E:\I46_3A3B_060718_lick\output',...
-            'E:\I46_AB_061518_lick\output'};
-
+dirList{2} = {'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_rand_d1_052918',...
+                'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_5A5B_060118',...
+                'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_3A3B_060718',...
+                'G:\Figure_1_OCGOL_learning_long_term\I46\behavior_only\I46_AB_061518'};
+            
 %I47 RS (1,0,1,1)
-dirlist = {'E:\I47_RS_rand_d2_051518_lick\output',...
-            'E:\I47_RS_5AB_d1_051618_lick\output',...
-            'E:\I47_RS_3AB_d8_052418_lick\output',...
-            'E:\I47_RS_AB_061418_lick\output'};
-
+dirList{3} = {'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_rand_d2_051518',...
+                'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_5AB_d7_052218',...
+                'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_3AB_d8_052418',...
+                'G:\Figure_1_OCGOL_learning_long_term\I47_RS\behavior_only\I47_RS_AB_061418'};
+            
 %I47LP (1,1,1,1)
-dirlist = {'E:\I47_LP_rand_d2_051518_lick\output',...
-            'E:\I47_LP_5AB_d1_051718_lick\output',...
-            'E:\I47_LP_3AB_d8_052418_lick\output',...
-            'E:\I47_LP_AB_061418_lick\output'};
+dirList{4} = {'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_rand_d2_051518',...
+                'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718',...
+                'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418',...
+                'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418'};
 
-%load in Behaviors and licks variables
-for ii = 1:size(dirlist,2)
-   stages{ii} = load([dirlist{ii} '\matlab.mat'],'licks','Behavior');    
+
+%% Load in Behavior struct with lick data
+
+%for each animal
+tic
+for aa=1:4
+    for ss = 1:4
+        lick_data{aa}{ss} = load(fullfile(dirList{aa}{ss},'output','Behavior.mat'),'Behavior');
+    end
+end
+toc;
+
+%% Take all lick positions and bin 
+
+
+figure
+hold on
+ylim([0 0.5])
+b= bar(sum(lick_data{1, 1}{1, 1}.Behavior.lick.bin_licks_lap,1)./...
+    sum(sum(lick_data{1, 1}{1, 1}.Behavior.lick.bin_licks_lap,1)),1,'hist')
+b.FaceColor = 'g'
+
+
+%% Normalize lap positions in lick struct to this matrix
+
+%get max pos in cm for each lap
+for aa=1:4
+    for ss=1:4
+        max_pos{aa}{ss} = lick_data{aa}{ss}.Behavior.position_lap(:,2);
+    end
+end
+%get normalized position of each lick on each lap
+for aa=1:4
+    %for each session
+    for ss=1:4
+        %for each lap
+        for ll=1:size(lick_data{aa}{ss}.Behavior.lick.lick_lap,2)
+            lick_lap_norm{aa}{ss}{ll} = lick_data{aa}{ss}.Behavior.lick.lick_lap{ll}.position./max_pos{aa}{ss}(ll);
+        end
+    end
 end
 
-%% iterate the sequence below
+histogram(cell2mat(lick_lap_norm{aa}{ss}'),0:0.025:1,'Normalization','probability')
 
-edges = (0:5:200);
+
+%% Split into A and B normalized lick positions
+
+for aa=1:4
+    %for each session
+    for ss=1:4
+        %correct and incorrect A trials
+        A_idx = find(lick_data{aa}{ss}.Behavior.performance.trialOrder == 2 | lick_data{aa}{ss}.Behavior.performance.trialOrder ==20);
+        lick_lap_norm_A{aa}{ss} = lick_lap_norm{aa}{ss}(A_idx);
+
+        %correct and incorrect B trials
+        B_idx = find(lick_data{aa}{ss}.Behavior.performance.trialOrder == 3 | lick_data{aa}{ss}.Behavior.performance.trialOrder ==30)
+
+        
+    end
+end
+
+
+%% iterate the sequence below
 
 for ss = 1:size(dirlist,2)
 
@@ -76,7 +109,8 @@ for ss = 1:size(dirlist,2)
             end
             
         end
-        
+    
+        %if RF session
     elseif ss == 1
         stages{ss}.lickCombined = [];
         for ii=1:size(stages{ss}.licks,2)
@@ -89,7 +123,10 @@ end
 
 
 %% Generate histograms
-magenta = [0.85, 0.42, 0.68];
+edges = (0:0.025:1);
+
+%magenta = [0.85, 0.42, 0.68];
+green = [50,205,50]./255;
 blue = [0.25,0.41,0.88];
 red =  [0.85,0.07,0.23];
 
@@ -98,7 +135,7 @@ figure('Position', [100 100 600 800]);
 subplot(4,2,[1 2])
 hold on
 title('Random')
-plotHisto(stages{1}.lickCombined,edges,magenta);
+plotHisto(cell2mat(lick_lap_norm{aa}{ss}'),edges,green);
 hold off
 
 subplot(4,2,3)
@@ -136,10 +173,4 @@ hold on
 title('B')
 plotHisto(stages{4}.lickCombined{2},edges,red);
 hold off
-
-%GOAL PLOTS
-% fraction lick histograms for each behavior stage for each animal on A and B trials
-
-
-%fraction of correct A and B trials at each timepoint for each animal
 
