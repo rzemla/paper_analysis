@@ -106,9 +106,96 @@ rew_B_mean_all = mean(rew_B_mean,1);
 rew_A_mean_all(2)*50, (rew_A_mean_all(2)+0.051)*50;
 rew_B_mean_all(2)*50, (rew_B_mean_all(2)+0.051)*50;
 
+%% Calculate fraction of licks in reward zone and plot (Figure 1C)
+
+%get mean of max positon for each animal, session
+for aa=1:4
+        mean_max_pos(:,aa) = cellfun(@mean,max_pos{aa});
+end
+
+%10 cm distance on normalized position
+range_norm = (ones(4,4)*10)./mean_max_pos;
+mean_range_norm = mean(mean(range_norm));
+
+%get reward ranges for
+rew_A_norm = mean(rew_A_mean_all(2:end));
+rew_B_norm = mean(rew_B_mean_all(2:end));
 
 
-%% Get percent correct plot
+%merge lick positions across all laps
+for aa=1:4
+    for ss=1:4
+        if ss ~= 1
+            lick_lap_norm_A_all_laps{aa}{ss} = cell2mat(lick_lap_norm_A{aa}{ss}');
+            lick_lap_norm_B_all_laps{aa}{ss} = cell2mat(lick_lap_norm_B{aa}{ss}');
+        elseif ss==1
+            lick_lap_norm_all_laps{aa}{1} = cell2mat(lick_lap_norm{aa}{1}');
+        end
+    end
+end
+
+%find number of licks in reward zones A for A laps; B for B laps
+for aa=1:4
+    for ss=1:4
+        if ss~=1
+            lick_count_Azone(ss,aa) = size(find(lick_lap_norm_A_all_laps{aa}{ss} >= rew_A_norm & lick_lap_norm_A_all_laps{aa}{ss} <= (rew_A_norm +mean_range_norm)),1);
+            lick_count_Bzone(ss,aa) = size(find(lick_lap_norm_B_all_laps{aa}{ss} >= rew_B_norm & lick_lap_norm_B_all_laps{aa}{ss} <= (rew_B_norm +mean_range_norm)),1);
+        elseif ss==1
+            lick_count_Azone(1,aa) = size(find(lick_lap_norm_all_laps{aa}{ss} >= rew_A_norm & lick_lap_norm_all_laps{aa}{ss} <= (rew_A_norm +mean_range_norm)),1);
+            lick_count_Bzone(1,aa) = size(find(lick_lap_norm_all_laps{aa}{ss} >= rew_B_norm & lick_lap_norm_all_laps{aa}{ss} <= (rew_B_norm +mean_range_norm)),1);   
+        end
+    end
+end
+
+%get total A lap and B lap licks
+for aa=1:4
+    for ss=1:4
+        if ss~=1
+            lick_count_A(ss,aa) = size(lick_lap_norm_A_all_laps{aa}{ss},1);
+            lick_count_B(ss,aa) = size(lick_lap_norm_B_all_laps{aa}{ss},1);
+        elseif ss==1
+            lick_count_A(1,aa) = size(lick_lap_norm_all_laps{aa}{ss},1);
+            lick_count_B(1,aa) = size(lick_lap_norm_all_laps{aa}{ss},1);   
+        end
+    end
+end
+
+%fraction of licks in reward zone on A and B laps
+frac_zone_A = lick_count_Azone./lick_count_A;
+frac_zone_B = lick_count_Bzone./lick_count_B;
+
+%get mean fraction of lick in A and B laps
+mean_zone_A = mean(frac_zone_A,2);
+mean_zone_B = mean(frac_zone_B,2);
+
+%sem of fraction of licks by animal
+sem_zone_A = std(frac_zone_A,0,2)./sqrt(4);
+sem_zone_B = std(frac_zone_B,0,2)./sqrt(4);
+
+%line plot
+figure
+hold on
+xlim([0.5 4.5])
+xticks(1:4)
+xticklabels({'Random\newline foraging' ,'5A5B','3A3B','Random\newline AB'})
+ylim([0 1.2])
+yticks(0:0.2:1)
+ylabel('Fraction of licks in reward zone')
+ae = errorbar(mean_zone_A,sem_zone_A,'Color',[65,105,225]./255,'LineWidth',2);
+be = errorbar(mean_zone_B,sem_zone_B,'Color',[220,20,60]./255,'LineWidth',2);
+
+legend([ae be],{'A','B'},'Location','northwest')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+
+%% Statistics - perform 1-way anova and t-test with Bonferroni correction for mc
+
+%each column is diff session
+[p_zoneA,tbl_zoneA,stats_zoneA] anova1(frac_zone_A')
+
+%% Calculate percent of trials correct and construct line plot (Figure 1D)
+
 for aa=1:4
     for ss=2:4
         trialData = lick_data{aa}{ss}.Behavior.performance.trialOrder;
