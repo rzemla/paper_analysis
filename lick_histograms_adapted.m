@@ -41,12 +41,12 @@ toc;
 %% Take all lick positions and bin 
 
 
-figure
-hold on
-ylim([0 0.5])
-b= bar(sum(lick_data{1, 1}{1, 1}.Behavior.lick.bin_licks_lap,1)./...
-    sum(sum(lick_data{1, 1}{1, 1}.Behavior.lick.bin_licks_lap,1)),1,'hist')
-b.FaceColor = 'g'
+% figure
+% hold on
+% ylim([0 0.5])
+% b= bar(sum(lick_data{1, 1}{1, 1}.Behavior.lick.bin_licks_lap,1)./...
+%     sum(sum(lick_data{1, 1}{1, 1}.Behavior.lick.bin_licks_lap,1)),1,'hist')
+% b.FaceColor = 'g'
 
 
 %% Normalize lap positions in lick struct to this matrix
@@ -87,47 +87,70 @@ for aa=1:4
     end
 end
 
+%% Get mean/median normalized A/B reward position for each animal
 
-%% iterate the sequence below
-
-for ss = 1:size(dirlist,2)
-
-    if ss ~= 1
-        
-        trialOrder = stages{ss}.Behavior{1}.performance.trialOrder;
-        
-        %take only correct A trials
-        stages{ss}.lickCombined{1} = [];
-        stages{ss}.lickCombined{2} = [];
-        
-        for ii=1:size(stages{ss}.licks,2)
-            if trialOrder(ii) == 2 || trialOrder(ii) == 20
-                %combine all lick positions into one vector
-                stages{ss}.lickCombined{1} = [stages{ss}.lickCombined{1}; stages{ss}.licks{ii}(:,2)];
-            elseif trialOrder(ii) == 3 || trialOrder(ii) == 30
-                stages{ss}.lickCombined{2} = [stages{ss}.lickCombined{2}; stages{ss}.licks{ii}(:,2)];
-            end
-            
-        end
-    
-        %if RF session
-    elseif ss == 1
-        stages{ss}.lickCombined = [];
-        for ii=1:size(stages{ss}.licks,2)
-            stages{ss}.lickCombined = [stages{ss}.lickCombined; stages{ss}.licks{ii}(:,2)];
-        end
-        
+for aa=1:4
+    %for each session (skip RF sessions)
+    for ss=2:4
+        %reward A normalized position onset
+        rew_A_mean(aa,ss) = mean(lick_data{aa}{ss}.Behavior.rewards{2}.position_norm);
+        %reward B normalized position onset
+        rew_B_mean(aa,ss) = mean(lick_data{aa}{ss}.Behavior.rewards{1}.position_norm);
     end
+end
+%mean from all animals on each session
+rew_A_mean_all = mean(rew_A_mean,1);
+rew_B_mean_all = mean(rew_B_mean,1);
 
+%reward range for plotting (50 bins)
+rew_A_mean_all(2)*50, (rew_A_mean_all(2)+0.051)*50;
+rew_B_mean_all(2)*50, (rew_B_mean_all(2)+0.051)*50;
+
+
+
+%% Get percent correct plot
+for aa=1:4
+    for ss=2:4
+        trialData = lick_data{aa}{ss}.Behavior.performance.trialOrder;
+        %frac A corr, frac B corr, all corr
+        corr_mat(ss,1,aa) = size(find(trialData == 2),1)./size(find(trialData == 2 | trialData == 20),1);
+        corr_mat(ss,2,aa) = size(find(trialData == 3),1)./size(find(trialData == 3 | trialData == 30),1);
+        corr_mat(ss,3,aa) = size(find(trialData == 2 | trialData == 3),1)./size(trialData,1);
+    end
 end
 
+%get mean and sem for A and B
+mean_corr = mean(corr_mat,3);
+sem_corr = std(corr_mat,0,3)./sqrt(4);
 
-%% Generate histograms
+%line plot
+figure
+hold on
+xlim([0.5 4.5])
+xticks(1:4)
+xticklabels({'Random\newline foraging' ,'5A5B','3A3B','Random\newline AB'})
+xtickangle(45)
+ylim([0 1.2])
+yticks([0:0.2:1])
+ylabel('Fraction correct')
+%mean A corr
+ae = errorbar(mean_corr(:,1),sem_corr(:,1),'Color',[65,105,225]./255,'LineWidth',2);
+%mean B corr
+be = errorbar(mean_corr(:,2),sem_corr(:,2),'Color',[220,20,60]./255,'LineWidth',2);
+%mean all corr
+abe = errorbar(mean_corr(:,3),sem_corr(:,3),'Color',[139, 0, 139]./255,'LineWidth',2);
+
+legend([ae be abe],{'A','B','All'},'Location','northwest')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+
+%% Generate histogram for figure animal
 
 %which animal to generate plot from
 aa=2;
-%40 bins
-edges = (0:0.025:1);
+%50 bins
+edges = (0:0.02:1);
 
 %magenta = [0.85, 0.42, 0.68];
 green = [50,205,50]./255;
