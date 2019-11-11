@@ -189,10 +189,38 @@ legend([ae be],{'A','B'},'Location','northwest')
 set(gca,'FontSize',16)
 set(gca,'LineWidth',2)
 
-%% Statistics - perform 1-way anova and t-test with Bonferroni correction for mc
+%% Statistics for reward zone lick - perform 1-way anova and t-test with Bonferroni correction for mc
 
-%each column is diff session
-[p_zoneA,tbl_zoneA,stats_zoneA] anova1(frac_zone_A')
+%each column is diff session - A
+[p_zoneA,tbl_zoneA,stats_zoneA] = anova1(frac_zone_A',{'RF','5A5B','3A3B','Rand AB'});
+%each coumns is diff session - B 
+[p_zoneB,tbl_zoneB,stats_zoneB] = anova1(frac_zone_B',{'RF','5A5B','3A3B','Rand AB'});
+
+%get columns so that they are sessions
+frac_zone_A_ses = frac_zone_A'; 
+frac_zone_B_ses = frac_zone_B';
+
+%do 3 paired t-tests for R- vs randAB; 3A3B vs. randAB, 5A5B vs. rand AB
+%RF vs. rand AB; sig after Holm-Sidak correction
+[~,p_Azone(1)] =ttest(frac_zone_A_ses(:,1),frac_zone_A_ses(:,4));
+%5A5B vs. rand AB
+[~,p_Azone(2)] =ttest(frac_zone_A_ses(:,2),frac_zone_A_ses(:,4));
+%3A3V vs. rand AB
+[~,p_Azone(3)] =ttest(frac_zone_A_ses(:,3),frac_zone_A_ses(:,4));
+
+%RF vs. rand AB; sig after Holm-Sidak correction
+[~,p_Bzone(1)] =ttest(frac_zone_B_ses(:,1),frac_zone_B_ses(:,4));
+%5A5B vs. rand AB
+[~,p_Bzone(2)] =ttest(frac_zone_B_ses(:,2),frac_zone_B_ses(:,4));
+%3A3V vs. rand AB
+[~,p_Bzone(3)] =ttest(frac_zone_B_ses(:,3),frac_zone_B_ses(:,4));
+
+%post hoc Holm-Sidak multi comp correction for 3 tests (Prism)
+
+%Dunn-Sidak correction (below),  Holm-Sidak (Prism analysis)
+%p_sidak = 1-(1-0.05)^(1/3)
+%p_sidak = 1-(1-0.01)^(1/3)
+%p_sidak = 1-(1-0.001)^(1/3)
 
 %% Calculate percent of trials correct and construct line plot (Figure 1D)
 
