@@ -189,31 +189,32 @@ legend([ae be],{'A','B'},'Location','northwest')
 set(gca,'FontSize',16)
 set(gca,'LineWidth',2)
 
-%% Statistics for reward zone lick - perform 1-way anova and t-test with Bonferroni correction for mc
-
-%each column is diff session - A
-[p_zoneA,tbl_zoneA,stats_zoneA] = anova1(frac_zone_A',{'RF','5A5B','3A3B','Rand AB'});
-%each coumns is diff session - B 
-[p_zoneB,tbl_zoneB,stats_zoneB] = anova1(frac_zone_B',{'RF','5A5B','3A3B','Rand AB'});
+%% Statistics for reward zone lick - perform 1-way anova and t-test with Holm-Sidak (prism) for mc
 
 %get columns so that they are sessions
-frac_zone_A_ses = frac_zone_A'; 
+frac_zone_A_ses = frac_zone_A';
 frac_zone_B_ses = frac_zone_B';
+
+%each column is diff session - A
+[p_zoneA_anova,tbl_zoneA,stats_zoneA_anova] = anova1(frac_zone_A_ses,{'RF','5A5B','3A3B','Rand AB'});
+%each coumns is diff session - B 
+[p_zoneB_anova,tbl_zoneB,stats_zoneB_anova] = anova1(frac_zone_B_ses,{'RF','5A5B','3A3B','Rand AB'});
+
 
 %do 3 paired t-tests for R- vs randAB; 3A3B vs. randAB, 5A5B vs. rand AB
 %RF vs. rand AB; sig after Holm-Sidak correction
-[~,p_Azone(1)] =ttest(frac_zone_A_ses(:,1),frac_zone_A_ses(:,4));
+[~,p_Azone(1),ci_Azone(1,:),stats_Azone(1)] =ttest(frac_zone_A_ses(:,1),frac_zone_A_ses(:,4));
 %5A5B vs. rand AB
-[~,p_Azone(2)] =ttest(frac_zone_A_ses(:,2),frac_zone_A_ses(:,4));
+[~,p_Azone(2),ci_Azone(2,:),stats_Azone(2)] =ttest(frac_zone_A_ses(:,2),frac_zone_A_ses(:,4));
 %3A3V vs. rand AB
-[~,p_Azone(3)] =ttest(frac_zone_A_ses(:,3),frac_zone_A_ses(:,4));
+[~,p_Azone(3),ci_Azone(3,:),stats_Azone(3)] =ttest(frac_zone_A_ses(:,3),frac_zone_A_ses(:,4));
 
 %RF vs. rand AB; sig after Holm-Sidak correction
-[~,p_Bzone(1)] =ttest(frac_zone_B_ses(:,1),frac_zone_B_ses(:,4));
+[~,p_Bzone(1),ci_Bzone(1,:),stats_Bzone(1)] =ttest(frac_zone_B_ses(:,1),frac_zone_B_ses(:,4));
 %5A5B vs. rand AB
-[~,p_Bzone(2)] =ttest(frac_zone_B_ses(:,2),frac_zone_B_ses(:,4));
+[~,p_Bzone(2),ci_Bzone(2,:),stats_Bzone(2)] =ttest(frac_zone_B_ses(:,2),frac_zone_B_ses(:,4));
 %3A3V vs. rand AB
-[~,p_Bzone(3)] =ttest(frac_zone_B_ses(:,3),frac_zone_B_ses(:,4));
+[~,p_Bzone(3),ci_Bzone(3,:),stats_Bzone(3)] =ttest(frac_zone_B_ses(:,3),frac_zone_B_ses(:,4));
 
 %post hoc Holm-Sidak multi comp correction for 3 tests (Prism)
 
@@ -259,6 +260,33 @@ legend([ae be abe],{'A','B','All'},'Location','northwest')
 
 set(gca,'FontSize',16)
 set(gca,'LineWidth',2)
+
+%% Statistics for fraction correct data
+
+%get columns so that they are sessions
+frac_corr_A_ses = squeeze(corr_mat(:,1,:))'; 
+frac_corr_B_ses = squeeze(corr_mat(:,2,:))';
+
+%each column is diff session - A
+[p_perf_zoneA_anova,tbl_perf_zoneA,stats_perf_zoneA_anova] = anova1(frac_corr_A_ses,{'RF','5A5B','3A3B','Rand AB'});
+%each coumns is diff session - B 
+[p_perf_zoneB_anova,tbl_perf_zoneB,stats_perf_zoneB_anova] = anova1(frac_corr_B_ses,{'RF','5A5B','3A3B','Rand AB'});
+
+%do 3 paired t-tests for R- vs randAB; 3A3B vs. randAB, 5A5B vs. rand AB
+%RF vs. rand AB; sig after Holm-Sidak correction
+[~,p_perf_Azone(1),ci_perf_Azone(1,:),stats_perf_Azone(1)] =ttest(frac_corr_A_ses(:,1),frac_corr_A_ses(:,4));
+%5A5B vs. rand AB
+[~,p_perf_Azone(2),ci_perf_Azone(2,:),stats_perf_Azone(2)] =ttest(frac_corr_A_ses(:,2),frac_corr_A_ses(:,4));
+%3A3V vs. rand AB
+[~,p_perf_Azone(3),ci_perf_Azone(3,:),stats_perf_Azone(3)] =ttest(frac_corr_A_ses(:,3),frac_corr_A_ses(:,4));
+
+%RF vs. rand AB; sig after Holm-Sidak correction
+[~,p_perf_Bzone(1),ci_perf_Bzone(1,:),stats_perf_Bzone(1)] =ttest(frac_corr_B_ses(:,1),frac_corr_B_ses(:,4));
+%5A5B vs. rand AB
+[~,p_perf_Bzone(2),ci_perf_Bzone(2,:),stats_perf_Bzone(2)] =ttest(frac_corr_B_ses(:,2),frac_corr_B_ses(:,4));
+%3A3V vs. rand AB
+[~,p_perf_Bzone(3),ci_perf_Bzone(3,:),stats_perf_Bzone(3)] =ttest(frac_corr_B_ses(:,3),frac_corr_B_ses(:,4));
+
 
 %% Generate histogram for figure animal
 
