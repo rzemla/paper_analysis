@@ -58,15 +58,38 @@ frac_all_si = tuned_counts_si/total_neurons;
 frac_all_ts = tuned_counts_ts/total_neurons;
 
 %% Statistics on fraction data (by animals)
-%Kruskall Waliis, paired Wilcoxon ranksum test with Dunn-Sidak correction)
-
-
-
 %fraction of neurons tuned in each category by SI/TS criteria
 %animal x tuned type - A, B, A&B, Neither
-frac_tuned_each.si
-frac_tuned_each.ts
 
+%Kruskall Waliis, paired Wilcoxon ranksum test with Dunn-Sidak correction)
+%si
+[p_kw_si,tbl_kw_si,stats_kw_si] = kruskalwallis(frac_tuned_each.si, {'A','B','A&B','Neither'});
+
+%friedman test - due to paired datapoints for each animal - used in
+%reporting
+[p_fr_si,tbl_fr_si,stats_fr_si] = friedman(frac_tuned_each.si);
+
+%ts
+[p_kw_ts,tbl_kw_ts,stats_kw_ts] = kruskalwallis(frac_tuned_each.ts, {'A','B','A&B','Neither'});
+
+%friedman test - due to paired datapoints for each animal - used in
+%reporting
+[p_fr_ts,tbl_fr_ts,stats_fr_ts] = friedman(frac_tuned_each.ts);
+
+
+%si paired Wilcoxon tests (each type against other type)
+for ii=1:4
+    for jj=1:4
+        [p_sr.si(ii,jj),~,stats_sr.si(ii,jj)] = signrank(frac_tuned_each.si(:,ii),frac_tuned_each.si(:,jj));
+    end
+end
+
+%ts paired Wilcoxon test (each type against other types)
+for ii=1:4
+    for jj=1:4
+        [p_sr.ts(ii,jj),~,stats_sr.ts(ii,jj)] = signrank(frac_tuned_each.ts(:,ii),frac_tuned_each.ts(:,jj));
+    end
+end
 
 %% Plot bar chart of fractions
 
