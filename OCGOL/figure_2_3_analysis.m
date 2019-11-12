@@ -1,9 +1,10 @@
 function figure_2_3_analysis(path_dir)
 
 %% Import variables and define options
-%clear
-%lab workstation
+
 %input directories to matching function
+%this one was excluded b/c analyzed after PSEM silecing occurred
+
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
  %near flat PV until end - check PSAM experiment order - late experiment - animal
 %already exposed to PSEM - use I52RT_AB_sal_113018 (no PSEM exposure yet
@@ -14,10 +15,13 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
+
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
 %good -%no PSEM exposure
+
 %path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %near flat PV until end %bug with idx remapper code; run parser (global) global difference
 %good first PSEM sliencing exp; 
+
 %I56_RTLS_ABrand_punish_041719 - last exp - part of learning before silence
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
@@ -29,6 +33,7 @@ function figure_2_3_analysis(path_dir)
 %and from learning - late learning session in Figure 4 learning datasets
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days

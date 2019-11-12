@@ -1,4 +1,5 @@
 %% Define experiment core directories
+%screened and good datasets for analysis
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'}; %
 %field rate error (after PSEM silencing
 path_dir{1} = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
@@ -13,6 +14,7 @@ path_dir{9} = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 path_dir{10} = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
 path_dir{11} = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
+%N =10; FOV = 11 (2 FOV from single animal)
 
 %% Fraction of place cell (A sel, B sel, A&B remapping,neither) - bar chart and pie chart
 %Figure 2C
