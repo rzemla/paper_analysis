@@ -224,8 +224,8 @@ options.dispFigure = 0;
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
-%normalized across both sessions
 
+%normalized across both sessions
 [task_sel_STC] = plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
 
 %% Number of place fields and widths for each sub-class of neurons
