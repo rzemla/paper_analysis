@@ -109,7 +109,7 @@ cmap_red(1,:) = [1 1 1];
 
 %input raster for display (A and B neighboring)
 %for A selective neurons
-figure('Position',[2106 101 761 857])
+figure('Position',[2182 356 934 559])
 %A
 subplot(2,2,1)
 %A laps
@@ -173,13 +173,13 @@ set(ax2, 'TickLength', [0 0]);
 
 %%%%% B selective neurons - STC on A laps and STC on B laps %%%%%
 
-% %set 0 value to white for both blue and red
-% cmap_blue(1,:) = [1 1 1];
-% cmap_red(1,:) = [1 1 1];
+%set 0 value to white for both blue and red
+cmap_blue(1,:) = [1 1 1];
+cmap_red(1,:) = [1 1 1];
 
 %input raster for display (A and B neighboring)
 %for A selective neurons
-%figure('Position',[2182 356 934 559])
+figure('Position',[2182 356 934 559])
 %A
 subplot(2,2,3)
 %A laps
@@ -242,8 +242,7 @@ set(gca,'LineWidth',1.5)
 set(ax2, 'TickLength', [0 0]);
 
 
-%%
-if 0
+%% 
 %STC normalized across trials
 f= figure('Position', [2090 415 1240 420]);
 subplot(1,2,1)
@@ -280,7 +279,6 @@ ax1.XTickLabel = {'0','1','1'};
 %A/B vertical separator line
 plot([100 100],[1,size(STC_norm_trials_AB{1}{1},1)], 'k','LineWidth', 1.5);
 hold off
-end
 
 % subplot(2,1,2)
 % imagesc(dF_maps_all_AB_early_late{2}(sortOrder_all_AB{2},:))

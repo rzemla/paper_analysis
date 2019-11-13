@@ -380,6 +380,7 @@ xticks([-0.5 0 0.5 1])
 axis square
 set(gca,'FontSize', 12)
 set(gca,'LineWidth',2)
+
 %% Place field analysis (width and number for selective neurons
 
 %read relevant data
