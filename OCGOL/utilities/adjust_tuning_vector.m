@@ -2,6 +2,7 @@ function [pf_vector] = adjust_tuning_vector(tun_vectors,tun_vector,placeField_ed
 %define the tuning vectors for each place field and outputs tuning vector
 %for each field in the pf_vector cell
 
+%QC checked
 
 %% Set variables
 
@@ -23,6 +24,7 @@ for rr=1:size(placeField_edges,2)
 end
 
 %% Define updated tuning vector for each place field
+%bin of each tuning vector
 
 %for each ROI
 for rr=1:size(placeField_edges,2)
@@ -38,8 +40,8 @@ for rr=1:size(placeField_edges,2)
                     pf_event_keep{rr}{pp} =  bins{rr} >= placeField_edges{rr}(pp,1) & bins{rr} <=placeField_edges{rr}(pp,2);
                 else
                     %disp(rr)
-                    pf_event_keep{rr}{pp} =  bins{rr} >= placeField_edges{rr}(pp,1) & bins{rr} <= 100 | ...
-                        bins{rr} >= 1 & bins{rr} <= placeField_edges{rr}(pp,2);
+                    pf_event_keep{rr}{pp} =  (bins{rr} >= placeField_edges{rr}(pp,1) & bins{rr} <= 100) | ...
+                        (bins{rr} >= 1 & bins{rr} <= placeField_edges{rr}(pp,2));
                     
                 end
                 

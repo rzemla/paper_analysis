@@ -102,17 +102,16 @@ end
 %isequal(rate_map,event_rate)
 
 %% Find and store transient rate and total events in each place field
+%QC checked
 
 for ss=options.sessionSelect
     %for each trial (A or B) regardless if correct (4,5) or only correct
-    %(1,2)
-    %CHECK THIS FOR CORRECT EDGE TREATMENT
+    %(1,2
     for tt=options.selectTrial
         %find field event rate for each session and trial types
         [field_event_rates{ss}{tt}, field_total_events{ss}{tt}] = field_rate(event_map{ss}{tt},occupancy{ss}{tt},placeField_edges{ss}{tt});
     end
 end
-
 
 %% Get place field edges and convert to normalized positions 
 
@@ -168,6 +167,7 @@ for ss=options.sessionSelect
 end
 
 %% Filter out neurons that do not have at least 5 sig events in max place field in at least 5 distinct laps
+%QC checked
 
 %for each session
 for ss=options.sessionSelect
@@ -237,9 +237,10 @@ for ss=options.sessionSelect
                         end
                         %register the corresponding lap of in-field filtered event
                         event_in_field_laps{ss}{tt}{rr}{pp} = event_lap_idx{ss}.B{rr}(events_in_field{ss}{tt}{rr}{pp});
-                        %get number of unique events (those occuring on each lap)
+                        %get number of unique events (those occuring on
+                        %each lap) - distinct laps
                         event_in_field_nb{ss}{tt}{rr}(pp) = size(unique(event_in_field_laps{ss}{tt}{rr}{pp}),1);
-                        %get position of in-field events
+                        %get position of in-field events (all events)
                         events_in_field_pos{ss}{tt}{rr}{pp} = event_norm_pos_run{ss}.B{rr}(events_in_field{ss}{tt}{rr}{pp});
                     end
                 else
@@ -258,10 +259,10 @@ end
 
 if 0
     %choose lap type
-    tt=2;
+    tt=1;
     
     figure
-    for rr=39:298
+    for rr=30:40
         %A laps
         hold on
         %event map
@@ -284,6 +285,7 @@ if 0
 end
 
 %% Create logical selection vectors for neurons with place fields that contain at least 5 events on distinct laps
+%QC
 %for each session
 for ss=options.sessionSelect
     %create logical for each ROI on each set of trial types
