@@ -167,21 +167,17 @@ options.selectTrial = [1 2];
 %continue to modify 
 [field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
 
-%% Plot spatial tuning curves according to transient rate and return max bin position (split into 2 fxn later)
-%normalized to each neuron across 
+%% Get max transient peak here (developed from multi-ses analysis)
+%get field event rates of max peak
 
-options.tuning_criterion = 'si'; %si or ts
-%AandB, AorB, onlyA, onlyB, neither all
-%all won't work b/c no defined fields to sort by
-options.trialTuning = 'onlyA';
-options.selectSes = [1 2];
-%sort according to which trial 1 2 4 5
-options.sortTrial = 1;
+%select whether to use TS vector of adjusted vector for cells with single fields
+%1 - adjusts based on max transient field and corresponding pf_vector (for
+%pf with single fields)
+%0 - uses the tuning vector from TS calculation (single fields only)
+options.select_adj_vec = 1;
 
-%outputs:
-%max_transient_peak - peak idx where event rate is highest for correct A/B
-%trials
-[max_bin_rate,max_transient_peak] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
+[max_bin_rate,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
+
 
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
 %TODO: put conditional here
@@ -215,7 +211,7 @@ options.tuning_criterion = 'both';
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
-%% Generate STC maps - task-selective neurons
+%% Generate STC maps - task-selective neurons - STC Figure 2 generator
 %customize to add options
 %tuned in both sessions by SI score
 %sorted by A trials
@@ -511,7 +507,25 @@ end
     %
     % meanStk{1} = mean(Y,3);
 
-%% Synchronized calcium event analysis
+    
+%%%%%% NOT USED %%%%%%%%%%%% OLD
+%% Plot spatial tuning curves according to transient rate and return max bin position 
+%normalized to each neuron across 
+
+% options.tuning_criterion = 'si'; %si or ts
+% %AandB, AorB, onlyA, onlyB, neither all
+% %all won't work b/c no defined fields to sort by
+% options.trialTuning = 'onlyA';
+% options.selectSes = [1 2];
+% %sort according to which trial 1 2 4 5
+% options.sortTrial = 1;
+% 
+% %outputs:
+% %placed into separate function below
+% %max_transient_peak - peak idx where event rate is highest for correct A/B
+% %trials
+% [~,~] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
+% 
 
 end
 

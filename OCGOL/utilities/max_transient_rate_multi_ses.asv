@@ -1,5 +1,5 @@
 function [bins,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options)
-%QC checked
+
 
 
 %% Variable descriptions
@@ -102,24 +102,23 @@ for ss=options.sessionSelect
 end
 
 %% QC plot
-if 0
-    figure
-    tt=1
-    for rr=1:298
-        subplot(1,2,1)
-        hold on
-        ylabel('Event count')
-        plot(1:100,session_vars{1}.Place_cell{tt}.Spatial_Info.event_map{8}(:,rr))
-        %plot max field center
-        plot([bins{1}{tt}(rr) bins{1}{tt}(rr)], [0 2],'r')
-        
-        subplot(1,2,2,polaraxes)
-        hold on
-        polarplot([0 angle(sort_vector{1}{tt}(rr))],[0 abs(sort_vector{1}{tt}(rr))])
-        pause
-        clf
-    end
+figure
+tt=1
+for rr=1:298
+    subplot(1,2,1)
+    hold on
+    ylabel('Event count')
+    plot(1:100,session_vars{1}.Place_cell{tt}.Spatial_Info.event_map{8}(:,rr))
+    %plot max field center
+    plot([bins{1}{tt}(rr) bins{1}{tt}(rr)], [0 2],'r')
+
+    subplot(1,2,2,polaraxes)
+    hold on
+    polarplot([0 angle(sort_vector{1}{tt}(rr))],[0 abs(sort_vector{1}{tt}(rr))])
+    pause
+    clf
 end
+
 
 
 

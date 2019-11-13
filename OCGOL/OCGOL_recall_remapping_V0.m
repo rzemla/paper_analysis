@@ -295,6 +295,10 @@ options.allCorrect = 1;
 %% Get max transient peak here
 %get field event rates of max peak
 
+%select whether to use TS vector of adjusted vector for cells with single fields
+%originally used 0, but make switch to 1
+options.select_adj_vec = 0;
+
 [max_bin_rate,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
 
 

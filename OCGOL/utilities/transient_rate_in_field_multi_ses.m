@@ -262,7 +262,7 @@ if 0
     tt=1;
     
     figure
-    for rr=30:40
+    for rr=[6 8 16 51 62 86]
         %A laps
         hold on
         %event map

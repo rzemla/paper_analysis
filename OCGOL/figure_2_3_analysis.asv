@@ -183,6 +183,13 @@ options.sortTrial = 1;
 %trials
 [max_bin_rate,max_transient_peak] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
 
+
+%% Get max transient peak here (developed from multi-ses analysis)
+%get field event rates of max peak
+
+[max_bin_rate_2,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
+
+
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
 %TODO: put conditional here
 %also generate the cent diff for either A&B tuned by either criteria
@@ -224,9 +231,9 @@ options.dispFigure = 0;
 
 %set option as to how to select neurons for plots
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
-%normalized across both sessions
 
-plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
+%normalized across both sessions
+[task_sel_STC] = plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
 
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
@@ -312,8 +319,6 @@ save(fullfile(path_dir{1},'cumul_analysis','select_ROI_criteria.mat'),'select_fi
                 'task_remapping_ROIs','task_selective_ROIs');
 
 
-
-
 %% PV and TC correlation matrices for each class of tuned neurons
 
 options.tuning_criterion = 'ts';
@@ -324,6 +329,9 @@ save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
 
 %% Centroid distribution across lap for A/B selective tuned neurons
+
+%checked - look upstream (no problem here)
+
 %use tuning spec criterion for this
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 [centroid_ct] = centroid_dist_task_selective(tunedLogical,task_selective_ROIs, max_bin_rate,options);
