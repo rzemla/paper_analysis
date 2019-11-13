@@ -268,6 +268,8 @@ norm_conv_factor = median_track_len/100;
 
 %% Filter out neurons that do not have at least 5 sig events in max place field in at least 5 distinct laps
 
+%FIX TYPE IN THIS SECTION
+
 %calcium event position and absolute restrict time
 %all neuron idx space
 event_norm_pos_run.A;
