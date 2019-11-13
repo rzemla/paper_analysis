@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_STC_OCGOL_singleSes_task_selective(animal_data, tunedLogical,task_selective_ROIs,options)
+function [task_sel_STC] = plot_STC_OCGOL_singleSes_task_selective(animal_data, tunedLogical,task_selective_ROIs,options)
 
 %% Import variables
 
@@ -212,7 +212,7 @@ set(gca,'FontSize',14)
 set(gca,'LineWidth',1.5)
 
 %B laps as input
-input_matrix = STC_norm_trials_AB{1}{2}(sortOrder_all_AB{1}{2},101:200);;
+input_matrix = STC_norm_trials_AB{1}{2}(sortOrder_all_AB{1}{2},101:200);
 
 %B 
 subplot(2,2,4)
@@ -241,6 +241,11 @@ set(gca,'LineWidth',1.5)
 %make ticks invisible
 set(ax2, 'TickLength', [0 0]);
 
+
+%% Export STCs for cumulative plot
+
+task_sel_STC.maps = STC_norm_trials_AB; 
+task_sel_STC.sortOrder = sortOrder_all_AB;
 
 %%
 if 0

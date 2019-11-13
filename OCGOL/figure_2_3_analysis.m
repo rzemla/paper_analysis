@@ -226,7 +226,7 @@ options.dispFigure = 0;
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 %normalized across both sessions
 
-plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
+[task_sel_STC] = plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
 
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
