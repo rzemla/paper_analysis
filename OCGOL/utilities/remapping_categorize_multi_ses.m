@@ -336,6 +336,7 @@ for ss=sessionSelect
                 else %do two event finds and merge (and sort) into one set of indices
                     events_in_field_temp_1 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} >= 0 & ...
                         event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} <= placeField_filtered_max_posnorm{ss}{tt}{rr}(2));
+                    
                     events_in_field_temp_2 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} >= placeField_filtered_max_posnorm{ss}{tt}{rr}(2) & ...
                         event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} <= 1 );
                     
@@ -364,6 +365,7 @@ for ss=sessionSelect
                 else %do two event finds and merge (and sort) into one set of indices
                     events_in_field_temp_1 = find(event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} >= 0 & ...
                         event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} <= placeField_filtered_max_posnorm{ss}{tt}{rr}(2));
+                    
                     events_in_field_temp_2 = find(event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} >= placeField_filtered_max_posnorm{ss}{tt}{rr}(2) & ...
                         event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} <= 1 );
                     

@@ -312,8 +312,6 @@ save(fullfile(path_dir{1},'cumul_analysis','select_ROI_criteria.mat'),'select_fi
                 'task_remapping_ROIs','task_selective_ROIs');
 
 
-
-
 %% PV and TC correlation matrices for each class of tuned neurons
 
 options.tuning_criterion = 'ts';
@@ -324,6 +322,9 @@ save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
 
 %% Centroid distribution across lap for A/B selective tuned neurons
+
+%checked - look upstream (no problem here)
+
 %use tuning spec criterion for this
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 [centroid_ct] = centroid_dist_task_selective(tunedLogical,task_selective_ROIs, max_bin_rate,options);

@@ -124,7 +124,8 @@ for ss=1:size(animal_data,2)
         for rr=1:size(pf_vector{ss}{tt},2)
             %if not empty
             if ~isempty(pf_vector{ss}{tt}{rr})
-                %if single field, use original vector
+                %if single field, use original vector - swap to max field
+                %vector
                 if size(pf_vector{ss}{tt}{rr},2) == 1
                     sort_vector{ss}{tt}(rr) = tun_vector{ss}{tt}(rr);
                 else %if more than 1
