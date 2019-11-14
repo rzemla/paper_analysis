@@ -96,7 +96,28 @@ end
 thres_A = mean(bin_shuffle_mean.A(:)) + 3*std(bin_shuffle_mean.A(:));
 thres_B = mean(bin_shuffle_mean.B(:)) + 3*std(bin_shuffle_mean.B(:));
 
-%get distribution histograms for A and B trials and 3*std line
+%% Range of bins above threshold for A or B
+%for 25 bins
+%at least 2 neighboring bins above threshold to be considered in sig range
+
+%define the cm range for the sig bins
+
+%bin width of eahc bin
+binSize_cm = 196/25;
+%
+bin_distance = [0:binSize_cm:196];
+%cm centers of the each bin
+bin_center_cm = bin_distance + (binSize_cm/2);
+bin_center_cm = bin_center_cm(1:end-1);
+
+%find bin range with at least 2 bins neighboring
+sig_bins.A = mean(centroid_count_ds_norm.A{bin_choose},1)>thres_A
+sig_bins.B = mean(centroid_count_ds_norm.B{bin_choose},1)>thres_B
+
+bin_center_cm(sig_bins.A)
+bin_center_cm(sig_bins.B)
+
+%% Get distribution histograms for A and B trials and 3*std line
 figure
 subplot(1,2,1)
 hold on
