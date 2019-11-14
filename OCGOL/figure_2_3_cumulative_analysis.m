@@ -32,49 +32,23 @@ remapping_centroids(path_dir,options)
 %centroid of max place field
 centroid_difference(path_dir)
 
-%% Centroid distribution for A and B selective neurons 
+%% Centroid distribution for A or B selective neurons - 
+%how many bins to display
+%1 - 20 (every 5) relative to 100 bins
+%2 - 25 (every 4) relative to 100 bins
+%3 - 50 (every 2) relative to 100 bins
+options.bin_choose = 2;
 
-centroid_dist_selective(path_dir)
+centroid_dist_selective(path_dir,options)
 
 %% Figure 3C - fractional distribution of remapping neuron subtypes
 
 frac_remapping_neurons(path_dir)
 
 %% AUC/min scatterplots of A vs B neurons for each animal 
-%read relevant data
-for ee=1:size(path_dir,2)
-    load_data_path_auc{ee} = fullfile(path_dir{ee},'cumul_analysis','auc.mat');
-    auc_data{ee} = load(string(load_data_path_auc{ee}));
-end
 
-%add colormap to this with cbrewer
-%blues (A trials)
-cmap_blue = cbrewer('seq','Blues',size(path_dir,2)+2);
-%reds (B trials)
-cmap_red = cbrewer('seq','Reds',size(path_dir,2)+2);
+auc_scatterplots(path_dir)
 
-figure;
-hold on
-axis square
-xlim([0 10])
-ylim([0 10])
-xticks(0:2:10)
-yticks(0:2:10)
-set(gca,'FontSize',14)
-set(gca,'LineWidth',2)
-xlabel('AUC/min - A trials')
-ylabel('AUC/min - B trials')
-title('Activity rate for task selective place cells')
-%A selective
-for ee=1:size(path_dir,2)
-    scatter(mean(auc_data{ee}.total_AUC_min.A(1,:)),mean(auc_data{ee}.total_AUC_min.A(2,:)),'filled','MarkerFaceColor',cmap_blue(ee+2,:))
-end
-%B selective
-for ee=1:size(path_dir,2)
-    scatter(mean(auc_data{ee}.total_AUC_min.B(1,:)),mean(auc_data{ee}.total_AUC_min.B(2,:)),'filled','MarkerFaceColor',cmap_red(ee+2,:))
-end
-%plot center line
-plot([0 10], [0 10],'Color',[0.5 0.5 0.5],'LineStyle', '--','LineWidth',2)
 
 %% PV/TC correlation
 %read relevant data

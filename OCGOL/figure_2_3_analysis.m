@@ -7,7 +7,7 @@ function figure_2_3_analysis(path_dir)
 
 %include in processing (detailed notes below for each dataset)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
- %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
@@ -121,7 +121,7 @@ if 0
     plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
 end
 
-%% Find  place fields
+%% Find place fields
 if options.loadPlaceField_data == 0
     %use rate map - number of event onsets/ occupancy across all laps
     options.gSigma = 3;
@@ -339,10 +339,10 @@ save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
 %use tuning spec criterion for this
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
-[centroid_ct] = centroid_dist_task_selective(tunedLogical,task_selective_ROIs, max_bin_rate,options);
+[centroid_ct,centroid_bins] = centroid_dist_task_selective(tunedLogical,task_selective_ROIs, max_bin_rate,options);
 
 %save the fractions output data
-save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
+save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct','centroid_bins');
 
 %% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
 

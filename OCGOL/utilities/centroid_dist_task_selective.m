@@ -1,4 +1,4 @@
-function [centroid_ct] = centroid_dist_task_selective(tunedLogical, task_selective_ROIs,max_bin_rate,options)
+function [centroid_ct,centroid_bins] = centroid_dist_task_selective(tunedLogical, task_selective_ROIs,max_bin_rate,options)
 %distribution of max centroids across length of track (bin space)
 
 %was originally session cell with relevant variables - import from learning
@@ -46,8 +46,8 @@ end
 
 %% Generate vectors with only max rate from A or B tuned neurons by TS tuning criterion
 %only A; only B
-bin_rate.A = max_bin_rate{1}{1}(select_filt_ROIs.A);
-bin_rate.B = max_bin_rate{1}{2}(select_filt_ROIs.B);
+centroid_bins.A = max_bin_rate{1}{1}(select_filt_ROIs.A);
+centroid_bins.B = max_bin_rate{1}{2}(select_filt_ROIs.B);
 
 %A and B
 %bin_rate.AB{1} = max_bin_rate{1}{1}(AandB_tuned{1, 1});
@@ -61,8 +61,8 @@ for tt=1:2
 end
 
 %% Generate count of centroids at each bin (1-100) (A only and B only neurons)
-[centroid_ct.A,edges] = histcounts(bin_rate.A, 0.5:1:100.5);
-[centroid_ct.B,edges] = histcounts(bin_rate.B, 0.5:1:100.5);
+[centroid_ct.A,edges] = histcounts(centroid_bins.A, 0.5:1:100.5);
+[centroid_ct.B,edges] = histcounts(centroid_bins.B, 0.5:1:100.5);
 
 %AandB
 %[centroid_ct.AB{1},edges] = histcounts(bin_rate.AB{1}, 0.5:1:100.5);
