@@ -117,6 +117,12 @@ sig_bins.B = mean(centroid_count_ds_norm.B{bin_choose},1)>thres_B
 bin_center_cm(sig_bins.A)
 bin_center_cm(sig_bins.B)
 
+%% Run ks test between the all neurons and generate cdf plot 
+
+[~,p,ks2stat] = kstest2(cell2mat(bin_assign.A),cell2mat(bin_assign.B));
+
+
+
 %% Get distribution histograms for A and B trials and 3*std line
 figure
 subplot(1,2,1)
