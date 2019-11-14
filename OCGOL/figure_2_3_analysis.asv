@@ -5,38 +5,54 @@ function figure_2_3_analysis(path_dir)
 %input directories to matching function
 %this one was excluded b/c analyzed after PSEM silecing occurred
 
+%include in processing (detailed notes below for each dataset)
+%path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
+ %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
+%RESUME HERE
+  path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
+% path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+
+%DON'T INCLUDE (only one)
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
  %near flat PV until end - check PSAM experiment order - late experiment - animal
 %already exposed to PSEM - use I52RT_AB_sal_113018 (no PSEM exposure yet
 %during task)- processed below
+
 %I52_RT - I52RT_ABp_112218 - last imaged training day
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+% %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
-%good -%no PSEM exposure
+% %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
+% %good -%no PSEM exposure
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %near flat PV until end %bug with idx remapper code; run parser (global) global difference
+% path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %near flat PV until end %bug with idx remapper code; run parser (global) global difference
 %good first PSEM sliencing exp; 
 
 %I56_RTLS_ABrand_punish_041719 - last exp - part of learning before silence
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
-%near flat PV until end %bug with idx remapper code; run parser (global) global difference
-
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
+% %near flat PV until end %bug with idx remapper code; run parser (global) global difference
+% 
+% path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %near flat PV until end %bug with idx remapper code; run parser (global) global difference
 %OK acquired the day of silencing but before; can also use session before
 %and from learning - late learning session in Figure 4 learning datasets
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
-
-%path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
+% path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+% 
+% path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+% 
+% path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
 %I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
 
 %whether to load place field data processed below
@@ -167,27 +183,16 @@ options.selectTrial = [1 2];
 %continue to modify 
 [field_event_rates,pf_vector,field_total_events, select_fields] = transient_rate_in_field_multi_ses(session_vars,options);
 
-%% Plot spatial tuning curves according to transient rate and return max bin position (split into 2 fxn later)
-%normalized to each neuron across 
-
-options.tuning_criterion = 'si'; %si or ts
-%AandB, AorB, onlyA, onlyB, neither all
-%all won't work b/c no defined fields to sort by
-options.trialTuning = 'onlyA';
-options.selectSes = [1 2];
-%sort according to which trial 1 2 4 5
-options.sortTrial = 1;
-
-%outputs:
-%max_transient_peak - peak idx where event rate is highest for correct A/B
-%trials
-[max_bin_rate,max_transient_peak] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
-
-
 %% Get max transient peak here (developed from multi-ses analysis)
 %get field event rates of max peak
 
-[max_bin_rate_2,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
+%select whether to use TS vector of adjusted vector for cells with single fields
+%1 - adjusts based on max transient field and corresponding pf_vector (for
+%pf with single fields)
+%0 - uses the tuning vector from TS calculation (single fields only)
+options.select_adj_vec = 1;
+
+[max_bin_rate,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
 
 
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
@@ -222,7 +227,7 @@ options.tuning_criterion = 'both';
 options.dispFigure = 0;
 [task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 
-%% Generate STC maps - task-selective neurons
+%% Generate STC maps - task-selective neurons - STC Figure 2 generator
 %customize to add options
 %tuned in both sessions by SI score
 %sorted by A trials
@@ -518,7 +523,25 @@ end
     %
     % meanStk{1} = mean(Y,3);
 
-%% Synchronized calcium event analysis
+    
+%%%%%% NOT USED %%%%%%%%%%%% OLD
+%% Plot spatial tuning curves according to transient rate and return max bin position 
+%normalized to each neuron across 
+
+% options.tuning_criterion = 'si'; %si or ts
+% %AandB, AorB, onlyA, onlyB, neither all
+% %all won't work b/c no defined fields to sort by
+% options.trialTuning = 'onlyA';
+% options.selectSes = [1 2];
+% %sort according to which trial 1 2 4 5
+% options.sortTrial = 1;
+% 
+% %outputs:
+% %placed into separate function below
+% %max_transient_peak - peak idx where event rate is highest for correct A/B
+% %trials
+% [~,~] = plot_STC_transient_rate_single_ses(session_vars,tunedLogical,field_event_rates, pf_vector,options);
+% 
 
 end
 

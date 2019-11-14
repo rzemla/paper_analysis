@@ -5,38 +5,55 @@ function figure_2_3_analysis(path_dir)
 %input directories to matching function
 %this one was excluded b/c analyzed after PSEM silecing occurred
 
+%include in processing (detailed notes below for each dataset)
+%path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
+ %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
+
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
+ 
+%path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+
+%DON'T INCLUDE (only one)
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
  %near flat PV until end - check PSAM experiment order - late experiment - animal
 %already exposed to PSEM - use I52RT_AB_sal_113018 (no PSEM exposure yet
 %during task)- processed below
+
 %I52_RT - I52RT_ABp_112218 - last imaged training day
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+% %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
-%good -%no PSEM exposure
+% %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'}; 
+% %good -%no PSEM exposure
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %near flat PV until end %bug with idx remapper code; run parser (global) global difference
+% path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'}; %near flat PV until end %bug with idx remapper code; run parser (global) global difference
 %good first PSEM sliencing exp; 
 
 %I56_RTLS_ABrand_punish_041719 - last exp - part of learning before silence
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
-%near flat PV until end %bug with idx remapper code; run parser (global) global difference
-
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+% path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
+% %near flat PV until end %bug with idx remapper code; run parser (global) global difference
+% 
+% path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %near flat PV until end %bug with idx remapper code; run parser (global) global difference
 %OK acquired the day of silencing but before; can also use session before
 %and from learning - late learning session in Figure 4 learning datasets
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
-
-%path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
+% path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+% 
+% path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+% 
+% path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'}; %OK - well trained - from one of learning days
 %I57_LT_AB_prePost_sal_050619 - last session before next day silencing with PSAM 
 
 %whether to load place field data processed below
@@ -318,8 +335,7 @@ save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
 
 %% Centroid distribution across lap for A/B selective tuned neurons
-
-%checked - look upstream (no problem here)
+%QC check
 
 %use tuning spec criterion for this
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
@@ -327,8 +343,6 @@ options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct');
-
-
 
 %% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
 
