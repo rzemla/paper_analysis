@@ -22,15 +22,15 @@ fraction_place_cells(path_dir)
 
 
 %% Remapping centroids
-%Figure 3E/F
+%Figure 3E/F ( all Figure 3 code is here - organize this)
 options.lowPVcorr = [6 7 8];
 %organize this 
 remapping_centroids(path_dir,options)
 
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 
 %scatterplot of centroid difference as a function of center between
-%centroid of max place field
-centroid_difference(path_dir)
+%centroid of max place field - not used
+%centroid_difference(path_dir)
 
 %% Centroid distribution for A or B selective neurons - 
 %how many bins to display
@@ -41,7 +41,7 @@ options.bin_choose = 2;
 
 centroid_dist_selective(path_dir,options)
 
-%% Figure 3C - fractional distribution of remapping neuron subtypes
+%% Fractional distribution of remapping neuron subtypes - Figure 3C
 
 frac_remapping_neurons(path_dir)
 
@@ -49,11 +49,9 @@ frac_remapping_neurons(path_dir)
 
 auc_scatterplots(path_dir)
 
-
 %% PV/TC correlation
 
 tc_pv_correlation_task_sel(path_dir)
-
 
 %% Place field analysis (width and number for selective neurons
 
@@ -70,7 +68,7 @@ for ee=1:size(path_dir,2)
     pf_count_mat_A(ee,:) = placeField_data{ee}.placeField_dist.task_sel.A.field_count;
     % placeField_data{ee}.placeField_dist.all.A.ts
     %pf_count_mat_B(ee,:) = placeField_data{ee}.placeField_dist.field_count_B;
-pf_count_mat_B(ee,:) = placeField_data{ee}.placeField_dist.task_sel.B.field_count;
+    pf_count_mat_B(ee,:) = placeField_data{ee}.placeField_dist.task_sel.B.field_count;
 end
 
 %normalize as fraction of neurons for each animal/exp for A-sel/B-sel

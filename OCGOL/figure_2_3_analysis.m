@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -18,7 +18,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
-path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %DON'T INCLUDE (only one)
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_120618_1'};
@@ -226,7 +226,13 @@ save(fullfile(path_dir{1},'cumul_analysis','centroid_diff_all.mat'),'cent_diff')
 options.tuning_criterion = 'both';
 %display events vs position for each task selective neuron in A or B
 options.dispFigure = 0;
-[task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
+%[task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
+%yields same output - correct edge
+[task_selective_ROIs_ses] = task_selective_categorize_multi_ses(tunedLogical,session_vars, max_transient_peak,options);
+
+%convert task_selective ROIs output to remove cell session
+task_selective_ROIs.A = task_selective_ROIs_ses{1}.A;
+task_selective_ROIs.B = task_selective_ROIs_ses{1}.B;
 
 %% Generate STC maps - task-selective neurons - STC Figure 2 generator
 %customize to add options

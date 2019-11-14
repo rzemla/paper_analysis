@@ -124,10 +124,10 @@ bin_center_cm(sig_bins.B)
 figure;
 hold on;
 c1 = cdfplot(cell2mat(bin_assign.A));
-c1.Color = 'b';
+c1.Color = [65,105,225]./255;
 c1.LineWidth = 2;
 c2 = cdfplot(cell2mat(bin_assign.B));
-c2.Color = 'r';
+c2.Color = [220,20,60]./255;
 c2.LineWidth = 2;
 
 xlabel('Normalized position');

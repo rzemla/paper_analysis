@@ -283,6 +283,8 @@ end
 % Aonly_field_filtered;
 % Bonly_field_filtered;
 
+%mopdify this for discontinuous place fields
+
 %for each session
 for ss=sessionSelect
     %find events occuring within max place field for each ROI
