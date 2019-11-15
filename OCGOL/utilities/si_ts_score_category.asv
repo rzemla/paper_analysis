@@ -1,4 +1,4 @@
-function [scores] = si_ts_score_category(session_vars,tunedLogical,task_selective_ROIs,options)
+function [outputArg1,outputArg2] = si_ts_score_category(session_vars,tunedLogical,task_selective_ROIs,options)
 
 
 %% Define the indices for each category of neurons

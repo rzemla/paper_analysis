@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -253,14 +253,11 @@ save(fullfile(path_dir{1},'cumul_analysis','task_sel_STC.mat'),'task_sel_STC');
 
 %% Export S.I/T.S scores for each neuron tuned by each criterion as well as score for A_sel/B_sel neurons
 
+[tuning_scores] = si_ts_score_category(session_vars,tunedLogical,task_selective_ROIs,options);
 
-si_ts_score_category
+%save task-selective STCs for cumulative Figure 2 plots
+save(fullfile(path_dir{1},'cumul_analysis','tuning_scores.mat'),'tuning_scores');
 
-%S.I. score
-session_vars{1, 1}.Place_cell{1, 1}.Spatial_Info.Spatial_Info  
-
-%T.S. score
-session_vars{1, 1}.Place_cell{1, 1}.Tuning_Specificity.tuning_specificity  
 
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
