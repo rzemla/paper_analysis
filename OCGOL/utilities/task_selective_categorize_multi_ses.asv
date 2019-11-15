@@ -331,6 +331,8 @@ for ss=sessionSelect
                     
                     %merge and sort indices here
                     events_in_field{ss}{tt}{rr} = sort([events_in_field_temp_1; events_in_field_temp_2]);                    
+                    
+                    
                 end
                 
                 %register the corresponding lap of in-field filtered event
