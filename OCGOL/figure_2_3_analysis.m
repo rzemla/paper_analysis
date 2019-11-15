@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -228,6 +228,7 @@ options.tuning_criterion = 'both';
 options.dispFigure = 0;
 %[task_selective_ROIs] = task_selective_categorize(cent_diff_AandB, tunedLogical, pf_vector_max, session_vars, max_transient_peak,options);
 %yields same output - correct edge
+%QC checked
 [task_selective_ROIs_ses] = task_selective_categorize_multi_ses(tunedLogical,session_vars, max_transient_peak,options);
 
 %convert task_selective ROIs output to remove cell session
@@ -246,6 +247,9 @@ options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 
 %normalized across both sessions
 [task_sel_STC] = plot_STC_OCGOL_singleSes_task_selective(session_vars,tunedLogical,task_selective_ROIs,options);
+
+%save task-selective STCs for cumulative Figure 2 plots
+save(fullfile(path_dir{1},'cumul_analysis','task_sel_STC.mat'),'task_sel_STC');
 
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)

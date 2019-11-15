@@ -20,6 +20,9 @@ path_dir{11} = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'
 %Figure 2C
 fraction_place_cells(path_dir)
 
+%% Cumulative task-selective STCs
+
+cumulative_task_sel_STC(path_dir)
 
 %% Remapping centroids
 %Figure 3E/F ( all Figure 3 code is here - organize this)

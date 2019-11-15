@@ -192,7 +192,7 @@ title('A selective')
 pax1.ThetaAxisUnits = 'degrees';
 pax1.ThetaTick = [0,rad2deg(angle(odor_zone_end_vector)),rad2deg(angle(reward_B_vector)),rad2deg(angle(reward_A_vector))+360,];
 pax1.ThetaTickLabel = {'Lap start','Odor end','B reward','A reward'};
-pax1.RAxisLocation = 10;
+pax1.RAxisLocation = 330;
 pax1.RLim = [0 0.15];
 pax1.RColor = 'k';
 pax1.ThetaColorMode = 'manual';
@@ -230,7 +230,7 @@ title('B selective')
 pax2.ThetaAxisUnits = 'degrees';
 pax2.ThetaTick = [0,rad2deg(angle(odor_zone_end_vector)),rad2deg(angle(reward_B_vector)),rad2deg(angle(reward_A_vector))+360,];
 pax2.ThetaTickLabel = {'Lap start','Odor end','B reward','A reward'};
-pax2.RAxisLocation = 10;
+pax2.RAxisLocation = 330;
 pax2.RLim = [0 0.15];
 pax2.RColor = 'k';
 pax2.ThetaColorMode = 'manual';

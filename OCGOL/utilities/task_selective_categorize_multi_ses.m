@@ -3,6 +3,8 @@ function [task_selective_ROIs] = task_selective_categorize_multi_ses(tuned_logic
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
 
+%QC checked
+
 %% Define inputs variables
 
 selectTrial = options.selectTrial;
