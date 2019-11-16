@@ -3,6 +3,7 @@ function [scores] = si_ts_score_category(session_vars,tunedLogical,task_selectiv
 
 %% Define the indices for each category of neurons
 
+%% SI
 %logicals for si tuned
 ROI_log.si.Aonly = tunedLogical.si.onlyA_tuned;
 ROI_log.si.Bonly = tunedLogical.si.onlyB_tuned;
@@ -21,6 +22,7 @@ ROI_nb.si(2) = size(ROI_idx.si.Bonly,2);
 ROI_nb.si(3) = size(ROI_idx.si.AB,2);
 ROI_nb.si(4) = size(ROI_idx.si.neither,2);
 
+%% TS
 %logicals for ts tuned
 ROI_log.ts.Aonly = tunedLogical.ts.onlyA_tuned;
 ROI_log.ts.Bonly = tunedLogical.ts.onlyB_tuned;
@@ -43,6 +45,7 @@ ROI_nb.ts(4) = size(ROI_idx.ts.neither,2);
 sum(ROI_nb.si)
 sum(ROI_nb.ts)
 
+%% Task selective
 %Get task selective neuron idxs
 task_sel_idx.A = task_selective_ROIs.A.idx;
 task_sel_idx.B = task_selective_ROIs.B.idx;

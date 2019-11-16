@@ -1,8 +1,4 @@
-function [tuned_fractions,ROI_idx_tuning_class] = fractionTuned(tunedLogical,pf_count_filtered_log)
-
-%output:
-%tuned_fractions = fractional tuned by each category
-%ROI_idx_tuning_class = indices of the neurons in each tuning clas 
+function [tuned_fractions] = fractionTuned(tunedLogical,pf_count_filtered_log)
 
 %% Define # of tuned neurons in each catergory
 
@@ -53,7 +49,6 @@ ROI_nb_class.si(2) = size(ROI_idx_tuning_class.si.Bonly,2);
 ROI_nb_class.si(3) = size(ROI_idx_tuning_class.si.AB,2);
 ROI_nb_class.si(4) = size(ROI_idx_tuning_class.si.N,2);
 
-%check if total equals nb of neurons as input
 isequal(sum(ROI_nb_class.si),size(pf_count_filtered_log,2))
 
 %TS
@@ -76,8 +71,7 @@ ROI_nb_class.ts(2) = size(ROI_idx_tuning_class.ts.Bonly,2);
 ROI_nb_class.ts(3) = size(ROI_idx_tuning_class.ts.AB,2);
 ROI_nb_class.ts(4) = size(ROI_idx_tuning_class.ts.N,2);
 
-%check if total equals nb of neurons as input
-isequal(sum(ROI_nb_class.ts),size(pf_count_filtered_log,2))
+sum(ROI_nb_class.si)
 
 
 %% Calculate fraction tuned

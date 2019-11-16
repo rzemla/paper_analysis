@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -251,14 +251,6 @@ options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 %save task-selective STCs for cumulative Figure 2 plots
 save(fullfile(path_dir{1},'cumul_analysis','task_sel_STC.mat'),'task_sel_STC');
 
-%% Export S.I/T.S scores for each neuron tuned by each criterion as well as score for A_sel/B_sel neurons
-
-[tuning_scores] = si_ts_score_category(session_vars,tunedLogical,task_selective_ROIs,options);
-
-%save task-selective STCs for cumulative Figure 2 plots
-save(fullfile(path_dir{1},'cumul_analysis','tuning_scores.mat'),'tuning_scores');
-
-
 %% Number of place fields and widths for each sub-class of neurons
 %add filter for classfing whether each field is significant (min 5 events)
 
@@ -273,13 +265,20 @@ save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_di
 %% Plot fraction of each neuron tuned 
 
 %plot pie chart for each and return counts
-[tuned_fractions] = fractionTuned(tunedLogical,pf_count_filtered_log);
+[tuned_fractions,ROI_idx_tuning_class] = fractionTuned(tunedLogical,pf_count_filtered_log);
 
 %export for cumulative analysis
 %make cumul_analysis folder
 mkdir(path_dir{1},'cumul_analysis')
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','frac_tuned.mat'),'tuned_fractions');
+
+%% Export S.I/T.S scores for each neuron tuned by each criterion as well as score for A_sel/B_sel neurons
+
+[tuning_scores] = si_ts_score_category(session_vars,tunedLogical,task_selective_ROIs,options);
+
+%save task-selective STCs for cumulative Figure 2 plots
+save(fullfile(path_dir{1},'cumul_analysis','tuning_scores.mat'),'tuning_scores');
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
