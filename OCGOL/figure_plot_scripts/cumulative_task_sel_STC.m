@@ -1,7 +1,7 @@
 function [outputArg1,outputArg2] = cumulative_task_sel_STC(path_dir)
 
 
-%% Load the stc data
+%% Load the STC data
 
 %read relevant data
 for aa=1:size(path_dir,2)
