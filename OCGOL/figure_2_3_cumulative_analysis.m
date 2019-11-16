@@ -49,7 +49,6 @@ cumulative_task_sel_STC(path_dir)
 si_ts_score_distributions(path_dir)
 
 
-
 %% Remapping centroids
 %Figure 3E/F ( all Figure 3 code is here - organize this)
 options.lowPVcorr = [6 7 8];
