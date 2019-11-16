@@ -1,20 +1,20 @@
-function [scores] = si_ts_score_category(session_vars,tunedLogical,task_selective_ROIs,options)
+function [scores] = si_ts_score_category(session_vars,ROI_idx_tuning_class,task_selective_ROIs,options)
 
 
 %% Define the indices for each category of neurons
 
 %% SI
 %logicals for si tuned
-ROI_log.si.Aonly = tunedLogical.si.onlyA_tuned;
-ROI_log.si.Bonly = tunedLogical.si.onlyB_tuned;
-ROI_log.si.AB = tunedLogical.si.AandB_tuned;
-ROI_log.si.neither = tunedLogical.si.neither;
+% ROI_log.si.Aonly = tunedLogical.si.onlyA_tuned;
+% ROI_log.si.Bonly = tunedLogical.si.onlyB_tuned;
+% ROI_log.si.AB = tunedLogical.si.AandB_tuned;
+% ROI_log.si.neither = tunedLogical.si.neither;
 
 %get ROI idxs corresponding to the logicals
-ROI_idx.si.Aonly = find(ROI_log.si.Aonly == 1);
-ROI_idx.si.Bonly = find(ROI_log.si.Bonly  == 1);
-ROI_idx.si.AB = find(ROI_log.si.AB  == 1);
-ROI_idx.si.neither = find(ROI_log.si.neither == 1);
+ROI_idx.si.Aonly = ROI_idx_tuning_class.si.Aonly;
+ROI_idx.si.Bonly = ROI_idx_tuning_class.si.Bonly;
+ROI_idx.si.AB = ROI_idx_tuning_class.si.AB;
+ROI_idx.si.neither = ROI_idx_tuning_class.si.N;
 
 %nb neurons in each category
 ROI_nb.si(1) = size(ROI_idx.si.Aonly,2);
@@ -24,16 +24,16 @@ ROI_nb.si(4) = size(ROI_idx.si.neither,2);
 
 %% TS
 %logicals for ts tuned
-ROI_log.ts.Aonly = tunedLogical.ts.onlyA_tuned;
-ROI_log.ts.Bonly = tunedLogical.ts.onlyB_tuned;
-ROI_log.ts.AB = tunedLogical.ts.AandB_tuned;
-ROI_log.ts.neither = tunedLogical.ts.neither;
+% ROI_log.ts.Aonly = tunedLogical.ts.onlyA_tuned;
+% ROI_log.ts.Bonly = tunedLogical.ts.onlyB_tuned;
+% ROI_log.ts.AB = tunedLogical.ts.AandB_tuned;
+% ROI_log.ts.neither = tunedLogical.ts.neither;
 
 %get ROI idxs corresponding to the logicals
-ROI_idx.ts.Aonly = find(ROI_log.ts.Aonly == 1);
-ROI_idx.ts.Bonly = find(ROI_log.ts.Bonly  == 1);
-ROI_idx.ts.AB = find(ROI_log.ts.AB  == 1);
-ROI_idx.ts.neither = find(ROI_log.ts.neither == 1);
+ROI_idx.ts.Aonly = ROI_idx_tuning_class.ts.Aonly;
+ROI_idx.ts.Bonly = ROI_idx_tuning_class.ts.Bonly;
+ROI_idx.ts.AB = ROI_idx_tuning_class.ts.AB;
+ROI_idx.ts.neither = ROI_idx_tuning_class.ts.N;
 
 %nb neurons in each category
 ROI_nb.ts(1) = size(ROI_idx.ts.Aonly,2);

@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -275,7 +275,7 @@ save(fullfile(path_dir{1},'cumul_analysis','frac_tuned.mat'),'tuned_fractions');
 
 %% Export S.I/T.S scores for each neuron tuned by each criterion as well as score for A_sel/B_sel neurons
 
-[tuning_scores] = si_ts_score_category(session_vars,tunedLogical,task_selective_ROIs,options);
+[tuning_scores] = si_ts_score_category(session_vars,ROI_idx_tuning_class,task_selective_ROIs,options);
 
 %save task-selective STCs for cumulative Figure 2 plots
 save(fullfile(path_dir{1},'cumul_analysis','tuning_scores.mat'),'tuning_scores');
