@@ -4,8 +4,7 @@ function [correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,
 %TO-DO:
 %1)A,B,A&B,Neither - give inputs that are screening for number of
 %events
-%2) generate A all and B all from Aonly. Bonly, and A&B inputs
-
+%2) generate A all and B all 
 
 
 
