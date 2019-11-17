@@ -89,18 +89,38 @@ for ee=1:size(path_dir,2)
 end
 
 %plot the mean TC boxplots for A-sel,B-sel and AB
+%cell array - row - each subgroup; columns - each category
+merge_new = cell(1,3);
+merge_new{1} =  mean_TC.Asel;
+merge_new{2} = mean_TC.Bsel;
+merge_new{3} = mean_TC.AB;
 
-figure('Position',[650 190 500 420])
+xlab={'1','2','3'} 
+col=[220,20,60, 255; 65,105,225, 255; 139, 0, 139,255];  
+col=col/255;
+
+f=figure('Position',[2263 287 377 460])
 hold on
-set(gca,'FontSize',14)
-set(gca,'LineWidth',1.5)
-ylim([0 0.8])
+title('Change colors manually in illustrator')
+%plot zone separator lines
+[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A&B','B','A'},col([1],:)') 
+%overlay boxplot to add median line 
+z= boxplot(x,group, 'positions', positions);
+lines = findobj(z, 'type', 'line', 'Tag', 'Median');
+set(lines, 'Color', 'k');
+set(lines, 'LineWidth',2)
+xticks([1.25, 1.75, 2.25])
 yticks([0.1 0.3 0.5 0.7])
-title('Tuning curve correlation between task laps')
-boxplot([mean_TC.Asel;mean_TC.Bsel;mean_TC.AB]','Colors',[65,105,225; 220,20,60; 139, 0, 139]./255)
-xticklabels({'A-selective','B-selective','A&B','All'})
-xtickangle(45)
+ylim
+xticklabels({'A selective', 'B selective', 'A&B'})
 ylabel('Correlation coef.')
+%plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
+%plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
+set(gca,'FontSize',16)
+
+%% Do stats on TC correlation - paired Wilcoxon rank sum (with Dunn sidak correction for multi comp in Prism)
+
+
 
 %% Plot combined CDF of TC corr values
 
