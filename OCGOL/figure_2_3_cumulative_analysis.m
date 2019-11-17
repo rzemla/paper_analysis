@@ -48,13 +48,6 @@ cumulative_task_sel_STC(path_dir)
 
 si_ts_score_distributions(path_dir)
 
-
-%% Remapping centroids
-%Figure 3E/F ( all Figure 3 code is here - organize this)
-options.lowPVcorr = [6 7 8];
-%organize this 
-remapping_centroids(path_dir,options)
-
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 
 %scatterplot of centroid difference as a function of center between
 %centroid of max place field - not used
@@ -154,4 +147,10 @@ xticks([1 2 3]);
 xticklabels({'1','2','3+'});
 ylabel('Fraction of neurons');
 legend('A','B')
+
+%% Remapping centroids
+%Figure 3E/F ( all Figure 3 code is here - organize this)
+options.lowPVcorr = [6 7 8];
+%organize this 
+remapping_centroids(path_dir,options)
 
