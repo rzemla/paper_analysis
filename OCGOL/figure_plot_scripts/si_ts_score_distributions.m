@@ -1,5 +1,7 @@
 function [outputArg1,outputArg2] = si_ts_score_distributions(path_dir)
 
+%% Color scheme for figures
+color_codes = [65,105,225; 220,20,60; 139, 0, 139; 128 128 128]./255;
 
 %% Load the scores for each animal
 for aa=1:size(path_dir,2)
@@ -60,6 +62,78 @@ ts.Bonly_cumul = cell2mat(ts.Bonly');
 ts.AB_cumul = cell2mat(ts.AB');
 ts.N_cumul = cell2mat(ts.N');
 
+%get mean for each animal
+for aa=1:size(path_dir,2)
+    %si
+    mean_si_each.Aonly(aa,:) = nanmean(si.Aonly{aa},1);
+    mean_si_each.Bonly(aa,:) = nanmean(si.Bonly{aa},1);
+    mean_si_each.AB(aa,:) = nanmean(si.AB{aa},1);
+    mean_si_each.N(aa,:) = nanmean(si.N{aa},1);
+    
+    %ts
+    mean_ts_each.Aonly(aa,:) = nanmean(ts.Aonly{aa},1);
+    mean_ts_each.Bonly(aa,:) = nanmean(ts.Bonly{aa},1);
+    mean_ts_each.AB(aa,:) = nanmean(ts.AB{aa},1);
+    mean_ts_each.N(aa,:) = nanmean(ts.N{aa},1);    
+end
+
+%% Scatterplots of mean scores
+%% Plot
+figure('Position',[2295 322 1080 420]);
+subplot(1,2,1)
+hold on
+axis square
+xlim([0 0.25])
+ylim([0 0.25])
+xticks([0 0.1 0.2])
+yticks([0 0.1 0.2])
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+xlabel('A trials')
+ylabel('B trials')
+title('S.I. score')
+
+%plot connecting lines for same animal points
+% for ee=1:size(path_dir,2)
+%     plot([mean_AUC.A(ee,1),mean_AUC.B(ee,1)],[mean_AUC.A(ee,2),mean_AUC.B(ee,2)] ,'Color',[1 1 1]*0.5,'LineWidth',0.5)
+% end
+
+%plot center line
+plot([0 10], [0 10],'Color',[1 1 1]*0,'LineStyle', '--','LineWidth',2)
+
+s1 = scatter(mean_si_each.Aonly(:,1),mean_si_each.Aonly(:,2),'filled','MarkerFaceColor',color_codes(1,:));
+s2 = scatter(mean_si_each.Bonly(:,1),mean_si_each.Bonly(:,2),'filled','MarkerFaceColor',color_codes(2,:));
+s4 = scatter(mean_si_each.N(:,1),mean_si_each.N(:,2),'filled','MarkerFaceColor',color_codes(4,:));
+s3 = scatter(mean_si_each.AB(:,1),mean_si_each.AB(:,2),'filled','MarkerFaceColor',color_codes(3,:));
+legend([s1 s2 s3 s4],{'A','B','A&B','Neither'},'location','southeast')
+
+subplot(1,2,2)
+hold on
+axis square
+xlim([0 1])
+ylim([0 1])
+xticks([0 0.5 1])
+yticks([0 0.5 1])
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+xlabel('A trials')
+ylabel('B trials')
+title('T.S. score')
+
+%plot connecting lines for same animal points
+% for ee=1:size(path_dir,2)
+%     plot([mean_AUC.A(ee,1),mean_AUC.B(ee,1)],[mean_AUC.A(ee,2),mean_AUC.B(ee,2)] ,'Color',[1 1 1]*0.5,'LineWidth',0.5)
+% end
+
+%plot center line
+plot([0 10], [0 10],'Color',[1 1 1]*0,'LineStyle', '--','LineWidth',2)
+
+s1 = scatter(mean_ts_each.Aonly(:,1),mean_ts_each.Aonly(:,2),'filled','MarkerFaceColor',color_codes(1,:),'MarkerEdgeColor','none');
+s2 = scatter(mean_ts_each.Bonly(:,1),mean_ts_each.Bonly(:,2),'filled','MarkerFaceColor',color_codes(2,:),'MarkerEdgeColor','none');
+s4 = scatter(mean_ts_each.N(:,1),mean_ts_each.N(:,2),'filled','MarkerFaceColor',color_codes(4,:),'MarkerEdgeColor','none');
+s3 = scatter(mean_ts_each.AB(:,1),mean_ts_each.AB(:,2),'filled','MarkerFaceColor',color_codes(3,:),'MarkerEdgeColor','none');
+legend([s1 s2 s3 s4],{'A','B','A&B','Neither'},'location','southeast')
+
 %% Get histogram distributions around centerline - S.I.
 
 %for si
@@ -72,8 +146,6 @@ unity_hist_scatter_spatial_scores(ts,options)
 
 %% Plot scatter plots of all neurons for each category
 marker_size = 5;
-
-color_codes = [65,105,225; 220,20,60; 139, 0, 139; 128 128 128]./255;
 
 %try scatterplot
 figure('Position',[2208 244 1198 512])
