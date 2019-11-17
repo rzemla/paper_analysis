@@ -1,7 +1,7 @@
 function [placeField_dist,pf_count_filtered_log, pf_count_filtered] = placeField_properties(session_vars, tunedLogical,select_fields,task_selective_ROIs,options)
 
 %% Bin to distance conversion factor
-binToCm = 2;
+binToCm = 1.96;
 
 %% Select trial tuned classes of neurons
 
@@ -51,6 +51,7 @@ tuned{1}.A.si = tunedLogical(ss).si.Atuned;
 tuned{1}.B.si = tunedLogical(ss).si.Btuned;
 
 %% Count number of PFs based on filter for 5 lap-distinct events in each field (for each ROI) - global (no selection)
+
 for tt =1:size(options.selectTrial,2)
     for rr =1:size(select_fields{1}{tt},2)
         %count the place fields for each roi

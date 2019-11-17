@@ -2,11 +2,8 @@ function [correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,
 
 
 %TO-DO:
-%1)A,B,A&B,Neither - give inputs that are screening for number of
-%events
-%2) generate A all and B all from Aonly. Bonly, and A&B inputs
-%3) get correlation for both SI and TS tuned neurons
-
+%1) get A and B tuned by either criterion correlation for comparison in
+%boxplot 
 
 %% Define tuned cell combinations across trials
 
@@ -37,6 +34,12 @@ for ss =1:size(session_vars,2)
     neither_tuned.ts{ss} = ROI_idx_tuning_class.ts.log.N;
     %AorB_tuned{ss} = tunedLogical(ss).ts.AorB_tuned;
 end
+
+%% A&B tuned neurons by either criterion
+
+Atuned.si_ts{1} = Atuned.si{1} | Atuned.ts{1};
+Btuned.si_ts{1} = Btuned.si{1} | Btuned.ts{1};
+AandB_tuned.si_ts{1} = Atuned.si_ts{1} & Btuned.si_ts{1};
 
 
 %% Task-selective neuron idx
@@ -101,6 +104,12 @@ TCcorr.ts.N = corr(A_STC_nn{1}(:,neither_tuned.ts{1}),B_STC_nn{1}(:,neither_tune
 %TC correlations for A-selective and B-selective filtered 
 TCcorr.Aselective =  corr(A_STC_nn{1}(:,select_filt_ROIs.A),B_STC_nn{1}(:,select_filt_ROIs.A), 'Rows', 'complete');
 TCcorr.Bselective =  corr(A_STC_nn{1}(:,select_filt_ROIs.B),B_STC_nn{1}(:,select_filt_ROIs.B), 'Rows', 'complete');
+
+%TC correlation for A&B tuned by either SI or TS criteria
+TCcorr.si_ts.AB = corr(A_STC_nn{1}(:,AandB_tuned.si_ts{1}),B_STC_nn{1}(:,AandB_tuned.si_ts{1}), 'Rows', 'complete');
+
+
+%mean(diag(TCcorr.si_ts.AB))
 
 % nanmean(diag(TCcorr.Aonly))
 % nanmean(diag(TCcorr.Bonly))
