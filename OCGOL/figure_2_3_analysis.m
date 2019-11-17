@@ -280,6 +280,13 @@ save(fullfile(path_dir{1},'cumul_analysis','frac_tuned.mat'),'tuned_fractions');
 %save task-selective STCs for cumulative Figure 2 plots
 save(fullfile(path_dir{1},'cumul_analysis','tuning_scores.mat'),'tuning_scores');
 
+%% PV and TC correlation matrices for each class of tuned neurons
+
+[correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class,options);
+
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
+
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
 options.tuning_criterion = 'ts';
@@ -340,16 +347,6 @@ histogram(bin_center.partial_far(2,:),0:50:100)
 
 save(fullfile(path_dir{1},'cumul_analysis','select_ROI_criteria.mat'),'select_fields','tunedLogical',...
                 'task_remapping_ROIs','task_selective_ROIs');
-
-
-%% PV and TC correlation matrices for each class of tuned neurons
-
-options.tuning_criterion = 'ts';
-[correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,options);
-
-%save the fractions output data
-save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
-
 
 %% Centroid distribution across lap for A/B selective tuned neurons
 %QC check

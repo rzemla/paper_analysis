@@ -80,6 +80,45 @@ ROI_nb_class.ts(4) = size(ROI_idx_tuning_class.ts.N,2);
 isequal(sum(ROI_nb_class.ts),size(pf_count_filtered_log,2))
 
 
+%% Generate the equivalent logicals for each class of neurons in SI and TS
+%needed as input for some downstream functions
+
+%generate 0 vectors equivalent to all neurons and populate 
+%si or ts have same nb of neurons, so doesn't matter
+blank_vector = false(1,sum(ROI_nb_class.si));
+
+%SI
+%create blanks and preallocate
+%Aonly
+ROI_idx_tuning_class.si.log.Aonly = blank_vector;
+ROI_idx_tuning_class.si.log.Aonly(ROI_idx_tuning_class.si.Aonly) = 1;
+%Bonly
+ROI_idx_tuning_class.si.log.Bonly = blank_vector;
+ROI_idx_tuning_class.si.log.Bonly(ROI_idx_tuning_class.si.Bonly) = 1;
+%A&B only
+ROI_idx_tuning_class.si.log.AB= blank_vector;
+ROI_idx_tuning_class.si.log.AB(ROI_idx_tuning_class.si.AB) = 1;
+%neither
+ROI_idx_tuning_class.si.log.N = blank_vector;
+ROI_idx_tuning_class.si.log.N(ROI_idx_tuning_class.si.N) = 1;
+
+%TS
+%create blanks and preallocate
+%Aonly
+ROI_idx_tuning_class.ts.log.Aonly = blank_vector;
+ROI_idx_tuning_class.ts.log.Aonly(ROI_idx_tuning_class.ts.Aonly) = 1;
+%Bonly
+ROI_idx_tuning_class.ts.log.Bonly = blank_vector;
+ROI_idx_tuning_class.ts.log.Bonly(ROI_idx_tuning_class.ts.Bonly) = 1;
+%A&B only
+ROI_idx_tuning_class.ts.log.AB= blank_vector;
+ROI_idx_tuning_class.ts.log.AB(ROI_idx_tuning_class.ts.AB) = 1;
+%neither
+ROI_idx_tuning_class.ts.log.N = blank_vector;
+ROI_idx_tuning_class.ts.log.N(ROI_idx_tuning_class.ts.N) = 1;
+
+
+
 %% Calculate fraction tuned
 %si
 fracTuned_si = tuned_count{1}/sum(tuned_count{1});

@@ -1,45 +1,43 @@
-function [correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,options)
+function [correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class,options)
 
 
 %TO-DO:
 %1)A,B,A&B,Neither - give inputs that are screening for number of
 %events
 %2) generate A all and B all from Aonly. Bonly, and A&B inputs
-
-
+%3) get correlation for both SI and TS tuned neurons
 
 
 %% Define tuned cell combinations across trials
 
-%make conditional here for si or ts tuned neurons
-switch options.tuning_criterion
-    case 'si' %spatial information
-        %for each session
-        for ss =1:size(session_vars,2)
-            %spatial information criterion
-            Atuned{ss} = tunedLogical(ss).si.Atuned;
-            Btuned{ss} = tunedLogical(ss).si.Btuned;
-            
-            AandB_tuned{ss} =  tunedLogical(ss).si.AandB_tuned;
-            AorB_tuned{ss} = tunedLogical(ss).si.AorB_tuned;
-            onlyA_tuned{ss} = tunedLogical(ss).si.onlyA_tuned;
-            onlyB_tuned{ss} = tunedLogical(ss).si.onlyB_tuned;
-            
-            neither_tuned{ss} = tunedLogical(ss).si.neither;
-        end
-   case 'ts' %spatial information 
-        for ss =1:size(session_vars,2)
-            %spatial information criterion
-            Atuned{ss} = tunedLogical(ss).ts.Atuned;
-            Btuned{ss} = tunedLogical(ss).ts.Btuned;
-            
-            AandB_tuned{ss} =  tunedLogical(ss).ts.AandB_tuned;
-            AorB_tuned{ss} = tunedLogical(ss).ts.AorB_tuned;
-            onlyA_tuned{ss} = tunedLogical(ss).ts.onlyA_tuned;
-            onlyB_tuned{ss} = tunedLogical(ss).ts.onlyB_tuned;
-        end
-        
+%load in logicals into these variables
+%S.I.
+%for each session
+for ss =1:size(session_vars,2)
+    %spatial information criterion
+    Atuned.si{ss} = ROI_idx_tuning_class.si.log.Aonly | ROI_idx_tuning_class.si.log.AB;
+    Btuned.si{ss} = ROI_idx_tuning_class.si.log.Bonly | ROI_idx_tuning_class.si.log.AB;
+    
+    %AorB_tuned{ss} = tunedLogical(ss).si.AorB_tuned;
+    onlyA_tuned.si{ss} = ROI_idx_tuning_class.si.log.Aonly;
+    onlyB_tuned.si{ss} = ROI_idx_tuning_class.si.log.Bonly;
+    AandB_tuned.si{ss} = ROI_idx_tuning_class.si.log.AB;
+    neither_tuned.si{ss} = ROI_idx_tuning_class.si.log.N;
 end
+
+%T.S.
+for ss =1:size(session_vars,2)
+    %spatial information criterion
+    Atuned.ts{ss} = ROI_idx_tuning_class.ts.log.Aonly | ROI_idx_tuning_class.ts.log.AB;
+    Btuned.ts{ss} = ROI_idx_tuning_class.ts.log.Bonly | ROI_idx_tuning_class.ts.log.AB;
+
+    onlyA_tuned.ts{ss} = ROI_idx_tuning_class.ts.log.Aonly;
+    onlyB_tuned.ts{ss} = ROI_idx_tuning_class.ts.log.Bonly;
+    AandB_tuned.ts{ss} = ROI_idx_tuning_class.ts.log.AB;
+    neither_tuned.ts{ss} = ROI_idx_tuning_class.ts.log.N;
+    %AorB_tuned{ss} = tunedLogical(ss).ts.AorB_tuned;
+end
+
 
 %% Task-selective neuron idx
 %add task-selective neurons (additional filters)
@@ -59,37 +57,46 @@ for ss =1:size(session_vars,2)
     A_STC_nn{ss} = session_vars{ss}.Place_cell{1}.Spatial_Info.rate_map_smooth{8};
     B_STC_nn{ss} = session_vars{ss}.Place_cell{2}.Spatial_Info.rate_map_smooth{8};
     
-    A_STC_both{ss} = A_STC{ss}(:,AandB_tuned{ss});
-    B_STC_both{ss} = B_STC{ss}(:,AandB_tuned{ss});
+    %A_STC_both{ss} = A_STC{ss}(:,AandB_tuned{ss});
+    %B_STC_both{ss} = B_STC{ss}(:,AandB_tuned{ss});
     
-    A_STC_onlyA{ss} = A_STC{ss}(:,onlyA_tuned{ss});
-    B_STC_onlyA{ss} = B_STC{ss}(:,onlyA_tuned{ss});
+    %A_STC_onlyA{ss} = A_STC{ss}(:,onlyA_tuned{ss});
+    %B_STC_onlyA{ss} = B_STC{ss}(:,onlyA_tuned{ss});
 end
-
 
 %% Normalize each STC ROI across both trials in non-norm STCs
 for ss =1:size(session_vars,2)
         %get max value for each ROIs between trials
         max_STC_across_trials{ss} = max([A_STC_nn{ss};B_STC_nn{ss}]);
+        %min STC across trials
+        min_STC_across_trials{ss} = min([A_STC_nn{ss};B_STC_nn{ss}]);
+        
         %normalize each matrix to these values (tn = trial normalized)
-        A_STC_tn{ss} = A_STC_nn{ss}./max_STC_across_trials{ss};
-        B_STC_tn{ss} = B_STC_nn{ss}./max_STC_across_trials{ss};
-    %for max value to normalize to by 1
-    %in future, do normalization range (0,1)
+        A_STC_tn{ss} = (A_STC_nn{ss} - min_STC_across_trials{ss})./(max_STC_across_trials{ss} - min_STC_across_trials{ss});
+        B_STC_tn{ss} = (B_STC_nn{ss} - min_STC_across_trials{ss})./(max_STC_across_trials{ss} - min_STC_across_trials{ss});
 end
-
 
 %% Calculate PV and TC correlation matrixes for tuned subcategories
 %correlations are done on non normalized STCs
+
 %PV correlation - all neurons
 PVcorr = corr(A_STC_nn{1}',B_STC_nn{1}', 'Rows', 'complete');
 
+%all neurons regardless of tuning status
+TCcorr.all = corr(A_STC_nn{1},B_STC_nn{1});
 
 %TC correlation
-TCcorr.all = corr(A_STC_nn{1},B_STC_nn{1});
-TCcorr.Aonly = corr(A_STC_nn{1}(:,onlyA_tuned{1}),B_STC_nn{1}(:,onlyA_tuned{1}), 'Rows', 'complete');
-TCcorr.Bonly = corr(A_STC_nn{1}(:,onlyB_tuned{1}),B_STC_nn{1}(:,onlyB_tuned{1}), 'Rows', 'complete');
-TCcorr.AB = corr(A_STC_nn{1}(:,AandB_tuned{1}),B_STC_nn{1}(:,AandB_tuned{1}), 'Rows', 'complete');
+%SI
+TCcorr.si.Aonly = corr(A_STC_nn{1}(:,onlyA_tuned.si{1}),B_STC_nn{1}(:,onlyA_tuned.si{1}), 'Rows', 'complete');
+TCcorr.si.Bonly = corr(A_STC_nn{1}(:,onlyB_tuned.si{1}),B_STC_nn{1}(:,onlyB_tuned.si{1}), 'Rows', 'complete');
+TCcorr.si.AB = corr(A_STC_nn{1}(:,AandB_tuned.si{1}),B_STC_nn{1}(:,AandB_tuned.si{1}), 'Rows', 'complete');
+TCcorr.si.N = corr(A_STC_nn{1}(:,neither_tuned.si{1}),B_STC_nn{1}(:,neither_tuned.si{1}), 'Rows', 'complete');
+
+%TS
+TCcorr.ts.Aonly = corr(A_STC_nn{1}(:,onlyA_tuned.ts{1}),B_STC_nn{1}(:,onlyA_tuned.ts{1}), 'Rows', 'complete');
+TCcorr.ts.Bonly = corr(A_STC_nn{1}(:,onlyB_tuned.ts{1}),B_STC_nn{1}(:,onlyB_tuned.ts{1}), 'Rows', 'complete');
+TCcorr.ts.AB = corr(A_STC_nn{1}(:,AandB_tuned.ts{1}),B_STC_nn{1}(:,AandB_tuned.ts{1}), 'Rows', 'complete');
+TCcorr.ts.N = corr(A_STC_nn{1}(:,neither_tuned.ts{1}),B_STC_nn{1}(:,neither_tuned.ts{1}), 'Rows', 'complete');
 
 %TC correlations for A-selective and B-selective filtered 
 TCcorr.Aselective =  corr(A_STC_nn{1}(:,select_filt_ROIs.A),B_STC_nn{1}(:,select_filt_ROIs.A), 'Rows', 'complete');
