@@ -95,21 +95,19 @@ hold on
 set(gca,'FontSize',14)
 set(gca,'LineWidth',1.5)
 ylim([0 0.8])
-yticks([0.1 0.3 0.5 0.7])
 title('Tuning curve correlation between task laps')
-boxplot([mean_TC.Asel;mean_TC.Bsel;mean_TC.AB]','Colors',[65,105,225; 220,20,60; 139, 0, 139]./255)
+boxplot([mean_TC.Asel;mean_TC.Bsel;mean_TC.AB]','Colors',[65,105,225; 220,20,60; 139, 0, 139]
 xticklabels({'A-selective','B-selective','A&B','All'})
 xtickangle(45)
 ylabel('Correlation coef.')
 
-%% Plot combined CDF of TC corr values
-
+%plot combined TC corr values as single plot
 figure;
 hold on;
-c1 = cdfplot(comb_TC.Asel);
+c1 = cdfplot(comb_TC.A);
 c1.Color = 'b';
 c1.LineWidth = 2;
-c2 = cdfplot(comb_TC.Bsel);
+c2 = cdfplot(comb_TC.B);
 c2.Color = 'r';
 c2.LineWidth = 2;
 c3 = cdfplot(comb_TC.AB);
@@ -124,13 +122,13 @@ xlim([-0.5 1]);
 xticks([-0.5 0 0.5 1])
 legend([c1 c2 c3],{'A','B','A&B'},'Location','northwest')
 
-%% Plot this as ecdf curve fraction vs correlation (individual)
+%plot this as ecdf curve fraction vs correlation (individual)
 figure('Position', [2060 550 1400 420]);
 subplot(1,3,1)
 hold on
 for ee=1:size(path_dir,2)
     %A selective
-    c1 = cdfplot(diag(correlation_data{ee}.correlation.TCcorr.Aselective));
+    c1 = cdfplot(diag(correlation_data{ee}.correlation.TCcorr.Aonly));
     c1.Color = 'b';
     c1.LineWidth = 1.5;
 end
@@ -148,7 +146,7 @@ subplot(1,3,2)
 hold on
 for ee=1:size(path_dir,2)
     %B-selective
-    c2 = cdfplot(diag(correlation_data{ee}.correlation.TCcorr.Bselective));
+    c2 = cdfplot(diag(correlation_data{ee}.correlation.TCcorr.Bonly));
     c2.Color = 'r';
     c2.LineWidth = 1.5;
 end
@@ -166,7 +164,7 @@ subplot(1,3,3)
 hold on
 for ee=1:size(path_dir,2)
     %A&B
-    c3 = cdfplot(diag(correlation_data{ee}.correlation.TCcorr.si_ts.AB));
+    c3 = cdfplot(diag(correlation_data{ee}.correlation.TCcorr.AB));
     c3.Color = 'm';
     c3.LineWidth = 1.5;
 end
