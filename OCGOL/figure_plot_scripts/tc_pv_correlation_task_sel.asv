@@ -118,7 +118,18 @@ ylabel('Correlation coef.')
 %plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
 set(gca,'FontSize',16)
 
-%% Do stats on TC correlation - paired Wilcoxon rank sum (with
+%% Statistics - TC correlation - paired Wilcoxon rank sum (with Dunn sidak correction for multi comp in Prism)
+
+%place each set of mean in columns of a matrix
+mean_matrix = [mean_TC.Asel', mean_TC.Bsel', mean_TC.AB'];
+
+
+%si paired Wilcoxon tests (each type against other type)
+for ii=1:3
+    for jj=1:3
+        [p_sr.si(ii,jj),~,stats_sr.si(ii,jj)] = signrank(mean_matrix(:,ii),mean_matrix(:,jj));
+    end
+end
 
 %% Plot combined CDF of TC corr values
 
