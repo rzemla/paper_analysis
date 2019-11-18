@@ -195,19 +195,6 @@ options.select_adj_vec = 1;
 
 [max_bin_rate,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
 
-
-%% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
-%TODO: put conditional here
-%also generate the cent diff for either A&B tuned by either criteria
-
-% options.tuning_criterion = 'ts';
-% [cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,options);
-% 
-% %save the fractions output data %
-% save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
-% %save the cent diff for all neurons (TS) tuned
-% save(fullfile(path_dir{1},'cumul_analysis','centroid_diff_all.mat'),'cent_diff');
-
 %% Calculate centroid difference between A&B tuned neurons (max in field transient rate) - alt - take centroid of PF of single PF place cells
 %returns same variables as above
 options.tuning_criterion = 'ts';
@@ -251,18 +238,6 @@ options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
 %save task-selective STCs for cumulative Figure 2 plots
 save(fullfile(path_dir{1},'cumul_analysis','task_sel_STC.mat'),'task_sel_STC');
 
-%% Number of place fields and widths for each sub-class of neurons
-%add filter for classfing whether each field is significant (min 5 events)
-
-%no tuning criterion - return parameters for both tuning params
-%options.tuning_criterion = 'si'; %si or ts
-%A correct/B correct or all
-options.selectTrial = [1 2];
-
-[placeField_dist, pf_count_filtered_log, pf_count_filtered] = placeField_properties(session_vars,tunedLogical,select_fields,task_selective_ROIs,options);
-%save the place field distributions output data
-save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
-
 %% Plot fraction of each neuron tuned 
 
 %plot pie chart for each and return counts
@@ -287,6 +262,18 @@ save(fullfile(path_dir{1},'cumul_analysis','tuning_scores.mat'),'tuning_scores')
 
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
+
+%% Number of place fields and widths for each sub-class of neurons
+%add filter for classfing whether each field is significant (min 5 events)
+
+%no tuning criterion - return parameters for both tuning params
+%options.tuning_criterion = 'si'; %si or ts
+%A correct/B correct or all
+options.selectTrial = [1 2];
+
+[placeField_dist, pf_count_filtered_log, pf_count_filtered] = placeField_properties(session_vars,tunedLogical,select_fields,task_selective_ROIs,ROI_idx_tuning_class,options);
+%save the place field distributions output data
+save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
@@ -524,7 +511,21 @@ elseif runOnly == 3
     saveastiff(Yb_ds_16,'B_DS_nr.tif');
 end
 
-end 
+end
+
+%% Calculate centroid difference between A&B tuned neurons (max in field transient rate)
+%TODO: put conditional here
+%also generate the cent diff for either A&B tuned by either criteria
+
+% options.tuning_criterion = 'ts';
+% [cent_diff,cent_diff_AandB, pf_vector_max] = centroid_diff_single_ses(session_vars,tunedLogical, pf_vector,field_event_rates,select_fields,options);
+% 
+% %save the fractions output data %
+% save(fullfile(path_dir{1},'cumul_analysis','centroid_diff.mat'),'cent_diff_AandB');
+% %save the cent diff for all neurons (TS) tuned
+% save(fullfile(path_dir{1},'cumul_analysis','centroid_diff_all.mat'),'cent_diff');
+%%
+
     %save to directory as 16 bit tiff
     % imwrite(uint16(meanStk{ii}),'AVG_nr.tif','tif')
     
