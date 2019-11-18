@@ -6,7 +6,6 @@ binToCm = 1.96;
 %TO-DO
 % 1) 
 % 2)
-% 3)
 
 %% Select trial tuned classes of neurons
 
@@ -210,7 +209,7 @@ title('A tuned- TS')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);
-ylim([0 0.7]);
+ylim([0 0.4]);
 
 subplot(2,2,2)
 hold on
@@ -219,7 +218,7 @@ histogram(all.B.ts.width_cm ,0:5:70,'Normalization','probability')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);
-ylim([0 0.7]);
+ylim([0 0.4]);
 
 subplot(2,2,3)
 hold on
@@ -228,7 +227,7 @@ title('A tuned- SI')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);
-ylim([0 0.7]);
+ylim([0 0.4]);
 
 subplot(2,2,4)
 hold on
@@ -237,15 +236,7 @@ histogram(all.B.si.width_cm ,0:5:70,'Normalization','probability')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);
-ylim([0 0.7]);
-
-%% Export structure
-
-%place fields for all A and B tuned neurons by either TS or SI with place
-%field and event filters in place
-placeField_dist.all = all;
-placeField_dist.task_sel = task_sel;
-
+ylim([0 0.4]);
 
 %% OLD CODE BELOW - preserve for for sake of compatibility
 %RESUME WITH EXPORT OF VARIABLES TO BE USED IN REMAPPING FILTER
@@ -330,4 +321,12 @@ ylim([0 0.4]);
 % placeField_dist.field_count_B = field_count_B;
 
 %}
+%% Export stuct
+% 
+
+%place fields for all A and B tuned neurons by either TS or SI with place
+%field and event filters in place
+placeField_dist.all = all;
+placeField_dist.task_sel = task_sel;
+
 end

@@ -74,7 +74,7 @@ auc_scatterplots(path_dir)
 
 tc_pv_correlation_task_sel(path_dir)
 
-%% Place field analysis (width and number for selective neurons
+%% Place field analysis (width and number for selective neurons)
 
 place_field_analysis(path_dir)
 
