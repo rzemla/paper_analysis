@@ -211,30 +211,35 @@ mean(task_sel.B.width_cm)
 [other_classes.si.AB.A] = extract_pf_width_count(AandB_tuned_idx.si, 1, session_vars, select_fields, pf_count_filtered,binToCm);
 %B laps
 [other_classes.si.AB.B] = extract_pf_width_count(AandB_tuned_idx.si, 2, session_vars, select_fields, pf_count_filtered,binToCm);
+%TS
+%A laps
+[other_classes.ts.AB.A] = extract_pf_width_count(AandB_tuned_idx.ts, 1, session_vars, select_fields, pf_count_filtered,binToCm);
+%B laps
+[other_classes.ts.AB.B] = extract_pf_width_count(AandB_tuned_idx.ts, 2, session_vars, select_fields, pf_count_filtered,binToCm);
+%SI or TS
+%A laps
+[other_classes.si_ts.AB.A] = extract_pf_width_count(AandB_tuned_idx.si_ts, 1, session_vars, select_fields, pf_count_filtered,binToCm);
+%B laps
+[other_classes.si_ts.AB.B] = extract_pf_width_count(AandB_tuned_idx.si_ts, 2, session_vars, select_fields, pf_count_filtered,binToCm);
 
 
 %% Plot PF count for SI/TS A/B neurons and histogram of PF widths
 
-figure;
-subplot(1,2,1)
-hold on
-title('Place field counts for task-selective neurons - SI');
-xticks([1 2 3])
-xticklabels( {'1','2','3+'});
-bar([all.A.si.field_count_total',all.B.si.field_count_total'])
-subplot(1,2,2)
-hold on
-title('Place field counts for task-selective neurons - TS');
-xticks([1 2 3])
-xticklabels( {'1','2','3+'});
-bar([all.A.ts.field_count_total',all.B.ts.field_count_total'])
 
-%plot histograms
+%place field counts
+figure;
+hold on
+title('PF counts - task-selective A and B');
+xticks([1 2 3])
+xticklabels( {'1','2','3+'});
+bar([task_sel.A.field_count_total',task_sel.B.field_count_total'])
+
+%plot histograms of pf width
 figure;
 subplot(2,2,1)
 hold on
-histogram(all.A.ts.width_cm ,0:5:70,'Normalization','probability')
-title('A tuned- TS')
+histogram(task_sel.A.width_cm ,0:5:70,'Normalization','probability')
+title('Task selective A')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);
@@ -242,8 +247,8 @@ ylim([0 0.7]);
 
 subplot(2,2,2)
 hold on
-title('B tuned- TS')
-histogram(all.B.ts.width_cm ,0:5:70,'Normalization','probability')
+title('Task selective B')
+histogram(task_sel.B.width_cm ,0:5:70,'Normalization','probability')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);

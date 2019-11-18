@@ -225,53 +225,29 @@ mean(task_sel.B.width_cm)
 
 %% Plot PF count for SI/TS A/B neurons and histogram of PF widths
 
+%place field counts
+figure;
+hold on
+title('PF counts - task-selective A and B');
+xticks([1 2 3])
+xticklabels( {'1','2','3+'});
+bar([task_sel.A.field_count_total',task_sel.B.field_count_total'])
+
+%plot histograms of pf width
 figure;
 subplot(1,2,1)
 hold on
-title('Place field counts for task-selective neurons - SI');
-xticks([1 2 3])
-xticklabels( {'1','2','3+'});
-bar([all.A.si.field_count_total',all.B.si.field_count_total'])
+histogram(task_sel.A.width_cm ,0:5:70,'Normalization','probability')
+title('Task selective A')
+xlabel('Width [cm]')
+ylabel('Normalized density')
+xlim([15 70]);
+ylim([0 0.7]);
+
 subplot(1,2,2)
 hold on
-title('Place field counts for task-selective neurons - TS');
-xticks([1 2 3])
-xticklabels( {'1','2','3+'});
-bar([all.A.ts.field_count_total',all.B.ts.field_count_total'])
-
-%plot histograms
-figure;
-subplot(2,2,1)
-hold on
-histogram(all.A.ts.width_cm ,0:5:70,'Normalization','probability')
-title('A tuned- TS')
-xlabel('Width [cm]')
-ylabel('Normalized density')
-xlim([15 70]);
-ylim([0 0.7]);
-
-subplot(2,2,2)
-hold on
-title('B tuned- TS')
-histogram(all.B.ts.width_cm ,0:5:70,'Normalization','probability')
-xlabel('Width [cm]')
-ylabel('Normalized density')
-xlim([15 70]);
-ylim([0 0.7]);
-
-subplot(2,2,3)
-hold on
-histogram(all.A.si.width_cm ,0:5:70,'Normalization','probability')
-title('A tuned- SI')
-xlabel('Width [cm]')
-ylabel('Normalized density')
-xlim([15 70]);
-ylim([0 0.7]);
-
-subplot(2,2,4)
-hold on
-title('B tuned- SI')
-histogram(all.B.si.width_cm ,0:5:70,'Normalization','probability')
+title('Task selective B')
+histogram(task_sel.B.width_cm ,0:5:70,'Normalization','probability')
 xlabel('Width [cm]')
 ylabel('Normalized density')
 xlim([15 70]);
@@ -281,7 +257,7 @@ ylim([0 0.7]);
 
 %place fields for all A and B tuned neurons by either TS or SI with place
 %field and event filters in place
-placeField_dist.all = all;
+placeField_dist.other_classes = other_classes;
 placeField_dist.task_sel = task_sel;
 
 
