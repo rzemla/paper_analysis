@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -346,7 +346,7 @@ save(fullfile(path_dir{1},'cumul_analysis','select_ROI_criteria.mat'),'select_fi
                 'task_remapping_ROIs','task_selective_ROIs');
 
 %% Centroid distribution across lap for A/B selective tuned neurons
-%QC check
+%QC checked
 
 %use tuning spec criterion for this
 options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
