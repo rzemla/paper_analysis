@@ -123,6 +123,7 @@ bin_center_cm(sig_bins.B)
 
 figure;
 hold on;
+axis square
 c1 = cdfplot(cell2mat(bin_assign.A));
 c1.Color = [65,105,225]./255;
 c1.LineWidth = 2;
@@ -134,6 +135,7 @@ xlabel('Normalized position');
 ylabel('Cumulative fraction');
 grid off
 set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
 %xlim([-0.5 1]);
 xticks([1 50 100])
 xticklabels({'0', '0.5', '100'})
