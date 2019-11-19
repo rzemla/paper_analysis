@@ -137,7 +137,11 @@ color_mat = [65,105,225; 220,20,60; 135,206,250; 240,128,128]./255;
 
 %% Run ks test between the all neurons and generate cdf plot 
 
-[~,p,ks2stat] = kstest2(cell2mat(bin_assign.A),cell2mat(bin_assign.B));
+%all neurons
+[~,p_all_neurons,ks2stat_all_neurons] = kstest2(cell2mat(bin_assign.A),cell2mat(bin_assign.B));
+
+%all means
+
 
 %every 4 cm from 18-100
 edges = [1:4:100];
