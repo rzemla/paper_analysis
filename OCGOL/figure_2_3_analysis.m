@@ -284,6 +284,22 @@ save(fullfile(path_dir{1},'cumul_analysis','tuning_scores.mat'),'tuning_scores')
 %save the fractions output data
 save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
 
+%% Centroid distribution across lap for A/B selective tuned neurons (only - modify inputs in future for rest of neurons if necessary)
+%QC checked
+
+%use tuning spec criterion for this
+options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
+[centroid_ct,centroid_bins] = centroid_dist_task_selective(tunedLogical,task_selective_ROIs, max_bin_rate,options);
+
+%save the fractions output data
+save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct','centroid_bins');
+
+%% Extract AUC/min rate of selective A/B tuned neurons (and other classes)
+%RUN, NO RUN FOR NOW for A sel, Bsel, A&B (si/ts tuned)
+[total_AUC_min] = AUC_scatter(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
+save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
+
+
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
 options.tuning_criterion = 'ts';
@@ -345,21 +361,7 @@ histogram(bin_center.partial_far(2,:),0:50:100)
 save(fullfile(path_dir{1},'cumul_analysis','select_ROI_criteria.mat'),'select_fields','tunedLogical',...
                 'task_remapping_ROIs','task_selective_ROIs');
 
-%% Centroid distribution across lap for A/B selective tuned neurons
-%QC checked
 
-%use tuning spec criterion for this
-options.tuning_criterion = 'selective_filtered'; %si or ts or selective_filtered
-[centroid_ct,centroid_bins] = centroid_dist_task_selective(tunedLogical,task_selective_ROIs, max_bin_rate,options);
-
-%save the fractions output data
-save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct','centroid_bins');
-
-%% Comparison of AUC/min rate of exclusive A tuned or exclusive B tuned neurons
-
-options.tuning_criterion = 'ts'; %si or ts
-[total_AUC_min] = AUC_scatter(tunedLogical,task_selective_ROIs,session_vars,options);
-save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
 
 
 %% Get percentage correct in each trial type and
