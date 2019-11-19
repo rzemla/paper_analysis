@@ -361,9 +361,6 @@ histogram(bin_center.partial_far(2,:),0:50:100)
 save(fullfile(path_dir{1},'cumul_analysis','select_ROI_criteria.mat'),'select_fields','tunedLogical',...
                 'task_remapping_ROIs','task_selective_ROIs');
 
-
-
-
 %% Get percentage correct in each trial type and
 
 trialOrder = session_vars{1}.Behavior.performance.trialOrder;
