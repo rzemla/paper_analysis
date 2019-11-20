@@ -139,19 +139,19 @@ mean_run = [mean_AUC.run.Asel, mean_AUC.run.Bsel, mean_AUC.run.AB];
 mean_norun = [mean_AUC.norun.Asel, mean_AUC.norun.Bsel, mean_AUC.norun.AB];
 
 %1 vs. 2 (A sel - A vs. B)
-p_run(1) = signrank(mean_run(:,1), mean_run(:,2));
+p_run(1) = signrank(mean_run(:,1), mean_run(:,2))
 %3 vs. 4 (B sel - A vs. B)
-p_run(2) = signrank(mean_run(:,3), mean_run(:,4));
+p_run(2) = signrank(mean_run(:,3), mean_run(:,4))
 %5 vs. 6 (A&B - A vs. B)
-p_run(3) = signrank(mean_run(:,5), mean_run(:,6));
+p_run(3) = signrank(mean_run(:,5), mean_run(:,6))
 
 
 %1 vs. 2 (A sel - A vs. B)
-p_norun(1) = signrank(mean_norun(:,1), mean_norun(:,2));
+p_norun(1) = signrank(mean_norun(:,1), mean_norun(:,2))
 %3 vs. 4 (B sel - A vs. B)
-p_norun(2) = signrank(mean_norun(:,3), mean_norun(:,4));
+p_norun(2) = signrank(mean_norun(:,3), mean_norun(:,4))
 %5 vs. 6 (A&B - A vs. B)
-p_norun(3) = signrank(mean_norun(:,5), mean_norun(:,6));
+p_norun(3) = signrank(mean_norun(:,5), mean_norun(:,6))
 
 %% Plot bar plots - RUN and NO RUN
 figure('Position',[2390 331 426 532]);

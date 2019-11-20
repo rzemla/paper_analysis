@@ -299,6 +299,10 @@ save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct','centro
 [total_AUC_min] = AUC_scatter(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
 save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
 
+%% Speed data for task selective place cells
+
+task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
+
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
