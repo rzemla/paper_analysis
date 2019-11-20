@@ -100,17 +100,143 @@ run_epoch_each_lap = session_vars{1}.Behavior_split_lap.run_ones;
 speed_all_laps = session_vars{1}.Behavior.speed;
 
 %normalized position across all laps
-norm_pos_all_laps = session_vars{1}.Behavior.normalizedposition;
+norm_pos_all_laps = session_vars{1}.Behavior.resampled.normalizedposition;
 
+%trial order of each lap
+%2 - A lap
+%3 - B lap
+%added 0 - (i.e. - 20 or 30 is wrong lap is wrong A or B lap,respectively)
+trialOrder = session_vars{1}.Behavior.performance.trialOrder;
+
+%lap number of each frame index
+lapNb_fr = session_vars{1}.Behavior.resampled.lapNb;
+
+%% Split by lap
+max_lap = max(lapNb_fr);
+
+%get start and end lap idxs across (in frame space) for each lap
+for ll=1:max_lap
+    lap_idxs(ll,1) = find(lapNb_fr == ll,1,'first');
+    lap_idxs(ll,2) = find(lapNb_fr == ll,1,'last');
+end
+
+%normalized position and speed on each lap
+for ll=1:max_lap
+   norm_pos_each_lap{ll} = norm_pos_all_laps(lap_idxs(ll,1):lap_idxs(ll,2));  
+   speed_each_lap{ll} = speed_all_laps(lap_idxs(ll,1):lap_idxs(ll,2));
+end
+
+%% Extract bin (run) frame on each lap
+
+%correct A lap indices
+corr_lap_idx.A = find(trialOrder == 2);
+corr_lap_idx.B = find(trialOrder == 3);
+
+trialType = 1;
+[mean_bin_speed.A] = extract_bin_speed(corr_lap_idx.A,session_vars,speed_each_lap,run_epoch_each_lap,trialType);
+
+trialType = 2;
+[mean_bin_speed.B] = extract_bin_speed(corr_lap_idx.B,session_vars,speed_each_lap,run_epoch_each_lap,trialType);
+
+figure
+hold on
+plot(mean_bin_speed.A','b')
+plot(mean_bin_speed.B','r')
+
+%get sem and mean (on each bin) across laps 
+mean_speed_A_laps = mean(mean_bin_speed.A,1);
+mean_speed_B_laps = mean(mean_bin_speed.B,1);
+
+%get sem
+sem_speed_A_laps = std(mean_bin_speed.A,0,1)./sqrt(size(mean_bin_speed.A,1));
+sem_speed_B_laps = std(mean_bin_speed.B,0,1)./sqrt(size(mean_bin_speed.B,1));
+
+%% Plot with shades (sem)
+figure
+hold on
+title('Bin speed in run epochs - shades = STD')
+xlabel('Bin position');
+ylabel('Speed [cm/s]');
+%plot(mean_speed_A_laps,'b')
+%plot(mean_speed_B_laps,'r')
+%errorbar(mean_speed_A_laps,sem_speed_A_laps,'b')
+%errorbar(mean_speed_B_laps,sem_speed_B_laps,'r')
+
+%create input function to calculate standard error of mean
+sem = @(x) std(x,0,1)./sqrt(size(x,1));
+
+s1 = shadedErrorBar(1:100,mean_bin_speed.A,{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
+set(s1.edge,'LineWidth',1.5,'LineStyle','-','Color',[[65,105,225]/255, 0.2]) %last value add transparency value
+s1.mainLine.LineWidth = 2;
+s1.mainLine.Color = [65,105,225]/255;
+s1.patch.FaceColor = [65,105,225]/255;
+
+s2 = shadedErrorBar(1:100,mean_bin_speed.B,{@mean,@std},'lineprops','-','transparent',true,'patchSaturation',0.20);
+set(s2.edge,'LineWidth',1.5,'LineStyle','-','Color',[[220,20,60]/255, 0.2]) %last value add transparency value
+s2.mainLine.LineWidth = 2;
+s2.mainLine.Color = [220,20,60]/255;
+s2.patch.FaceColor = [220,20,60]/255;
+
+legend('A laps','B laps','location','southeast');
 
 %% All lap speed and norm position
 figure
 hold on
+%norm speed
+plot(speed_all_laps', 'g')
 %norm position
 plot(norm_pos_all_laps-1, 'k')
-%norm speed
-plot(speed_all_laps, 'k')
 
+
+%% Extract bin code below - modified to be generic for extract_bin_speed fxn
+%{
+% correct A laps (100 bins)
+corr_lap_bins.A = session_vars{1}.Place_cell{1}.Bin{8};
+
+%speed for each frame on corr A laps
+speed_corr.A = speed_each_lap(corr_lap_idx.A);
+
+%break run bins into cells (by each corr A lap)
+%get run epoch on/off first
+run_epoch_corr.A = run_epoch_each_lap(corr_lap_idx.A);
+
+%extract 1 only indices (RUN EPOCH ON)
+for ll=1:size(run_epoch_corr.A,2)
+    run_only_corr.A{ll} = ll*ones(size(find(run_epoch_corr.A{ll}==1),1),1);
+end
+%convert to vector
+run_only_corr_vec.A = cell2mat(run_only_corr.A');
+
+%get indices for extracting bins as laps
+for ll=1:size(run_only_corr.A,2)
+    lap_bin_idxs.A(ll,1) = find(run_only_corr_vec.A == ll,1,'first');
+    lap_bin_idxs.A(ll,2) = find(run_only_corr_vec.A == ll,1,'last');
+end    
+
+%split bins into laps - correct A
+for ll=1:size(lap_bin_idxs.A,1)
+    corr_lap_bin_split.A{ll} = corr_lap_bins.A(lap_bin_idxs.A(ll,1):lap_bin_idxs.A(ll,2));
+end
+
+%generate matching speed values for bins for each lap
+for ll=1:size(lap_bin_idxs.A,1)
+    speed_match_bin.A{ll} = speed_corr.A{ll}(logical(run_epoch_corr.A{ll}));
+end
+
+%get mean speed in each bin on each lap
+%for each lap
+for ll=1:size(lap_bin_idxs.A,1)
+    %for each bin
+    for bb=1:100
+        speed_bin_lap.A{ll}{bb} = speed_match_bin.A{ll}(find(corr_lap_bin_split.A{ll} == bb));
+    end 
+end
+
+%take mean speed in each bin on each lap
+for ll=1:size(lap_bin_idxs.A,1)
+    mean_bin_speed.A(ll,:) = cellfun(@mean,speed_bin_lap.A{ll})
+end
+%}
 
 
 end
