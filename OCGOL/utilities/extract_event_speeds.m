@@ -69,7 +69,7 @@ for rr=1:nbROI
                 start_idx = find(event_run_bin_extract{rr}{ll} >= 1 &  event_run_bin_extract{rr}{ll} <= bin_end);
                 
                 %combine the indices above
-                event_idx_temp = sort([start_idx,end_idx]);
+                event_idx_temp = sort([start_idx;end_idx]);
                 %extract the event within the field on each lap
                 event_run_bin_extract_pf_sel{rr}{ll} = event_run_bin_extract{rr}{ll}(event_idx_temp);
             end
