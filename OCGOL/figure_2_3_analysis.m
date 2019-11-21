@@ -305,10 +305,11 @@ save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
 
 %% Event vs. speed analysis
 
-event_vs_speed(session_vars, task_selective_ROIs,ROI_idx_tuning_class,...
-                select_fields,max_transient_peak,mean_bin_speed,lap_bin_split,options)
+[mean_event_speed] = event_vs_speed(session_vars, task_selective_ROIs,ROI_idx_tuning_class,...
+                select_fields,max_transient_peak,mean_bin_speed,lap_bin_split,options);
 
-%check the #nb of fields per ROI
+%export the lap speed data and event speed data for cumulative analysis
+save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
