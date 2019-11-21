@@ -299,13 +299,16 @@ save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct','centro
 [total_AUC_min] = AUC_scatter(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
 save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
 
-%% Speed data for each lap 
+%% Speed data for each lap (extract speed in each bin)
 
-[mean_bin_speed] =task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
+[mean_bin_speed, lap_bin_split] =task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
 
 %% Event vs. speed analysis
 
-event_vs_speed()
+event_vs_speed(session_vars, task_selective_ROIs,ROI_idx_tuning_class,...
+                select_fields,max_transient_peak,mean_bin_speed,lap_bin_split,options)
+
+%check the #nb of fields per ROI
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs

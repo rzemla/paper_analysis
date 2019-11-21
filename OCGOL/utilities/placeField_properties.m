@@ -1,6 +1,8 @@
 function [placeField_dist,pf_count_filtered_log, pf_count_filtered] = placeField_properties(session_vars,tunedLogical,...
                                             select_fields,task_selective_ROIs,ROI_idx_tuning_class,options)
-
+%QC checked
+                                        
+                                        
 %% Bin to distance conversion factor
 binToCm = 1.96;
 

@@ -1,4 +1,4 @@
-function [mean_bin_speed] = task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options)
+function [mean_bin_speed,lap_bin_split] = task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options)
 
 
 sessionSelect = options.sessionSelect;
@@ -135,10 +135,10 @@ corr_lap_idx.A = find(trialOrder == 2);
 corr_lap_idx.B = find(trialOrder == 3);
 
 trialType = 1;
-[mean_bin_speed.A] = extract_bin_speed(corr_lap_idx.A,session_vars,speed_each_lap,run_epoch_each_lap,trialType);
+[mean_bin_speed.A,lap_bin_split.A] = extract_bin_speed(corr_lap_idx.A,session_vars,speed_each_lap,run_epoch_each_lap,trialType);
 
 trialType = 2;
-[mean_bin_speed.B] = extract_bin_speed(corr_lap_idx.B,session_vars,speed_each_lap,run_epoch_each_lap,trialType);
+[mean_bin_speed.B,lap_bin_split.B] = extract_bin_speed(corr_lap_idx.B,session_vars,speed_each_lap,run_epoch_each_lap,trialType);
 
 figure
 hold on

@@ -1,4 +1,4 @@
-function [mean_bin_speed] = extract_bin_speed(corr_lap_idx,session_vars,speed_each_lap,run_epoch_each_lap,trialType)
+function [mean_bin_speed,corr_lap_bin_split] = extract_bin_speed(corr_lap_idx,session_vars,speed_each_lap,run_epoch_each_lap,trialType)
 
 % correct A laps (100 bins)
 corr_lap_bins = session_vars{1}.Place_cell{trialType}.Bin{8};

@@ -31,8 +31,6 @@ end
 nbROI = size(bin_aligned_onsets.A{1, 1},2);
 
 %overlay bin map on top of onsets for each ROI
-nb_laps.A = size(corr_laps_idx.A,1);
-
 
 %repmat each bin assign to number of ROIs
 for ll=1:size(lap_bin_split.A,2)
@@ -48,7 +46,7 @@ end
 for rr=1:nbROI
     %for each laps
     for ll=1:size(event_run_bins_mat.A,2)
-        event_run_bin_extract{rr}{ll} = event_run_bins_mat.A{ll}((event_run_bins_mat.A{ll}(:,rr) ~=0),rr); 
+        event_run_bin_extract{rr}{ll} = event_run_bins_mat.A{ll}((event_run_bins_mat.A{ll}(:,rr) ~=0),rr);
     end
     
 end
@@ -66,14 +64,11 @@ for rr=1:nbROI
 end
 
 for rr=1:nbROI
-    %if place field exists
     if ~isnan(max_place_field_bin_edges.A{rr})
-        
     if (max_place_field_bin_edges.A{rr}(1) < max_place_field_bin_edges.A{rr}(2))
-        for 
+        
     else %if split field along track end
         
-    end
     end
 end
 
@@ -85,8 +80,21 @@ end
 
 %mean bin speed - mean speed in each bin on each lap
 
+%which place fields are significant
+select_fields
+
+%fields with max rate 
+max_transient_peak
+
+%place field edges
 
 
+
+
+% NEED THE FOLLOWING VARS:
+%bin field edges
+% bin position of each event onset
+% lap onset for each event
 
 
 end
