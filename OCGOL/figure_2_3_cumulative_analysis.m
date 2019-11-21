@@ -74,12 +74,15 @@ tc_pv_correlation_task_sel(path_dir)
 
 place_field_analysis(path_dir)
 
-%% Speed analysis for each animal used in Figure 2/3 (mean bin speed on A/B laps) 
+%% Speed analysis for each animal used in Figure 2/3 (mean bin speed on A/B laps) (Sup 2)
 
 lap_speed_by_animal(path_dir)
 
 %save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
 
+%% Event vs speed scatterplot for task selective neurons for supplement (Sup 3)
+
+event_speed_scatter
 
 
 %% REMAPPING RELATED (FIGURE 3)
