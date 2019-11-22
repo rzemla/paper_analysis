@@ -82,7 +82,7 @@ lap_speed_by_animal(path_dir)
 
 %% Event vs speed scatterplot for task selective neurons for supplement (Sup 3)
 
-event_speed_scatter
+event_speed_scatter(path_dir)
 
 
 %% REMAPPING RELATED (FIGURE 3)
