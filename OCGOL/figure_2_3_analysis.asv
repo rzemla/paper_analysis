@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -337,17 +337,8 @@ options.p_sig = 0.05;
 [task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
                         max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
                     
-%% Calculate centroid difference between neurons with single place fields in each A and B trials 
+%% Calculate centroid different 
 %max_transient_peak - index of max transient peak
-%pf_count_filtered - stat. significant place fields for each neuron 
-%cent_diff - between max fields
-%ROI_idx_tuning_class - category of each ROI (filtered by events and place
-%field) 
-
-[ts_bin_conv_diff,pf_distance_metric_ts] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,cent_diff,pf_count_filtered,max_transient_peak);
-
-%export distances
-save(fullfile(path_dir{1},'cumul_analysis','place_field_AB_distances.mat'),'ts_bin_conv_diff','pf_distance_metric_ts');
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options

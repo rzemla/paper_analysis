@@ -819,7 +819,7 @@ Place_cell{place_struct_nb}.Tuning_Specificity.placeField.width = placeField.wid
 
 
 %% Plot final values
-if 0
+if 1
 figure;
 for rr =SI_tuned_ROIs%1:100
     

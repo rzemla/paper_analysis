@@ -48,6 +48,11 @@ cumulative_task_sel_STC(path_dir)
 
 si_ts_score_distributions(path_dir)
 
+%% Place field A&B distance separation
+
+place_AB_distance_separation(path_dir)
+%export distances
+
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 
 %scatterplot of centroid difference as a function of center between
 %centroid of max place field - not used

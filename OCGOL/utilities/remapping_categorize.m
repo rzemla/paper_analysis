@@ -65,6 +65,7 @@ rate_remap_idx_orig = rate_remap_idx_start;
 %extract only the indices
 rate_remap_idx_start = intersect(rate_remap_idx_orig,single_pf_idxs);
 
+
 %% Parse starting partial remap neurons (2PF vs 1 PF)
 %ROIs with siginificant 2PF vs. 1PFs
 single_double_pf_idxs = find(sum((pf_count_filtered == 1) + 2*(pf_count_filtered == 2),1) ==3);
