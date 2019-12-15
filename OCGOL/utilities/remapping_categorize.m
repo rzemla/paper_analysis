@@ -3,6 +3,8 @@ function [remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tu
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
 
+%QC checked
+
 %% Set parameters
 
 %number of degrees of centroid difference
@@ -291,6 +293,7 @@ norm_conv_factor = median_track_len/100;
 % Bonly_field_filtered;
 
 %find events occuring within max place field for each ROI
+%in terms of normalized position
 for tt=1:2
     for rr=1:size(placeField_filtered_max_posnorm{tt},2)
         %get idxs of events with max place field
@@ -308,7 +311,8 @@ for tt=1:2
             else %do two event finds and merge (and sort) into one set of indices
                 events_in_field_temp_1 = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= 0 & ...
                     event_norm_pos_run.A{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-                events_in_field_temp_2 = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(2) & ...
+                %typo was below - wrong edge inserted
+                events_in_field_temp_2 = find(event_norm_pos_run.A{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
                     event_norm_pos_run.A{remapping_pf_filtered(rr)} <= 1 );
                 
                 %merge and sort indices here
@@ -336,7 +340,8 @@ for tt=1:2
             else %do two event finds and merge (and sort) into one set of indices
                 events_in_field_temp_1 = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= 0 & ...
                     event_norm_pos_run.B{remapping_pf_filtered(rr)} <= placeField_filtered_max_posnorm{tt}{rr}(2));
-                events_in_field_temp_2 = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(2) & ...
+                %typo was below
+                events_in_field_temp_2 = find(event_norm_pos_run.B{remapping_pf_filtered(rr)} >= placeField_filtered_max_posnorm{tt}{rr}(1) & ...
                     event_norm_pos_run.B{remapping_pf_filtered(rr)} <= 1 );
                 
                 %merge and sort indices here
