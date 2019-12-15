@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -171,6 +171,16 @@ end
 %for overlapping area merge (calculate number of place fields)
 %https://www.mathworks.com/matlabcentral/answers/361760-area-between-two-overlapping-plots
 
+%% Extract speed according to selected trial types
+%(1) only A corr
+%(2) only B corr
+%(3) all laps
+%(4) all A trials
+%(5) all B trials
+
+%extract speed on each trial and load into session_vars struct
+session_vars = extract_speed_for_each_trial_set(session_vars);
+
 %% Calculate the transient rates in each of the place fields (integrate later) and recalculate centroids based on highest transient rate field
 
 %funtion to calculate transient rate in field
@@ -299,18 +309,6 @@ save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct','centro
 [total_AUC_min] = AUC_scatter(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
 save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
 
-%% Speed data for each lap (extract speed in each bin)
-
-[mean_bin_speed, lap_bin_split] =task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
-
-%% Event vs. speed analysis
-
-[mean_event_speed] = event_vs_speed(session_vars, task_selective_ROIs,ROI_idx_tuning_class,...
-                select_fields,max_transient_peak,mean_bin_speed,lap_bin_split,options);
-
-%export the lap speed data and event speed data for cumulative analysis
-save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
-
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
 options.tuning_criterion = 'ts';
@@ -337,6 +335,25 @@ options.p_sig = 0.05;
 [task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
                         max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
                     
+                    
+%% Speed data for each lap (extract speed in each bin) - insert speed data
+
+[mean_bin_speed, lap_bin_split] =task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
+
+
+%% Compare speed of events for rate remapping neurons
+
+speed_comparison(task_remapping_ROIs, lap_bin_split, session_vars, max_transient_peak,options)
+
+
+%% Event vs. speed analysis
+
+[mean_event_speed] = event_vs_speed(session_vars, task_selective_ROIs,ROI_idx_tuning_class,...
+                select_fields,max_transient_peak,mean_bin_speed,lap_bin_split,options);
+
+%export the lap speed data and event speed data for cumulative analysis
+save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
+
 %% Calculate centroid difference between neurons with single place fields in each A and B trials 
 %max_transient_peak - index of max transient peak
 %pf_count_filtered - stat. significant place fields for each neuron 

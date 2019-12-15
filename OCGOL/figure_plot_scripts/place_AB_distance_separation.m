@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = place_AB_distance_separation(path_dir)
+function [combined_distances,combined_dist_metric] = place_AB_distance_separation(path_dir)
 
 %% Load in place field distance data
 
@@ -15,6 +15,9 @@ for ss=1:size(distances,2)
     combined_dist_metric{ss} = distances{ss}.pf_distance_metric_ts;
     
 end
+
+%% Export the data loaded in from all animals
+
 
 
 %% Plot histogram

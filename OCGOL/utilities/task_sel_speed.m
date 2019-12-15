@@ -128,12 +128,16 @@ for ll=1:max_lap
    speed_each_lap{ll} = speed_all_laps(lap_idxs(ll,1):lap_idxs(ll,2));
 end
 
+%convert speed on each lap to vector
+cell2mat(speed_each_lap')
+
 %% Extract bin (run) frame on each lap
 
 %correct A lap indices
 corr_lap_idx.A = find(trialOrder == 2);
 corr_lap_idx.B = find(trialOrder == 3);
 
+%extract bins associated with each frame
 trialType = 1;
 [mean_bin_speed.A,lap_bin_split.A] = extract_bin_speed(corr_lap_idx.A,session_vars,speed_each_lap,run_epoch_each_lap,trialType);
 
@@ -152,6 +156,8 @@ mean_speed_B_laps = mean(mean_bin_speed.B,1);
 %get sem
 sem_speed_A_laps = std(mean_bin_speed.A,0,1)./sqrt(size(mean_bin_speed.A,1));
 sem_speed_B_laps = std(mean_bin_speed.B,0,1)./sqrt(size(mean_bin_speed.B,1));
+
+cell2mat(lap_bin_split.A')
 
 %% Plot with shades (sem)
 figure
