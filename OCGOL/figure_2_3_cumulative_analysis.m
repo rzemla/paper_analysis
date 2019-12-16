@@ -55,9 +55,12 @@ si_ts_score_distributions(path_dir)
 %export the lap speed data and event speed data for cumulative analysis
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distances_A&B_neurons.mat'),'combined_distances', 'combined_dist_metric');
 
-%% Remapping ROIs based on correlation map criteria
+%% Remapping ROIs based on correlation map criteria and return quantile for common field separation
 
-remapping_corr(path_dir)
+[common_cutoffs_95] = remapping_corr(path_dir);
+
+save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cutoff.mat'),'common_cutoffs_95');
+
 
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 
 %scatterplot of centroid difference as a function of center between

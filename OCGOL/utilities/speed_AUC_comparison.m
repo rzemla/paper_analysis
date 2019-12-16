@@ -250,16 +250,23 @@ allSig = pAll < 0.05;
 otherTermsOr = allSig(2,:) | allSig(3,:);
 
 %find ROI with group effect regardless of other interactions
-rate_remap_ROI_group_all = find(pGroup <0.1);
+rate_remap_ROI_group_all = find(pGroup <0.05);
 
 %find ROI with group effect only (cell identity explains AUC)
 rate_remap_group_only = setdiff(rate_remap_ROI_group_all,intersect(rate_remap_ROI_group_all,find(otherTermsOr ==1)));
 
 %% Export rate remapping ROIs
 
-remapping_corr_idx.rate_remap_grp_only = rate_remap_group_only;
-remapping_corr_idx.rate_remap_all = rate_remap_ROI_group_all;
+%rate remapping neurons - by only category group
+remapping_corr_idx.final.rate_remap_grp_only = rate_remap_group_only;
+remapping_corr_idx.final.rate_remap_all = rate_remap_ROI_group_all;
 
+%define common in relation remove the rate remapping neurons from
+%non_global_ROIs
+remapping_corr_idx.final.common = setdiff(non_global_ROIs,remapping_corr_idx.final.rate_remap_all);
+
+%global idx
+remapping_corr_idx.final.global = remapping_corr_idx.global_idx;
 
 %% Run wilcoxon for all ROIs - check if any sig
 for ss=sessionSelect

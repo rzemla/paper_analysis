@@ -1,4 +1,8 @@
-function [ts_bin_conv_diff,pf_distance_metric_ts] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,cent_diff,pf_count_filtered,max_transient_peak)
+function [ts_bin_conv_diff,pf_distance_metric_ts] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,remapping_corr_idx,cent_diff,pf_count_filtered,max_transient_peak)
+
+
+
+%% TS and SI tuned neurons in each class (min 5 events and single fields)
 
 %get TS tuned neurons(event filtered) for each class
 %ts

@@ -372,10 +372,18 @@ save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_
 %ROI_idx_tuning_class - category of each ROI (filtered by events and place
 %field) 
 
-[ts_bin_conv_diff,pf_distance_metric_ts] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,cent_diff,pf_count_filtered,max_transient_peak);
+[ts_bin_conv_diff,pf_distance_metric_ts] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,remapping_corr_idx,cent_diff,pf_count_filtered,max_transient_peak);
 
 %export distances
 save(fullfile(path_dir{1},'cumul_analysis','place_field_AB_distances.mat'),'ts_bin_conv_diff','pf_distance_metric_ts');
+
+%% Calculate centroid difference/distasnce between neurons with common place fields for setting
+ 
+[common_bin_conv_diff,common_pf_distance_metric] = place_field_AandB_distribution_common_neurons(session_vars,ROI_idx_tuning_class,remapping_corr_idx,cent_diff,pf_count_filtered,max_transient_peak);
+
+%export distances for common neurons defined as having similar
+%correlation maps 
+save(fullfile(path_dir{1},'cumul_analysis','place_field_common_distances.mat'),'common_bin_conv_diff','common_pf_distance_metric');
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
 %customize to add options

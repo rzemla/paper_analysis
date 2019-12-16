@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = remapping_corr(path_dir)
+function [cutoffs_95] = remapping_corr(path_dir)
 
 %% Load in remapping idx data
 
@@ -13,31 +13,72 @@ for aa=1:size(path_dir,2)
     STC{aa} = load(string(load_STC_path{aa}));
 end
 
-%% Load in STCs
-%load(fullfile(path_dir{1},'cumul_analysis','place_field_AB_distances.mat'),'ts_bin_conv_diff','ts_bin_conv_diff');
+%% Load in place field separation distances for common neurons
+for aa=1:size(path_dir,2)
+    load_distance_path{aa} = fullfile(path_dir{aa},'cumul_analysis','place_field_common_distances.mat');
+    distances{aa} = load(string(load_distance_path{aa}));
+end
+
+%save(fullfile(path_dir{1},'cumul_analysis','place_field_common_distances.mat'),'common_bin_conv_diff','common_pf_distance_metric');
+
+%% Combine distances and compute the 95th %centile cutoff
+
+for aa=1:size(path_dir,2)
+    bin_dist{aa} = distances{aa}.common_bin_conv_diff;
+end
+
+%get 95% bin cutoff for fields that are considered common (for defining
+%partial neurons)
+bin_cutoff_95 = quantile(cell2mat(bin_dist),0.95);
+cm_cutoff_95 = bin_cutoff_95*1.96;
+ang_cutoff_95 = rad2deg((bin_cutoff_95./100)*2*pi);
+
+%export cutoffs
+cutoffs_95.bin = bin_cutoff_95;
+cutoffs_95.cm = cm_cutoff_95;
+cutoffs_95.ang = ang_cutoff_95;
+
+%plot histogram
+figure
+hold on
+histogram(cell2mat(bin_dist),30)
 
 %% Combined into single matrix
 for ss=1:size(remap_corr_idx,2)
-    non_global_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.non_global_idx;
+    %non_global_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.non_global_idx;
+    %global
     global_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.global_idx;
-    rate_only_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.rate_remap_grp_only;
-    rate_part_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.rate_remap_all;
-    common_idx{ss} = setdiff(non_global_idx{ss},rate_only_idx{ss});
+    %rate remapping
+    rate_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.final.rate_remap_all;
+    %common
+    common_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.final.common;
+    %only signifcance for rate and nothing else (speed or interaction)
+    rate_only_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.final.rate_remap_grp_only;
+    
+    %use this as only interested (group signifance regardless of speed or
+    %interaction)
+    
+    %common
+    %common_idx{ss} = remap_corr_idx{ss}.remapping_corr_idx.final.common;
+    %common_idx{ss} = setdiff(non_global_idx{ss},rate_only_idx{ss});
 end
 
 %plot the STCs associated with each class
-non_global_comb = cell2mat(non_global_idx');
+%non_global_comb = cell2mat(non_global_idx');
 global_comb = cell2mat(global_idx');
-rate_only_comb = cell2mat(rate_only_idx);
+rate_only_comb = cell2mat(rate_idx);
 
 %common neurons 
 common_comb = cell2mat(common_idx');
 
+%number of neurons that are only task category modulated
+cell2mat(rate_only_idx);
+
 %total neurons from all animals
-total_ct = length(non_global_comb) + length(global_comb);
+%total_ct = length(non_global_comb) + length(global_comb);
 
 %fraction global
-length(global_comb)./total_ct;
+%length(global_comb)./total_ct;
 
 %save the neurons parsed by correlation remapping criteria
 %save(fullfile(path_dir{1},'cumul_analysis','remap_corr_idx.mat'),'remapping_corr_idx'); 
@@ -47,7 +88,7 @@ for aa=1:size(path_dir,2)
     %A vs B side by side
     STC_tn_global{aa} = [STC{aa}.STC_export.A_STC_tn{1}(:,global_idx{aa})', STC{aa}.STC_export.B_STC_tn{1}(:,global_idx{aa})'];
     STC_tn_common{aa} = [STC{aa}.STC_export.A_STC_tn{1}(:,common_idx{aa})', STC{aa}.STC_export.B_STC_tn{1}(:,common_idx{aa})'];
-    STC_tn_rate_only{aa} = [STC{aa}.STC_export.A_STC_tn{1}(:,rate_only_idx{aa})', STC{aa}.STC_export.B_STC_tn{1}(:,rate_only_idx{aa})'];
+    STC_tn_rate{aa} = [STC{aa}.STC_export.A_STC_tn{1}(:,rate_idx{aa})', STC{aa}.STC_export.B_STC_tn{1}(:,rate_idx{aa})'];
 end
 
 %% Sort STCs for each session
@@ -59,7 +100,7 @@ for aa=1:size(path_dir,2)
     
     sortOrder_common{aa} = sortSTC(STC_tn_common{aa},1:100);
     
-    sortOrder_rate_only{aa} = sortSTC(STC_tn_rate_only{aa},1:100);
+    sortOrder_rate{aa} = sortSTC(STC_tn_rate{aa},1:100);
     
 end
 
@@ -69,7 +110,7 @@ for aa=1:size(path_dir,2)
     
     STC_tn_common_sorted{aa} = STC_tn_common{aa}(sortOrder_common{aa},:);
     
-    STC_tn_rate_sorted{aa} = STC_tn_rate_only{aa}(sortOrder_rate_only{aa},:);
+    STC_tn_rate_sorted{aa} = STC_tn_rate{aa}(sortOrder_rate{aa},:);
     
 end
 

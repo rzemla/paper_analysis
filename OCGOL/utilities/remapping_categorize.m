@@ -27,7 +27,7 @@ tuned_AB_si_ts = tuned_A_si_ts & tuned_B_si_ts;
 rate_remap_idx_start = find(tuned_logical.ts.AandB_tuned ==1);
 %rate_remap_idx_start = find(tuned_AB_si_ts == 1); 
 
-%partial remapping - both A and B tuned to SI
+%partial remapping - both A and B tuned to SI or TS
 %partial_remap_idx_start = find(tuned_logical.si.AandB_tuned == 1);
 partial_remap_idx_start = find(tuned_AB_si_ts == 1);
 
