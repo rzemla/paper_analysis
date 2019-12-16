@@ -317,17 +317,18 @@ save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
 options.tuning_criterion = 'ts';
 %display events vs position for each task selective neuron in A or B
 options.dispFigure = 0;
-%number of degrees of centroid difference
+%number of degrees of centroid difference (input these into analysis below)
 %45 deg ~25 cm; 
 %36 deg ~20 cm;
 %27 deg ~15 cm;
-%18 dege ~10 cm
+%18 deg ~10 cm;
+%25 deg ~13 cm;
 options.deg_thres = 18;
 %ranges for splitting the global remappers
 %0-10 cm; 10 - 30cm; 30+ cm
 options.deg_ranges = [0 18 54];
 %degree threshold for partial remappers
-options.partial_deg_thres = [18 36];
+options.partial_deg_thres = [25 0];
 %choice between KS test of unpaired Mann Whitney U (later)
 %either 'ranksum' or ks
 options.AUC_test = 'ranksum';
@@ -337,6 +338,21 @@ options.p_sig = 0.05;
 %task_selective_ROIs structure
 [task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
                         max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
+                    
+%% Extract spatial bins for each class of remapping neurons
+
+bin_center = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs, select_fields,partial_field_idx);
+
+save(fullfile(path_dir{1},'cumul_analysis','place_field_centers_remap.mat'),'bin_center');
+
+%plot remapping as scatter
+%green dots - common ; red - partial field 
+
+%distribution of partial fields
+figure
+hold on
+histogram(bin_center.partial_far(1,:),0:50:100)
+histogram(bin_center.partial_far(2,:),0:50:100)
                                         
 %% Split remapping categories by stat sig of rate map correlations (global vs non global)
 
@@ -348,10 +364,10 @@ options.p_sig = 0.05;
 [mean_bin_speed, lap_bin_split] =task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
 
 
-%% Compare speed and AUC of events for rate remapping neurons
+%% Compare speed and AUC of events for rate remapping neurons and DEFINE each category
 %run 2 way anova for each neuron
 
-[remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,options);
+[remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,bin_center, options);
 
 %get rate remapping neurons as well with 2-way ANOVA
 %save the neurons parsed by correlation remapping criteria
@@ -370,7 +386,7 @@ save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_
 %pf_count_filtered - stat. significant place fields for each neuron 
 %cent_diff - between max fields
 %ROI_idx_tuning_class - category of each ROI (filtered by events and place
-%field) 
+%field)
 
 [ts_bin_conv_diff,pf_distance_metric_ts] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,remapping_corr_idx,cent_diff,pf_count_filtered,max_transient_peak);
 
@@ -400,20 +416,7 @@ options.tuning_criterion = 'remapping_filtered'; %si or ts or selective_filtered
 plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,path_dir,options);
 
 
-%% Extract spatial bins for each class of remapping neurons
 
-bin_center = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs, select_fields,partial_field_idx);
-
-save(fullfile(path_dir{1},'cumul_analysis','place_field_centers_remap.mat'),'bin_center');
-
-%plot remapping as scatter
-%green dots - common ; red - partial field 
-
-%distribution of partial fields
-figure
-hold on
-histogram(bin_center.partial_far(1,:),0:50:100)
-histogram(bin_center.partial_far(2,:),0:50:100)
 
 %% Save the idxs of each class of remapping neurons, placeFields that match min 5 event criteria and tuned logical
 

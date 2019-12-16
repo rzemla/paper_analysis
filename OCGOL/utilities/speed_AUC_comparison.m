@@ -1,10 +1,14 @@
-function [remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,options)
+function [remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,bin_center,options)
 
 %rate remapping neurons
 rate_ROI_idx = task_remapping_ROIs.rate;
 
 %non global ROIs from rate map correlations
 non_global_ROIs = remapping_corr_idx.non_global_idx;
+
+%partial_ROI (near/common field defined from threshold and no limit on far
+%field)
+partial_ROIs = task_remapping_ROIs.partial;
 
 %session indices
 sessionSelect = options.sessionSelect;
@@ -255,18 +259,6 @@ rate_remap_ROI_group_all = find(pGroup <0.05);
 %find ROI with group effect only (cell identity explains AUC)
 rate_remap_group_only = setdiff(rate_remap_ROI_group_all,intersect(rate_remap_ROI_group_all,find(otherTermsOr ==1)));
 
-%% Export rate remapping ROIs
-
-%rate remapping neurons - by only category group
-remapping_corr_idx.final.rate_remap_grp_only = rate_remap_group_only;
-remapping_corr_idx.final.rate_remap_all = rate_remap_ROI_group_all;
-
-%define common in relation remove the rate remapping neurons from
-%non_global_ROIs
-remapping_corr_idx.final.common = setdiff(non_global_ROIs,remapping_corr_idx.final.rate_remap_all);
-
-%global idx
-remapping_corr_idx.final.global = remapping_corr_idx.global_idx;
 
 %% Run wilcoxon for all ROIs - check if any sig
 for ss=sessionSelect
@@ -281,10 +273,40 @@ for ss=sessionSelect
     end
 end
 
+%% Plot example STCS (trial normalized)
+%generate combined STC for selected ROIs
+STC_tn_partial = [STC_export.A_STC_tn{1}(:,partial_ROIs)', STC_export.B_STC_tn{1}(:,partial_ROIs)'];
+
+%center bins - get sort order from here
+[~,com_partial_idx_sort] = sort(bin_center.partial_com(1,:),'ascend');
+
+%plot the sorted partial neurons
+figure
+imagesc(STC_tn_partial(com_partial_idx_sort,:))
+hold on
+caxis([0 1])
+colormap('jet')
+
 %% Parse each class based on remapping category - finish here
 %extract speed true for remapping states
 speed_true(rate_ROI_idx)
 field_speed_events{ss}(rate_ROI_idx,:)
+
+%% Export rate remapping ROIs
+
+%rate remapping neurons - by only category group
+remapping_corr_idx.final.rate_remap_grp_only = rate_remap_group_only;
+remapping_corr_idx.final.rate_remap_all = rate_remap_ROI_group_all;
+
+%define common in relation remove the rate remapping neurons from
+%non_global_ROIs
+remapping_corr_idx.final.common = setdiff(non_global_ROIs,remapping_corr_idx.final.rate_remap_all);
+
+%global idx
+remapping_corr_idx.final.global = remapping_corr_idx.global_idx;
+
+%partial idx
+remapping_corr_idx.final.partial = partial_ROIs;
 
 
 %%
