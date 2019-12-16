@@ -1,4 +1,4 @@
-function [remapping_corr_idx] = speed_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,options)
+function [outputArg1,outputArg2] = speed_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,options)
 
 %rate remapping neurons
 rate_ROI_idx = task_remapping_ROIs.rate;
@@ -255,10 +255,6 @@ rate_remap_ROI_group_all = find(pGroup <0.1);
 %find ROI with group effect only (cell identity explains AUC)
 rate_remap_group_only = setdiff(rate_remap_ROI_group_all,intersect(rate_remap_ROI_group_all,find(otherTermsOr ==1)));
 
-%% Export rate remapping ROIs
-
-remapping_corr_idx.rate_remap_grp_only = rate_remap_group_only;
-remapping_corr_idx_rate_remap_all = rate_remap_ROI_group_all;
 
 
 %% Run wilcoxon for all ROIs - check if any sig

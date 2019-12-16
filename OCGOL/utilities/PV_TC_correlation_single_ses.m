@@ -1,4 +1,4 @@
-function [correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class,options)
+function [correlation,STC_export] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class,options)
 
 
 %TO-DO:
@@ -78,6 +78,21 @@ for ss =1:size(session_vars,2)
         A_STC_tn{ss} = (A_STC_nn{ss} - min_STC_across_trials{ss})./(max_STC_across_trials{ss} - min_STC_across_trials{ss});
         B_STC_tn{ss} = (B_STC_nn{ss} - min_STC_across_trials{ss})./(max_STC_across_trials{ss} - min_STC_across_trials{ss});
 end
+
+%% Get all STCs for export (all correct trials)
+
+%non-normalized
+STC_export.A_STC_nn = A_STC_nn;
+STC_export.B_STC_nn = B_STC_nn;
+
+%trial-normalized
+STC_export.A_STC_tn = A_STC_tn;
+STC_export.B_STC_tn = B_STC_tn;
+
+%self-normalized
+STC_export.A_STC_self = A_STC;
+STC_export.B_STC_self = B_STC;
+
 
 %% Calculate PV and TC correlation matrixes for tuned subcategories
 %correlations are done on non normalized STCs

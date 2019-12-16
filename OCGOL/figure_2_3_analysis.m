@@ -288,10 +288,14 @@ save(fullfile(path_dir{1},'cumul_analysis','tuning_scores.mat'),'tuning_scores')
 
 %% PV and TC correlation matrices for each class of tuned neurons
 
-[correlation] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class,options);
+%correlation values (1); spatial tuning curves (2)
+[correlation,STC_export] = PV_TC_correlation_single_ses(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class,options);
 
-%save the fractions output data
+%save the tuning correlation output
 save(fullfile(path_dir{1},'cumul_analysis','corr.mat'),'correlation');
+
+%save spatial tuning curve output for each ROI
+save(fullfile(path_dir{1},'cumul_analysis','STC.mat'),'STC_export')
 
 %% Centroid distribution across lap for A/B selective tuned neurons (only - modify inputs in future for rest of neurons if necessary)
 %QC checked
@@ -337,20 +341,21 @@ options.p_sig = 0.05;
 %% Split remapping categories by stat sig of rate map correlations (global vs non global)
 
 [remapping_corr_idx] = remapping_correlations(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class, task_remapping_ROIs,pf_count_filtered, options);
-
-
-%save the neurons parsed by correlation remapping criteria
-save(fullfile(path_dir{1},'cumul_analysis','remap_corr_idx.mat'),'remapping_corr_idx');                    
+                   
                     
 %% Speed data for each lap (extract speed in each bin) - insert speed data
 
 [mean_bin_speed, lap_bin_split] =task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
 
 
-%% Compare speed of events for rate remapping neurons
+%% Compare speed and AUC of events for rate remapping neurons
+%run 2 way anova for each neuron
 
-speed_comparison(task_remapping_ROIs, lap_bin_split, session_vars, max_transient_peak,options)
+[remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,options);
 
+%get rate remapping neurons as well with 2-way ANOVA
+%save the neurons parsed by correlation remapping criteria
+save(fullfile(path_dir{1},'cumul_analysis','remap_corr_idx.mat'),'remapping_corr_idx'); 
 
 %% Event vs. speed analysis
 
