@@ -9,7 +9,7 @@ function figure_2_3_analysis(path_dir)
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
  
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
@@ -268,7 +268,6 @@ options.selectTrial = [1 2];
 %save the place field distributions output data
 save(fullfile(path_dir{1},'cumul_analysis','placeField_dist.mat'),'placeField_dist');
 
-
 %% Plot fraction of each neuron tuned 
 
 %plot pie chart for each and return counts
@@ -334,7 +333,14 @@ options.p_sig = 0.05;
 %task_selective_ROIs structure
 [task_remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tunedLogical, pf_vector_max ,pf_vector, session_vars,...
                         max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
-                    
+                                        
+%% Split remapping categories by stat sig of rate map correlations (global vs non global)
+
+[remapping_corr_idx] = remapping_correlations(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class, task_remapping_ROIs,pf_count_filtered, options);
+
+
+%save the neurons parsed by correlation remapping criteria
+save(fullfile(path_dir{1},'cumul_analysis','remap_corr_idx.mat'),'remapping_corr_idx');                    
                     
 %% Speed data for each lap (extract speed in each bin) - insert speed data
 

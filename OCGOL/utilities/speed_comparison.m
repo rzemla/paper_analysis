@@ -197,8 +197,8 @@ for ss=sessionSelect
         if ~(sum(isnan(field_speed_events{ss}{rr,1})) | sum(isnan(field_speed_events{ss}{rr,2})))
         [speed_pval(rr),speed_true(rr),~] = ranksum(field_speed_events{ss}{rr,1},field_speed_events{ss}{rr,2});
         else
-            speed_pval(rr) = nan;
-            speed_true(rr) = nan;
+            speed_pval(rr) = 0;
+            speed_true(rr) = 0;
         end
     end
 end
