@@ -1,4 +1,4 @@
-function [remapping_ROIs,partial_field_idx] = remapping_categorize(cent_diff, tuned_logical, pf_vector_max,pf_vector, session_vars,max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields, options)
+function [remapping_ROIs,partial_field_idx,event_5_min_and_occup_filtered_ROI] = remapping_categorize(cent_diff, tuned_logical, pf_vector_max,pf_vector, session_vars,max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields, options)
 %split mutually tuned neurons by remapping category: 
 %common (less than certain centroid difference between max
 %tuned_log = tunedLogical.ts.AandB_tuned;
@@ -512,9 +512,12 @@ run_epoch_filt_both = logical(run_epoch_filt_include_log{1}) | logical(run_epoch
 
 %apply final filter to ROI indices
 
-%select ROI indices (from original)
+%select ROI indices (from original) - same output ROIs
 final_filtered_ROI.A = ROI_field_filtered_event.A(run_epoch_filt_both);
 final_filtered_ROI.B = ROI_field_filtered_event.B(run_epoch_filt_both);
+
+%for export - min 5 events in field and occupancy of opposing fields
+event_5_min_and_occup_filtered_ROI = ROI_field_filtered_event.A(run_epoch_filt_both);
 
 %place field width positions
 placeField_final{1} = placeField_eventFilt{1}(run_epoch_filt_both);

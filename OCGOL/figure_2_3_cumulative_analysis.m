@@ -105,6 +105,9 @@ event_speed_scatter(path_dir)
 
 frac_remapping_neurons(path_dir)
 
+%% Fractional remapping using updated criteria
+frac_remapping_neurons_corr_criteria(path_dir) 
+
 %% Remapping centroids
 %Figure 3E/F ( all Figure 3 code is here - organize this)
 options.lowPVcorr = [6 7 8];

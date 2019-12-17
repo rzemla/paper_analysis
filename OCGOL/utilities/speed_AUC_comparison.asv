@@ -1,7 +1,5 @@
 function [remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,bin_center,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
 
-%QC checked
-
 %rate remapping neurons
 rate_ROI_idx = task_remapping_ROIs.rate;
 
@@ -297,7 +295,7 @@ global_idx_occup_filt = intersect(remapping_corr_idx.global_idx,event_5_min_and_
 %% Get number of unclassified neurons
 
 %common tuned neurons
-common_idx = setdiff(non_global_ROIs,rate_remap_ROI_group_all);
+common_idx = setdiff(non_global_ROIs,remapping_corr_idx.final.rate_remap_all);
 
 %rate remapping
 rate_remap_ROI_group_all;
