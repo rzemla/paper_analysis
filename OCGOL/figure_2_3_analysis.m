@@ -328,7 +328,7 @@ options.deg_thres = 18;
 %0-10 cm; 10 - 30cm; 30+ cm
 options.deg_ranges = [0 18 54];
 %degree threshold for partial remappers
-options.partial_deg_thres = [25 0];
+options.partial_deg_thres = [25 25];
 %choice between KS test of unpaired Mann Whitney U (later)
 %either 'ranksum' or ks
 options.AUC_test = 'ranksum';
