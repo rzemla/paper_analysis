@@ -402,10 +402,11 @@ save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_
 %ROI_idx_tuning_class - category of each ROI (filtered by events and place
 %field)
 
-[ts_bin_conv_diff,pf_distance_metric_ts] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,remapping_corr_idx,cent_diff,pf_count_filtered,max_transient_peak);
+[ts_bin_conv_diff,pf_distance_metric_ts,final_global_remap_bin_diff] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,remapping_corr_idx,cent_diff,pf_count_filtered,max_transient_peak);
 
 %export distances
-save(fullfile(path_dir{1},'cumul_analysis','place_field_AB_distances.mat'),'ts_bin_conv_diff','pf_distance_metric_ts');
+save(fullfile(path_dir{1},'cumul_analysis','place_field_AB_distances.mat'),'ts_bin_conv_diff','pf_distance_metric_ts',...
+    'final_global_remap_bin_diff');
 
 %% Calculate centroid difference/distasnce between neurons with common place fields for setting
  

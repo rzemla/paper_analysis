@@ -56,7 +56,7 @@ si_ts_score_distributions(path_dir)
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distances_A&B_neurons.mat'),'combined_distances', 'combined_dist_metric');
 
 %% Remapping ROIs based on correlation map criteria and return quantile for common field separation
-%STCs of the different categories of neurons are here
+%STCs of the different categories of neurons are here (Figure 3C)
 
 [common_cutoffs_95] = remapping_corr(path_dir);
 
@@ -110,7 +110,8 @@ frac_remapping_neurons(path_dir)
 frac_remapping_neurons_corr_criteria(path_dir) 
 
 %% Modification to original code
-remapping_centroids_updated(path_dir,options)
+%return bin position of the respective reward zones
+[A_zone_end, B_zone_end] = remapping_centroids_updated(path_dir,options);
 
 %% Remapping centroids
 %Figure 3E/F ( all Figure 3 code is here - organize this)

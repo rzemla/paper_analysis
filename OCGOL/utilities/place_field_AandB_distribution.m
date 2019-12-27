@@ -1,4 +1,4 @@
-function [ts_bin_conv_diff,pf_distance_metric_ts] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,remapping_corr_idx,cent_diff,pf_count_filtered,max_transient_peak)
+function [ts_bin_conv_diff,pf_distance_metric_ts,final_global_remap_bin_diff] = place_field_AandB_distribution(session_vars,ROI_idx_tuning_class,remapping_corr_idx,cent_diff,pf_count_filtered,max_transient_peak)
 
 
 
@@ -43,6 +43,14 @@ end
 %distance/sum of place field metric
 pf_distance_metric_ts = ts_bin_conv_diff./sum(pf_width.ts.AB_single.comb,1);
 
+%% Export angular difference (bins) for final global remapping neurons
+
+%global remapping neurons using significant correlation map differences
+final_global_remap_idx = remapping_corr_idx.final.global;
+
+%convert angular difference to bin difference
+final_global_remap_bin_diff  = (cent_diff.angle_diff(final_global_remap_idx))./(2*pi)*100;
+
 %get place fields
 
 %plot
@@ -56,6 +64,12 @@ subplot(2,1,2)
 hold on
 title('Distance metric (D/(sum of place widths))') 
 histogram(pf_distance_metric_ts,20)
+
+%get global remapping place cell histogram
+figure
+hold on
+title('Place field distance - global remapping neurons') 
+histogram(final_global_remap_bin_diff,20)
 
 end
 
