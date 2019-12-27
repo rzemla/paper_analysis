@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = remapping_centroids(path_dir,options)
+function [outputArg1,outputArg2] = remapping_centroids_updated(path_dir,options)
 
 %% Load in data from each session directory
 for ee=1:size(path_dir,2)
@@ -6,90 +6,537 @@ for ee=1:size(path_dir,2)
     binCenter_data{ee} = load(string(load_data_path{ee}));
 end
 
-%load(fullfile(path_dir{rr},'cumul_analysis','place_field_centers_remap.mat'),'bin_center');
 
-%% Simple scatter plot for global remapper far
+%% Load in reward positions from each animal
+for ee=1:size(path_dir,2)
+    load_reward_path{ee} = fullfile(path_dir{ee},'cumul_analysis','reward_positions.mat');
+    reward_pos_data{ee} = load(string(load_reward_path{ee}));
+end
+
+
+%% Mean normalized reward 
+for ee=1:size(path_dir,2)
+    rew_A_pos(ee) = reward_pos_data{ee}.reward_positions.mean_rew_A_norm;
+    rew_B_pos(ee) = reward_pos_data{ee}.reward_positions.mean_rew_B_norm;
+    track_end_cm(ee) = reward_pos_data{ee}.reward_positions.mean_track_end_cm;
+end
+
+%mean track end position
+mean_track_end_cm = mean(track_end_cm);
+
+%mean reward zone start position
+mean_rew_A_pos = mean(rew_A_pos);
+mean_rew_B_pos = mean(rew_B_pos);
+
+%5 cm zone
+reward_5cm_dist = 5/mean_track_end_cm;
+
+%zone ends in bins
+A_zone_end = 100*round(mean_rew_A_pos + reward_5cm_dist,2);
+B_zone_end = 100*round(mean_rew_B_pos + reward_5cm_dist,2);
+
+%% Simple scatter plot for common/global remapper
 figure
 hold on
-title('far')
-xlabel('Center of Place field A')
-ylabel('Center of Place field B')
+title('Global')
+xlabel('Normalized location of place field A')
+ylabel('Normalized location of place field B')
+%generate axis for place fields
+xticks(0:10:100)
+yticks(0:10:100)
+xlabels_norm = 0:0.1:1;
+x_labels = {};
+
+for xt=1:11
+    x_labels{xt} = num2str(xlabels_norm(xt));
+end
+xticklabels(x_labels)
+yticklabels(x_labels)
+
 for ee=1:size(path_dir,2)
-    scatter(binCenter_data{ee}.bin_center.global_far(1,:),binCenter_data{ee}.bin_center.global_far(2,:),'m')
+    scatter(binCenter_data{ee}.bin_center.final.global(1,:),binCenter_data{ee}.bin_center.final.global(2,:),12,'filled',...
+            'MarkerEdgeColor',[139,0,139]./255,'MarkerFaceColor',[139,0,139]./255)
+end
+
+plot([0 100],[0 100],'k','LineWidth',2)
+
+plot([B_zone_end B_zone_end], [0 100],'k--', 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 100],'k--', 'LineWidth',2)
+
+figure
+hold on
+title('Common')
+xlabel('Center location of Place field A')
+ylabel('Center location of Place field B')
+for ee=1:size(path_dir,2)
+    scatter(binCenter_data{ee}.bin_center.final.common(1,:),binCenter_data{ee}.bin_center.final.common(2,:),'filled','m')
 end
 plot([0 100],[0 100],'k--')
 
-% 
-merge_far_binCenters = [];
-figure
-hold on
-title('near + far ')
-xlabel('Center of Place field A')
-ylabel('Center of Place field B')
+plot([B_zone_end B_zone_end], [0 B_zone_end],'k--')
+plot([A_zone_end A_zone_end], [0 A_zone_end],'k--')
+
+
+%combine global place fields into 1 matrix
 for ee=1:size(path_dir,2)
-    scatter(binCenter_data{ee}.bin_center.global_near(1,:),binCenter_data{ee}.bin_center.global_near(2,:),'g')
-    %scatter(binCenter_data{ee}.bin_center.global_far(1,:),binCenter_data{ee}.bin_center.global_far(2,:),'r')
-%merge far centroids
-merge_far_binCenters = [merge_far_binCenters,binCenter_data{ee}.bin_center.global_far,binCenter_data{ee}.bin_center.global_near];
+    A_global_bincenter{ee} = binCenter_data{ee}.bin_center.final.global(1,:);
+    B_global_bincenter{ee} = binCenter_data{ee}.bin_center.final.global(2,:);
+    
+    A_common_bincenter{ee} = binCenter_data{ee}.bin_center.final.common(1,:);
+    B_common_bincenter{ee} = binCenter_data{ee}.bin_center.final.common(2,:);
+    
 end
 
-plot([0 100],[0 100],'k--')
+%combine bins for common and global
+global_bins_combined = [cell2mat(A_global_bincenter); cell2mat(B_global_bincenter)];
+common_bins_combined = [cell2mat(A_common_bincenter); cell2mat(B_common_bincenter)]; 
 
-%tile histogram
+%get difference
+A_minus_B_global = global_bins_combined(1,:) - global_bins_combined(2,:);
+A_minus_B_common = common_bins_combined(1,:) - common_bins_combined(2,:);
+
+%scatter of A-B
+figure
+hold on
+ylabel('A-B')
+boxplot(A_minus_B_global)
+%scatter(ones(size(A_minus_B_global)),A_minus_B_global)
+
+[p,h,~] = signrank(A_minus_B_common)
+
+[p,h,~] = signrank(A_minus_B_global)
+
+% zone_global_idx(1).A = find(global_far.A > 0 & global_far.A <= B_zone_end);
+% zone_global_idx(2).A = find(global_far.A > B_zone_end & global_far.A <= A_zone_end);
+% zone_global_idx(3).A = find(global_far.A > A_zone_end & global_far.A <= 100);
+%define the zones of the track
+mean(A_minus_B_common)
+
+%% Plot common histogram
 figure;
-hold on
-nbins = 15;
-xedges = 0:5:100;
-xedges = [0,33,66, 100];
-yedges = xedges;
-xlim([0 100]);
-ylim([0 100])
-h = histogram2(merge_far_binCenters(1,:),merge_far_binCenters(2,:),xedges,yedges,'DisplayStyle','tile','ShowEmptyBins','on');
-%h = histogram2(merge_far_binCenters(1,:),merge_far_binCenters(2,:),nbins,'DisplayStyle','tile','ShowEmptyBins','on');
-colormap('hot')
-colorbar
-
-%find all y's below x values
-less_than_unity = merge_far_binCenters(1,:)>merge_far_binCenters(2,:);
-figure
-hold on
-histogram2(merge_far_binCenters(1,less_than_unity),merge_far_binCenters(2,less_than_unity),xedges,yedges,'DisplayStyle','tile','ShowEmptyBins','on')
-
-%only low track PV correlated animals
-figure
-hold on
-title('Low PV correlated animal - far global')
-xlabel('Center of Place field A')
-ylabel('Center of Place field B')
-for ee=options.lowPVcorr
-    scatter(binCenter_data{ee}.bin_center.global_far(1,:),binCenter_data{ee}.bin_center.global_far(2,:),'m')
-end
-plot([0 100],[0 100],'k--')
-
-%plot partial remappers
-figure
-hold on
-for ee=1:size(path_dir,2)
-for rr=1:size(binCenter_data{ee}.bin_center.partial_com,2)
-    if isnan(binCenter_data{ee}.bin_center.partial_far(1,rr))
-        scatter(mean(binCenter_data{ee}.bin_center.partial_com(:,rr)),binCenter_data{ee}.bin_center.partial_far(2,rr),'r')
-    else
-        scatter(mean(binCenter_data{ee}.bin_center.partial_com(:,rr)),binCenter_data{ee}.bin_center.partial_far(1,rr),'b')
-    end
-end
-end
-
-%% Plot common scatter
-figure; hold on; scatter(binCenter_data{1}.bin_center.common(1,:),binCenter_data{1}.bin_center.common(2,:) )
+hold on;
+scatter(binCenter_data{1}.bin_center.common(1,:),binCenter_data{1}.bin_center.common(2,:) )
 %combine common centers into one matrix
 common_centers = [];
 for ee=1:size(path_dir,2)
     common_centers = [common_centers, binCenter_data{ee}.bin_center.common];
 end
 
-
+%use A trial centers and not mean
 figure
-histogram(mean(common_centers,1),0:5:100)
+hold on
+ylim([0 0.2])
+yticks([0 0.05 0.1 0.15 0.2])
+h1 = histogram(common_bins_combined(1,:),0:10:100,'Normalization','probability');
+xticks([0 100])
+xticklabels({'0','1'})
+xlabel('Normalized position')
+ylabel('Normalized density')
+h1.FaceColor = [139 0 139]./255;
+h1.FaceAlpha = 1;
+
+plot([B_zone_end B_zone_end], [0 0.2],'k--', 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 0.2],'k--', 'LineWidth',2)
+
+%% Do Rayleigh test of uniformity on dataset
+%convert bins to radians
+common_rad_angles = circ_ang2rad(common_bins_combined(1,:)./100.*360);
+[pval, z] = circ_rtest(common_rad_angles)
+
+%% Binomial test for shift (edges included) - B-A - relative to A
+
+%zone ends in bins
+A_zone_end = 100*round(mean_rew_A_pos + reward_5cm_dist,2);
+B_zone_end = 100*round(mean_rew_B_pos + reward_5cm_dist,2);
+
+% global_bins_combined
+% A_minus_B_global = global_bins_combined(1,:) - global_bins_combined(2,:);
+
+%ecdf this 
+zone1_idx = find(global_bins_combined(1,:) > 0 & global_bins_combined(1,:) <= B_zone_end);
+zone2_idx = find(global_bins_combined(1,:) > B_zone_end & global_bins_combined(1,:) <= A_zone_end);
+zone3_idx = find(global_bins_combined(1,:) > A_zone_end & global_bins_combined(1,:) <= 100);
+
+%field difference B-A
+%if positive - B in front of A
+%if negative - B behind A
+field_pos_diff = global_bins_combined(2,:) - global_bins_combined(1,:);
+
+zone1_shifts = field_pos_diff(zone1_idx);
+zone2_shifts = field_pos_diff(zone2_idx);
+zone3_shifts = field_pos_diff(zone3_idx);
+
+%fraction of neurons where B is in front of A ( 
+ratio_pos_neg.I = length(find(zone1_shifts > 0))/length(zone1_idx);
+ratio_pos_neg.II = length(find(zone2_shifts > 0))/length(zone2_idx);
+ratio_pos_neg.III = length(find(zone3_shifts > 0))/length(zone3_idx);
+
+%trapezoid area formula
+trap_area = @(a,b,h) (a+b)*h*0.5;  
+
+%calculate area within the trapezoid
+%total zone I area
+zoneI_area = 1*B_zone_end/100;
+
+%trapezoid params
+zoneI.h_upper = B_zone_end/100;
+zoneI.a_upper = 1-zoneI.h_upper;
+zoneI.b_upper = 1;
+
+%fraction in each area
+zoneI.upper_area_frac = trap_area(zoneI.a_upper,zoneI.b_upper,zoneI.h_upper)/zoneI_area; 
+zoneI.lower_area_frac = 1-zoneI.upper_area_frac;
+
+%total zone II area
+zoneII_area = 1*(A_zone_end - B_zone_end)/100;
+
+%trapezoid params
+zoneII.h_lower = (A_zone_end - B_zone_end)/100;
+zoneII.a_lower = B_zone_end/100;
+zoneII.b_lower = A_zone_end/100;
+
+%fraction in each area
+zoneII.lower_area_frac = trap_area(zoneII.a_lower,zoneII.b_lower,zoneII.h_lower)/zoneII_area; 
+
+%total zone III area
+zoneIII_area = 1*(1 - A_zone_end/100);
+
+%trapezoid params
+zoneIII.h_lower = (1 - A_zone_end/100);
+zoneIII.a_lower = A_zone_end/100;
+zoneIII.b_lower = 1;
+
+%fraction in each area
+zoneIII.lower_area_frac =trap_area(zoneIII.a_lower,zoneIII.b_lower,zoneIII.h_lower)./zoneIII_area;
+
+%number of successful outcomes in lower part , number of all events in that
+%area (lower part B < A)
+
+zoneI.frac_lower_actual = length(find(zone1_shifts < 0))/length(zone1_idx);
+zoneI.lower_area_frac
+%actual: 0.2705
+%predicted (area): 0.16
+%conclusion: more B before A neurons here
+p_zone(1) = myBinomTest(length(find(zone1_shifts < 0)),length(zone1_idx),zoneI.lower_area_frac);
+
+zoneII.frac_lower_actual = length(find(zone2_shifts < 0))/length(zone2_idx);
+zoneII.lower_area_frac
+%actual: 0.7892
+%predicted (area): 0.53
+%conclusion: more B before A neurons here
+p_zone(2) = myBinomTest(length(find(zone2_shifts < 0)),length(zone2_idx),zoneII.lower_area_frac);
+
+zoneIII.frac_lower_actual = length(find(zone3_shifts < 0))/length(zone3_idx);
+zoneIII.lower_area_frac
+%actual: 0.907
+%predicted (area): 0.87
+%conclusion: more B before A neurons here
+p_zone(3) = myBinomTest(length(find(zone3_shifts < 0)),length(zone3_idx),zoneIII.lower_area_frac);
+
+% pOut = myBinomTest(length(find(zone1_shifts > 0)),length(zone1_idx),0.5)
+% pOut = myBinomTest(length(find(zone2_shifts > 0)),length(zone2_idx),0.5)
+% pOut = myBinomTest(length(find(zone3_shifts > 0)),length(zone3_idx),0.5)
+
+%% Generate table with values of number of neurons in each category
+
+zone_fraction_ct = [length(find(zone1_shifts < 0)),0,length(zone1_idx);
+    length(find(zone2_shifts < 0)),0,length(zone2_idx);
+    length(find(zone3_shifts < 0)),0,length(zone3_idx)];
+
+for ii=1:3
+    zone_fraction_ct(ii,2) = zone_fraction_ct(ii,3)- zone_fraction_ct(ii,1);
+end
+
+
+%% Plot stacked columns
+figure
+hold on
+% ba = bar([ratio_pos_neg.I, 1-ratio_pos_neg.I; ratio_pos_neg.II, 1-ratio_pos_neg.II; ratio_pos_neg.III, 1-ratio_pos_neg.III],...
+%         'stacked','FaceColor','flat')
+% xticks([1 2 3])
+% xticklabels({'Zone I','Zone II','Zone III'})
+% legend([ba(1,1),ba(1,2)],{'A behind B','A after B'},'AutoUpdate','off')
+% %plot 50% chance line
+% plot([-0.2 4.5],[0.5 0.5],'k--','LineWidth',1)
+
+%try to invert (A after B is below)    
+ba = bar([1-ratio_pos_neg.I,ratio_pos_neg.I; 1-ratio_pos_neg.II,ratio_pos_neg.II; 1-ratio_pos_neg.III, ratio_pos_neg.III],...
+        'stacked','FaceColor','flat')
+xticks([1 2 3])
+xticklabels({'Zone I','Zone II','Zone III'})
+legend([ba(1,1),ba(1,2)],{'B before A','B after A'},'AutoUpdate','off')
+%plot 50% chance line
+%plot([-0.2 4.5],[0.5 0.5],'k--','LineWidth',1)
+
+ylim([0 1.2])
+xlim([-0.2 4.2])
+ylabel('Fraction of neurons');
+yticks([0 0.2 0.4 0.6 0.8 1])
+%set bar colors
+ba(1).CData = [0,100,0]/255;
+ba(2).CData = [1,1,1]*0.8;
+set(gca,'FontSize',18)
+set(gca,'LineWidth',2)
+
+
+% 
+% merge_far_binCenters = [];
+% figure
+% hold on
+% title('near + far ')
+% xlabel('Center of Place field A')
+% ylabel('Center of Place field B')
+% for ee=1:size(path_dir,2)
+%     scatter(binCenter_data{ee}.bin_center.global_near(1,:),binCenter_data{ee}.bin_center.global_near(2,:),'g')
+%     %scatter(binCenter_data{ee}.bin_center.global_far(1,:),binCenter_data{ee}.bin_center.global_far(2,:),'r')
+% %merge far centroids
+% merge_far_binCenters = [merge_far_binCenters,binCenter_data{ee}.bin_center.global_far,binCenter_data{ee}.bin_center.global_near];
+% end
+% 
+% plot([0 100],[0 100],'k--')
+
+%tile histogram
+% figure;
+% hold on
+% nbins = 15;
+% xedges = 0:5:100;
+% xedges = [0,33,66, 100];
+% yedges = xedges;
+% xlim([0 100]);
+% ylim([0 100])
+% h = histogram2(merge_far_binCenters(1,:),merge_far_binCenters(2,:),xedges,yedges,'DisplayStyle','tile','ShowEmptyBins','on');
+% %h = histogram2(merge_far_binCenters(1,:),merge_far_binCenters(2,:),nbins,'DisplayStyle','tile','ShowEmptyBins','on');
+% colormap('hot')
+% colorbar
+% 
+% %find all y's below x values
+% less_than_unity = merge_far_binCenters(1,:)>merge_far_binCenters(2,:);
+% figure
+% hold on
+% histogram2(merge_far_binCenters(1,less_than_unity),merge_far_binCenters(2,less_than_unity),xedges,yedges,'DisplayStyle','tile','ShowEmptyBins','on')
+% 
+% %only low track PV correlated animals
+% figure
+% hold on
+% title('Low PV correlated animal - far global')
+% xlabel('Center of Place field A')
+% ylabel('Center of Place field B')
+% for ee=options.lowPVcorr
+%     scatter(binCenter_data{ee}.bin_center.global_far(1,:),binCenter_data{ee}.bin_center.global_far(2,:),'m')
+% end
+% plot([0 100],[0 100],'k--')
+% 
+% %plot partial remappers
+% figure
+% hold on
+% for ee=1:size(path_dir,2)
+% for rr=1:size(binCenter_data{ee}.bin_center.partial_com,2)
+%     if isnan(binCenter_data{ee}.bin_center.partial_far(1,rr))
+%         scatter(mean(binCenter_data{ee}.bin_center.partial_com(:,rr)),binCenter_data{ee}.bin_center.partial_far(2,rr),'r')
+%     else
+%         scatter(mean(binCenter_data{ee}.bin_center.partial_com(:,rr)),binCenter_data{ee}.bin_center.partial_far(1,rr),'b')
+%     end
+% end
+% end
+
+%% Partial remapping neurons distribution (updated)
+
+%rearrange partially remapping neurons
+%combine common and partial far
+for ii=1:size(binCenter_data,2)
+    partial_com{ii} = binCenter_data{ii}.bin_center.final.partial_com;
+    partial_far{ii} = binCenter_data{ii}.bin_center.final.partial_far;
+end
+
+%first 2 rows - common field; last 2 rows - partial field; A, then B
+partial_com_far_combined = [cell2mat(partial_com);cell2mat(partial_far)];
+
+%parse into A and B selective neurons (indices)
+partial_A_idx = find(~isnan(partial_com_far_combined(3,:)) == 1);
+partial_B_idx = find(~isnan(partial_com_far_combined(4,:)) == 1);
+
+%get common for both fields and selective field
+partial_A_common_far = partial_com_far_combined(1:3,partial_A_idx);
+partial_B_common_far = partial_com_far_combined([1,2,4],partial_B_idx);
+
+%prepare inputs for function below to generate histograms
+%first column is mean of common position and latter column is position of
+%partial field
+partial_A_common_far_input(:,1) = mean(partial_A_common_far([1,2],:));
+partial_A_common_far_input(:,2) = partial_A_common_far(3,:);
+
+partial_B_common_far_input(:,1) = mean(partial_B_common_far([1,2],:));
+partial_B_common_far_input(:,2) = partial_B_common_far(3,:);
+
+
+%% Bin as a function of center and get boxplots of distrubution
+%get bin indices
+%10 even spaced bins
+partial_bin_idx.A = discretize(partial_A_common_far_input(:,1),[0:10:100]);
+partial_bin_idx.B = discretize(partial_B_common_far_input(:,1),[0:10:100]);
+
+%3 behaviorally spaced bins (1-35, 35-75, 75-100)
+%this will assign values to one of three bins defined in parameters using
+%mean common position
+partial_bin_idx_3.A = discretize(partial_A_common_far_input(:,1),[0,B_zone_end,A_zone_end,100]);
+partial_bin_idx_3.B = discretize(partial_B_common_far_input(:,1),[0,B_zone_end,A_zone_end,100]);
+
+%for each bin (3 behavior)
+for bb=1:3
+    count_3.A{bb} = partial_A_common_far_input(find(partial_bin_idx_3.A == bb),2);
+    count_3.B{bb} = partial_B_common_far_input(find(partial_bin_idx_3.B == bb),2);
+end
+
+%merge both cell in alternate manner (input into bar plotter)
+merge_hist_counts_3(1:2:5) = count_3.A;
+merge_hist_counts_3(2:2:6) = count_3.B;
+
+%boxplot 2 wrapper(plot distributions of diff sizes
+col=@(x)reshape(x,numel(x),1);
+boxplot2=@(C,varargin)boxplot(cell2mat(cellfun(col,col(C),'uni',0)),cell2mat(arrayfun(@(I)I*ones(numel(C{I}),1),col(1:numel(C)),'uni',0)),varargin{:});
+
+
+%% Statistics
+[h,p] = ranksum(count_3.A{1},count_3.B{1})
+[h,p] = ranksum(count_3.A{2},count_3.B{2})
+[h,p] = ranksum(count_3.A{3},count_3.B{3})
+
+
+
+%% Boxplot of distributions relative to mean of centroid in each zone
+
+merge_new = [merge_hist_counts_3([1,3,5]);merge_hist_counts_3([2,4,6])];
+
+xlab={'1','2','3'} ;
+col=[220,20,60, 255;
+65,105,225, 255;
+]; 
+%0, 0, 255, 200]; 
+col=col/255;
+
+f=figure 
+hold on
+%plot zone separator lines
+[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A','B'},col') 
+%overlay boxplot to add median line 
+z= boxplot(x,group, 'positions', positions);
+lines = findobj(z, 'type', 'line', 'Tag', 'Median');
+set(lines, 'Color', 'k');
+set(lines, 'LineWidth',2)
+ylim([0 100])
+xticks([1.3750, 2.1250, 2.875])
+xticklabels({'Zone I', 'Zone II', 'Zone III'})
+ylabel('Place field position')
+%yticks([0 20 40 60 80 100])
+%yticklabels({'0', '0.2', '0.4','0.6','0.8','1'})
+plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
+plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
+set(gca,'FontSize',16)
+
+%% Distribution of partially remapping fields for A and B plot and KS test for significanee (Figure 2F)
+
+figure('Position',[2200 317 508 433])
+hold on
+title('Distribution of partially remapping fields')
+[fA,xA] = ecdf(partial_A_common_far_input(:,2))
+[fB,xB] = ecdf(partial_B_common_far_input(:,2))
+ap = stairs(xA,fA,'LineWidth',2,'Color',[65,105,225]/255);
+bp = stairs(xB,fB,'LineWidth',2,'Color',[220,20,60]/255);
+xlabel(gca,'Normalized positon')
+ylabel('Cumulative probability')
+
+xticks([0 100])
+xticklabels({'0','1'})
+set(gca,'LineWidth',1.5)
+set(gca,'FontSize',16)
+legend([ap bp],{'A','B'},'Location','northwest','AutoUpdate','off')
+
+plot([B_zone_end B_zone_end], [0 1],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 1],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+
+%% Statistics
+[h,p] =kstest2(partial_A_common_far_input(:,2), partial_B_common_far_input(:,2))
+
+%% Minaturized normalized histogram for each set of partial remapping neurons (inset)
+%cdf
+figure('Position',[1199 400 208 420])
+subplot(2,1,1)
+hold on;
+ylim([0 0.2])
+yticks([0 0.1 0.2])
+xticks([0 50 100])
+xticklabels({'0','0.5','1'})
+ylabel('Norm. density')
+set(gca,'FontSize',16)
+histogram(partial_A_common_far_input(:,2),[0:10:100],'Normalization','probability','FaceColor', [65,105,225]/255,'FaceAlpha',1)
+
+plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+subplot(2,1,2)
+hold on
+ylim([0 0.2])
+yticks([0 0.1 0.2])
+xticks([0 50 100])
+xticklabels({'0','0.5','1'})
+ylabel('Norm. density')
+xlabel('Normalized ')
+set(gca,'FontSize',16)
+histogram(partial_B_common_far_input(:,2),[0:10:100],'Normalization','probability','FaceColor',[220,20,60]/255,'FaceAlpha',1)
+
+plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+
+%
+%for each bin (10 even)
+% for bb=1:10
+%     count.A{bb} = partial.com_parA(find(partial_bin_idx.A == bb),2)
+%     count.B{bb} = partial.com_parB(find(partial_bin_idx.B == bb),2)
+% end
+
+
+%merge both cell in alternate manner
+% merge_hist_counts(1:2:20) = count.A;
+% merge_hist_counts(2:2:21) = count.B;
+
+
+% figure;
+% %Distribution of partial indexes  
+% hold on
+% boxplot2(merge_hist_counts_3)
+% 
+% %use matlab boxplot to generate groups
+% grouping_box{1} = repmat(1,size(count_3.A{1},1),1)
+% grouping_box{2} = repmat(2,size(count_3.B{1},1),1)
+% grouping_box{3} = repmat(3,size(count_3.A{2},1),1)
+% grouping_box{4} = repmat(4,size(count_3.B{2},1),1)
+% grouping_box{5} = repmat(5,size(count_3.A{3},1),1)
+% grouping_box{6} = repmat(6,size(count_3.B{3},1),1)
+% %catx=repmat({'I' 'II','III'},1,100);
+% c=cell2mat(grouping_box')';
+% c(find(c==1 | c==3 | c==5)) = 1;
+% c(find(c==2 |c==4 | c==6)) = 2
+
+% g=gramm('x',cell2mat(grouping_box'),'y',cell2mat(merge_hist_counts_3'),'color',c);
+% g.set_color_options('map',[65,105,225; 220,20,60; 255,0,255; 0 0 0]/255);
+
+%%%
+% Plot raw data as points
+% g.geom_point();
+% g.stat_boxplot('width',1,'dodge',2);
+% g.geom_vline('xintercept',[2.5,4.5])
+% % Set appropriate names for legends
+% g.set_names('column','Origin','x','Zone','y','Place field center','color','Trial type');
+% %%%
+% % Set figure title
+% %g.set_title('Fuel economy of new cars between 1970 and 1982');
+% %%%
+% % Do the actual drawing
+% figure('Position',[100 100 800 400]);
+% g.draw();
+
 
 %% 2 subplots - store common vs. partial center for each A or B find
 storeIdx =0;
@@ -110,6 +557,7 @@ for ee=1:size(path_dir,2)
     end
 end
 storeIdx =0;
+
 subplot(1,2,2)
 hold on
 for ee=1:size(path_dir,2)
@@ -148,161 +596,7 @@ kstest2(diff_par.A,diff_par.A);
 %ks test on distribution of partial field centers
 [h,p] =kstest2(partial.com_parA(:,2),partial.com_parB(:,2))
 
-%% Bin as a function of center and get boxplots of distrubution
-%get bin indices
-%10 even spaced bins
-%mean of common field first and then partial field
-%mean of common bin goes here
-%group into 10 bins
-partial_bin_idx.A = discretize(partial.com_parA(:,1),[0:10:100]);
-partial_bin_idx.B = discretize(partial.com_parB(:,1),[0:10:100]);
 
-%3 behaviorally spaced bins (1-35, 35-75, 75-100)
-%split mean of common bin here by zones - %group into 3 bins
-partial_bin_idx_3.A = discretize(partial.com_parA(:,1),[0,35,75,100]);
-partial_bin_idx_3.B = discretize(partial.com_parB(:,1),[0,35,75,100]);
-
-%
-%for each bin (10 even)
-for bb=1:10
-    count.A{bb} = partial.com_parA(find(partial_bin_idx.A == bb),2)
-    count.B{bb} = partial.com_parB(find(partial_bin_idx.B == bb),2)
-end
-
-%for each bin (3 behavior)
-for bb=1:3
-    count_3.A{bb} = partial.com_parA(find(partial_bin_idx_3.A == bb),2)
-    count_3.B{bb} = partial.com_parB(find(partial_bin_idx_3.B == bb),2)
-end
-
-%boxplot 2 wrapper(plot distributions of diff sizes
-col=@(x)reshape(x,numel(x),1);
-boxplot2=@(C,varargin)boxplot(cell2mat(cellfun(col,col(C),'uni',0)),cell2mat(arrayfun(@(I)I*ones(numel(C{I}),1),col(1:numel(C)),'uni',0)),varargin{:});
-
-%merge both cell in alternate manner
-merge_hist_counts(1:2:20) = count.A;
-merge_hist_counts(2:2:21) = count.B;
-
-merge_hist_counts_3(1:2:5) = count_3.A;
-merge_hist_counts_3(2:2:6) = count_3.B;
-
-figure;
-%Distribution of partial indexes  
-hold on
-boxplot2(merge_hist_counts_3)
-
-%use matlab boxplot to generate groups
-grouping_box{1} = repmat(1,size(count_3.A{1},1),1)
-grouping_box{2} = repmat(2,size(count_3.B{1},1),1)
-grouping_box{3} = repmat(3,size(count_3.A{2},1),1)
-grouping_box{4} = repmat(4,size(count_3.B{2},1),1)
-grouping_box{5} = repmat(5,size(count_3.A{3},1),1)
-grouping_box{6} = repmat(6,size(count_3.B{3},1),1)
-%catx=repmat({'I' 'II','III'},1,100);
-c=cell2mat(grouping_box')';
-c(find(c==1 | c==3 | c==5)) = 1;
-c(find(c==2 |c==4 | c==6)) = 2
-
-% g=gramm('x',cell2mat(grouping_box'),'y',cell2mat(merge_hist_counts_3'),'color',c);
-% g.set_color_options('map',[65,105,225; 220,20,60; 255,0,255; 0 0 0]/255);
-
-%%%
-% Plot raw data as points
-% g.geom_point();
-% g.stat_boxplot('width',1,'dodge',2);
-% g.geom_vline('xintercept',[2.5,4.5])
-% % Set appropriate names for legends
-% g.set_names('column','Origin','x','Zone','y','Place field center','color','Trial type');
-% %%%
-% % Set figure title
-% %g.set_title('Fuel economy of new cars between 1970 and 1982');
-% %%%
-% % Do the actual drawing
-% figure('Position',[100 100 800 400]);
-% g.draw();
-
-
-figure
-boxplot(count_3.A{1},ones(size(count_3.A{1},1),1))
-
-figure;
-%Distribution of partial indexes  
-hold on
-subplot(1,2,1)
-boxplot2(count_3.A)
-hold on
-subplot(1,2,2)
-boxplot2(count_3.B)
-
-[h,p] = ranksum(count_3.A{1},count_3.B{1})
-[h,p] = ranksum(count_3.A{2},count_3.B{2})
-[h,p] = ranksum(count_3.A{3},count_3.B{3})
-
-figure
-boxplot2([[count_3.A(1), count_3.B(1)];[count_3.A(2), count_3.B(2)]])
-
-%% Boxplot of distributions relative to mean of centroid in each zone
-
-merge_new = [merge_hist_counts_3([1,3,5]);merge_hist_counts_3([2,4,6])]
-
-xlab={'1','2','3'} 
-col=[220,20,60, 255;
-65,105,225, 255;
-]; 
-%0, 0, 255, 200]; 
-col=col/255;
-
-f=figure 
-hold on
-%plot zone separator lines
-[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A','B'},col') 
-%overlay boxplot to add median line 
-z= boxplot(x,group, 'positions', positions);
-lines = findobj(z, 'type', 'line', 'Tag', 'Median');
-set(lines, 'Color', 'k');
-set(lines, 'LineWidth',2)
-xticks([1.3750, 2.1250, 2.875])
-xticklabels({'Zone I', 'Zone II', 'Zone III'})
-ylabel('Place field center')
-plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
-plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
-set(gca,'FontSize',16)
-
-%% Distribution of partially remapping fields for A and B plot and KS test for significanee (Figure 2F)
-figure('Position',[2200 317 508 433])
-hold on
-title('Distribution of partially remapping fields')
-[fA,xA] = ecdf(partial.com_parA(:,2))
-[fB,xB] = ecdf(partial.com_parB(:,2))
-ap = stairs(xA,fA,'LineWidth',2,'Color',[65,105,225]/255);
-bp = stairs(xB,fB,'LineWidth',2,'Color',[220,20,60]/255);
-xlabel(gca,'Track positon')
-ylabel('Cumulative probability')
-set(gca,'LineWidth',1.5)
-set(gca,'FontSize',16)
-legend([ap bp],{'A','B'},'Location','northwest')
-
-[h,p] =kstest2(partial.com_parB(:,2), partial.com_parA(:,2))
-
-%normalized histogram for each set of partial remapping neurons (inset for
-%cdf
-figure('Position',[1199 400 208 420])
-subplot(2,1,1)
-hold on;
-ylim([0 0.2])
-yticks([0 0.1 0.2])
-ylabel('Norm. density')
-set(gca,'FontSize',16)
-histogram(partial.com_parA(:,2),[0:10:100],'Normalization','probability','FaceColor', [65,105,225]/255)
-
-subplot(2,1,2)
-hold on
-ylim([0 0.2])
-yticks([0 0.1 0.2])
-ylabel('Norm. density')
-xlabel('Track position')
-set(gca,'FontSize',16)
-histogram(partial.com_parB(:,2),[0:10:100],'Normalization','probability','FaceColor',[220,20,60]/255)
 
 %% Distance relative to PF center position
 figure;
@@ -445,48 +739,7 @@ plot(x, Ypred,'-r')
 hold off
 %grid
 
-%% Binomial test for shift (edges excluded)
 
-%ecdf this
-zone1_idx = find(global_near.A > 5 & global_near.A <=35);
-zone2_idx = find(global_near.A > 35 & global_near.A <= 75);
-zone3_idx = find(global_near.A > 75 & global_near.A <= 95);
-
-%field difference B-A
-field_pos_diff = global_near.B - global_near.A;
-
-zone1_shifts = field_pos_diff(zone1_idx);
-zone2_shifts = field_pos_diff(zone2_idx);
-zone3_shifts = field_pos_diff(zone3_idx);
-
-ratio_pos_neg.I = length(find(zone1_shifts > 0))/length(zone1_idx)
-ratio_pos_neg.II = length(find(zone2_shifts > 0))/length(zone2_idx)
-ratio_pos_neg.III = length(find(zone3_shifts > 0))/length(zone3_idx)
-
-pOut = myBinomTest(length(find(zone1_shifts > 0)),length(zone1_idx),0.5)
-pOut = myBinomTest(length(find(zone2_shifts > 0)),length(zone2_idx),0.5)
-pOut = myBinomTest(length(find(zone3_shifts > 0)),length(zone3_idx),0.5)
-
-
-%% Plot a stacked columns
-figure
-hold on
-ba = bar([ratio_pos_neg.I, 1-ratio_pos_neg.I; ratio_pos_neg.II, 1-ratio_pos_neg.II; ratio_pos_neg.III, 1-ratio_pos_neg.III],...
-        'stacked','FaceColor','flat')
-xticks([1 2 3])
-xticklabels({'Early','Mid','Late'})
-%plot 50% chance line
-plot([-0.2 4.5],[0.5 0.5],'k--','LineWidth',1)
-
-ylim([0 1.2])
-xlim([-0.2 4.2])
-ylabel('Fraction of neurons');
-yticks([0 0.2 0.4 0.6 0.8 1])
-%set bar colors
-ba(1).CData = [0,100,0]/255;
-ba(2).CData = [1,1,1]*0.8;
-set(gca,'FontSize',18)
-set(gca,'LineWidth',2)
 
 %% 6 zones - not more informative than 3 zones
 if 0

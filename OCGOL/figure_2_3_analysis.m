@@ -121,6 +121,12 @@ if 0
     plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
 end
 
+%% Get mean norm position of each reward (A or B)
+[reward_positions] = extract_reward_position(session_vars);
+
+%save the fractions output data %
+save(fullfile(path_dir{1},'cumul_analysis','reward_positions.mat'),'reward_positions');
+
 %% Find place fields
 if options.loadPlaceField_data == 0
     %use rate map - number of event onsets/ occupancy across all laps
@@ -359,22 +365,7 @@ options.p_sig = 0.05;
                         max_transient_peak,pf_count_filtered_log, pf_count_filtered,select_fields,options);
 
 %ROIs that are single fields by TS; min 5 events; 80% occupnancy on opposing trials 
-event_5_min_and_occup_filtered_ROI;                    
-                    
-%% Extract spatial bins for each class of remapping neurons
-
-bin_center = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs, select_fields,partial_field_idx);
-
-save(fullfile(path_dir{1},'cumul_analysis','place_field_centers_remap.mat'),'bin_center');
-
-%plot remapping as scatter
-%green dots - common ; red - partial field 
-
-%distribution of partial fields
-figure
-hold on
-histogram(bin_center.partial_far(1,:),0:50:100)
-histogram(bin_center.partial_far(2,:),0:50:100)
+event_5_min_and_occup_filtered_ROI;
                                         
 %% Split remapping categories by stat sig of rate map correlations (global vs non global)
 
@@ -390,7 +381,7 @@ histogram(bin_center.partial_far(2,:),0:50:100)
 %run 2 way anova for each neuron
 
 [remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,...
-    STC_export,bin_center, event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts, options);
+    STC_export, event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts, options);
 
 %get rate remapping neurons as well with 2-way ANOVA
 %save the neurons parsed by correlation remapping criteria
@@ -439,7 +430,21 @@ options.tuning_criterion = 'remapping_filtered'; %si or ts or selective_filtered
 plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,path_dir,options);
 
 
+%% Extract spatial bins for each class of remapping neurons
+%add extraction for ROIs gathered with correlation based remapping
 
+bin_center = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs, remapping_corr_idx, select_fields,partial_field_idx);
+
+save(fullfile(path_dir{1},'cumul_analysis','place_field_centers_remap.mat'),'bin_center');
+
+%plot remapping as scatter
+%green dots - common ; red - partial field 
+
+%distribution of partial fields
+figure
+hold on
+histogram(bin_center.partial_far(1,:),0:50:100)
+histogram(bin_center.partial_far(2,:),0:50:100)
 
 %% Save the idxs of each class of remapping neurons, placeFields that match min 5 event criteria and tuned logical
 

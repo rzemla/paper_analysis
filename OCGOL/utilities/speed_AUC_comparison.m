@@ -1,4 +1,4 @@
-function [remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,bin_center,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
+function [remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
 
 %QC checked
 
@@ -276,18 +276,20 @@ for ss=sessionSelect
 end
 
 %% Plot example STCS (trial normalized)
-%generate combined STC for selected ROIs
-STC_tn_partial = [STC_export.A_STC_tn{1}(:,partial_ROIs)', STC_export.B_STC_tn{1}(:,partial_ROIs)'];
-
-%center bins - get sort order from here
-[~,com_partial_idx_sort] = sort(bin_center.partial_com(1,:),'ascend');
-
-%plot the sorted partial neurons
-figure
-imagesc(STC_tn_partial(com_partial_idx_sort,:))
-hold on
-caxis([0 1])
-colormap('jet')
+if 0
+    %generate combined STC for selected ROIs
+    STC_tn_partial = [STC_export.A_STC_tn{1}(:,partial_ROIs)', STC_export.B_STC_tn{1}(:,partial_ROIs)'];
+    
+    %center bins - get sort order from here
+    [~,com_partial_idx_sort] = sort(bin_center.partial_com(1,:),'ascend');
+    
+    %plot the sorted partial neurons
+    figure
+    imagesc(STC_tn_partial(com_partial_idx_sort,:))
+    hold on
+    caxis([0 1])
+    colormap('jet')
+end
 
 %% Filter global events based on occupancy metric from remapping_categorize code
 

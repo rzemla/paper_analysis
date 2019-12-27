@@ -1,4 +1,4 @@
-function [bin_center] = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs, select_fields,partial_field_idx)
+function [bin_center] = extract_centroid_bins_remap(cent_diff,task_remapping_ROIs,remapping_corr_idx, select_fields,partial_field_idx)
 
 %% Assign parameters
 sig_center_bins = cent_diff.all_sig_bin;
@@ -28,9 +28,30 @@ for tt=1:2
     for rr=1:size(task_remapping_ROIs.rate,2)
         bin_center.rate(tt,rr) = sig_center_bins{1}{tt}{task_remapping_ROIs.rate(rr)};
     end
-
-
-    %for each ROI for rate remapping ROIs
+    
+%%%%%%%% Final corr match based %%%%%%%%%%
+    %extract rate corr matched neurons (in final struct) - COMMON
+    for rr=1:size(remapping_corr_idx.final.common,1)
+        bin_center.final.common(tt,rr) = sig_center_bins{1}{tt}{remapping_corr_idx.final.common(rr)};
+    end
+    
+    %extract rate corr matched neurons (in final struct) - RATE
+    for rr=1:size(remapping_corr_idx.final.rate_remap_all,2)
+        bin_center.final.rate(tt,rr) = sig_center_bins{1}{tt}{remapping_corr_idx.final.rate_remap_all(rr)};
+    end
+    
+    %extract rate corr matched neurons (in final struct) - GLOBAL
+    for rr=1:size(remapping_corr_idx.final.global,1)
+        bin_center.final.global(tt,rr) = sig_center_bins{1}{tt}{remapping_corr_idx.final.global(rr)};
+    end
+    
+%     %extract rate corr matched neurons (in final struct) - GLOBAL
+%     for rr=1:size(remapping_corr_idx.final.unclass,1)
+%         bin_center.final.unclass(tt,rr) = sig_center_bins{1}{tt}{remapping_corr_idx.final.unclass(rr)};
+%     end    
+    
+    
+    %for each ROI for partial remapping ROIs
     for rr=1:size(task_remapping_ROIs.partial,2)
         if tt==1
             bin_center.partial(1:2,rr) = sig_center_bins{1}{tt}{task_remapping_ROIs.partial(rr)};
@@ -88,6 +109,11 @@ for tt=1:2
     end
 end
 
+%% Load the partial remapper into final ROI selected struct
+
+bin_center.final.partial = bin_center.partial;
+bin_center.final.partial_com = bin_center.partial_com;
+bin_center.final.partial_far = bin_center.partial_far;
 
 %%
 end

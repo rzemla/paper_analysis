@@ -8,18 +8,25 @@ for ee=1:size(path_dir,2)
     select_ROI_data{ee} = load(string(load_data_path_select_ROI{ee}));
 end
 
+%% Load place cells defined according to correlation sig criteria (updated)
+for ee=1:size(path_dir,2)
+    load_remapping_ROI{ee} = fullfile(path_dir{ee},'cumul_analysis','remap_corr_idx.mat');
+    remapping_ROI_data{ee} = load(string(load_remapping_ROI{ee}));
+end
+
+remapping_ROI_data{1, 1}.remapping_corr_idx.final.unclass
 %% Get fraction relative to total A&B neurons for animal
 
 %order: common, rate, global, partial, unclassified
 
 %total remapping neurons for each animal (matrix)
 for ee=1:size(path_dir,2)
-    total_remap(ee,1) = size(select_ROI_data{ee}.task_remapping_ROIs.global_near,2);
-    total_remap(ee,2) = size(select_ROI_data{ee}.task_remapping_ROIs.global_far,2);
-    total_remap(ee,3) = size(select_ROI_data{ee}.task_remapping_ROIs.rate,2);
-    total_remap(ee,4) = size(select_ROI_data{ee}.task_remapping_ROIs.common,2);
-    total_remap(ee,5) = size(select_ROI_data{ee}.task_remapping_ROIs.partial,2);
-    total_remap(ee,6) = size(select_ROI_data{ee}.task_remapping_ROIs.mixed,2);
+    total_remap(ee,1) = size(remapping_ROI_data{ee}.remapping_corr_idx.final.common,1);
+    total_remap(ee,2) = size(remapping_ROI_data{ee}.remapping_corr_idx.final.rate_remap_all,2);
+    total_remap(ee,3) = size(remapping_ROI_data{ee}.remapping_corr_idx.final.global,1);
+    total_remap(ee,4) = size(remapping_ROI_data{ee}.remapping_corr_idx.final.partial,2);
+    total_remap(ee,5) = size(remapping_ROI_data{ee}.remapping_corr_idx.final.unclass,2);
+    %total_remap(ee,6) = size(select_ROI_data{ee}.task_remapping_ROIs.mixed,2);
 end
 
 %total counts of each class of neurons
@@ -39,41 +46,41 @@ class_sem = class_std./sqrt(size(total_remap,1));
 %% Rearrange order to match that of color scheme below
 %from: near, far rate, common, partial, mixed
 %to: common, rate, near, far, partial,mixed
-class_mean_ordered = class_mean;
-class_std_ordered = class_std;
-class_sem_ordered = class_sem;
-%mean re-order
-class_mean_ordered(1) = class_mean(4);
-class_mean_ordered(2) = class_mean(3);
-class_mean_ordered(3) = class_mean(1);
-class_mean_ordered(4) = class_mean(2);
-%std re-order
-class_std_ordered(1) = class_std(4);
-class_std_ordered(2) = class_std(3);
-class_std_ordered(3) = class_std(1);
-class_std_ordered(4) = class_std(2);
-%sem re-order
-class_sem_ordered(1) = class_sem(4);
-class_sem_ordered(2) = class_sem(3);
-class_sem_ordered(3) = class_sem(1);
-class_sem_ordered(4) = class_sem(2);
+% class_mean_ordered = class_mean;
+% class_std_ordered = class_std;
+% class_sem_ordered = class_sem;
+% %mean re-order
+% class_mean_ordered(1) = class_mean(4);
+% class_mean_ordered(2) = class_mean(3);
+% class_mean_ordered(3) = class_mean(1);
+% class_mean_ordered(4) = class_mean(2);
+% %std re-order
+% class_std_ordered(1) = class_std(4);
+% class_std_ordered(2) = class_std(3);
+% class_std_ordered(3) = class_std(1);
+% class_std_ordered(4) = class_std(2);
+% %sem re-order
+% class_sem_ordered(1) = class_sem(4);
+% class_sem_ordered(2) = class_sem(3);
+% class_sem_ordered(3) = class_sem(1);
+% class_sem_ordered(4) = class_sem(2);
 
 %% Color scheme for classes
-%forest green - common
-[34,139,34];
-%rate - orange red
-[255,69,0];
-%light cyan (medium turquoise) - near remap
-[72,209,204];
-%dark cyan - global remap
-[0 139 139];
-%partial - metallic gold
-[212,175,55];
-%dark purple (indigo) - unclassified
-[75,0,130];
-
-%combine into one matrix
-cmap = [34,139,34; 255,69,0; 72,209,204; 0 139 139; 212,175,55; 75,0,130];
+% %forest green - common
+% [34,139,34];
+% %rate - orange red
+% [255,69,0];
+% %light cyan (medium turquoise) - near remap
+% [72,209,204];
+% %dark cyan - global remap
+% [0 139 139];
+% %partial - metallic gold
+% [212,175,55];
+% %dark purple (indigo) - unclassified
+% [75,0,130];
+% 
+% %combine into one matrix
+% cmap = [34,139,34; 255,69,0; 72,209,204; 0 139 139; 212,175,55; 75,0,130];
 
 %order common - rate - near - far - partial - mixed
 
@@ -82,12 +89,12 @@ cmap = [34,139,34; 255,69,0; 72,209,204; 0 139 139; 212,175,55; 75,0,130];
 figure('Position',[2704 336 641 500])
 hold on
 ylabel('Fraction of total remapping neurons')
-bar(class_mean_ordered,'FaceColor',[139, 0, 139]/255)
-xticks([1:6])
-xticklabels({'Common','Rate','Global near','Global far','Partial','Mixed'})
+bar(class_mean,'FaceColor',[139, 0, 139]/255)
+xticks([1:5])
+xticklabels({'Common','Rate','Global','Partial','Unclassified'})
 xtickangle(45)
 set(gca,'FontSize',16)
-errorbar([1:6],class_mean_ordered,class_sem_ordered,'k.')
+errorbar([1:5],class_mean,class_sem,'k.')
 ylim([0 0.4])
 
 

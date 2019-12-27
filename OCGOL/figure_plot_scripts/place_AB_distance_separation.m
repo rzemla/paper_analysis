@@ -10,6 +10,7 @@ end
 %load(fullfile(path_dir{1},'cumul_analysis','place_field_AB_distances.mat'),'ts_bin_conv_diff','ts_bin_conv_diff');
 
 %% Combined into single matrix
+
 for ss=1:size(distances,2)
     combined_distances{ss} = distances{ss}.ts_bin_conv_diff;
     combined_dist_metric{ss} = distances{ss}.pf_distance_metric_ts;
