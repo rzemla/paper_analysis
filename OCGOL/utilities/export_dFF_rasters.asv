@@ -1,0 +1,23 @@
+function [outputArg1,outputArg2] = export_dFF_rasters(session_vars,remapping_corr_idx)
+
+%remapping neuron idx
+remap_neuron_idx = remapping_corr_idx.final.rate_remap_all;
+
+for ii=1:size(remap_neuron_idx,2)
+    %correct A trials
+    rate.mean_dFF(ii,:) = [mean(session_vars{1}.Place_cell{1}.dF_lap_map_ROI{remap_neuron_idx(ii)},1),...
+         mean(session_vars{1}.Place_cell{2}.dF_lap_map_ROI{remap_neuron_idx(ii)},1)];
+    
+    %correct B trials
+   
+end
+
+%% 
+figure
+imagesc(rate.mean_dFF)
+hold on
+colormap('jet')
+colorbar
+caxis([0 2])
+end
+

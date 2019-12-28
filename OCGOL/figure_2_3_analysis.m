@@ -127,6 +127,8 @@ end
 %save the fractions output data %
 save(fullfile(path_dir{1},'cumul_analysis','reward_positions.mat'),'reward_positions');
 
+
+
 %% Find place fields
 if options.loadPlaceField_data == 0
     %use rate map - number of event onsets/ occupancy across all laps
@@ -430,6 +432,12 @@ options.tuning_criterion = 'remapping_filtered'; %si or ts or selective_filtered
 
 plot_STC_OCGOL_singleSes_task_remapping(session_vars,tunedLogical,task_remapping_ROIs,path_dir,options);
 
+
+%% Export dF/F values for rate remapping neurons
+
+[rate_mean_dFF] =export_dFF_rasters(session_vars,remapping_corr_idx);
+
+save(fullfile(path_dir{1},'cumul_analysis','rate_mean_dFF.mat'),'rate_mean_dFF');
 
 %% Extract spatial bins for each class of remapping neurons
 %add extraction for ROIs gathered with correlation based remapping
