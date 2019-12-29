@@ -382,12 +382,15 @@ event_5_min_and_occup_filtered_ROI;
 %% Compare speed and AUC of events for rate remapping neurons and DEFINE each category
 %run 2 way anova for each neuron
 
-[remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,...
+[remapping_corr_idx,remap_idx_traces] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,...
     STC_export, event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts, options);
 
 %get rate remapping neurons as well with 2-way ANOVA
 %save the neurons parsed by correlation remapping criteria
 save(fullfile(path_dir{1},'cumul_analysis','remap_corr_idx.mat'),'remapping_corr_idx'); 
+
+%export remapping traces for supp data figure
+save(fullfile(path_dir{1},'cumul_analysis','remap_traces.mat'),'remap_idx_traces'); 
 
 %% Event vs. speed analysis
 

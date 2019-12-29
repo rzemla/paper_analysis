@@ -1,4 +1,4 @@
-function [remapping_corr_idx] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
+function [remapping_corr_idx,remap_idx_traces] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
 
 %QC checked
 
@@ -66,6 +66,9 @@ for ss=sessionSelect
         %extract only indices corresponding to run interval
         run_onsets_in_run_epoch{ss}.A{rr} = run_onsets_in_run_epoch{ss}.A{rr}(logical(session_vars{ss}.Behavior_split{selectTrial(1)}.run_ones));
         
+        %event traces
+        event_traces{ss}.A{rr} = Event_split{ss}{selectTrial(1)}.Run.properties.trace{rr};  
+        
         %event bin positions
         event_run_bins{ss}.A{rr} = A_run_bins(find(run_onsets_in_run_epoch{ss}.A{rr} ==1));
         
@@ -84,12 +87,15 @@ for ss=sessionSelect
         %get AUC events here
         event_AUC{ss}.A{rr} = Event_split{ss}{selectTrial(1)}.Run.properties.AUC{rr};
         
+        
         %bin position
         %get entire interval first
         run_onsets_in_run_epoch{ss}.B{rr} = Event_split{ss}{selectTrial(2)}.Run.run_onset_binary(:,rr);
         %extract only indices corresponding to run interval
         run_onsets_in_run_epoch{ss}.B{rr} = run_onsets_in_run_epoch{ss}.B{rr}(logical(session_vars{ss}.Behavior_split{selectTrial(2)}.run_ones));
         
+        %event traces
+        event_traces{ss}.B{rr} = Event_split{ss}{selectTrial(2)}.Run.properties.trace{rr};  
         
         %event bin positions
         event_run_bins{ss}.B{rr} = B_run_bins(find(run_onsets_in_run_epoch{ss}.B{rr} ==1));
@@ -185,7 +191,7 @@ for ss=sessionSelect
     end
 end
 
-%% Extract speeds and AUC based on discovered events within place field above
+%% Extract speeds, traces, and AUC based on discovered events within place field above
 for ss=sessionSelect
     %for all ROIs
     for rr=1:size(max_pf_edges.A{ss},2)
@@ -195,23 +201,50 @@ for ss=sessionSelect
             field_speed_events{ss}{rr,1} = event_speed{ss}.A{rr}(select_field_idx.A{ss}{rr});
             %AUC
             field_AUC_events{ss}{rr,1} = event_AUC{ss}.A{rr}(select_field_idx.A{ss}{rr});
+            %trace
+            field_trace_events{ss}{rr,1} = event_traces{ss}.A{rr}(select_field_idx.A{ss}{rr});
             
         else
             field_speed_events{ss}{rr,1} = nan;
             field_AUC_events{ss}{rr,1} = nan;
+            field_trace_events{ss}{rr,1} = nan;
         end
         
         if ~isnan(select_field_idx.B{ss}{rr})
             field_speed_events{ss}{rr,2} = event_speed{ss}.B{rr}(select_field_idx.B{ss}{rr});
             %AUC
-            field_AUC_events{ss}{rr,2} = event_AUC{ss}.B{rr}(select_field_idx.B{ss}{rr});            
+            field_AUC_events{ss}{rr,2} = event_AUC{ss}.B{rr}(select_field_idx.B{ss}{rr});
+            %trace
+            field_trace_events{ss}{rr,2} = event_traces{ss}.B{rr}(select_field_idx.B{ss}{rr});
         else
             field_speed_events{ss}{rr,2} = nan;
             field_AUC_events{ss}{rr,2} = nan;
+            field_trace_events{ss}{rr,2} = nan;
         end
         
     end
 end
+
+
+%% Plot sample traces for rate remapping neurons
+
+% figure
+% subplot(2,1,1)
+% hold on
+% ylim([0 3])
+% xlim([0 250])
+% for ii=1:9
+%     plot(field_trace_events{1, 1}{278, 1}{ii},'b')
+% end
+% 
+% subplot(2,1,2)
+% hold on
+% ylim([0 3])
+% xlim([0 250])
+% for ii=1:9
+%     plot(field_trace_events{1, 1}{278, 2}{ii},'r')
+% end
+
 
 %% Plot scatter of speed vs AUC for A events and B events
 
@@ -261,6 +294,13 @@ rate_remap_ROI_group_all = find(pGroup <0.05);
 %find ROI with group effect only (cell identity explains AUC)
 rate_remap_group_only = setdiff(rate_remap_ROI_group_all,intersect(rate_remap_ROI_group_all,find(otherTermsOr ==1)));
 
+%% Get event onset/offset in frames
+%onset and offset frame of event
+Event_split{1, 1}{1, 1}.Run.run_onset_offset{1, 1}
+%trace of event
+Event_split{1, 1}{1, 1}.Run.properties.trace  
+
+event_run_bins
 
 %% Run wilcoxon for all ROIs - check if any sig
 for ss=sessionSelect
@@ -329,6 +369,7 @@ field_speed_events{ss}(rate_ROI_idx,:)
 remapping_corr_idx.final.rate_remap_grp_only = rate_remap_group_only;
 remapping_corr_idx.final.rate_remap_all = rate_remap_ROI_group_all;
 
+
 %define common in relation remove the rate remapping neurons from
 %non_global_ROIs
 remapping_corr_idx.final.common = common_idx;
@@ -344,6 +385,22 @@ remapping_corr_idx.final.unclass = unclass_idx;
 
 %all A&B tuned by SI or TS criteria
 remapping_corr_idx.final.AB_tuned_si_ts = ABtuned_all_si_ts;
+
+
+
+%% Extract and export traces associated with each remapping neuron
+nb_remap_idx = size(rate_remap_ROI_group_all,2);
+
+idx_start = 1;
+for rr=rate_remap_ROI_group_all
+    [traces_combined{idx_start}.A] = extract_traces(field_trace_events{1}{rr,1});
+    [traces_combined{idx_start}.B] = extract_traces(field_trace_events{1}{rr,2});
+    idx_start = idx_start + 1;
+end
+
+%export this variable
+remap_idx_traces = traces_combined;
+
 
 
 %%

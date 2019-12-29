@@ -210,18 +210,45 @@ rate_dFF_mean_sorted.B = rate_dFF_mean_sorted_all(:,101:200);
 %smooth extended rate map for each ROI
 for rr = 1:64
     %smooth A
-    gauss_smoothed_dFF.A(rr,:) = conv(rate_dFF_mean_sorted.A(rr,:),gaussFilter, 'same');    
+    gauss_smoothed_dFF.A(rr,:) = conv(rate_dFF_mean_sorted.A(rr,:),gaussFilter, 'same');
+    %smooth B
+    gauss_smoothed_dFF.B(rr,:) = conv(rate_dFF_mean_sorted.B(rr,:),gaussFilter, 'same');
 end
-
 
 figure
 for ii=1:64
     hold on
-    plot(rate_dFF_mean_sorted(ii,1:100),'b')
-    plot(rate_dFF_mean_sorted(ii,101:200),'r')
+    plot(gauss_smoothed_dFF.A(ii,1:100),'b')
+    plot(gauss_smoothed_dFF.B(ii,1:100),'r')
     pause
     clf
 end
+
+%sort by peak difference of dF/F
+ [~,sort_max_dff_diff] = sort(max(gauss_smoothed_dFF.A,[],2) - max(gauss_smoothed_dFF.B,[],2),'ascend')
+
+figure
+hold on
+idx_step = 0;
+
+for ii=sort_max_dff_diff(51:60)'
+    plot(gauss_smoothed_dFF.A(ii,:)+idx_step,'b','LineWidth',1)
+    plot(gauss_smoothed_dFF.B(ii,:)+idx_step,'r','LineWidth',1)
+    idx_step = idx_step +2;
+end
+
+
+figure
+subplot(1,2,1)
+imagesc(gauss_smoothed_dFF.A)
+hold on
+caxis([0 2])
+colormap('jet')
+subplot(1,2,2)
+imagesc(gauss_smoothed_dFF.B)
+hold on
+caxis([0 2])
+colormap('jet')
 
 %% Compare partial remapping neurons curve by curve
 

@@ -63,6 +63,10 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distanc
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cutoff.mat'),'common_cutoffs_95');
 
 
+%% Generate mean/SEM traces for rate remapping neurons
+
+rate_remap_traces(path_dir)
+
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 
 %scatterplot of centroid difference as a function of center between
 %centroid of max place field - not used
