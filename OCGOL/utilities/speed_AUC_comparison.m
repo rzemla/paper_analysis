@@ -1,4 +1,4 @@
-function [remapping_corr_idx,remap_idx_traces] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
+function [remapping_corr_idx,remap_idx_traces,com_idx_traces] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
 
 %QC checked
 
@@ -393,15 +393,26 @@ nb_remap_idx = size(rate_remap_ROI_group_all,2);
 
 idx_start = 1;
 for rr=rate_remap_ROI_group_all
-    [traces_combined{idx_start}.A] = extract_traces(field_trace_events{1}{rr,1});
-    [traces_combined{idx_start}.B] = extract_traces(field_trace_events{1}{rr,2});
+    [traces_combined_remap{idx_start}.A] = extract_traces(field_trace_events{1}{rr,1});
+    [traces_combined_remap{idx_start}.B] = extract_traces(field_trace_events{1}{rr,2});
     idx_start = idx_start + 1;
 end
 
 %export this variable
-remap_idx_traces = traces_combined;
+remap_idx_traces = traces_combined_remap;
 
+%% Extract and export traces associated with each common neuron (for histogram comparison against remapping neurons)
+nb_common_idx = size(common_idx,1);
 
+idx_start = 1;
+for rr=common_idx'
+    [traces_combined_com{idx_start}.A] = extract_traces(field_trace_events{1}{rr,1});
+    [traces_combined_com{idx_start}.B] = extract_traces(field_trace_events{1}{rr,2});
+    idx_start = idx_start + 1;
+end
+
+%export this variable
+com_idx_traces = traces_combined_com;
 
 %%
 end
