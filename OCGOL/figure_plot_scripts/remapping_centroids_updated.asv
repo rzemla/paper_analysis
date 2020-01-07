@@ -115,7 +115,7 @@ boxplot(A_minus_B_global)
 %define the zones of the track
 mean(A_minus_B_common)
 
-%% Split global remappers between A & B into distinct zones
+%% Split global remappers between A & B into distinct zones (combined)
 %QC checked
 % for ee=1:size(path_dir,2)
 %     scatter(binCenter_data{ee}.bin_center.final.common(1,:),binCenter_data{ee}.bin_center.final.common(2,:),'filled','m')
@@ -191,7 +191,6 @@ for rr=1:size(global_bins_combined,2)
         ct.zoneIII_I = ct.zoneIII_I + 1;
     end     
     
-    
 end
 
 all_zone_counts = [ct.zoneI, ct.zoneII, ct.zoneIII, ct.zoneI_II,ct.zoneI_III,...
@@ -207,7 +206,139 @@ xticklabels({'I-I','II-II','III-III','I-II','I-III','II-I','II-III','III-II','II
 % zone_global_idx(1).A = find(global_far.A > 0 & global_far.A <= B_zone_end);
 % zone_global_idx(2).A = find(global_far.A > B_zone_end & global_far.A <= A_zone_end);
 % zone_global_idx(3).A = find(global_far.A > A_zone_end & global_far.A <= 100);
-    
+
+%% Split global remappers between A & B into distinct zones (combined)
+%QC checked
+
+session_nb = size(A_global_bincenter,2);
+
+%preallocate
+ct_split.zoneI = zeros(session_nb,1);
+ct_split.zoneII = zeros(session_nb,1);
+ct_split.zoneIII = zeros(session_nb,1);
+
+ct_split.zoneI_II = zeros(session_nb,1);
+ct_split.zoneI_III = zeros(session_nb,1);
+
+ct_split.zoneII_I = zeros(session_nb,1);
+ct_split.zoneII_III = zeros(session_nb,1);
+
+ct_split.zoneIII_II = zeros(session_nb,1);
+ct_split.zoneIII_I = zeros(session_nb,1);
+
+%merge together with by-animal split of global remapping neurons
+for aa=1:session_nb
+    global_bincenter_split{aa} = [A_global_bincenter{aa}; B_global_bincenter{aa}];
+end
+
+
+%for each session
+for ss=1:session_nb
+    %for each ROI
+    for rr=1:size(global_bincenter_split{ss},2)
+        %if both in zone I
+        if (global_bincenter_split{ss}(1,rr) > 0 && global_bincenter_split{ss}(1,rr) <= B_zone_end) &&...
+                (global_bincenter_split{ss}(2,rr) > 0 && global_bincenter_split{ss}(2,rr) <= B_zone_end)
+            ct_split.zoneI(ss) = ct_split.zoneI(ss) + 1;
+        end
+        
+        %if both in zone II
+        if (global_bincenter_split{ss}(1,rr) > B_zone_end && global_bincenter_split{ss}(1,rr) <= A_zone_end) &&...
+                (global_bincenter_split{ss}(2,rr) > B_zone_end && global_bincenter_split{ss}(2,rr) <= A_zone_end)
+            ct_split.zoneII(ss) = ct_split.zoneII(ss) + 1;
+        end
+        
+        %if both in zone III
+        if (global_bincenter_split{ss}(1,rr) > A_zone_end && global_bincenter_split{ss}(1,rr) <= 100) &&...
+                (global_bincenter_split{ss}(2,rr) > A_zone_end && global_bincenter_split{ss}(2,rr) <= 100)
+            ct_split.zoneIII(ss) = ct_split.zoneIII(ss) + 1;
+        end
+        
+        %if both in zone I --> II
+        if (global_bincenter_split{ss}(1,rr) > 0 && global_bincenter_split{ss}(1,rr) <= B_zone_end) &&...
+                (global_bincenter_split{ss}(2,rr) > B_zone_end && global_bincenter_split{ss}(2,rr) <= A_zone_end)
+            ct_split.zoneI_II(ss) = ct_split.zoneI_II(ss) + 1;
+        end
+        
+        %if both in zone I --> III
+        if (global_bincenter_split{ss}(1,rr) > 0 && global_bincenter_split{ss}(1,rr) <= B_zone_end) &&...
+                (global_bincenter_split{ss}(2,rr) > A_zone_end && global_bincenter_split{ss}(2,rr) <= 100)
+            ct_split.zoneI_III(ss) = ct_split.zoneI_III(ss) + 1;
+        end
+        
+        %if both in zone II --> I
+        if (global_bincenter_split{ss}(1,rr) > B_zone_end && global_bincenter_split{ss}(1,rr) <= A_zone_end) &&...
+                (global_bincenter_split{ss}(2,rr) > 0 && global_bincenter_split{ss}(2,rr) <= B_zone_end)
+            ct_split.zoneII_I(ss) = ct_split.zoneII_I(ss) + 1;
+        end
+        
+        %if both in zone II --> III
+        if (global_bincenter_split{ss}(1,rr) > B_zone_end && global_bincenter_split{ss}(1,rr) <= A_zone_end) &&...
+                (global_bincenter_split{ss}(2,rr) > A_zone_end && global_bincenter_split{ss}(2,rr) <= 100)
+            ct_split.zoneII_III(ss) = ct_split.zoneII_III(ss) + 1;
+        end
+        
+        %if both in zone III --> II
+        if (global_bincenter_split{ss}(1,rr) > A_zone_end && global_bincenter_split{ss}(1,rr) <= 100) &&...
+                (global_bincenter_split{ss}(2,rr) > B_zone_end && global_bincenter_split{ss}(2,rr) <= A_zone_end)
+            ct_split.zoneIII_II(ss) = ct_split.zoneIII_II(ss) + 1;
+        end
+        
+        %if both in zone III --> I
+        if (global_bincenter_split{ss}(1,rr) > A_zone_end && global_bincenter_split{ss}(1,rr) <= 100) &&...
+                (global_bincenter_split{ss}(2,rr) > 0 && global_bincenter_split{ss}(2,rr) <= B_zone_end)
+            ct_split.zoneIII_I(ss) = ct_split.zoneIII_I(ss) + 1;
+        end
+        
+        
+    end
+end
+
+%turn in to fractional count
+%organize by zone with first digit being A zone
+%animal x zone_switch
+all_zone_counts_split = [ct_split.zoneI, ct_split.zoneII, ct_split.zoneIII,...
+    ct_split.zoneI_II,ct_split.zoneII_I,...
+    ct_split.zoneII_III,ct_split.zoneIII_II,...
+    ct_split.zoneI_III ,ct_split.zoneIII_I];
+
+%get sum for each animal and get fractional count
+total_global_neurons_by_animal = sum(all_zone_counts_split,2);
+
+%fractional count
+frac_zones = all_zone_counts_split./total_global_neurons_by_animal;
+
+%QC - check - adds up to 1
+%sum(frac_zones,2)
+
+%get mean and sem
+mean_fraction_zone_split = mean(frac_zones,1);
+sem_fraction_zone_split = std(frac_zones,0,1)./sqrt(session_nb);
+
+
+%plot bar chart
+% figure
+% hold on
+% bar(all_zone_counts)
+% xticks(1:9)
+% xticklabels({'I-I','II-II','III-III','I-II','I-III','II-I','II-III','III-II','III-I'})
+
+%plot mean bar chart
+figure
+hold on
+bar([1 2 3 4.5 5.5 7 8 9.5 10.5], mean(frac_zones,1),'FaceColor',[139, 0, 139]/255)
+xticks([1 2 3 4.5 5.5 7 8 9.5 10.5])
+errorbar([1 2 3 4.5 5.5 7 8 9.5 10.5],mean_fraction_zone_split,sem_fraction_zone_split,'k.')
+xticklabels({'AI <--> BI','AII <--> BII','AIII <--> BIII','AI --> BII','BI --> AII',...
+    'AII --> BIII','BII --> AIII','AI --> BIII','BI --> AIII'})
+xtickangle(45)
+%zone I,II,III switches
+sigstar({[1,2], [1,3], [2,3]})
+%I vs. II switch, II vs. III switch, I vs. III
+sigstar({[4.5 5.5],[7 8],[9.5 10.5]})
+yticks([0 0.1 0.2 0.3])
+ylabel('Fraction of neurons');
+
 %% Plot common histogram
 figure;
 hold on;
@@ -364,18 +495,49 @@ for ii=1:size(A_global_bincenter,2)
     ratio_B_beforeA.III(ii) = length(find(zone3_shifts_split{ii} < 0))/length(zone3_idx_split{ii});
 end
 
-mean(ratio_B_beforeA.I) vs. %0.16
-mean(ratio_B_beforeA.II) vs. %0.53
-mean(ratio_B_beforeA.III) vs. %0.87
+%mean(ratio_B_beforeA.I) vs. %0.16
+%mean(ratio_B_beforeA.II) vs. %0.53
+%mean(ratio_B_beforeA.III) vs. %0.87
 
 %subtract expected value and do Mann Whitney U test
 mean(ratio_B_beforeA.I - zoneI.lower_area_frac)
 
-p = signrank(ratio_B_beforeA.I - zoneI.lower_area_frac);
-p = signrank(ratio_B_beforeA.II - zoneII.lower_area_frac);
-p = signrank(ratio_B_beforeA.III - zoneIII.lower_area_frac);
+%test against median distribution of 0
+p(1) = signrank(ratio_B_beforeA.I - zoneI.lower_area_frac);
+p(2) = signrank(ratio_B_beforeA.II - zoneII.lower_area_frac);
+p(3) = signrank(ratio_B_beforeA.III - zoneIII.lower_area_frac);
+
+%% Plot scatter for each zone
+
+zoneI_diff = ratio_B_beforeA.I - zoneI.lower_area_frac;
+zoneII_diff = ratio_B_beforeA.II - zoneII.lower_area_frac;
+zoneIII_diff = ratio_B_beforeA.III - zoneIII.lower_area_frac;
+
+%get the means
+zone_med(1) = mean(zoneI_diff);
+zone_med(2) = mean(zoneII_diff);
+zone_med(3) = mean(zoneIII_diff);
+%get the sems
+zone_sem(1) = std(zoneI_diff)./sqrt(size(zoneI_diff,2));
+zone_sem(2) = std(zoneII_diff)./sqrt(size(zoneII_diff,2));
+zone_sem(3) = std(zoneIII_diff)./sqrt(size(zoneIII_diff,2));
 
 
+figure('renderer','painters','Position',[2186 348 341 420])
+hold on
+xlim([0 4])
+ylim([-0.5 0.5])
+xticks([1 2 3])
+yticks([-0.4, -0.2, 0, 0.2, 0.4])
+xticklabels({'Zone I','Zone II','Zone III'})
+dot_size = 14;
+scatter(ones(1,size(zoneI_diff,2)),zoneI_diff,dot_size,'filled','MarkerFaceColor',[0.5 0.5 0.5])
+scatter(2*ones(1,size(zoneII_diff,2)),zoneII_diff,dot_size,'filled','MarkerFaceColor',[0.5 0.5 0.5])
+scatter(3*ones(1,size(zoneIII_diff,2)),zoneIII_diff,dot_size,'filled','MarkerFaceColor',[0.5 0.5 0.5])
+bar([1 2 3],zone_med,'FaceColor',[139, 0, 139]/255,'EdgeColor',[0 0 0]/255,'FaceAlpha',0.3)
+errorbar([1 2 3],zone_med,zone_sem,'LineStyle','none','Color', [0 0 0])
+%0 dash line
+%plot([0 4],[0 0],'--','Color',[0.5 0.5 0.5],'LineWidth',1)
 
 %% Generate table with values of number of neurons in each category
 

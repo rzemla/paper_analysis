@@ -42,7 +42,7 @@ rate_dFF_combined = cell2mat(rate_mean_dFF_no_struct');
 %save(fullfile(path_dir{1},'cumul_analysis','place_field_centers_remap.mat'),'bin_center');
 %save(fullfile(path_dir{1},'cumul_analysis','place_field_common_distances.mat'),'common_bin_conv_diff','common_pf_distance_metric');
 
-%% Combine distances and compute the 95th %centile cutoff
+%% Combine distances and compute the 95th percentile cutoff
 
 for aa=1:size(path_dir,2)
     bin_dist{aa} = distances{aa}.common_bin_conv_diff;

@@ -58,7 +58,7 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distanc
 %% Remapping ROIs based on correlation map criteria and return quantile for common field separation
 %STCs of the different categories of neurons are here (Figure 3C)
 %use this as definition for the separation of fields (common and partial
-%field) for partially remapping neurons
+%field) for p
 [common_cutoffs_95] = remapping_corr(path_dir);
 
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cutoff.mat'),'common_cutoffs_95');
@@ -107,14 +107,12 @@ event_speed_scatter(path_dir)
 
 %% REMAPPING RELATED (FIGURE 3)
 
-%% Fractional remapping using updated criteria - use this for plotting
-frac_remapping_neurons_corr_criteria(path_dir) 
-
-
-%% Fractional distribution of remapping neuron subtypes - Figure 3C (OLD)
+%% Fractional distribution of remapping neuron subtypes - Figure 3C
 
 frac_remapping_neurons(path_dir)
 
+%% Fractional remapping using updated criteria - use this for plotting
+frac_remapping_neurons_corr_criteria(path_dir) 
 
 %% Modification to original code
 %return bin position of the respective reward zones
