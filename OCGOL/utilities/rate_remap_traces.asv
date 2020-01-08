@@ -152,16 +152,17 @@ histogram(remap_idx_values,20,'Normalization','probability','DisplayStyle','stai
 
 [h,p] = kstest2(remap_idx_values,common_idx_values)
 
+%% Plot the cdf of the peak indices for common vs. remapping neurons
 figure
 hold on
 e1 = cdfplot(common_idx_values);
 e2 = cdfplot(remap_idx_values);
 
-e1.LineWidth = 1.5
-e1.Color = [0 0 0]
+e1.LineWidth = 1.5;
+e1.Color = [0 0 0];
 
-e2.LineWidth = 1.5
-e2.Color = [255,140,0]./255
+e2.LineWidth = 1.5;
+e2.Color = [255,140,0]./255;
 
 grid off
 title(' ')

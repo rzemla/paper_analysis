@@ -65,7 +65,7 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cut
 
 
 %% Generate mean/SEM traces for rate remapping neurons
-%here is where you need to change the colorscheme
+%also calculate A-B/A+B index and compare against common neurons
 rate_remap_traces(path_dir)
 
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 

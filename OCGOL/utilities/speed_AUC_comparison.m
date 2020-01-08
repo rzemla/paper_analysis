@@ -1,4 +1,4 @@
-function [remapping_corr_idx,remap_idx_traces,com_idx_traces] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
+function [remapping_corr_idx,remap_idx_traces,com_idx_traces,AUC_remappers] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak, STC_export,event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts,options)
 
 %QC checked
 
@@ -386,7 +386,39 @@ remapping_corr_idx.final.unclass = unclass_idx;
 %all A&B tuned by SI or TS criteria
 remapping_corr_idx.final.AB_tuned_si_ts = ABtuned_all_si_ts;
 
+%% Extract AUC values for A and B trials for common and remapping neurons
 
+remapping_corr_idx.final.rate_remap_all
+remapping_corr_idx.final.common
+
+%extract AUC of each event for common neurons
+for rr=1:size(remapping_corr_idx.final.common,1)
+    %A AUC events
+    common_AUC{rr,1} = field_AUC_events{1}{remapping_corr_idx.final.common(rr),1};
+    %B AUC events
+    common_AUC{rr,2} = field_AUC_events{1}{remapping_corr_idx.final.common(rr),2};
+end
+
+%extract AUC of each event for common neurons
+for rr=1:size(remapping_corr_idx.final.rate_remap_all,2)
+    %A AUC events
+    remap_AUC{rr,1} = field_AUC_events{1}{remapping_corr_idx.final.rate_remap_all(rr),1};
+    %B AUC events
+    remap_AUC{rr,2} = field_AUC_events{1}{remapping_corr_idx.final.rate_remap_all(rr),2};
+end
+
+%use for export
+AUC_remappers.common = common_AUC;
+AUC_remappers.remap = remap_AUC;
+
+% x = abs(cellfun(@sum,common_AUC(:,1)) - cellfun(@sum,common_AUC(:,2)))
+% 
+% y = abs(cellfun(@sum,remap_AUC(:,1)) - cellfun(@sum,remap_AUC(:,2)))
+% 
+% figure
+% hold on
+% histogram(x,10)
+% histogram(y,10)
 
 %% Extract and export traces associated with each remapping neuron
 nb_remap_idx = size(rate_remap_ROI_group_all,2);
