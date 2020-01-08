@@ -399,20 +399,16 @@ end
 
 for ee=1:size(path_dir,2)
     %get normalization counts
-    [N(ee,:),edges] = histcounts(binCenter_data{ee}.bin_center.final.common(1,:),0:10:100,'Normalization','probability');
+    N(ee,:) = histcounts(binCenter_data{ee}.bin_center.final.common(1,:),0:10:100,'Normalization','probability');
 end
 
-%get standard error of mean
 sem_counts = std(N,0,1)./sqrt(11);
 
 figure
 hold on
 yticks([0 0.05 0.1 0.15 0.2])
-xticks([0 100])
-xticklabels({'0','1'})
-
-h1 = bar(5:10:100,mean(N),'BarWidth',1);
-errorbar(5:10:100, mean(N),sem_counts,'LineStyle','none','Color','k' )
+h1 = bar(mean(N),'BarWidth',1);
+errorbar(1:10, mean(N),sem_counts,'LineStyle','none','Color','k' )
 xlabel('Normalized position')
 ylabel('Normalized density')
 h1.FaceColor = [139 0 139]./255;
