@@ -117,7 +117,6 @@ frac_remapping_neurons_corr_criteria(path_dir)
 
 
 
-
 %% Remapping centroids (OLD)
 %Figure 3E/F ( all Figure 3 code is here - organize this)
 options.lowPVcorr = [6 7 8];

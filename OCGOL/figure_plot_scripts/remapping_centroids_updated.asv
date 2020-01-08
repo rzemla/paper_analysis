@@ -366,7 +366,7 @@ h1.FaceAlpha = 1;
 plot([B_zone_end B_zone_end], [0 0.2],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
 plot([A_zone_end A_zone_end], [0 0.2],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
 
-%split into animal by animal plot
+%% Split into animal by animal plot - display histogram for each animal
 figure('Position', [2663 91 301 887])
 for ee=1:size(path_dir,2)
     subplot(6,2,ee)
@@ -381,14 +381,14 @@ for ee=1:size(path_dir,2)
     %add number of neurons for each animal
     txt = ['n=' num2str(size(binCenter_data{ee}.bin_center.final.common(1,:),2))];
     text(60,0.4,txt)
-        
+    
     h1 = histogram(binCenter_data{ee}.bin_center.final.common(1,:),0:10:100,'Normalization','probability');
     h1.FaceColor = [139 0 139]./255;
     h1.FaceAlpha = 1;
     
-        %add reward zones
-plot([B_zone_end B_zone_end], [0 0.3],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
-plot([A_zone_end A_zone_end], [0 0.3],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
+    %add reward zones
+    plot([B_zone_end B_zone_end], [0 0.3],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
+    plot([A_zone_end A_zone_end], [0 0.3],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
     
     if ee ==10 || ee==11
         xlabel('Normalized position')
@@ -399,16 +399,20 @@ end
 
 for ee=1:size(path_dir,2)
     %get normalization counts
-    N(ee,:) = histcounts(binCenter_data{ee}.bin_center.final.common(1,:),0:10:100,'Normalization','probability');
+    [N(ee,:),edges] = histcounts(binCenter_data{ee}.bin_center.final.common(1,:),0:10:100,'Normalization','probability');
 end
 
+%get standard error of mean
 sem_counts = std(N,0,1)./sqrt(11);
 
 figure
 hold on
 yticks([0 0.05 0.1 0.15 0.2])
-h1 = bar(mean(N),'BarWidth',1);
-errorbar(1:10, mean(N),sem_counts,'LineStyle','none','Color','k' )
+xticks([0 100])
+xticklabels({'0','1'})
+
+h1 = bar(5:10:100,mean(N),'BarWidth',1);
+errorbar(5:10:100, mean(N),sem_counts,'LineStyle','none','Color','k' )
 xlabel('Normalized position')
 ylabel('Normalized density')
 h1.FaceColor = [139 0 139]./255;
@@ -574,6 +578,7 @@ zone_sem(2) = std(zoneII_diff)./sqrt(size(zoneII_diff,2));
 zone_sem(3) = std(zoneIII_diff)./sqrt(size(zoneIII_diff,2));
 
 
+%% Difference plot from expected fraction of B before A
 figure('renderer','painters','Position',[2186 348 341 420])
 hold on
 xlim([0 4])
@@ -614,7 +619,7 @@ hold on
 
 %try to invert (A after B is below)    
 ba = bar([1-ratio_pos_neg.I,ratio_pos_neg.I; 1-ratio_pos_neg.II,ratio_pos_neg.II; 1-ratio_pos_neg.III, ratio_pos_neg.III],...
-        'stacked','FaceColor','flat')
+        'stacked','FaceColor','flat');
 xticks([1 2 3])
 xticklabels({'Zone I','Zone II','Zone III'})
 legend([ba(1,1),ba(1,2)],{'B before A','B after A'},'AutoUpdate','off')
@@ -631,6 +636,275 @@ ba(2).CData = [1,1,1]*0.8;
 set(gca,'FontSize',18)
 set(gca,'LineWidth',2)
 
+%% Partial remapping neurons distribution (updated)
+
+%rearrange partially remapping neurons
+%combine common and partial far
+for ii=1:size(binCenter_data,2)
+    partial_com{ii} = binCenter_data{ii}.bin_center.final.partial_com;
+    partial_far{ii} = binCenter_data{ii}.bin_center.final.partial_far;
+end
+
+%% Split by animal - combine common and partial fields
+
+%combine the common and partial fields by animal
+for ii=1:size(binCenter_data,2)
+    partial_com_far_split{ii} = [partial_com{ii};partial_far{ii}];
+end
+
+%get A and B indexes for each animal
+for ii=1:size(binCenter_data,2)
+    partial_A_idx_split{ii} = find(~isnan(partial_com_far_split{ii}(3,:)) == 1);
+    partial_B_idx_split{ii} = find(~isnan(partial_com_far_split{ii}(4,:)) == 1);
+end
+
+%get common and far fields for A or B type partial neurons
+for ii=1:size(binCenter_data,2)
+    partial_A_common_far_split{ii} = partial_com_far_split{ii}(1:3,partial_A_idx_split{ii});
+    partial_B_common_far_split{ii} = partial_com_far_split{ii}([1,2,4],partial_B_idx_split{ii});
+end
+
+%isolate common field (A field) for each animal and partial and combined in
+%row
+for ii=1:size(binCenter_data,2)
+    %common field (A)
+    partial_A_common_far_split_input{ii}(1,:) = partial_A_common_far_split{ii}(1,:);
+    %partial field (A)
+    partial_A_common_far_split_input{ii}(2,:) = partial_A_common_far_split{ii}(3,:);
+    
+    %common field (A)
+    partial_B_common_far_split_input{ii}(1,:) = partial_B_common_far_split{ii}(1,:);
+    %partial field (B)
+    partial_B_common_far_split_input{ii}(2,:) = partial_B_common_far_split{ii}(3,:);
+end
+
+%% Combined analysis
+
+%first 2 rows - common field; last 2 rows - partial field; A, then B
+partial_com_far_combined = [cell2mat(partial_com);cell2mat(partial_far)];
+
+%parse into A and B partial remapping neurons (indices)
+partial_A_idx = find(~isnan(partial_com_far_combined(3,:)) == 1);
+partial_B_idx = find(~isnan(partial_com_far_combined(4,:)) == 1);
+
+%get common for both fields and selective field
+%first 2 rows indicate the common field
+%third row is the partial field for A trials
+%fourth row is the partial field for B trials
+partial_A_common_far = partial_com_far_combined(1:3,partial_A_idx);
+partial_B_common_far = partial_com_far_combined([1,2,4],partial_B_idx);
+
+%prepare inputs for function below to generate histograms
+%first column is mean of common position and latter column is position of
+%partial field
+
+%use the A field as common field (OK b/c partial field now collapsed to
+%third row)
+partial_A_common_far_input(:,1) = partial_A_common_far([1],:);
+partial_A_common_far_input(:,2) = partial_A_common_far(3,:);
+
+%use the A field as common field (OK b/c partial field now collapsed to
+%third row)
+partial_B_common_far_input(:,1) = partial_B_common_far([1],:);
+partial_B_common_far_input(:,2) = partial_B_common_far(3,:);
+
+
+%% Bin as a function of center and get boxplots of distrubution
+%get bin indices
+%10 even spaced bins
+partial_bin_idx.A = discretize(partial_A_common_far_input(:,1),[0:10:100]);
+partial_bin_idx.B = discretize(partial_B_common_far_input(:,1),[0:10:100]);
+
+%3 behaviorally spaced bins (1-35, 35-75, 75-100)
+%this will assign values to one of three bins defined in parameters using
+%mean common position
+partial_bin_idx_3.A = discretize(partial_A_common_far_input(:,1),[0,B_zone_end,A_zone_end,100]);
+partial_bin_idx_3.B = discretize(partial_B_common_far_input(:,1),[0,B_zone_end,A_zone_end,100]);
+
+%for each bin (3 behavior)
+for bb=1:3
+    count_3.A{bb} = partial_A_common_far_input(find(partial_bin_idx_3.A == bb),2);
+    count_3.B{bb} = partial_B_common_far_input(find(partial_bin_idx_3.B == bb),2);
+end
+
+%merge both cell in alternate manner (input into bar plotter)
+merge_hist_counts_3(1:2:5) = count_3.A;
+merge_hist_counts_3(2:2:6) = count_3.B;
+
+%boxplot 2 wrapper(plot distributions of diff sizes
+col=@(x)reshape(x,numel(x),1);
+boxplot2=@(C,varargin)boxplot(cell2mat(cellfun(col,col(C),'uni',0)),cell2mat(arrayfun(@(I)I*ones(numel(C{I}),1),col(1:numel(C)),'uni',0)),varargin{:});
+
+
+%% Statistics
+[h,p] = ranksum(count_3.A{1},count_3.B{1})
+[h,p] = ranksum(count_3.A{2},count_3.B{2})
+[h,p] = ranksum(count_3.A{3},count_3.B{3})
+
+
+%% Boxplot of distributions relative to mean of centroid in each zone
+
+merge_new = [merge_hist_counts_3([1,3,5]);merge_hist_counts_3([2,4,6])];
+
+xlab={'1','2','3'} ;
+col=[220,20,60, 255;
+65,105,225, 255;
+]; 
+%0, 0, 255, 200]; 
+col=col/255;
+
+f=figure 
+hold on
+%plot zone separator lines
+[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A','B'},col') 
+%overlay boxplot to add median line 
+z= boxplot(x,group, 'positions', positions);
+lines = findobj(z, 'type', 'line', 'Tag', 'Median');
+set(lines, 'Color', 'k');
+set(lines, 'LineWidth',2)
+ylim([0 100])
+xticks([1.3750, 2.1250, 2.875])
+xticklabels({'Zone I', 'Zone II', 'Zone III'})
+ylabel('Place field position')
+%yticks([0 20 40 60 80 100])
+%yticklabels({'0', '0.2', '0.4','0.6','0.8','1'})
+plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
+plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
+set(gca,'FontSize',16)
+
+%% Distribution of partially remapping fields for A and B plot and KS test for significance (Figure 2F)
+
+figure('Position',[2200 317 508 433])
+hold on
+title('Distribution of partially remapping fields')
+[fA,xA] = ecdf(partial_A_common_far_input(:,2));
+[fB,xB] = ecdf(partial_B_common_far_input(:,2));
+ap = stairs(xA,fA,'LineWidth',2,'Color',[65,105,225]/255);
+bp = stairs(xB,fB,'LineWidth',2,'Color',[220,20,60]/255);
+xlabel(gca,'Normalized positon')
+ylabel('Cumulative probability')
+
+xticks([0 100])
+xticklabels({'0','1'})
+set(gca,'LineWidth',1.5)
+set(gca,'FontSize',16)
+legend([ap bp],{'A','B'},'Location','northwest','AutoUpdate','off')
+
+plot([B_zone_end B_zone_end], [0 1],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 1],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+%% Plot cumulative density function (CDF) for each animal
+
+figure('Position',[2683 74 456 907])
+title('Distribution of partially remapping fields for each animal')
+for ii=1:11
+    subplot(6,2,ii)
+    hold on
+    title(num2str(ii))
+    [fA,xA] = ecdf(partial_A_common_far_split_input{ii}(2,:));
+    [fB,xB] = ecdf(partial_B_common_far_split_input{ii}(2,:));
+    xlim([0 100])
+    ap = stairs(xA,fA,'LineWidth',2,'Color',[65,105,225]/255);
+    bp = stairs(xB,fB,'LineWidth',2,'Color',[220,20,60]/255);
+    %xlabel(gca,'Normalized position')
+    %ylabel('Cumulative probability')
+    
+    xticks([0 100])
+    xticklabels({'0','1'})
+    
+    %add label with neuron count
+    txtA = ['n(A)=' num2str(size(partial_A_common_far_split_input{ii}(2,:),2))];
+    txtB = ['n(B)=' num2str(size(partial_B_common_far_split_input{ii}(2,:),2))];
+    text(68,0.4,txtA)
+    text(68,0.2,txtB)
+    
+    if (rem(ii,2) ~= 0)
+        ylabel('Cumulative probability');
+    end
+    
+    %add A vs. B legend on last animal
+    if ii==11
+    legend([ap bp], {'A','B'},'location','northwest')
+    end
+    
+    if ii ==10 || ii==11
+        xlabel('Normalized position')
+    end
+end
+
+%% Make histograms for partial fields (skip for now - come back if necessary)
+
+figure('Position', [2663 91 301 887])
+for ee=1:size(path_dir,2)
+    subplot(6,2,ee)
+    hold on
+    title(num2str(ee))
+    ylim([0 0.5])
+    if (rem(ee,2) ~= 0)
+        ylabel('Normalized density');
+    end
+    xticks([0 100])
+    xticklabels({'0','1'})
+    %add number of neurons for each animal
+    txt = ['n=' num2str(size(binCenter_data{ee}.bin_center.final.common(1,:),2))];
+    text(60,0.4,txt)
+    
+    h1 = histogram(binCenter_data{ee}.bin_center.final.common(1,:),0:10:100,'Normalization','probability');
+    h1.FaceColor = [139 0 139]./255;
+    h1.FaceAlpha = 1;
+    
+    %add reward zones
+    plot([B_zone_end B_zone_end], [0 0.3],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
+    plot([A_zone_end A_zone_end], [0 0.3],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
+    
+    if ee ==10 || ee==11
+        xlabel('Normalized position')
+    end
+end
+
+
+%% Plot scatter for each animal
+%common bin on x axis
+%partial bin on y axis
+
+%% Plot 
+
+
+%% Statistics (combined dataset)
+
+[h,p] = kstest2(partial_A_common_far_input(:,2), partial_B_common_far_input(:,2));
+
+%% Minaturized normalized histogram for each set of partial remapping neurons (inset)
+%cdf
+figure('Position',[1199 400 208 420])
+subplot(2,1,1)
+hold on;
+ylim([0 0.2])
+yticks([0 0.1 0.2])
+xticks([0 50 100])
+xticklabels({'0','0.5','1'})
+ylabel('Norm. density')
+set(gca,'FontSize',16)
+histogram(partial_A_common_far_input(:,2),[0:10:100],'Normalization','probability','FaceColor', [65,105,225]/255,'FaceAlpha',1)
+
+plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+subplot(2,1,2)
+hold on
+ylim([0 0.2])
+yticks([0 0.1 0.2])
+xticks([0 50 100])
+xticklabels({'0','0.5','1'})
+ylabel('Norm. density')
+xlabel('Normalized ')
+set(gca,'FontSize',16)
+histogram(partial_B_common_far_input(:,2),[0:10:100],'Normalization','probability','FaceColor',[220,20,60]/255,'FaceAlpha',1)
+
+plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+%% OLD
 
 % 
 % merge_far_binCenters = [];
@@ -691,156 +965,6 @@ set(gca,'LineWidth',2)
 %     end
 % end
 % end
-
-%% Partial remapping neurons distribution (updated)
-
-%rearrange partially remapping neurons
-%combine common and partial far
-for ii=1:size(binCenter_data,2)
-    partial_com{ii} = binCenter_data{ii}.bin_center.final.partial_com;
-    partial_far{ii} = binCenter_data{ii}.bin_center.final.partial_far;
-end
-
-%first 2 rows - common field; last 2 rows - partial field; A, then B
-partial_com_far_combined = [cell2mat(partial_com);cell2mat(partial_far)];
-
-%parse into A and B selective neurons (indices)
-partial_A_idx = find(~isnan(partial_com_far_combined(3,:)) == 1);
-partial_B_idx = find(~isnan(partial_com_far_combined(4,:)) == 1);
-
-%get common for both fields and selective field
-partial_A_common_far = partial_com_far_combined(1:3,partial_A_idx);
-partial_B_common_far = partial_com_far_combined([1,2,4],partial_B_idx);
-
-%prepare inputs for function below to generate histograms
-%first column is mean of common position and latter column is position of
-%partial field
-partial_A_common_far_input(:,1) = mean(partial_A_common_far([1,2],:));
-partial_A_common_far_input(:,2) = partial_A_common_far(3,:);
-
-partial_B_common_far_input(:,1) = mean(partial_B_common_far([1,2],:));
-partial_B_common_far_input(:,2) = partial_B_common_far(3,:);
-
-
-%% Bin as a function of center and get boxplots of distrubution
-%get bin indices
-%10 even spaced bins
-partial_bin_idx.A = discretize(partial_A_common_far_input(:,1),[0:10:100]);
-partial_bin_idx.B = discretize(partial_B_common_far_input(:,1),[0:10:100]);
-
-%3 behaviorally spaced bins (1-35, 35-75, 75-100)
-%this will assign values to one of three bins defined in parameters using
-%mean common position
-partial_bin_idx_3.A = discretize(partial_A_common_far_input(:,1),[0,B_zone_end,A_zone_end,100]);
-partial_bin_idx_3.B = discretize(partial_B_common_far_input(:,1),[0,B_zone_end,A_zone_end,100]);
-
-%for each bin (3 behavior)
-for bb=1:3
-    count_3.A{bb} = partial_A_common_far_input(find(partial_bin_idx_3.A == bb),2);
-    count_3.B{bb} = partial_B_common_far_input(find(partial_bin_idx_3.B == bb),2);
-end
-
-%merge both cell in alternate manner (input into bar plotter)
-merge_hist_counts_3(1:2:5) = count_3.A;
-merge_hist_counts_3(2:2:6) = count_3.B;
-
-%boxplot 2 wrapper(plot distributions of diff sizes
-col=@(x)reshape(x,numel(x),1);
-boxplot2=@(C,varargin)boxplot(cell2mat(cellfun(col,col(C),'uni',0)),cell2mat(arrayfun(@(I)I*ones(numel(C{I}),1),col(1:numel(C)),'uni',0)),varargin{:});
-
-
-%% Statistics
-[h,p] = ranksum(count_3.A{1},count_3.B{1})
-[h,p] = ranksum(count_3.A{2},count_3.B{2})
-[h,p] = ranksum(count_3.A{3},count_3.B{3})
-
-
-
-%% Boxplot of distributions relative to mean of centroid in each zone
-
-merge_new = [merge_hist_counts_3([1,3,5]);merge_hist_counts_3([2,4,6])];
-
-xlab={'1','2','3'} ;
-col=[220,20,60, 255;
-65,105,225, 255;
-]; 
-%0, 0, 255, 200]; 
-col=col/255;
-
-f=figure 
-hold on
-%plot zone separator lines
-[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A','B'},col') 
-%overlay boxplot to add median line 
-z= boxplot(x,group, 'positions', positions);
-lines = findobj(z, 'type', 'line', 'Tag', 'Median');
-set(lines, 'Color', 'k');
-set(lines, 'LineWidth',2)
-ylim([0 100])
-xticks([1.3750, 2.1250, 2.875])
-xticklabels({'Zone I', 'Zone II', 'Zone III'})
-ylabel('Place field position')
-%yticks([0 20 40 60 80 100])
-%yticklabels({'0', '0.2', '0.4','0.6','0.8','1'})
-plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
-plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
-set(gca,'FontSize',16)
-
-%% Distribution of partially remapping fields for A and B plot and KS test for significanee (Figure 2F)
-
-figure('Position',[2200 317 508 433])
-hold on
-title('Distribution of partially remapping fields')
-[fA,xA] = ecdf(partial_A_common_far_input(:,2))
-[fB,xB] = ecdf(partial_B_common_far_input(:,2))
-ap = stairs(xA,fA,'LineWidth',2,'Color',[65,105,225]/255);
-bp = stairs(xB,fB,'LineWidth',2,'Color',[220,20,60]/255);
-xlabel(gca,'Normalized positon')
-ylabel('Cumulative probability')
-
-xticks([0 100])
-xticklabels({'0','1'})
-set(gca,'LineWidth',1.5)
-set(gca,'FontSize',16)
-legend([ap bp],{'A','B'},'Location','northwest','AutoUpdate','off')
-
-plot([B_zone_end B_zone_end], [0 1],'--','Color',[220,20,60]/255, 'LineWidth',2)
-plot([A_zone_end A_zone_end], [0 1],'--','Color',[65,105,225]/255, 'LineWidth',2)
-
-
-%% Statistics
-[h,p] =kstest2(partial_A_common_far_input(:,2), partial_B_common_far_input(:,2))
-
-%% Minaturized normalized histogram for each set of partial remapping neurons (inset)
-%cdf
-figure('Position',[1199 400 208 420])
-subplot(2,1,1)
-hold on;
-ylim([0 0.2])
-yticks([0 0.1 0.2])
-xticks([0 50 100])
-xticklabels({'0','0.5','1'})
-ylabel('Norm. density')
-set(gca,'FontSize',16)
-histogram(partial_A_common_far_input(:,2),[0:10:100],'Normalization','probability','FaceColor', [65,105,225]/255,'FaceAlpha',1)
-
-plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
-plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
-
-subplot(2,1,2)
-hold on
-ylim([0 0.2])
-yticks([0 0.1 0.2])
-xticks([0 50 100])
-xticklabels({'0','0.5','1'})
-ylabel('Norm. density')
-xlabel('Normalized ')
-set(gca,'FontSize',16)
-histogram(partial_B_common_far_input(:,2),[0:10:100],'Normalization','probability','FaceColor',[220,20,60]/255,'FaceAlpha',1)
-
-plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
-plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
-
 
 %
 %for each bin (10 even)
