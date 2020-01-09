@@ -111,9 +111,11 @@ event_speed_scatter(path_dir)
 frac_remapping_neurons_corr_criteria(path_dir) 
 
 
-%% Modification to original code
+%% Modification to original code (updated using established criteria)
 %return bin position of the respective reward zones
-[A_zone_end, B_zone_end] = remapping_centroids_updated(path_dir);
+[A_zone_end, B_zone_end,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir);
+
+save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','partial_idx_by_animal.mat'),'partial_idx_by_animal_zone');
 
 
 %% Remapping centroids (OLD)

@@ -1,4 +1,4 @@
-function [A_zone_end, B_zone_end] = remapping_centroids_updated(path_dir)
+function [A_zone_end, B_zone_end,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir)
 
 %% Load in data from each session directory
 for ee=1:size(path_dir,2)
@@ -11,6 +11,13 @@ end
 for ee=1:size(path_dir,2)
     load_reward_path{ee} = fullfile(path_dir{ee},'cumul_analysis','reward_positions.mat');
     reward_pos_data{ee} = load(string(load_reward_path{ee}));
+end
+
+%% Load in the indices of the neurons for each animal to identify partial remappers for visualization in supp.
+
+for ee=1:size(path_dir,2)
+    load_neuron_idx_path{ee} = fullfile(path_dir{ee},'cumul_analysis','remap_corr_idx.mat');
+    remapping_idxs{ee} = load(string(load_neuron_idx_path{ee}));
 end
 
 
@@ -732,6 +739,14 @@ end
 merge_hist_counts_3(1:2:5) = count_3.A;
 merge_hist_counts_3(2:2:6) = count_3.B;
 
+%% Extract partial neuron idx's that are examples of each zone for supplement
+
+%extract all from each zone for each animal and export
+for ii=1:size(binCenter_data,2)
+    partial_idx_by_animal{ii}.A = remapping_idxs{ii}.remapping_corr_idx.final.partial(partial_A_idx_split{ii});
+    partial_idx_by_animal{ii}.B = remapping_idxs{ii}.remapping_corr_idx.final.partial(partial_B_idx_split{ii});
+end
+
 %% Bin as a function of A center and get boxplots for distribution by animal/session
 %get bin indices
 %10 even spaced bins
@@ -755,6 +770,12 @@ for ii=1:size(binCenter_data,2)
     for bb=1:3
         count_3_split{ii}.A{bb} = partial_A_common_far_split_input{ii}(2,find(partial_bin_idx_3_split{ii}.A == bb))';
         count_3_split{ii}.B{bb} = partial_B_common_far_split_input{ii}(2,find(partial_bin_idx_3_split{ii}.B == bb))';
+        
+        %place idx extraction here using same approach (export these for
+        %animal plots)
+        partial_idx_by_animal_zone{ii}.A.zone{bb} = partial_idx_by_animal{ii}.A(find(partial_bin_idx_3_split{ii}.A == bb));
+        partial_idx_by_animal_zone{ii}.B.zone{bb} = partial_idx_by_animal{ii}.B(find(partial_bin_idx_3_split{ii}.B == bb));
+        
     end
 end
 
@@ -878,36 +899,38 @@ for ii=1:size(binCenter_data,2)
     end
 end
 
-
-%for each animal
-f=figure
-for ii=1:size(binCenter_data,2)
-    subplot(6,2,ii)
-    hold on
-    %plot zone separator lines
-    [f2,x,group,positions,labelpos] =  multiple_boxplot_subplot(merge_new_split{ii}',xlab,{'A','B'},col');
-    
-    title(num2str(ii))
-    %overlay boxplot to add median line
-    z= boxplot(x,group, 'positions', positions);
-    lines = findobj(z, 'type', 'line', 'Tag', 'Median');
-    set(lines, 'Color', 'k');
-    set(lines, 'LineWidth',2)
-    ylim([0 100])
-    xticks([1.3750, 2.1250, 2.875])
-    xticklabels({'Zone I', 'Zone II', 'Zone III'})
-    ylabel('Place field position')
-    %yticks([0 20 40 60 80 100])
-    %yticklabels({'0', '0.2', '0.4','0.6','0.8','1'})
-    plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
-    plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
-    %set(gca,'FontSize',16)
-    
-    %add number count to display
-    txtA_1 = [num2str(partial_ct_by_animal(1,1,ii))];
-    text(60,0.8,txtA_1)
-    
+%% For each animal, boxplots of A vs. B counts
+if 1
+    f=figure
+    for ii=1:size(binCenter_data,2)
+        subplot(6,2,ii)
+        hold on
+        %plot zone separator lines
+        [f2,x,group,positions,labelpos] =  multiple_boxplot_subplot(merge_new_split{ii}',xlab,{'A','B'},col');
+        
+        title(num2str(ii))
+        %overlay boxplot to add median line
+        z= boxplot(x,group, 'positions', positions);
+        lines = findobj(z, 'type', 'line', 'Tag', 'Median');
+        set(lines, 'Color', 'k');
+        set(lines, 'LineWidth',2)
+        ylim([0 100])
+        xticks([1.3750, 2.1250, 2.875])
+        xticklabels({'Zone I', 'Zone II', 'Zone III'})
+        ylabel('Place field position')
+        %yticks([0 20 40 60 80 100])
+        %yticklabels({'0', '0.2', '0.4','0.6','0.8','1'})
+        plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
+        plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
+        %set(gca,'FontSize',16)
+        
+        %add number count to display
+        txtA_1 = [num2str(partial_ct_by_animal(1,1,ii))];
+        text(60,0.8,txtA_1)
+        
+    end
 end
+
 
 %% Distribution of partially remapping fields for A and B plot and KS test for significance (Figure 2F)
 
