@@ -708,12 +708,13 @@ partial_A_common_far_input(:,2) = partial_A_common_far(3,:);
 partial_B_common_far_input(:,1) = partial_B_common_far([1],:);
 partial_B_common_far_input(:,2) = partial_B_common_far(3,:);
 
-
-%% Bin as a function of center and get boxplots of distrubution
+%% Bin as a function of A center and get boxplots for distribution
+%place in bin for common A field
 %get bin indices
 %10 even spaced bins
-partial_bin_idx.A = discretize(partial_A_common_far_input(:,1),[0:10:100]);
-partial_bin_idx.B = discretize(partial_B_common_far_input(:,1),[0:10:100]);
+%uncomment if problem
+%partial_bin_idx.A = discretize(partial_A_common_far_input(:,1),[0:10:100]);
+%partial_bin_idx.B = discretize(partial_B_common_far_input(:,1),[0:10:100]);
 
 %3 behaviorally spaced bins (1-35, 35-75, 75-100)
 %this will assign values to one of three bins defined in parameters using
@@ -731,10 +732,46 @@ end
 merge_hist_counts_3(1:2:5) = count_3.A;
 merge_hist_counts_3(2:2:6) = count_3.B;
 
-%boxplot 2 wrapper(plot distributions of diff sizes
-col=@(x)reshape(x,numel(x),1);
-boxplot2=@(C,varargin)boxplot(cell2mat(cellfun(col,col(C),'uni',0)),cell2mat(arrayfun(@(I)I*ones(numel(C{I}),1),col(1:numel(C)),'uni',0)),varargin{:});
+%% Bin as a function of A center and get boxplots for distribution by animal/session
+%get bin indices
+%10 even spaced bins
 
+%split by common field
+% for ii=1:size(binCenter_data,2)
+%     partial_bin_idx_split{ii}.A = discretize(partial_A_common_far_split_input{ii}(1,:)',[0:10:100]);
+%     partial_bin_idx_split{ii}.B = discretize(partial_B_common_far_split_input{ii}(1,:)',[0:10:100]);
+% end
+
+%3 behaviorally spaced bins (1-35, 35-75, 75-100)
+%this will assign values to one of three bins defined in parameters using
+%A common position
+for ii=1:size(binCenter_data,2)
+    partial_bin_idx_3_split{ii}.A = discretize(partial_A_common_far_split_input{ii}(1,:)',[0,B_zone_end,A_zone_end,100]);
+    partial_bin_idx_3_split{ii}.B = discretize(partial_B_common_far_split_input{ii}(1,:)',[0,B_zone_end,A_zone_end,100]);
+end
+
+%for each bin (3 behavior)
+for ii=1:size(binCenter_data,2)
+    for bb=1:3
+        count_3_split{ii}.A{bb} = partial_A_common_far_split_input{ii}(2,find(partial_bin_idx_3_split{ii}.A == bb))';
+        count_3_split{ii}.B{bb} = partial_B_common_far_split_input{ii}(2,find(partial_bin_idx_3_split{ii}.B == bb))';
+    end
+end
+
+%merge both cell in alternate manner (input into bar plotter) for each
+%animal
+for ii=1:size(binCenter_data,2)
+    merge_hist_counts_3_split{ii}(1:2:5) = count_3_split{ii}.A;
+    merge_hist_counts_3_split{ii}(2:2:6) = count_3_split{ii}.B;
+end
+
+%QC check if split adds to total number of partial neurons (checks out)
+% for ii=1:size(binCenter_data,2)
+%     element_partial{ii} = cell2mat(merge_hist_counts_3_split{ii}');
+% end
+% 
+% nb_partial_remappers_check = length(cell2mat(element_partial'));
+% isequal(nb_partial_remappers_check, size(partial_com_far_combined,2))
 
 %% Statistics
 [h,p] = ranksum(count_3.A{1},count_3.B{1})
@@ -756,7 +793,7 @@ col=col/255;
 f=figure 
 hold on
 %plot zone separator lines
-[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A','B'},col') 
+[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A','B'},col');
 %overlay boxplot to add median line 
 z= boxplot(x,group, 'positions', positions);
 lines = findobj(z, 'type', 'line', 'Tag', 'Median');
@@ -771,6 +808,106 @@ ylabel('Place field position')
 plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
 plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
 set(gca,'FontSize',16)
+
+%% Make plot of of scatter and bars to show bimodal distribution of A lap neurons
+
+%get colormap
+paper_cmap = return_paper_colormap();
+
+figure('Position', [2335 351 915 597])
+hold on
+xlim([0 10])
+marker_size = 18;
+ylabel('Partial place field position along track')
+yticks([0 20 40 60 80 100])
+yticklabels({'0','0.2','0.4','0.6','0.8','1'})
+
+xticks([1.5 4.5 7.5])
+xticklabels({'Zone I','Zone II','Zone III'})
+
+%AI
+bar(1, median(merge_new{1,1}),'FaceColor','none','EdgeColor',paper_cmap(1,:),'LineWidth',1.5)
+scatter(ones(1,size(merge_new{1,1},1)),merge_new{1,1},marker_size,'filled','MarkerFaceColor',paper_cmap(1,:))
+%BI
+bar(2, median(merge_new{2,1}),'FaceColor','none','EdgeColor',paper_cmap(2,:),'LineWidth',1.5)
+scatter(2*ones(1,size(merge_new{2,1},1)),merge_new{2,1},marker_size,'filled','MarkerFaceColor',paper_cmap(2,:))
+
+%AII
+bar(4, median(merge_new{1,2}),'FaceColor','none','EdgeColor',paper_cmap(1,:),'LineWidth',1.5)
+scatter(4*ones(1,size(merge_new{1,2},1)),merge_new{1,2},marker_size,'filled','MarkerFaceColor',paper_cmap(1,:))
+%BII
+bar(5, median(merge_new{2,2}),'FaceColor','none','EdgeColor',paper_cmap(2,:),'LineWidth',1.5)
+scatter(5*ones(1,size(merge_new{2,2},1)),merge_new{2,2},marker_size,'filled','MarkerFaceColor',paper_cmap(2,:))
+
+%AIII
+bar(7, median(merge_new{1,3}),'FaceColor','none','EdgeColor',paper_cmap(1,:),'LineWidth',1.5)
+scatter(7*ones(1,size(merge_new{1,3},1)),merge_new{1,3},marker_size,'filled','MarkerFaceColor',paper_cmap(1,:))
+%BIII
+bar(8, median(merge_new{2,3}),'FaceColor','none','EdgeColor',paper_cmap(2,:),'LineWidth',1.5)
+scatter(8*ones(1,size(merge_new{2,3},1)),merge_new{2,3},marker_size,'filled','MarkerFaceColor',paper_cmap(2,:))
+
+%add significance lines
+sigstar([1,2])
+sigstar([4,5])
+sigstar([7,8])
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+%set(gca,'XTick',[])
+
+%% Boxplot of partial remapping distributions as subplot for each animal
+
+%merge for each animal
+for ii=1:size(binCenter_data,2)
+    merge_new_split{ii} = [merge_hist_counts_3_split{ii}([1,3,5]);merge_hist_counts_3_split{ii}([2,4,6])];
+end
+
+%count each type cell type in each subgroup for each animal
+for ii=1:size(binCenter_data,2)
+    %place each count in to array
+    partial_ct_by_animal(:,:,ii) = cellfun(@(x) size(x,1),merge_new_split{ii},'UniformOutput',true);
+end
+
+%replace empty cells with nans
+for ii=1:size(binCenter_data,2)
+    %find index of empty cells
+    empty_cells{ii} = find(cellfun(@isempty,merge_new_split{ii}) ==1);
+    %if index found
+    if ~isempty(empty_cells{ii})
+        merge_new_split{ii}(empty_cells{ii}) = {nan};
+    end
+end
+
+
+%for each animal
+f=figure
+for ii=1:size(binCenter_data,2)
+    subplot(6,2,ii)
+    hold on
+    %plot zone separator lines
+    [f2,x,group,positions,labelpos] =  multiple_boxplot_subplot(merge_new_split{ii}',xlab,{'A','B'},col');
+    
+    title(num2str(ii))
+    %overlay boxplot to add median line
+    z= boxplot(x,group, 'positions', positions);
+    lines = findobj(z, 'type', 'line', 'Tag', 'Median');
+    set(lines, 'Color', 'k');
+    set(lines, 'LineWidth',2)
+    ylim([0 100])
+    xticks([1.3750, 2.1250, 2.875])
+    xticklabels({'Zone I', 'Zone II', 'Zone III'})
+    ylabel('Place field position')
+    %yticks([0 20 40 60 80 100])
+    %yticklabels({'0', '0.2', '0.4','0.6','0.8','1'})
+    plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
+    plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
+    %set(gca,'FontSize',16)
+    
+    %add number count to display
+    txtA_1 = [num2str(partial_ct_by_animal(1,1,ii))];
+    text(60,0.8,txtA_1)
+    
+end
 
 %% Distribution of partially remapping fields for A and B plot and KS test for significance (Figure 2F)
 
@@ -867,8 +1004,6 @@ end
 %common bin on x axis
 %partial bin on y axis
 
-%% Plot 
-
 
 %% Statistics (combined dataset)
 
@@ -904,7 +1039,13 @@ histogram(partial_B_common_far_input(:,2),[0:10:100],'Normalization','probabilit
 plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
 plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
 
+
 %% OLD
+
+%boxplot 2 wrapper(plot distributions of diff sizes
+% col=@(x)reshape(x,numel(x),1);
+% boxplot2=@(C,varargin)boxplot(cell2mat(cellfun(col,col(C),'uni',0)),cell2mat(arrayfun(@(I)I*ones(numel(C{I}),1),col(1:numel(C)),'uni',0)),varargin{:});
+
 
 % 
 % merge_far_binCenters = [];
