@@ -6,18 +6,27 @@ function figure_2_3_analysis(path_dir)
 %this one was excluded b/c analyzed after PSEM silecing occurred
 
 %include in processing (detailed notes below for each dataset)
+%1
 %path_dir = {'G:\Figure_2_3_selective_remap\I47_LP_AB_d1_062018_1'};
+%2
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
-
+%3
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%4
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
- 
+%5 
 %path_dir = {'G:\Figure_2_3_selective_remap\I53LT_AB_sal_113018_1'};
+%6
 %path_dir = {'G:\Figure_2_3_selective_remap\I56_RTLS_AB_prePost_sal_042419_1'};
+%7
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
-%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+%8
+path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+%9
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
+%10
 %path_dir = {'G:\Figure_2_3_selective_remap\I46_AB_d1_062018_1'};
+%11
 %path_dir = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'};
 
 %DON'T INCLUDE (only one)
@@ -105,8 +114,15 @@ if 0
     
     
     %generate figure used in task selecitve figure
-    options.plotFigure2 = 0;
+    options.plotFigure2 = 1;
     raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
+    
+    %% Generate partial remapper display for supplement figure
+    
+    options.plotFigure2 = 1;
+    options.animalIdx = 8;
+    options.partial = 1;
+    raster_spiral_partial_maps(session_vars,CNMF_vars,removeROI,templates,partial_idx_by_animal_zone,options)    
     
     %% Preprare inputs for raster spiral plotter
     %add option above to prevent from re-calculating values on every run
@@ -119,6 +135,7 @@ if 0
     %figure presentation
     options.plotFigure2 = 1;
     plot_raster_spiral_only(plot_raster_vars,session_vars,templates,task_remapping_ROIs,path_dir,options)
+    
 end
 
 %% Get mean norm position of each reward (A or B)
@@ -372,8 +389,8 @@ event_5_min_and_occup_filtered_ROI;
 %% Split remapping categories by stat sig of rate map correlations (global vs non global)
 
 [remapping_corr_idx] = remapping_correlations(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class, task_remapping_ROIs,pf_count_filtered, options);
-                   
-                    
+
+
 %% Speed data for each lap (extract speed in each bin) - insert speed data
 
 [mean_bin_speed, lap_bin_split] =task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
