@@ -4,6 +4,7 @@ function [task_selective_ROIs] = task_selective_categorize_multi_ses(tuned_logic
 %tuned_log = tunedLogical.ts.AandB_tuned;
 
 %QC checked
+%commented out speed
 
 %% Define inputs variables
 
@@ -144,7 +145,7 @@ for ss=sessionSelect
         %lap assignment for A
         event_lap_idx{ss}.A{rr} = Behavior_split{ss}{selectTrial(1)}.resampled.lapNb(logical(Event_split{ss}{selectTrial(1)}.Run.run_onset_binary(:,rr)));
         %event speed on each lap
-        event_speed{ss}.A{rr} = Behavior_split{ss}{selectTrial(1)}.speed(find(Event_split{ss}{selectTrial(1)}.Run.run_onset_binary(:,rr) == 1));
+        %event_speed{ss}.A{rr} = Behavior_split{ss}{selectTrial(1)}.speed(find(Event_split{ss}{selectTrial(1)}.Run.run_onset_binary(:,rr) == 1));
         
         %time of significant run events in B
         event_norm_time{ss}.B{rr} = Imaging_split{ss}{selectTrial(2)}.time_restricted(find(Event_split{ss}{selectTrial(2)}.Run.run_onset_binary(:,rr) == 1))/60;
@@ -153,7 +154,7 @@ for ss=sessionSelect
         %lap assignment for B
         event_lap_idx{ss}.B{rr} = Behavior_split{ss}{selectTrial(2)}.resampled.lapNb(logical(Event_split{ss}{selectTrial(2)}.Run.run_onset_binary(:,rr)));
         %event speed on each lap
-        event_speed{ss}.B{rr} = Behavior_split{ss}{selectTrial(2)}.speed(find(Event_split{ss}{selectTrial(2)}.Run.run_onset_binary(:,rr) == 1));        
+        %event_speed{ss}.B{rr} = Behavior_split{ss}{selectTrial(2)}.speed(find(Event_split{ss}{selectTrial(2)}.Run.run_onset_binary(:,rr) == 1));        
     end
 end
 

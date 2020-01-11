@@ -284,7 +284,8 @@ options.allCorrect = 0;
 
 %% Get max transient peak here
 %get field event rates of max peak
-
+%adjust center vector to point to the field
+options.select_adj_vec = 1;
 [max_bin_rate,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
 
 %% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in firld
@@ -322,6 +323,11 @@ options.tuning_criterion = 'ts';
 %save pf_vector_max and cent_diff for angle difference analysis
 
 save(fullfile(crossdir,'pf_vector_max.mat'),'pf_vector_max');
+
+%% Export matching STCs for Jason for detecting splitter cells across time
+%all neurons first
+
+export_day_matched_STCs(session_vars,session_vars_append,registered)
 
 %% Split neurons by A or B task selective category - A or B selective (exclusive)
 %which criterion to use for task-selective ROIs
