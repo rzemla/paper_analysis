@@ -21,30 +21,33 @@ options.selectTrial = [4 5];
 %for use in global workspace
 selectTrial = options.selectTrial;
 
+%ANIMAL #1
 %I56_RTLS
 %input directories to matching function
-%  path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6',...
-%      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_punish_041719_7'};
-% % %cross session directory
-%  crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
+ path_dir = {'G:\OCGOL_learning_short_term\I56_RTLS\I56_RLTS_5AB_041019_1',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_5AB_041119_2',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041219_3',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_3A3B_041319_4',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041519_5',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6',...
+     'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_punish_041719_7'};
+% %cross session directory
+ crossdir = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
 
+%ANIMAL #2
 %I57_RTLS
- path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_5AB_041119_2',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_3A3B_041219_3',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_1A1B_041319_4',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041519_5',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041619_6',...
-     'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
+%  path_dir = {'G:\OCGOL_learning_short_term\I57_RTLS\I57_RLTS_5AB_041019_1',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_5AB_041119_2',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_3A3B_041219_3',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_1A1B_041319_4',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041519_5',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_no_punish_041619_6',...
+%      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
+% 
+% %cross session directory
+% crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 
-%cross session directory
-crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
-
+%ANIMAL #3
 %I57_LT
 %  path_dir = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
 %      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041719_2',...
@@ -57,6 +60,7 @@ crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 %  
 %  crossdir = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
 
+%ANIMAL #4
 %I58 RT
 %input directories to matching function
 %  path_dir = {'E:\OCGOL_learning_short_term\I58_RT\I58_RT_5A5B_073019_1',...
@@ -71,6 +75,7 @@ crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 % %cross session directory
 % crossdir = 'E:\OCGOL_learning_short_term\I58_RT\crossSession';
 
+%ANIMAL #5
 %I58 LT
 % path_dir = {'E:\OCGOL_learning_short_term\I58_LT\I58_LT_5A5B_080419_1',...
 %      'E:\OCGOL_learning_short_term\I58_LT\I58_LT_5A5B_080519_2',...
@@ -82,6 +87,7 @@ crossdir = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 % %cross session directory
 % crossdir = 'E:\OCGOL_learning_short_term\I58_LT\crossSession';
 
+%ANIMAL #6
 %I58 RTLP
 %  path_dir = {'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_5A5B_080419_1',...
 %      'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_5A5B_080519_2',...
@@ -325,9 +331,12 @@ options.tuning_criterion = 'ts';
 save(fullfile(crossdir,'pf_vector_max.mat'),'pf_vector_max');
 
 %% Export matching STCs for Jason for detecting splitter cells across time
-%all neurons first
+%all neurons first with minimum number of events
 
-export_day_matched_STCs(session_vars,session_vars_append,registered)
+[matching_tun_curves] = export_day_matched_STCs(session_vars,session_vars_append,registered);
+
+%export the matching STCs
+save(fullfile(crossdir,'matching_tun_curves.mat'),'matching_tun_curves');
 
 %% Split neurons by A or B task selective category - A or B selective (exclusive)
 %which criterion to use for task-selective ROIs
@@ -551,7 +560,24 @@ save(fullfile(crossdir,'tc_corr_match.mat'),'tc_corr_match')
 %which sessions to use
 %options.sessionSelect = [1 2 3 4 5 6];
 
+%performance and total laps for each session
 [ses_perf,ses_lap_ct] = session_performance(session_vars,options);
+
+%modify into table format with descriptors
+%1st row - performance on all laps
+%2nd row - A trial performance
+%3rd row - B trial performance
+
+for ii=1:size(session_vars,2)
+    var_names{ii} = ['Session_',num2str(ii)];
+end
+
+%convert into table
+ses_perf_table = array2table(ses_perf,'RowNames',{'All trials','A trials','B trials'},'VariableNames',var_names);
+ses_lap_ct_table = array2table(ses_lap_ct,'RowNames',{'All trials','A trials','B trials'},'VariableNames',var_names);
+
+%export performance tables for Jason
+save(fullfile(crossdir,'perf_lap_tables.mat'),'ses_perf_table','ses_lap_ct_table');
 
 %export session performance data
 save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');

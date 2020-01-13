@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = export_day_matched_STCs(session_vars,session_vars_append,registered)
+function [matching_tun_curves] = export_day_matched_STCs(session_vars,session_vars_append,registered)
 %export matching STCs for A and B neurons
 
 %go down pipeline and remove ROIs with less than 5 run events
@@ -106,22 +106,18 @@ end
 [session_sm_rate_map_min_5_events_both_A_B] = multi_session_STC_extract(match_list_run_event_filtered_5_event_both_A_B,rate_map_ev_sm_oc_sm);
 
 %% Arrange as a struct for export purposes
-  
-size(cell2mat(session_STC_nonNorm_min_5_events_global))
-size(cell2mat(session_STC_norm_min_5_events_global))
-size(cell2mat(session_sm_rate_map_min_5_events_global))
 
-size(cell2mat(session_STC_nonNorm_min_5_events_both_A_B))
-size(cell2mat(session_STC_norm_min_5_events_both_A_B))
-size(cell2mat(session_sm_rate_map_min_5_events_both_A_B))
+%minimum 5 run events on any lap
+matching_tun_curves.min_5_global_events.STC_nonNorm = session_STC_nonNorm_min_5_events_global;
+matching_tun_curves.min_5_global_events.STC_norm = session_STC_norm_min_5_events_global;
+matching_tun_curves.min_5_global_events.sm_rate_map = session_sm_rate_map_min_5_events_global;
 
-%% Export for splitter analysis across learning 
+%minimum 5 run events on A and B laps
+matching_tun_curves.min_5_events_both_A_B.STC_nonNorm = session_STC_nonNorm_min_5_events_both_A_B;
+matching_tun_curves.min_5_events_both_A_B.STC_norm = session_STC_norm_min_5_events_both_A_B;
+matching_tun_curves.min_5_events_both_A_B.sm_rate_map = session_sm_rate_map_min_5_events_both_A_B;
 
-merge_norm_STC = cell2mat(session_sm_rate_map_min_5_events_global);
 
-figure
-imagesc(merge_norm_STC)
-hold on
 
 
 end

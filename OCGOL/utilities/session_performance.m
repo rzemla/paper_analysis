@@ -1,13 +1,15 @@
 function [performance,session_lap_ct,session_lap_ct_corr] = session_performance(session_vars, options)
 
 %% TODO: Adjust for punish trials on punish days and excluded trials due to technical issues
-
+%should already be done
 %technical exclusion adjustment
-%
+
 
 %A correct (2) divided by all A trials (2 - correct A trials, 20 - incorrect A trials))
 for ss = options.sessionSelect
     %get total number of laps after adjustment for technical exclusion
+    %only include correct and incorrect trials (not punish or technically
+    %excluded trials)
     nb_laps_adj_tech(ss) = sum((session_vars{ss}.Behavior.performance.trialCorrect == 0) | (session_vars{ss}.Behavior.performance.trialCorrect == 1));
     
     %all performance
