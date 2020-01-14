@@ -201,7 +201,7 @@ end
 
 %% Generate correct and incorrect STCs and cross-correlate
 
-corr_incorr_correlation(session_vars)
+corr_incorr_correlation
 
 %% Calculate relevant place fields
 
