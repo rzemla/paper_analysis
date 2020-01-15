@@ -201,7 +201,7 @@ end
 
 %% Generate correct and incorrect STCs and cross-correlate
 
-corr_incorr_correlation(session_vars)
+[A,B,trial_counts_tbl] = corr_incorr_correlation(session_vars{1});
 
 %% Calculate relevant place fields
 

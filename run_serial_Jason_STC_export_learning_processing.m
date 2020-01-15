@@ -78,11 +78,20 @@ path_dir{6} = {'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_5A5B_080419_1',..
 crossdir{6} = 'E:\OCGOL_learning_short_term\I58_RTLP\crossSession';
  
 
-%% Run the analysis
+%% Run the analysis for STC export for splitter cell analysis
 
 for ii=[1 3 4 5 6]
     disp(['Running: ', num2str(ii)])
     OCGOL_learning_remapping_Jason_export_shortened_V0(path_dir{ii},crossdir{ii})
 end
+
+%% Run the export of correct vs incorrect trial analysis
+
+for ii=[1 2 3 4 5 6]
+    disp(['Running: ', num2str(ii)])
+    extract_STCs_for_split_session_analysis(path_dir{ii},crossdir{ii})
+end
+
+
 
 
