@@ -85,7 +85,7 @@ for ii=[1 3 4 5 6]
     OCGOL_learning_remapping_Jason_export_shortened_V0(path_dir{ii},crossdir{ii})
 end
 
-%% Run the export of correct vs incorrect trial analysis
+%% Run the export of correct vs incorrect trial analysis (does not include random selection of laps)
 
 for ii=[1 2 3 4 5 6]
     disp(['Running: ', num2str(ii)])
