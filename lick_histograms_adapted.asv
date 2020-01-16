@@ -236,9 +236,6 @@ for aa=1:4
 end
 
 %fraction of A 
-frac_A_trials_corr_by_ses = squeeze(corr_mat(:,1,:))';
-
-frac_B_trials_corr_by_ses = squeeze(corr_mat(:,2,:))';
 
 %get mean and sem for A and B
 mean_corr = mean(corr_mat,3);
