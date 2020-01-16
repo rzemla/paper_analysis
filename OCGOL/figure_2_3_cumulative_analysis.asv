@@ -36,10 +36,8 @@ path_dir{11} = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'
 
 %N =10; FOV = 11 (2 FOV from single animal)
 
-%% Load the reward endzones calculated from script below (remapping_centroids_updated) into variable
+%% Load the reward endzones calculated from script below (remapping_centroids_updated) into workspace
 
-%load in struct with reward zone start and end for each animal
-load(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zones_all_animals.mat'));
 
 
 %% Fraction of place cell (A sel, B sel, A&B remapping,neither) - bar chart and pie chart
@@ -86,7 +84,7 @@ rate_remap_traces(path_dir)
 %3 - 50 (every 2) relative to 100 bins
 options.bin_choose = 2;
 
-centroid_dist_selective(path_dir,reward_zones_all_animal,options)
+centroid_dist_selective(path_dir,options)
 
 %% AUC/min scatterplots of A vs B neurons for each animal 
 
@@ -119,13 +117,14 @@ frac_remapping_neurons_corr_criteria(path_dir)
 
 %% Modification to original code (updated using established criteria)
 %return bin position of the respective reward zones
-[reward_zones_all_animal,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir);
+[A_zone_end, B_zone_end,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir);
 
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','partial_idx_by_animal.mat'),'partial_idx_by_animal_zone');
 
 %save the reward zone endpoints (100 bins) into a common file for use by functions
 %above
-save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zones_all_animals.mat'),'reward_zones_all_animal');
+save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_endzones_all animals.mat'),'A_zone_end','B_zone_end');
+
 
 %% Remapping centroids (OLD)
 %Figure 3E/F ( all Figure 3 code is here - organize this)

@@ -6,13 +6,14 @@ function [cmap_return] = return_paper_colormap()
 %A&B - dark magenta
 %A&B - A - light blue (light sky blue)
 %A&B - B - light red (light coral red)
+%odor labels - forest green
 
 cmap_return = [65,105,225;
                 220,20,60;
                 139, 0, 139;
                 135,206,250;
-                240,128,128]./255;
-
+                240,128,128;
+                34,139,34]./255;
 
 end
 

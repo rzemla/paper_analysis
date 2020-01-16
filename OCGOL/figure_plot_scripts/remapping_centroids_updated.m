@@ -1,4 +1,4 @@
-function [A_zone_end, B_zone_end,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir)
+function [reward_zones_all_animal,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir)
 
 %% Load in data from each session directory
 for ee=1:size(path_dir,2)
@@ -35,12 +35,25 @@ mean_track_end_cm = mean(track_end_cm);
 mean_rew_A_pos = mean(rew_A_pos);
 mean_rew_B_pos = mean(rew_B_pos);
 
-%5 cm zone
-reward_5cm_dist = 5/mean_track_end_cm;
+%10 cm zone
+reward_10cm_dist = 10/mean_track_end_cm;
 
 %zone ends in bins
-A_zone_end = 100*round(mean_rew_A_pos + reward_5cm_dist,2);
-B_zone_end = 100*round(mean_rew_B_pos + reward_5cm_dist,2);
+A_zone_start = 100*round(mean_rew_A_pos,2);
+B_zone_start = 100*round(mean_rew_B_pos,2);
+%end zone
+A_zone_end = 100*round(mean_rew_A_pos + reward_10cm_dist,2);
+B_zone_end = 100*round(mean_rew_B_pos + reward_10cm_dist,2);
+
+
+
+%% Bundle reward bins for export
+
+reward_zones_all_animal.A_zone_start = A_zone_start;
+reward_zones_all_animal.B_zone_start = B_zone_start;
+reward_zones_all_animal.A_zone_end = A_zone_end;
+reward_zones_all_animal.B_zone_end = B_zone_end;
+
 
 %% Simple scatter plot for common/global remapper
 
@@ -436,8 +449,8 @@ common_rad_angles = circ_ang2rad(common_bins_combined(1,:)./100.*360);
 %% Binomial test for shift (edges included) - B-A - relative to A
 
 %zone ends in bins
-A_zone_end = 100*round(mean_rew_A_pos + reward_5cm_dist,2);
-B_zone_end = 100*round(mean_rew_B_pos + reward_5cm_dist,2);
+A_zone_end = 100*round(mean_rew_A_pos + reward_10cm_dist,2);
+B_zone_end = 100*round(mean_rew_B_pos + reward_10cm_dist,2);
 
 % global_bins_combined
 % A_minus_B_global = global_bins_combined(1,:) - global_bins_combined(2,:);
