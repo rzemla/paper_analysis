@@ -69,6 +69,26 @@ for bb=1:25
     p(bb) = signrank(centroid_count_ds_norm.A{2}(:,bb), centroid_count_ds_norm.B{2}(:,bb));
 end
 
+%% Resume here to generate linearize plot and get Rayleigh test
+figure
+hold on
+ylim([0 0.2])
+yticks([0 0.05 0.1 0.15 0.2])
+h1 = histogram(common_bins_combined(1,:),0:10:100,'Normalization','probability');
+xticks([0 100])
+xticklabels({'0','1'})
+xlabel('Normalized position')
+ylabel('Normalized density')
+h1.FaceColor = [139 0 139]./255;
+h1.FaceAlpha = 1;
+
+plot([B_zone_end B_zone_end], [0 0.2],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
+plot([A_zone_end A_zone_end], [0 0.2],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
+
+%% Do Rayleigh test of uniformity on dataset
+%convert bins to radians
+common_rad_angles = circ_ang2rad(common_bins_combined(1,:)./100.*360);
+[pval, z] = circ_rtest(common_rad_angles)
 
 %% Generate shuffle data
 %get number of ROI for each animal for A and B laps
