@@ -1,4 +1,7 @@
 function figure_2_3_analysis(path_dir)
+%% Set to not display figures when running in serial export fashion
+
+set(0,'DefaultFigureVisible','off'); 
 
 %% Import variables and define options
 
@@ -11,7 +14,7 @@ function figure_2_3_analysis(path_dir)
 %2
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 %3
-%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %4
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 %5 
@@ -21,7 +24,7 @@ function figure_2_3_analysis(path_dir)
 %7
 %path_dir = {'G:\Figure_2_3_selective_remap\I52RT_AB_sal_113018_1'};  
 %8
-path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I57_RTLS_AB_prePost_792_042519_1'};
 %9
 %path_dir = {'G:\Figure_2_3_selective_remap\I45_RT_AB_d1_062018_1'};
 %10
@@ -388,16 +391,19 @@ event_5_min_and_occup_filtered_ROI;
                                         
 %% Split remapping categories by stat sig of rate map correlations (global vs non global)
 
-[remapping_corr_idx] = remapping_correlations(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class, task_remapping_ROIs,pf_count_filtered, options);
+[remapping_corr_idx,tun_curve_corr] = remapping_correlations(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class, task_remapping_ROIs,pf_count_filtered, options);
 
+%export the r values and p values associated with each rate map correlation
+save(fullfile(path_dir{1},'cumul_analysis','tun_curve_corr.mat'),'tun_curve_corr'); 
 
 %% Speed data for each lap (extract speed in each bin) - insert speed data
 
 [mean_bin_speed, lap_bin_split] =task_sel_speed(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
 
 
-%% Compare speed and AUC of events for rate remapping neurons and DEFINE each category
-%run 2 way anova for each neuron
+%% Compare speed and AUC of events for rate remapping neurons and DEFINE  remapping each category
+%determine the other subcategories of the remapping neurons
+%run 2 way anova for each neuron to determine which one is rate remapper
 
 [remapping_corr_idx,remap_idx_traces,com_idx_traces,AUC_remappers] = speed_AUC_comparison(task_remapping_ROIs, remapping_corr_idx, lap_bin_split, session_vars, max_transient_peak,...
     STC_export, event_5_min_and_occup_filtered_ROI,ABtuned_all_si_ts, options);

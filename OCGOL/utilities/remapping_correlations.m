@@ -1,4 +1,4 @@
-function [remap_corr_idx] = remapping_correlations(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class,task_remapping_ROIs,pf_count_filtered,options)
+function [remap_corr_idx,tun_curve_corr] = remapping_correlations(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class,task_remapping_ROIs,pf_count_filtered,options)
 
 
 %TO-DO:
@@ -203,6 +203,10 @@ remap_corr_idx.non_global_idx = non_global_idx;
 
 %TC correlation
 remap_corr_idx.global_idx = global_idx;
+
+%export tuning correlation R coef and p value for each neuron in struct
+tun_curve_corr.r = r_score;
+tun_curve_corr.p_val = p_val;
 
 end
 

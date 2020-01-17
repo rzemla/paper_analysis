@@ -110,6 +110,9 @@ lap_speed_by_animal(path_dir)
 
 event_speed_scatter(path_dir)
 
+%% Generate scatterplot with correlation against p-value for supplement
+
+corr_score_scatter(path_dir)
 
 %% REMAPPING RELATED (FIGURE 3)
 

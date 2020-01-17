@@ -296,11 +296,11 @@ rate_remap_group_only = setdiff(rate_remap_ROI_group_all,intersect(rate_remap_RO
 
 %% Get event onset/offset in frames
 %onset and offset frame of event
-Event_split{1, 1}{1, 1}.Run.run_onset_offset{1, 1}
+Event_split{1, 1}{1, 1}.Run.run_onset_offset{1, 1};
 %trace of event
-Event_split{1, 1}{1, 1}.Run.properties.trace  
+Event_split{1, 1}{1, 1}.Run.properties.trace;
 
-event_run_bins
+event_run_bins;
 
 %% Run wilcoxon for all ROIs - check if any sig
 for ss=sessionSelect
