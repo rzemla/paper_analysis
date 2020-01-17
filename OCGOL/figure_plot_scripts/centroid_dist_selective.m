@@ -141,9 +141,8 @@ set(gca,'LineWidth',2)
 % plot([B_zone_end B_zone_end]./4, [0 0.15],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
 % plot([A_zone_end-1 A_zone_end-1]./4, [0 0.15],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
 
-%% Run Rayleigh test on pooled data
 
-%% Do Rayleigh test of uniformity on dataset
+%% Do Rayleigh test of uniformity on pooled dataset
 bin_nb = 25;
 bin_center_25_bin = 2:4:98;
 bin2bin_dist = 4;
@@ -173,11 +172,8 @@ center_bin_radians_B_all = circ_ang2rad(cell2mat(bin_assign.B)./100.*360);
 %get similar result
 [pval_B_test_all, z_B_test_all] = circ_rtest(center_bin_radians_B_all);
 
-
 %[N, edges] = histcounts(1:100,25);
 %bin centers for 25 bins
-
-
 
 %% Generate plot of mean and sem at each bin (25), plot and do stats
 

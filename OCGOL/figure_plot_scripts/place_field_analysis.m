@@ -152,6 +152,26 @@ legend([e1 e2 e3 e4],{'A selective','B selective','A&B - A', 'A&B - B'},'locatio
 set(gca,'FontSize',16)
 set(gca,'LineWidth',1.5)
 
+%% Pool place field width data together for export for ks test analysis
+
+%move this data to prism
+pf_width_pool.Asel = cell2mat(pf_width.Asel)';
+pf_width_pool.Bsel = cell2mat(pf_width.Bsel)';
+pf_width_pool.AB.A = cell2mat(pf_width.AB.A)';
+pf_width_pool.AB.B = cell2mat(pf_width.AB.B)';
+
+[h, p] = kstest2(pf_width_pool.Asel,pf_width_pool.Bsel)
+
+figure
+hold on
+xlim([10 70])
+cdfplot(pf_width_pool.Asel)
+cdfplot(pf_width_pool.Bsel)
+cdfplot(pf_width_pool.AB.A)
+cdfplot(pf_width_pool.AB.B)
+
+
+
 %% Place field analysis plotting
 
 %plot bar
