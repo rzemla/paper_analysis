@@ -14,7 +14,7 @@ set(0,'DefaultFigureVisible','off');
 %2
 %path_dir = {'G:\Figure_2_3_selective_remap\I42R_AB_d1_032118_1'};
 %3
-path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
+%path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_1'};
 %4
 %path_dir = {'G:\Figure_2_3_selective_remap\I42L_AB_d1_032118_2'};
 %5 
@@ -147,6 +147,12 @@ end
 %save the fractions output data %
 save(fullfile(path_dir{1},'cumul_analysis','reward_positions.mat'),'reward_positions');
 
+%% Export rate maps from all ROIs (visualization supplement figures)
+
+[rate_maps_display] = export_rate_maps_for_display(session_vars);
+
+%save the fractions output data %
+save(fullfile(path_dir{1},'cumul_analysis','rate_maps_display.mat'),'rate_maps_display');
 
 
 %% Find place fields
@@ -392,6 +398,9 @@ event_5_min_and_occup_filtered_ROI;
 %% Split remapping categories by stat sig of rate map correlations (global vs non global)
 
 [remapping_corr_idx,tun_curve_corr] = remapping_correlations(session_vars,tunedLogical,task_selective_ROIs,ROI_idx_tuning_class, task_remapping_ROIs,pf_count_filtered, options);
+
+%tun_curve_corr - contains the r and p values for the rate map correlations
+%of each neuron
 
 %export the r values and p values associated with each rate map correlation
 save(fullfile(path_dir{1},'cumul_analysis','tun_curve_corr.mat'),'tun_curve_corr'); 
