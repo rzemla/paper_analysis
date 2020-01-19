@@ -142,6 +142,7 @@ end
 %orchid - global
 %paper colors
 cmap_paper = return_paper_colormap;
+
 %scatter colors
 cmap_remapping_type = [147,112,219;...
                     255,0,255]./255;

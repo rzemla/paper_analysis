@@ -16,12 +16,14 @@ options.visualize_match = 0;
 options.loadSCE = 0;
 
 options.selectTrial = [1 2];
+
+%moved below to calculate based on number of input sessions
 %which session to include in calculation
-options.sessionSelect = [1 2 3 4 5 6];
+%options.sessionSelect = [1 2 3 4 5 6];
 
 %for use in workspace
-selectTrial = options.selectTrial;
-sessionSelect = options.sessionSelect;
+%selectTrial = options.selectTrial;
+%sessionSelect = options.sessionSelect;
 
 %I47 LP
 % path_dir = {'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d1_062018_1',...
@@ -69,15 +71,15 @@ sessionSelect = options.sessionSelect;
 % crossdir = 'G:\OCGOL_stability_recall\I45_RT\crossSession';
 
 %I42L 1
-%  path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
-%      'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
+ path_dir = {'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d1_032118_1',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d2_032218_2',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d3_032318_3',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d6_032618_4',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d7_032718_5',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d8_032818_6',...
+     'G:\OCGOL_stability_recall\I42L_1\I42L_AB_d9_032918_7'};
+%cross session directory
+crossdir = 'G:\OCGOL_stability_recall\I42L_1\crossSession';
 
                             %%%%% LONG-TERM (30 day sessions) %%%%
 %I47_LP
@@ -101,14 +103,26 @@ sessionSelect = options.sessionSelect;
 % crossdir = 'D:\OCGOL_learning_long_term\I45_RT\crossSession';
 
 %I46
-path_dir = {'D:\OCGOL_learning_long_term\I46\I46_AB_d1_062018_1',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d6_062518_2',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d16_070518_3',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d20_070918_4',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d25_071318_5',...
-     'D:\OCGOL_learning_long_term\I46\I46_AB_d30_071818_6'};
-%cross session directory
-crossdir = 'D:\OCGOL_learning_long_term\I46\crossSession';
+% path_dir = {'D:\OCGOL_learning_long_term\I46\I46_AB_d1_062018_1',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d6_062518_2',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d16_070518_3',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d20_070918_4',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d25_071318_5',...
+%      'D:\OCGOL_learning_long_term\I46\I46_AB_d30_071818_6'};
+% %cross session directory
+% crossdir = 'D:\OCGOL_learning_long_term\I46\crossSession';
+
+%% Determine number of sessions to analyze for animal
+
+%which session to include in calculation
+options.sessionSelect = 1:size(path_dir,2);
+
+%for use as var in global workspace
+sessionSelect = options.sessionSelect;
+
+%% Override to selection (only 1st for animal 1)
+% options.sessionSelect = 1;
+% sessionSelect = 1;
 
 %% Load place cell variables for each session
 %get mat directories in each output folder
@@ -261,6 +275,15 @@ else
     end
 end
 
+%% Export matching STCs for Jason for detecting splitter cells across time
+%all neurons first with minimum number of events
+
+[matching_tun_curves] = export_day_matched_STCs_recall(session_vars,session_vars_append,registered);
+
+%export the matching STCs
+save(fullfile(crossdir,'matching_tun_curves.mat'),'matching_tun_curves');
+
+
 %% Define tuned logical vectors
 
 %flag to all A or B trial or only correct A or B trials
@@ -333,6 +356,8 @@ options.tuning_criterion = 'ts';
 %save pf_vector_max and cent_diff for angle difference analysis
 
 save(fullfile(crossdir,'pf_vector_max.mat'),'pf_vector_max');
+
+
 
 %% Split neurons by A or B task selective category - A or B selective (exclusive)
 %which criterion to use for task-selective ROIs
@@ -495,6 +520,7 @@ visualize_neuron_characteristics(plot_raster_vars,norm_events,registered,session
 
 activity_distributions(session_vars,task_selective_ROIs,options) 
 
+
 %% Extract performance fractions across sessions (respective laps)
 %check if agree with manual analysis
 %turn into table with future code upgrade
@@ -502,10 +528,41 @@ activity_distributions(session_vars,task_selective_ROIs,options)
 %which sessions to use
 %options.sessionSelect = [1 2 3 4 5 6];
 
-[ses_perf,ses_lap_ct,ses_lap_corr_ct] = session_performance(session_vars,options);
+%performance and total laps for each session
+[ses_perf,ses_lap_ct] = session_performance(session_vars,options);
+
+%modify into table format with descriptors
+%1st row - performance on all laps
+%2nd row - A trial performance
+%3rd row - B trial performance
+
+for ii=1:size(session_vars,2)
+    var_names{ii} = ['Session_',num2str(ii)];
+end
+
+%convert into table
+ses_perf_table = array2table(ses_perf,'RowNames',{'All trials','A trials','B trials'},'VariableNames',var_names);
+ses_lap_ct_table = array2table(ses_lap_ct,'RowNames',{'All trials','A trials','B trials'},'VariableNames',var_names);
+
+%export performance tables for Jason
+save(fullfile(crossdir,'perf_lap_tables.mat'),'ses_perf_table','ses_lap_ct_table');
 
 %export session performance data
-save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct','ses_lap_corr_ct');
+save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
+
+
+
+%% Extract performance fractions across sessions (respective laps) (old)
+%check if agree with manual analysis
+%turn into table with future code upgrade
+
+%which sessions to use
+%options.sessionSelect = [1 2 3 4 5 6];
+
+% [ses_perf,ses_lap_ct,ses_lap_corr_ct] = session_performance(session_vars,options);
+% 
+% %export session performance data
+% save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct','ses_lap_corr_ct');
 
 %% Detect SCEs and measure number of SCE in each session A or B
 
