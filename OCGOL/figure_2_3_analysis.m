@@ -362,7 +362,9 @@ save(fullfile(path_dir{1},'cumul_analysis','centroid.mat'),'centroid_ct','centro
 %% Extract AUC/min rate of selective A/B tuned neurons (and other classes)
 %RUN, NO RUN FOR NOW for A sel, Bsel, A&B (si/ts tuned)
 [total_AUC_min] = AUC_scatter(tunedLogical,task_selective_ROIs,session_vars,ROI_idx_tuning_class,options);
+
 save(fullfile(path_dir{1},'cumul_analysis','auc.mat'),'total_AUC_min');
+
 
 %% Split A&B neurons by remapping category - common, partial, global, rate remapping
 %which criterion to use for task-selective ROIs
