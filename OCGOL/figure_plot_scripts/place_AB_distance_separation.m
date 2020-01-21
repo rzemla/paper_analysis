@@ -35,6 +35,7 @@ for aa=1:size(path_dir,2)
     subplot(6,2,aa)
     hold on
     ylim([0 15])
+    xlabel('Distance [cm]')
     ylabel('Counts')
     title(num2str(aa))
     histogram(global_dist_cm{aa},0:5:100)
@@ -58,6 +59,16 @@ if 0
     histogram(cell2mat(combined_dist_metric),30,'Normalization','probability')
 end
 
+%% Data for prism to get descriptive statistics
+
+separation_cm_global = cell2mat(combined_final_global_dist).*1.96;
+
+
+%% Calculate median of distribution and plot
+median_dist = median(separation_cm_global);
+
+separation_cm_global = separation_cm_global';
+
 %% This is the histogram used in the supplement
 f = figure;
 set(f,'renderer','Painters')
@@ -68,14 +79,19 @@ title('Global remapping distance A vs. B')
 xlabel('A vs. B center of field distance [cm]')
 ylabel('Normalized density')
 histogram(cell2mat(combined_final_global_dist).*1.96,0:2.5:100,'Normalization','probability','FaceAlpha',1,'FaceColor',[139,0,139]./255)
+%plot median line
+plot([median_dist median_dist],[0 0.09],'k','LineWidth',1)
+
 yticks([0 0.02 0.04 0.06 0.08 0.1])
 set(gca,'XTick',0:10:100)
 xticks(0:10:100)
-ylim([0 0.1])
+ylim([0 0.09])
 set(gca,'TickDir','Out')
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5);
 %export rasters fpr first colum
 
-export_fig(f ,fullfile('G:\Google_drive\task_selective_place_paper\input_figures_to_illustrator\Figure_3_figures','global_AB_dist.eps'))
+%export_fig(f ,fullfile('G:\Google_drive\task_selective_place_paper\input_figures_to_illustrator\Figure_3_figures','global_AB_dist.eps'))
 
 
 
