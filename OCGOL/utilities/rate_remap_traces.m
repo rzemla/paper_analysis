@@ -16,8 +16,53 @@ for aa=1:size(path_dir,2)
     AUC.remap{aa} = AUC_data{aa}.AUC_remappers.remap;
 end
 
+%% Load in the indices of the remappers
 
-%% Assemble into more compact representation (activity remapping neurons)
+for aa=1:size(path_dir,2)
+    load_neuron_idx_path{aa} = fullfile(path_dir{aa},'cumul_analysis','remap_corr_idx.mat');
+    remapping_idxs{aa} = load(string(load_neuron_idx_path{aa}));
+end
+
+%activity remapping indices
+for aa=1:size(path_dir,2)
+    activity_remap_idx{aa} = remapping_idxs{aa}.remapping_corr_idx.final.rate_remap_all;
+end
+
+
+%% Load in the activity rate (AUC/min) of the remappers
+
+for aa=1:size(path_dir,2)
+    load_auc_min_path{aa} = fullfile(path_dir{aa},'cumul_analysis','auc.mat');
+    auc_min_data{aa} = load(string(load_auc_min_path{aa}));
+end
+
+%% Extract RUN AUC/min data from all activity remapping neurons (for each animal)
+
+for aa=1:size(path_dir,2)
+    auc_min_activity_remap{aa} = auc_min_data{aa}.total_AUC_min.run.all(:,activity_remap_idx{aa});
+end
+
+%% Merge AUC/min data into one matrix (top row - A trials; bottom row - B trials)
+
+auc_min_activity_remap_rate = cell2mat(auc_min_activity_remap);
+
+mean(auc_min_activity_remap_rate,2)
+
+figure
+subplot(1,2,1)
+hold on
+ylim([0 25])
+title('A >= B')
+plot(auc_min_activity_remap_rate(:, auc_min_activity_remap_rate(1,:)>=auc_min_activity_remap_rate(2,:)))
+
+subplot(1,2,2)
+hold on
+ylim([0 25])
+title('A < B')
+plot(auc_min_activity_remap_rate(:, auc_min_activity_remap_rate(1,:)<auc_min_activity_remap_rate(2,:)))
+
+
+%% Assemble into more compact representation (activity remapping neurons) - these are the traces 
 
 %combine into 1 big matrix
 mean_dff_matrix.remap.A = zeros(64,300);
@@ -130,7 +175,7 @@ hold on
 histogram(com_idx_AUC,10,'Normalization','probability')
 histogram(remap_idx_AUC,10,'Normalization','probability')
 
-%% Calculate index for common and remapping neurons and plot (this is the index you want)
+%% Calculate index for common and remapping neurons and plot (this is the index you want) - USED IN SUPPLEMENT
 
 max_pk_A_value_remap = max(mean_dff_matrix.remap.A,[],2);
 max_pk_B_value_remap = max(mean_dff_matrix.remap.B,[],2);
@@ -151,6 +196,26 @@ histogram(remap_idx_values,20,'Normalization','probability','DisplayStyle','stai
 
 
 [h,p] = kstest2(remap_idx_values,common_idx_values)
+
+%% Split the peak idx values by animal into cells (so as to plot with calcium traces)
+
+%get number of activity remapping neurons for each animal
+nb_activity_remap_per_animal = cellfun(@(x) size(x,2), activity_remap_idx);
+
+%starting index of 1
+start_idx = 1;
+for aa=1:size(path_dir,2)
+    %get range of idxs for each animal
+    extract_idx{aa} = start_idx:(nb_activity_remap_per_animal(aa)+start_idx-1);
+    %create a new starting index for next iteration of the loop
+    start_idx = extract_idx{aa}(end)+1;
+end
+
+%split the peak indices according to the count per animal split
+for aa=1:size(path_dir,2)
+    activity_remap_pk_idx_split{aa} = remap_idx_values(extract_idx{aa});
+end
+
 
 %% Plot the cdf of the peak indices for common vs. remapping neurons
 figure
@@ -328,14 +393,136 @@ for cc =1
 
 end
 
+%% Get range of pk idxs for supplement visualization purposes
+%min(cell2mat(activity_remap_pk_idx_split'))
+%max(cell2mat(activity_remap_pk_idx_split'))
 
+%spread of values to display 
+%~0.15, ~0.3 ~0.5
+
+%% Get the AUC/min mean and sem
+
+activity_remap_mean_AUC_min = mean(auc_min_activity_remap_rate,2);
+activity_remap_sem_AUC_min = std(auc_min_activity_remap_rate,0,2)./sqrt(size(path_dir,2));
+
+
+%% Generate the plot for each neuron and AUC/min values
+%top row : 1-3 A > B
+%low to high; animal number first, then neuron idx (linear:
+%5,6 ; 11,10; 11,11
+%bottom row: 5-7 B > A
+%4,2; 10,8; 7,1
+
+%get frame to second equivalenet 1,2,3,4,5 s in frames
+frames_sec = round([2,4,6]./0.0334);
+
+%animal number first; then ROI number (linear, not absolute index)
+A_sel_idx = [5,6;
+            11,10;
+            11,11];
+        
+B_sel_idx = [4,2;
+            10,8;
+            7,1];
+
+        figure('Position', [2120 125 1330 751])
+        %A > B
+        for ii=1:3
+            %for top row
+            subplot(2,4,ii)
+            hold on
+            axis square
+            ylim([0 2.2])
+            xlim([0 200])
+            yticks([0 1 2])
+            xticks(frames_sec)
+            xticklabels({'2','4','6'})
+            aa=A_sel_idx(ii,1); rr=A_sel_idx(ii,2);
+            title(num2str(round(activity_remap_pk_idx_split{aa}(rr),2)))
+            plot_dFF_mean_trace(remap_traces_idx{aa}.remap_idx_traces{rr}.A, remap_traces_idx{aa}.remap_idx_traces{rr}.B)
+            legend({'A','B'})
+            if ii ==1
+               ylabel('dF/F') 
+            end
+            set(gca,'FontSize',14)
+            set(gca,'LineWidth',1.5)
+        end
+%B>A
+        for ii=1:3
+            subplot(2,4,ii+4)
+            hold on
+            axis square
+            ylim([0 2.2])
+            xlim([0 200])
+            yticks([0 1 2])
+            xticks(frames_sec)
+            xticklabels({'2','4','6'})
+            aa=B_sel_idx(ii,1); rr=B_sel_idx(ii,2);
+            title(num2str(round(activity_remap_pk_idx_split{aa}(rr),2)))
+            plot_dFF_mean_trace(remap_traces_idx{aa}.remap_idx_traces{rr}.A, remap_traces_idx{aa}.remap_idx_traces{rr}.B)
+            legend({'A','B'})
+            xlabel('Time [s]')
+            if ii ==1
+               ylabel('dF/F') 
+            end
+            set(gca,'FontSize',14)
+            set(gca,'LineWidth',1.5)
+            
+        end
+
+%plot the AUC/min as subplots
+paper_cmap = return_paper_colormap;
+
+    subplot(2,4,[4])
+    hold on
+    
+    xlim([0 3])
+    xticks([1 2])
+    xticklabels({'A','B'})
+    ylim([0 7])
+    ylabel('AUC/min')
+    b =bar([1 2],activity_remap_mean_AUC_min','FaceColor','flat')
+    errorbar([1 2],activity_remap_mean_AUC_min, activity_remap_sem_AUC_min,'LineStyle','none','LineWidth',1.5,'Color','k')
+    sigstar([1 2])
+    axis square
+    set(gca,'FontSize',14)
+    set(gca,'LineWidth',1.5)    
+%    
+%     for ib = 1:numel(b)
+%         %XData property is the tick labels/group centers; XOffset is the offset
+%         %of each distinct group
+%         if ib ==1
+%             xData(1,:) = b(ib).XData + b(ib).XOffset;
+%         elseif ib ==2
+%             xData(2,:) = b(ib).XData + b(ib).XOffset;
+%         elseif ib ==3
+%             xData(3,:) = b(ib).XData + b(ib).XOffset;
+%         elseif ib ==4
+%             xData(4,:) = b(ib).XData + b(ib).XOffset;
+%         end
+%         %errorbar(xData(ib,:),grouped_means_run(:,ib)',grouped_sem_run(:,ib),'k.','LineWidth',1)
+%     end
+
+% %set A group bars to blue
+% b(1).CData(1,:) =  paper_cmap(1,:);
+% %set B group bars to red
+% b(2).CData(1,:) =  paper_cmap(2,:);
+    %% Sign rank test to test where activity rate is different between A and B trials (no diff)
+    %export this data to prism and run there
+    p = signrank(auc_min_activity_remap_rate(1,:),auc_min_activity_remap_rate(2,:))
+    
+    x = auc_min_activity_remap_rate'
+    
 %% Plot mean/sem each remapping neuron 
 figure
 sp_idx=1;
+%for every animal
 for aa=1:11
+    %for every neuron
     for rr=1:size(remap_traces_idx{aa}.remap_idx_traces,2)
         subplot(8,8,sp_idx)
         hold on
+        title([num2str(activity_remap_pk_idx_split{aa}(rr)),' ',num2str(aa),' ',num2str(rr) ])
         %find max and add 0.5
         max_dFF = max([max(mean(remap_traces_idx{aa}.remap_idx_traces{rr}.A,1)), max(mean(remap_traces_idx{aa}.remap_idx_traces{rr}.B,1))]);
         max_frame = max([max(mean(remap_traces_idx{aa}.remap_idx_traces{rr}.A,2)), max(mean(remap_traces_idx{aa}.remap_idx_traces{rr}.B,2))]);

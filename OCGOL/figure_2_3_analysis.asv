@@ -134,19 +134,15 @@ if 0
     %% Generate global remapper display for supplement figure
     %this is a derivative of the function above
     
-    %global_idx_by_animal_zone - not used, but can provide the indices
+    %partial_idx_by_animal_zone - not used, but can provide the indices
     %used to select the neurons
-    %input the neurons selected from the remapper code
-    global_idx_by_animal_zone = remapping_corr_idx.final.global;
-    %bin distance separation for global remappers (multiply by cm
-    %conversion factor to get cm separation)
-    final_global_remap_bin_diff;
+    global_idx_by_animal_zone = 0;
     
     options.plotFigure2 = 1;
     options.animalIdx = 11;
     %label to display the partial remapping schematic
     options.global = 1;
-    raster_spiral_global_maps(session_vars,CNMF_vars,removeROI,templates,global_idx_by_animal_zone,final_global_remap_bin_diff,options)
+    raster_spiral_global_maps(session_vars,CNMF_vars,removeROI,templates,global_idx_by_animal_zone,options)
     
     %% Preprare inputs for raster spiral plotter
     %add option above to prevent from re-calculating values on every run

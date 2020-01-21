@@ -54,7 +54,7 @@ cumulative_task_sel_STC(path_dir)
 
 si_ts_score_distributions(path_dir)
 
-%% Place field A&B distance separation
+%% Place field A&B distance separation (global remapper distance distribution - supplement)
 
 [combined_distances,combined_dist_metric] = place_AB_distance_separation(path_dir);
 

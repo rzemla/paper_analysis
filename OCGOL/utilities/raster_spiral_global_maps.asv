@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = raster_spiral_partial_maps(session_vars,CNMF_vars,removeROI,templates,partial_idx_by_animal_zone,options)
+function [outputArg1,outputArg2] = raster_spiral_global_maps(session_vars,CNMF_vars,removeROI,templates,global_idx_by_animal_zone,final_global_remap_bin_diff,options)
 
 %% Define/load variables for each session
 
@@ -232,7 +232,6 @@ max_val_STC = max(smooth_maps_combined,[],2);
 A_smooth_norm = (A_smooth - min_val_STC')./(max_val_STC - min_val_STC)';
 B_smooth_norm = (B_smooth - min_val_STC')./(max_val_STC - min_val_STC)';
 
-
 % normalize from 0-1 (circularly
 smooth_maps_combined_circ = [A_smooth_circ' B_smooth_circ'];
 
@@ -243,6 +242,8 @@ max_val_STC_circ = max(smooth_maps_combined_circ,[],2);
 A_smooth_norm_circ = (A_smooth_circ - min_val_STC_circ')./(max_val_STC_circ - min_val_STC_circ)';
 B_smooth_norm_circ = (B_smooth_circ - min_val_STC_circ')./(max_val_STC_circ - min_val_STC_circ)';
 
+
+%% Plot for checking which neurons fit the the example in the distribution
 figure
 hold on
 %zone II A (far)
@@ -282,152 +283,210 @@ hold on
 plot(session_vars{1, 1}.Place_cell{1}.Spatial_Info.rate_map_sm_plot{8}(:,205),'b' )
 plot(session_vars{1, 1}.Place_cell{2}.Spatial_Info.rate_map_sm_plot{8}(:,205),'r' )
 
-%% Plot as one big plot
+%% Plot as one big plot - modify this section to get global display
 marker_size = 12;
 
 %get colors
 paper_colors = return_paper_colormap;
 
+%reshape global vector into 3 column ROIs by whatever rows
+%add first ROI (arbitrary to make divisible by 3)
+go_through_global_set_of_3 = reshape([global_idx_by_animal_zone;1],[],3);
+
+%bin to cm conversion factor
+cm_conv_factor = 1.96;
+
+%convert distances to cm and reshape to match set of 3 reshaping above
+%add nan to make multiple of 3
+reshaped_cm_distance = reshape([final_global_remap_bin_diff';nan],[],3);
+%convert all values to cm
+reshaped_cm_distance = reshaped_cm_distance.*cm_conv_factor;
+
+%matching ROI idx and cm distance
+vec_cm_distance = final_global_remap_bin_diff'.*cm_conv_factor;
+
+yy = [global_idx_by_animal_zone,vec_cm_distance]
+
+%nice examples
+%near 6, 15, 556, 369, 370, 629, 423, 179 690
+%mid 524, 621, 400
+%far: 57, 563, 564, 424, 471
+%define the neurons to be plotted and cm distancce separation
+%used as input to plotted
+ROI_all = [556 400 424];
+[~,idx_dist,~] = intersect(global_idx_by_animal_zone, ROI_all,'stable');
+
+%get true/false vector the A is in B, 
+[tf, loc] = ismember(global_idx_by_animal_zone, ROI_all);
+%get order in which the elements were found
+%returns order once values are sorted in ascending order
+[~,idx_resort] = sort(loc(tf));
+%returns the sorted indices where there is a 1
+idx_display_mapper = find(tf);
+%resort the indeces according to order from sort function
+%get indices from the corresponding vectors
+idx_in_global_remap_vec = idx_display_mapper(idx_resort);
+%check that the correct indices are returned
+global_idx_by_animal_zone(idx_in_global_remap_vec)
+%get the distance for respective ROI
+dist_all = round(vec_cm_distance(idx_in_global_remap_vec));
+
 for kk=1
-    if options.partial == 1
-                
+    if options.global == 1
+        
         %number of each type of ROI - A,B,common
         % zone I (first 2 ROIs)
         %ROI_all = [309,326,602];
         % zone II (first 2 ROIs)
         %ROI_all = [346, 147, 147];
-      
+        
         % zone III (first 2 ROIs)
         %ROI_all =[349,300,346,205,91,166];
         %animal #8 (zone I, zone II, zone III)
-        ROI_all =[349,300,346,147,387,166];
-        
-        %first value is columns
-        %second value is rows
-        %6x7
-        linear_idx = 1:42;
-        matrix_order = reshape(linear_idx,6,7)';
-        
-        ROI_colors = [139,0,139]./255;
-        ROI_outline_order = matrix_order(:,1);
-        
-        figure('Position',[1920 40 1920 960],'Renderer','painters')
-        %Show spatial outline of the component
-        for rr=1:6
-            subplot(7,6,ROI_outline_order(rr))
-            imagesc(templates{1}.template);
-            hold on
-            title(num2str(ROI_all(rr)))
-            axes(gca);
-            axis square
-            xticks(gca,[])
-            yticks(gca,[])
+        %cycle through each row of set of 3 neurons
+
+            %first value is columns
+            %second value is rows
+            %6x4
+            %dimensions of subplot
+            row_sub = 4;
+            col_sub = 6;
+            linear_idx = 1:(row_sub*col_sub);
+            matrix_order = reshape(linear_idx,col_sub,row_sub)';
             
-            grayMap = brighten(gray,0.5);
-            colormap(gca,grayMap)
-            %plot componenet outline
-            plot(coor_keep_sel{ROI_all(rr)}(1,:),coor_keep_sel{ROI_all(rr)}(2,:),'Color',ROI_colors, 'LineWidth',1);
-            %zoom into component based on center of mass calculation
-            xlim([A_keep_sel_com(ROI_all(rr),2)-30, A_keep_sel_com(ROI_all(rr),2)+30])
-            ylim([A_keep_sel_com(ROI_all(rr),1)-30, A_keep_sel_com(ROI_all(rr),1)+30])
-        end
-        
-        %show color-coded (by trial) calcium traces of the component
-        ROI_trace_order = matrix_order(1:6,2:4);
-        for rr=1:6
-            subplot(7,6,ROI_trace_order(rr,:))
+            %outline of the ROIs
+            ROI_colors = [139,0,139]./255;
+            ROI_outline_order = matrix_order(:,1);
+            
+            figure('Position',[1920 40 1920 960],'Renderer','painters')
+            %for cycling through sets of 3
+%             for cc=1:32
+%                 ROI_all = go_through_global_set_of_3(cc,:);
+%                 dist_all = reshaped_cm_distance(cc,:);
+
+            %Show spatial outline of the component
+            for rr=1:3
+                subplot(row_sub,col_sub,ROI_outline_order(rr))
+                imagesc(templates{1}.template);
+                hold on
+                title(num2str(ROI_all(rr)))
+                axes(gca);
+                axis square
+                xticks(gca,[])
+                yticks(gca,[])
+                
+                grayMap = brighten(gray,0.5);
+                colormap(gca,grayMap)
+                %plot componenet outline
+                plot(coor_keep_sel{ROI_all(rr)}(1,:),coor_keep_sel{ROI_all(rr)}(2,:),'Color',ROI_colors, 'LineWidth',1);
+                %zoom into component based on center of mass calculation
+                xlim([A_keep_sel_com(ROI_all(rr),2)-30, A_keep_sel_com(ROI_all(rr),2)+30])
+                ylim([A_keep_sel_com(ROI_all(rr),1)-30, A_keep_sel_com(ROI_all(rr),1)+30])
+            end
+            
+            
+            %show color-coded (by trial) calcium traces of the component
+            ROI_trace_order = matrix_order(1:row_sub-1,2:4);
+            for rr=1:3
+                subplot(row_sub,col_sub,ROI_trace_order(rr,:))
+                hold on
+                title([round(num2str(dist_all(rr))),' cm'])
+                xlim([0 12])
+                ylim([-0.2 3.5])
+                yticks([0 1 2])
+                ylabel('dF/F');
+                xticks(0:3:12.5);
+                set(gca,'FontSize',14)
+                set(gca,'LineWidth',1)
+                %convert to minuntes and offset to start at 0 min (0s)
+                %for each split (cell above) % for A trial traces
+                for ii=1:size(start_end_idx.A,1)
+                    plot(Imaging_split{1}{4}.time_restricted(start_end_idx.A(ii,1):start_end_idx.A(ii,2))/60,...
+                        Imaging_split{1}{4}.trace_restricted(start_end_idx.A(ii,1):start_end_idx.A(ii,2),ROI_all(rr)),'Color',paper_colors(1,:),...
+                        'LineWidth',1)
+                end
+                %for each split (cell above) % for B trial traces
+                for ii=1:size(start_end_idx.B,1)
+                    plot(Imaging_split{1}{5}.time_restricted(start_end_idx.B(ii,1):start_end_idx.B(ii,2))/60,...
+                        Imaging_split{1}{5}.trace_restricted(start_end_idx.B(ii,1):start_end_idx.B(ii,2),ROI_all(rr)),'Color',paper_colors(2,:),...
+                        'LineWidth',1)
+                end
+            end
+            
+            %polar plots
+            ROI_polar_order = matrix_order(1:row_sub-1,5);
+            for rr=1:3
+                %tuning vectors of the component
+                pax1 = subplot(row_sub,col_sub,ROI_polar_order(rr),polaraxes);
+                hold on
+                pax1.FontSize = 14;
+                angles = 0;
+                pax1.ThetaTick = angles;
+                thetaticklabels(pax1,{'lap start'});
+                rticks(pax1, []);
+                rlim(pax1,[0 25]);
+                
+                polarplot(x{1},r_scaled{1},'k','Linewidth',1.0)
+                
+                %plot A (2) trial events
+                for ll=1:size(idxMin{1}{1},2)
+                    polarscatter(angle(posVectorApprox{1}{1}{ll}{ROI_all(rr)}),r_scaled{1}(idxMin{1}{1}{ll}{ROI_all(rr)}),marker_size,'o','MarkerFaceColor',paper_colors(1,:),'MarkerEdgeColor',paper_colors(1,:))
+                    %place field center
+                    %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
+                end
+                %plot B (3) trial events
+                for ll=1:size(idxMin{1}{2},2)
+                    polarscatter(angle(posVectorApprox{1}{2}{ll}{ROI_all(rr)}),r_scaled{1}(idxMin{1}{2}{ll}{ROI_all(rr)}),marker_size,'o','MarkerFaceColor',paper_colors(2,:),'MarkerEdgeColor',paper_colors(2,:))
+                    %place field center
+                    %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
+                end
+            end
+            
+            ROI_STC_order = matrix_order(1:row_sub,6);
+            %plot STCs
+            for rr=1:3
+                subplot(row_sub,col_sub,ROI_STC_order(rr))
+                hold on
+                plot(A_smooth_norm_circ(:,ROI_all(rr)),'Color',paper_colors(1,:),'LineWidth',2)
+                plot(B_smooth_norm_circ(:,ROI_all(rr)),'Color',paper_colors(2,:),'LineWidth',2)
+                xticks([0 100])
+                xticklabels({'0','1'})
+                yticks([0 1])
+                %set(gca,'FontSize',10)
+                if rr==row_sub-1
+                    xlabel('Normalized position')
+                    ylabel('Normalized activity')
+                end
+            end
+            
+            %plot normalized position
+            subplot(row_sub,col_sub,matrix_order(row_sub,2:4))
             hold on
-            xlim([0 12.5])
-            ylim([-0.2 5])
-            yticks([0 1 2])
-            ylabel('dF/F');
+            yticks([0 0.5 1])
+            ylabel('Normalized position')
+            xlabel('Time [min]');
             xticks(0:3:12.5);
+            xlim([0.0 12])
+            ylim([0 1])
             set(gca,'FontSize',14)
             set(gca,'LineWidth',1)
-            %convert to minuntes and offset to start at 0 min (0s)
-            %for each split (cell above) % for A trial traces
-            for ii=1:size(start_end_idx.A,1)
-                plot(Imaging_split{1}{4}.time_restricted(start_end_idx.A(ii,1):start_end_idx.A(ii,2))/60,...
-                    Imaging_split{1}{4}.trace_restricted(start_end_idx.A(ii,1):start_end_idx.A(ii,2),ROI_all(rr)),'Color',paper_colors(1,:),...
-                    'LineWidth',1)
+            %A laps
+            for ii=1:size(lap_idxs.A,1)
+                plot(Imaging_split{1}{4}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
+                    Behavior_split{1}{4}.resampled.position_norm(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
+                    'Color',paper_colors(1,:),'LineWidth',1.5)
             end
-            %for each split (cell above) % for B trial traces
-            for ii=1:size(start_end_idx.B,1)
-                plot(Imaging_split{1}{5}.time_restricted(start_end_idx.B(ii,1):start_end_idx.B(ii,2))/60,...
-                    Imaging_split{1}{5}.trace_restricted(start_end_idx.B(ii,1):start_end_idx.B(ii,2),ROI_all(rr)),'Color',paper_colors(2,:),...
-                    'LineWidth',1)
+            %B laps
+            for ii=1:size(lap_idxs.B,1)
+                plot(Imaging_split{1}{5}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
+                    Behavior_split{1}{5}.resampled.position_norm(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
+                    'Color',paper_colors(2,:),'LineWidth',1.5)
             end
-        end
+%                     pause
+%         clf
+%         end
+
         
-        %polar plots
-        ROI_polar_order = matrix_order(1:6,5);
-        for rr=1:6
-            %tuning vectors of the component
-            pax1 = subplot(7,6,ROI_polar_order(rr),polaraxes);
-            hold on
-            pax1.FontSize = 14;
-            angles = 0;
-            pax1.ThetaTick = angles;
-            thetaticklabels(pax1,{'lap start'});
-            rticks(pax1, []);
-            rlim(pax1,[0 25]);
-            
-            polarplot(x{1},r_scaled{1},'k','Linewidth',1.0)
-            
-            %plot A (2) trial events
-            for ll=1:size(idxMin{1}{1},2)
-                polarscatter(angle(posVectorApprox{1}{1}{ll}{ROI_all(rr)}),r_scaled{1}(idxMin{1}{1}{ll}{ROI_all(rr)}),marker_size,'o','MarkerFaceColor',paper_colors(1,:),'MarkerEdgeColor',paper_colors(1,:))
-                %place field center
-                %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
-            end
-            %plot B (3) trial events
-            for ll=1:size(idxMin{1}{2},2)
-                polarscatter(angle(posVectorApprox{1}{2}{ll}{ROI_all(rr)}),r_scaled{1}(idxMin{1}{2}{ll}{ROI_all(rr)}),marker_size,'o','MarkerFaceColor',paper_colors(2,:),'MarkerEdgeColor',paper_colors(2,:))
-                %place field center
-                %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
-            end
-        end
-        
-        ROI_STC_order = matrix_order(1:6,6);
-        %plot STCs
-        for rr=1:6
-            subplot(7,6,ROI_STC_order(rr))
-            hold on
-            plot(A_smooth_norm_circ(:,ROI_all(rr)),'Color',paper_colors(1,:),'LineWidth',2)
-            plot(B_smooth_norm_circ(:,ROI_all(rr)),'Color',paper_colors(2,:),'LineWidth',2)
-            xticks([0 100])
-            xticklabels({'0','1'})
-            yticks([0 1])
-            %set(gca,'FontSize',10)
-            if rr==6
-            xlabel('Normalized position')
-            ylabel('Normalized activity')
-            end
-        end
-        
-        %plot normalized position
-        subplot(7,6,matrix_order(7,2:4))
-        hold on
-        yticks([0 0.5 1])
-        ylabel('Normalized position')
-        xlabel('Time [min]');
-        xticks(0:3:12.5);
-        xlim([0.1 12.5])
-        ylim([0 1])
-        set(gca,'FontSize',14)
-        set(gca,'LineWidth',1)
-        %A laps
-        for ii=1:size(lap_idxs.A,1)
-            plot(Imaging_split{1}{4}.time_restricted(lap_idxs.A(ii,1):lap_idxs.A(ii,2))/60,...
-                Behavior_split{1}{4}.resampled.position_norm(lap_idxs.A(ii,1):lap_idxs.A(ii,2)),...
-                'Color',paper_colors(1,:),'LineWidth',1.5)
-        end
-        %B laps
-        for ii=1:size(lap_idxs.B,1)
-            plot(Imaging_split{1}{5}.time_restricted(lap_idxs.B(ii,1):lap_idxs.B(ii,2))/60,...
-                Behavior_split{1}{5}.resampled.position_norm(lap_idxs.B(ii,1):lap_idxs.B(ii,2)),...
-                'Color',paper_colors(2,:),'LineWidth',1.5)
-        end
     end
 end
 

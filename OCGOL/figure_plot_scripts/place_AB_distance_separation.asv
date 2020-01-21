@@ -34,12 +34,11 @@ figure('Position', [2058 101 586 865])
 for aa=1:size(path_dir,2)
     subplot(6,2,aa)
     hold on
-    ylim([0 15])
-    ylabel('Counts')
+    ylim([0 10])
     title(num2str(aa))
     histogram(global_dist_cm{aa},0:5:100)
     txt = ['n=' num2str(size(global_dist_cm{aa},2))];
-    text(80,9,txt)
+    text(80,7,txt)
 end
 
 %% Plot histogram 
