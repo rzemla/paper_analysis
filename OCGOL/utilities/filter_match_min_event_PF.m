@@ -1,5 +1,5 @@
 function [matching_list] = filter_match_min_event_PF(matching_list,select_fields,options)
-
+%QC checked
 
 %% Generate logical vector filter to ensure at least 1 PF and 5 distinct events in field 
 
@@ -22,19 +22,26 @@ end
 %generate for A trials and B trials as well (naming)
 for ss=options.sessionSelect
     select_fieldsAB{ss} = select_fields_binary{ss}{options.selectTrial(1)} & select_fields_binary{ss}{options.selectTrial(2)};
+    select_fieldsAorB{ss} = select_fields_binary{ss}{options.selectTrial(1)} | select_fields_binary{ss}{options.selectTrial(2)};
     select_fieldsA{ss} = select_fields_binary{ss}{options.selectTrial(1)};
     select_fieldsB{ss} = select_fields_binary{ss}{options.selectTrial(2)};
 end
 
 %%
 %copy match matices from previous filter
+%SI
 matching_list.si_AB_filt_event_filt = matching_list.si_AB_filt;
+matching_list.si_AorB_filt_event_filt = matching_list.si_AorB_filt;
+
 
 matching_list.si_Aall_filt_event_filt = matching_list.si_Aall_filt;
 matching_list.si_Ball_filt_event_filt = matching_list.si_Ball_filt;
-
+%TS
 matching_list.ts_Aall_filt_event_filt = matching_list.ts_Aall_filt;
 matching_list.ts_Ball_filt_event_filt = matching_list.ts_Ball_filt;
+
+matching_list.ts_AB_filt_event_filt = matching_list.ts_AB_filt;
+matching_list.ts_AorB_filt_event_filt = matching_list.ts_AorB_filt;
 
 % for SI A
 %for each session
@@ -58,7 +65,6 @@ for ss=options.sessionSelect
     matching_list.si_Ball_filt_event_filt(~keep_idx_log,ss) = nan;
 end
 
-
  % for SI AB
 %for each session
 for ss=options.sessionSelect
@@ -69,6 +75,19 @@ for ss=options.sessionSelect
     %set the negative of the log to nan (no match based on tuning criterion
     matching_list.si_AB_filt_event_filt(~keep_idx_log,ss) = nan;
 end
+
+
+% for SI A or B
+%for each session
+for ss=options.sessionSelect
+    %get idxs
+    event_idx_temp = find(select_fieldsAorB{ss} ==1);
+    %get logical with values that are si tuned
+    keep_idx_log = ismember(matching_list.si_AorB_filt_event_filt(:,ss),event_idx_temp);
+    %set the negative of the log to nan (no match based on tuning criterion
+    matching_list.si_AorB_filt_event_filt(~keep_idx_log,ss) = nan;
+end
+
 
 % for TS A
 %for each session
@@ -91,6 +110,29 @@ for ss=options.sessionSelect
     %set the negative of the log to nan (no match based on tuning criterion
     matching_list.ts_Ball_filt_event_filt(~keep_idx_log,ss) = nan;
 end
+
+% for TS AB
+%for each session
+for ss=options.sessionSelect
+    %get idxs
+    event_idx_temp = find(select_fieldsAB{ss} ==1);
+    %get logical with values that are si tuned
+    keep_idx_log = ismember(matching_list.ts_AB_filt_event_filt(:,ss),event_idx_temp);
+    %set the negative of the log to nan (no match based on tuning criterion
+    matching_list.ts_AB_filt_event_filt(~keep_idx_log,ss) = nan;
+end
+
+% for TS A or B
+%for each session
+for ss=options.sessionSelect
+    %get idxs
+    event_idx_temp = find(select_fieldsAorB{ss} ==1);
+    %get logical with values that are si tuned
+    keep_idx_log = ismember(matching_list.ts_AorB_filt_event_filt(:,ss),event_idx_temp);
+    %set the negative of the log to nan (no match based on tuning criterion
+    matching_list.ts_AorB_filt_event_filt(~keep_idx_log,ss) = nan;
+end
+
 
 
 

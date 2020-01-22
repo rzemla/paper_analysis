@@ -58,7 +58,8 @@ for ii=1:size(match_mat,1) %with nans where no match
             subplot(3,size(sessionSelect,2),matrix_order(2,ss))
             polarplot(x{ss},r_scaled{ss},'k','Linewidth',1.5)
             hold on
-            title([cat_registered_cell{ii,ss}, '\newline']);
+            %plot remapping label and index number of the neuron
+            title([cat_registered_cell{ii,ss}, '\newline', num2str(match_mat(ii,ss))]);
             %title([cat_registered_cell{ii,ss}, '\newline','SCE all: ',num2str(multi_ses_SCE_data.SCE_all_ROI_engage(ii,ss))]);
             %plot A (2) trial events
             for ll=1:size(idxMin{ss}{1},2)

@@ -341,11 +341,15 @@ end
 %export computed values
 tc_corr_match.PV_corr_all_day = PV_corr_all_day;
 tc_corr_match.TC_corr_all_day = TC_corr_all_day;
+
 tc_corr_match.tex_pos = tex_pos;
 tc_corr_match.rew_pos = rew_pos;
+
 tc_corr_match.matching_ROI_all_day_STC = matching_ROI_all_day_STC;
+
 tc_corr_match.STC_mat_AB_A = STC_mat_AB_A;
 tc_corr_match.STC_mat_AB_B = STC_mat_AB_B;
+
 tc_corr_match.STC_mat_A  = STC_mat_A;
 tc_corr_match.STC_mat_B = STC_mat_B;
 

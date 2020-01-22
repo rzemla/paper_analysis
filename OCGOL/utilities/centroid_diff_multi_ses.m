@@ -242,7 +242,7 @@ ylabel('Cumulative fraction');
 legend([e1,e2], '5A5B','Random AB', 'Location','southeast');
 hold off
 
-[h,p] = ttest2(ses_match_theta{ses_comp(1)},ses_match_theta{ses_comp(2)})
+%[h,p] = ttest2(ses_match_theta{ses_comp(1)},ses_match_theta{ses_comp(2)})
 
 %% Export centroid diffs for all neurons
 

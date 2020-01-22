@@ -336,8 +336,8 @@ for ss=sessionSelect
                 else %do two event finds and merge (and sort) into one set of indices
                     events_in_field_temp_1 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} >= 0 & ...
                         event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} <= placeField_filtered_max_posnorm{ss}{tt}{rr}(2));
-                    
-                    events_in_field_temp_2 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} >= placeField_filtered_max_posnorm{ss}{tt}{rr}(2) & ...
+                    %typo was here replace with correct edge
+                    events_in_field_temp_2 = find(event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} >= placeField_filtered_max_posnorm{ss}{tt}{rr}(1) & ...
                         event_norm_pos_run{ss}.A{remapping_pf_filtered{ss}(rr)} <= 1 );
                     
                     %merge and sort indices here
@@ -365,8 +365,8 @@ for ss=sessionSelect
                 else %do two event finds and merge (and sort) into one set of indices
                     events_in_field_temp_1 = find(event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} >= 0 & ...
                         event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} <= placeField_filtered_max_posnorm{ss}{tt}{rr}(2));
-                    
-                    events_in_field_temp_2 = find(event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} >= placeField_filtered_max_posnorm{ss}{tt}{rr}(2) & ...
+                    %typo was below - replaced with correct edge
+                    events_in_field_temp_2 = find(event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} >= placeField_filtered_max_posnorm{ss}{tt}{rr}(1) & ...
                         event_norm_pos_run{ss}.B{remapping_pf_filtered{ss}(rr)} <= 1 );
                     
                     %merge and sort indices here
@@ -726,6 +726,7 @@ end
 %centroid diff - common (less than 10 cm) and one more than 30
 %make sure than animal was running both fields on either trials
 %regardless of remap in each zone
+%runs through every session inside of the function
 [partial_remap_filtered,partial_field_idx] = filter_partial_remappers_multi_ses(partial_remap_idx_start,cent_diff,select_fields,Place_cell,edges,pf_vector,...
                             Behavior_full,Behavior_split,event_norm_pos_run, event_lap_idx,options);
 

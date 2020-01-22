@@ -13,9 +13,10 @@ toc;
 
 cumulative_performance_plot(short_term_learn,short_term_recall)
 
-%% Tuning curve correlation for A&B tuned neurons across days
+%% Plot A/B/AB/neither distributions for learning/recall across sessions
 
-AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
+plot_fraction_tuned(short_term_learn.tuned_frac,short_term_recall.tuned_frac)
+
  
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)
 %also orient maps by day (T.S.) only tuned for now for learning and recall
@@ -23,16 +24,16 @@ AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match
 %short term learning vs recall
 combine_STC_plot_multi_animal(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
 
-%vs long term data
+
+%vs long term data (supplement - not enough animals)
 combine_STC_plot_multi_animal_short_vs_long_term(short_term_learn.TC_corr_match,long_term_recall.TC_corr_match)
 
-%% Examine spatial trajectories for across time
+%% Tuning curve correlation for A&B tuned neurons across days
+%this runs for T.S. neurons
+%uses output from tc_corr_matching_neurons
+%correlation done on curves normalized to each other
 
-trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)
-
-%% Plot A/B/AB/neither distributions for learning/recall across sessions
-
-plot_fraction_tuned(short_term_learn.tuned_frac,short_term_recall.tuned_frac)
+AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
 
 %% Centroid difference across sessions
 
@@ -45,6 +46,11 @@ recurrence_cum_analysis(short_term_recall,long_term_recall)
 
 %learning only
 recurrence_cum_analysis_learn(short_term_learn)
+
+%% Examine spatial trajectories for across time
+
+%trajectory_analysis(TC_corr_match_learning,TC_corr_match_recall)
+
 
 %% Show outlines of neightboring day matching componenets (1 vs. 3) - learning
 %modify this to show discarded matches

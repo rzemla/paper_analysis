@@ -7,8 +7,13 @@ function [outputArg1,outputArg2] = non_norm_matching_STC_rasters(animal_data, tu
 %matching_list = registered.multi.assigned_all;
 %matched on any day (including nans)
 %matching_list = registered.multi.assigned;
+
+%default - filtered manually for bad matches
 %use matches that were additionally manually filtered for mismatches
 matching_list = registered.multi.assigned_filtered;
+
+%input here matrix of filtered neurons to select 
+%matching_list = registered.multi.matching_list_filtered.si_AorB_filt_event_filt;
 
 %number of sessions
 nb_ses = size(options.sessionSelect,2);
