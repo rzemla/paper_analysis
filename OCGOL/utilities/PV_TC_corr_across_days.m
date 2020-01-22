@@ -7,8 +7,13 @@ function [PV_TC_corr] = PV_TC_corr_across_days(animal_data, tunedLogical,registe
 %matching_list = registered.multi.assigned_all;
 %matched on any day (including nans)
 %matching_list = registered.multi.assigned;
+
+%these neurons are just matched (no other criteria applied)
 %use matches that were additionally manually filtered for mismatches
 matching_list = registered.multi.assigned_filtered;
+
+%these neurons have above list filtered to have a significant place field
+%and at least 5 distinct events within the place field
 %event,PF, and criteria filtered
 matching_list_filtered = registered.multi.matching_list_filtered;
 
@@ -369,12 +374,19 @@ end
 
 %TC correlations relative to day 1
 PV_TC_corr.meanTC_rel_d1 = meanTC_rel_d1;
+%contains the correlation matrices for each day relative to day1 for thos
+%neurons that matched (both si and ts criteria)
+PV_TC_corr_rel_d1_mat_nonnon = TCcorr_rel_d1;
+
 %Same day A vs B. TC correlations for each neuron (all neurons)
 PV_TC_corr.TC_same_day_mat = TCcorr_all_same_day;
 PV_TC_corr.TC_same_day_diag = TCcorr_all_same_day_diag;
 
 %PV correlations relative to day 1
 PV_TC_corr.meanPV_rel_d1 = meanPV_rel_d1;
+
+
+
 %PV correlations same day
 PV_TC_corr.meanPV_same_day = meanPV_same_day;
 %PV correlation - same day - all neurons

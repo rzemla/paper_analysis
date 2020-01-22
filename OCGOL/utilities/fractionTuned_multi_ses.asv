@@ -98,11 +98,9 @@ for ss=sessionSelect
 end
 
 %QC check to see if I get the same fractions
-% si_frac_check = tuned_counts_ordered.si./sum(tuned_counts_ordered.si,2);
-% ts_frac_check = tuned_counts_ordered.ts./sum(tuned_counts_ordered.ts,2);
-% %confirms
-% isequal(si_frac_check, fracTuned_si_filt)
-% isequal(ts_frac_check, fracTuned_ts_filt)
+si_frac_check = tuned_counts_ordered.si./sum(tuned_counts_ordered.si,2);
+ts_frac_check = tuned_counts_ordered.ts./sum(tuned_counts_ordered.ts,2);
+isequal(s
 
 %% Plot stacked histograms to check distribution across sessions
 
@@ -165,9 +163,6 @@ end
 %absolute counts for each subcategory and fractional counts
 %tuned_fractions.tuned_count = tuned_count;
 tuned_fractions.tuned_count_filt = tuned_count_filt;
-%count ordered in matrix form for session and subtype
-tuned_fractions.tuned_counts_ordered = tuned_counts_ordered;
-
 %fraction tuned by SI criterion
 %tuned_fractions.fracTuned_si = fracTuned_si;
 tuned_fractions.fracTuned_si_filt = fracTuned_si_filt;
