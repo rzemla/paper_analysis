@@ -296,10 +296,8 @@ colormap('jet')
 
 %plot diagonal curves across sessions
 
-%% Mean PV as function of task performance
 
-
-%% TC correlation between session of all neurons (non norm STC_
+%% TC correlation between session of all neurons (non norm STC)
 
 for ss = options.sessionSelect
     TCcorr_all_same_day{ss} = corr(A_STC_noNorm{ss},B_STC_noNorm{ss}, 'type','Pearson','rows','complete');
@@ -408,7 +406,7 @@ for ss=options.sessionSelect(2:end)
            %A corr across days
            TCcorr_rel_d1.ts.B{ss-1} = corr(B_STC_noNorm{1}(:,d2d_match_list(:,1)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
        else
-           TCcorr_rel_d1.ts.A{ss-1} = nan;
+           TCcorr_rel_d1.ts.B{ss-1} = nan;
        end
 end
 
@@ -426,7 +424,140 @@ for ss = options.sessionSelect(2:end)
     meanTC_rel_d1.ts.B(ss-1) = nanmean(diag(TCcorr_rel_d1.ts.B{ss-1}));    
 end
 
-%TS
+%% TC correlation for neurons (do this session against asession and compare) - modification of code above - SI
+
+%SI tuned - A trials only
+%for A tuned matching day 2 day (relative to D1)
+%for each session (relative to D1
+for ii = options.sessionSelect
+    for ss=options.sessionSelect
+        %get index of matches for filtered match matrix
+        non_nan_idx = find(sum(~isnan(matching_list_filtered.si_Aall_filt_event_filt(:,[ii,ss])),2) == 2);
+        
+        %generate day2 day match matrix
+        d2d_match_list = matching_list_filtered.si_Aall_filt_event_filt(non_nan_idx,[ii,ss]);
+        
+        %A corr across days
+        TCcorr_all_ses.si.A{ii,ss} = corr(A_STC_noNorm{ii}(:,d2d_match_list(:,1)),A_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+        
+    end
+end
+
+%SI - B trials only
+%for B tuned matching day 2 day (relative to D1)
+%for each session (relative to D1
+for ii = options.sessionSelect
+    for ss = options.sessionSelect
+        %get index of matches for filtered match matrix
+        non_nan_idx = find(sum(~isnan(matching_list_filtered.si_Ball_filt_event_filt(:,[ii,ss])),2) == 2);
+        
+        %generate day2 day match matrix
+        d2d_match_list = matching_list_filtered.si_Ball_filt_event_filt(non_nan_idx,[ii,ss]);
+        
+        %A corr across days
+        TCcorr_all_ses.si.B{ii,ss} = corr(B_STC_noNorm{ii}(:,d2d_match_list(:,1)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+        
+    end
+end
+
+%extract the neurons counts for each TC correlation by taking the size of
+%each matrix
+%SI - A trials and B trials
+for ii = options.sessionSelect
+    for ss = options.sessionSelect
+        TCcorr_all_ses_neuron_count.si.A(ii,ss) = size(TCcorr_all_ses.si.A{ii,ss},1);
+        TCcorr_all_ses_neuron_count.si.B(ii,ss) = size(TCcorr_all_ses.si.B{ii,ss},1);
+    end
+end
+
+%QC check - CORRECT FOR SI TUNED - THESE ARE ALREADY min 5 event filtered
+%and 1 PF filtered
+
+%then check that these values are the same as generated from D1 comparisons
+isequal(TCcorr_rel_d1.si.A{4-1},TCcorr_all_ses.si.A{1,4})
+
+%first check the correlation values are different across time (diagonal)
+figure
+hold on
+title('Diagonals for TC correlations between different sessions')
+%plot self
+plot(diag(TCcorr_all_ses.si.A{1,1}))
+%plot 1 vs. 4
+plot(diag(TCcorr_all_ses.si.A{1,4}))
+%plot 3 vs. 4
+plot(diag(TCcorr_all_ses.si.A{3,4}))
+%plot 3 vs. 5
+plot(diag(TCcorr_all_ses.si.A{3,5}))
+
+%% TC correlation for neurons (do this session against  every session and compare) - modification of code above - TS
+
+%TS - A
+%for each session against each session
+for ii=options.sessionSelect
+    for ss=options.sessionSelect
+        %get index of matches for filtered match matrix
+        non_nan_idx = find(sum(~isnan(matching_list_filtered.ts_Aall_filt_event_filt(:,[ii,ss])),2) == 2);
+        
+        %generate day2 day match matrix
+        d2d_match_list = matching_list_filtered.ts_Aall_filt_event_filt(non_nan_idx,[ii,ss]);
+        
+        %if not matched
+        if ~isempty(d2d_match_list)
+            %A corr across days
+            TCcorr_all_ses.ts.A{ii,ss} = corr(A_STC_noNorm{ii}(:,d2d_match_list(:,1)),A_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+        else
+            TCcorr_all_ses.ts.A{ii,ss} = nan;
+        end
+    end
+end
+
+%TS - B
+%for B tuned matching day 2 day (relative to D1)
+%for each session (relative to D1
+for ii=options.sessionSelect
+    for ss=options.sessionSelect
+        %get index of matches for filtered match matrix
+        non_nan_idx = find(sum(~isnan(matching_list_filtered.ts_Ball_filt_event_filt(:,[ii,ss])),2) == 2);
+        
+        %generate day2 day match matrix
+        d2d_match_list = matching_list_filtered.ts_Ball_filt_event_filt(non_nan_idx,[ii,ss]);
+        %if not matched
+        if ~isempty(d2d_match_list)
+            %A corr across days
+            TCcorr_all_ses.ts.B{ii,ss} = corr(B_STC_noNorm{ii}(:,d2d_match_list(:,1)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+        else
+            TCcorr_all_ses.ts.B{ii,ss} = nan;
+        end
+    end
+end
+
+%SI - A trials and B trials
+for ii = options.sessionSelect
+    for ss = options.sessionSelect
+        TCcorr_all_ses_neuron_count.ts.A(ii,ss) = size(TCcorr_all_ses.si.A{ii,ss},1);
+        TCcorr_all_ses_neuron_count.si.B(ii,ss) = size(TCcorr_all_ses.si.B{ii,ss},1);
+    end
+end
+
+%QC check - CORRECT FOR SI TUNED - THESE ARE ALREADY min 5 event filtered
+%and 1 PF filtered
+
+%then check that these values are the same as generated from D1 comparisons
+isequal(TCcorr_rel_d1.si.A{4-1},TCcorr_all_ses.si.A{1,4})
+
+%first check the correlation values are different across time (diagonal)
+figure
+hold on
+title('Diagonals for TC correlations between different sessions')
+%plot self
+plot(diag(TCcorr_all_ses.si.A{1,1}))
+%plot 1 vs. 4
+plot(diag(TCcorr_all_ses.si.A{1,4}))
+%plot 3 vs. 4
+plot(diag(TCcorr_all_ses.si.A{3,4}))
+%plot 3 vs. 5
+plot(diag(TCcorr_all_ses.si.A{3,5}))
+
 
 %% Plot - tuning curve correlations
 
@@ -474,6 +605,11 @@ PV_TC_corr_rel_d1_mat_nonnon = TCcorr_rel_d1;
 PV_TC_corr.TC_same_day_mat = TCcorr_all_same_day;
 PV_TC_corr.TC_same_day_diag = TCcorr_all_same_day_diag;
 
+%TC CORRELATION DATA FOR EXPORT (BOTH S.I and T.S in substuct)
+PV_TC_corr.TCcorr_all_ses = TCcorr_all_ses;
+PV_TC_corr.TCcorr_all_ses_neuron_count = TCcorr_all_ses_neuron_count;
+
+
 %PV CORRELATION DATA FOR EXPORT
 
 %PV correlations relative to day 1
@@ -482,7 +618,7 @@ PV_TC_corr.meanPV_rel_d1 = meanPV_rel_d1;
 %numbers of ROIs PV correlated against any 2 sessions
 PV_TC_corr.PV_corr_ROI_count = PV_corr_ROI_count;
 
-%
+%PV correlation matrices - same results
 PV_TC_corr.PVcorr_all_ses_no_nan = PVcorr_all_ses_no_nan;
 PV_TC_corr.PVcorr_all_ses = PVcorr_all_ses;
 
