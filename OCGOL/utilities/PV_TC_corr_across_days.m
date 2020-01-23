@@ -20,6 +20,10 @@ matching_list_filtered = registered.multi.matching_list_filtered;
 %number of sessions
 nb_ses = size(options.sessionSelect,2);
 
+%assign the selected input trials
+options.selectSes = options.selectTrial;
+
+
 %% Extract mean STC map in each spatial bin (not normalized and not occupancy divided) (100 bins)
 %for each session
 for ss = options.sessionSelect%1:size(animal_data,2)
@@ -99,6 +103,8 @@ end
 %fill the matching assignments with trial-normalized STC
 for ss=options.sessionSelect
     nan_log = isnan(matching_list(:,ss));
+    %normalized original output - each cell normalized to itself for each
+    %trial
     matchSTCs_A(~nan_log,1+(ss-1)*100:ss*100) = A_STC{ss}(:,matching_list(~nan_log,ss))';
     matchSTCs_B(~nan_log,1+(ss-1)*100:ss*100) = B_STC{ss}(:,matching_list(~nan_log,ss))';
     %norm both trials
@@ -165,6 +171,92 @@ for ss = options.sessionSelect(2:end)
     meanPV_rel_d1.B(ss-1) = nanmean(diag(PVcorr_rel_d1.B{ss-1}));
 end
 
+%% PV correlation for all matching neurons (each session against each session) 
+
+%remove all nan values from the matrices before doing the correlation
+%allows you to count the number of neurons being correlated
+
+%find those that are nans in both subsets
+%this is the logical that says which neurons should be selected
+%these indices correspond to the indices in the match matrix
+%ROI x bins
+for ii = options.sessionSelect
+    for jj = options.sessionSelect
+        %for A
+        keep_nonan_ROIs.A = ~(logical(sum(isnan(matchSTCs_nn.A{ii}),2)) | logical(sum(isnan(matchSTCs_nn.A{jj}),2)));
+        %for B
+        keep_nonan_ROIs.B = ~(logical(sum(isnan(matchSTCs_nn.B{ii}),2)) | logical(sum(isnan(matchSTCs_nn.B{jj}),2)));
+        
+        %these are the indices in the matching_list matrix (should be the
+        %same b/c these are matching)
+        PV_corr_ROI_count.A(ii,jj) = size(find(keep_nonan_ROIs.A == 1),1);
+        PV_corr_ROI_count.B(ii,jj) = size(find(keep_nonan_ROIs.B == 1),1);
+        %A corr across days
+        PVcorr_all_ses_no_nan.A{ii,jj} = corr(matchSTCs_nn.A{ii}(keep_nonan_ROIs.A,:),matchSTCs_nn.A{jj}(keep_nonan_ROIs.A,:), 'type','Pearson');
+        %B corr across days
+        PVcorr_all_ses_no_nan.B{ii,jj} = corr(matchSTCs_nn.B{ii}(keep_nonan_ROIs.B,:),matchSTCs_nn.B{jj}(keep_nonan_ROIs.B,:), 'type','Pearson');
+        
+    end
+end
+
+%run population correlation between non-norm event based STCs
+for ii = options.sessionSelect
+    for jj = options.sessionSelect
+        %A corr across days
+        PVcorr_all_ses.A{ii,jj} = corr(matchSTCs_nn.A{ii},matchSTCs_nn.A{jj}, 'type','Pearson','rows','complete');
+        %B corr across days
+        PVcorr_all_ses.B{ii,jj} = corr(matchSTCs_nn.B{ii},matchSTCs_nn.B{jj}, 'type','Pearson','rows','complete');
+    end
+end
+
+%% TESTING CODE
+%check if you remove nans you get the same result - try one if you remove
+%nans
+%ses 1 vs ses 2 
+% PVcorr_all_ses.A{1, 2}  
+% 
+% %ROI x bin
+% x = matchSTCs_nn.A{1};
+% y = matchSTCs_nn.A{2};
+% 
+% %find indices of nans in both arrays, merge, remove from both, and run the
+% %correlation
+% 
+% %find those that are nans in both subsets
+% remove_subset_ROIs = logical(sum(isnan(x),2)) | logical(sum(isnan(y),2));
+% 
+% %both matrices with nans removed
+% x_nonan = x(~remove_subset_ROIs,:);
+% y_nonan = y(~remove_subset_ROIs,:);
+% 
+% PVcorr_test_1_2 = corr(x_nonan,y_nonan, 'type','Pearson');
+% 
+% %same result as with running corr with complete parameter 
+% %use this approach for getting the number of neurons being correlated
+% %across days
+% isequal(PVcorr_all_ses.A{1, 2}, PVcorr_test_1_2)
+
+%QC check against day 1 generated data - checks out
+% isequal(PVcorr_all_ses.A{1,5}, PVcorr_rel_d1.A{4})
+% 
+% figure
+% subplot(1,2,1) 
+% imagesc(PVcorr_all_ses.A{1,4})
+% subplot(1,2,2)
+% imagesc(PVcorr_rel_d1.A{3})
+
+%% TESTING CODE
+%compare all the matrices - same result
+% for ii = options.sessionSelect
+%     for jj = options.sessionSelect
+%         %do for A
+%         equal_matrix.A(ii,jj) = isequal(PVcorr_all_ses_no_nan.A{ii,jj},PVcorr_all_ses.A{ii,jj});
+%         %do for B
+%         equal_matrix.B(ii,jj) = isequal(PVcorr_all_ses_no_nan.B{ii,jj},PVcorr_all_ses.B{ii,jj});
+%     end
+% end
+
+%% Same day correlation for all neurons (non-matching)
 %same day correlation between A and B trials
 for ss = options.sessionSelect
     %between A and B trials
@@ -177,7 +269,7 @@ for ss = options.sessionSelect
     meanPV_same_day.AB(ss) = nanmean(diag(PVcorr_same_day.AB{ss}));
 end
 
-%% PV correlation (all neurons) - same day for each session
+%% PV correlation (all neurons) - SAME DAY for each session
 %expect the value to to down with learning and remain constant with recall
 %no filter at the moment
 for ss = options.sessionSelect
@@ -382,9 +474,17 @@ PV_TC_corr_rel_d1_mat_nonnon = TCcorr_rel_d1;
 PV_TC_corr.TC_same_day_mat = TCcorr_all_same_day;
 PV_TC_corr.TC_same_day_diag = TCcorr_all_same_day_diag;
 
+%PV CORRELATION DATA FOR EXPORT
+
 %PV correlations relative to day 1
 PV_TC_corr.meanPV_rel_d1 = meanPV_rel_d1;
 
+%numbers of ROIs PV correlated against any 2 sessions
+PV_TC_corr.PV_corr_ROI_count = PV_corr_ROI_count;
+
+%PV correlation matrices - same results
+PV_TC_corr.PVcorr_all_ses_no_nan = PVcorr_all_ses_no_nan;
+PV_TC_corr.PVcorr_all_ses = PVcorr_all_ses;
 
 
 %PV correlations same day

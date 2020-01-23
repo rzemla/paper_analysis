@@ -353,6 +353,23 @@ tc_corr_match.STC_mat_AB_B
 %save to output file for cumulative analysis
 save(fullfile(crossdir,'tc_corr_match.mat'),'tc_corr_match')
 
+%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
+
+%set option as to how to select neurons for plots
+options.tuning_criterion = 'si'; %si or ts
+%options.sessionSelect = [1 2 3 4 5 6 ];
+%options.selectSes = [4 5];
+%learning or recall datasets
+
+%this is just for controlling the display of labels across sessions/days
+%doesn't control anything else
+options.learning_data = 1;
+[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
+
+%save to output file for cumulative analysis
+save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
+
+
 %% Extract performance fractions across sessions (respective laps)
 %check if agree with manual analysis
 %turn into table with future code upgrade
@@ -538,21 +555,6 @@ toc;
 
 %code for rose plot like event density is here
 activity_distributions(session_vars,task_selective_ROIs,options)
-
-
-%% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
-
-%set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
-%options.sessionSelect = [1 2 3 4 5 6 ];
-options.selectSes = [4 5];
-%learning or recall datasets
-options.learning_data = 1;
-[PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
-
-%save to output file for cumulative analysis
-save(fullfile(crossdir,'PV_TC_corr.mat'),'PV_TC_corr')
-
 
 %% Raster plot across days (FIGURE 4) (at least 2 match between sessions) raster (non_norm)
 %this generates the figure rasters in 4
