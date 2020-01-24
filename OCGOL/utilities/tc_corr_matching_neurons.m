@@ -106,7 +106,8 @@ for rew=1:2
     rew_pos(rew) = nanmean(session_vars{1}.Behavior.rewards{rew}.position_norm);
 end
 
-%% Construct STCs for all A (ts/event) matching neurons and all B (ts/event) matching neurons (all day combinations)
+%% Construct STCs for all A (ts/event) matching neurons and all B (ts/event) matching neurons (all day combinations) (not A&B analysis)
+
 for ii=sessionSelect
     for jj=sessionSelect
 
@@ -171,7 +172,8 @@ end
 % imagesc(test_STC_sort)
 
 
-%% Do for A/B matching neurons
+%% Do for A&B matching neurons
+
 for ii=sessionSelect
     for jj=sessionSelect
         

@@ -19,6 +19,8 @@ matching_list_filtered = registered.multi.matching_list_filtered;
 
 %number of sessions
 nb_ses = size(options.sessionSelect,2);
+%should yield the same number of correct matrix alignment
+%nb_ses = size(matching_list,2);
 
 %assign the selected input trials
 options.selectSes = options.selectTrial;
@@ -68,21 +70,21 @@ end
 
 
 %% Create combined STC matrix of neurons matching across all sessions
-
+%changed here from fixed 7 value to actual number of sessions 
 %generate sample map for 1 vs. 2 day with NaN filled with -1 value
 %generate blank ROI by bins matrix
 
 %normalized to A/self trials
-matchSTCs_A = zeros(size(matching_list,1),7*100);
-matchSTCs_B = zeros(size(matching_list,1),7*100);
+matchSTCs_A = zeros(size(matching_list,1),nb_ses*100);
+matchSTCs_B = zeros(size(matching_list,1),nb_ses*100);
 
 %normalized across both A and B trials
-matchSTCs_A_norm = zeros(size(matching_list,1),7*100);
-matchSTCs_B_norm = zeros(size(matching_list,1),7*100);
+matchSTCs_A_norm = zeros(size(matching_list,1),nb_ses*100);
+matchSTCs_B_norm = zeros(size(matching_list,1),nb_ses*100);
 
 %not self normalized both A and B trials
-matchSTCs_A_noNorm = zeros(size(matching_list,1),7*100);
-matchSTCs_B_Nonorm = zeros(size(matching_list,1),7*100);
+matchSTCs_A_noNorm = zeros(size(matching_list,1),nb_ses*100);
+matchSTCs_B_Nonorm = zeros(size(matching_list,1),nb_ses*100);
 
 
 %fill the nan assignments to STC to be NaN
@@ -479,7 +481,7 @@ isequal(TCcorr_rel_d1.si.A{4-1},TCcorr_all_ses.si.A{1,4})
 %first check the correlation values are different across time (diagonal)
 figure
 hold on
-title('Diagonals for TC correlations between different sessions')
+title('Diagonals for TC correlations between different sessions - S.I. tuned neurons')
 %plot self
 plot(diag(TCcorr_all_ses.si.A{1,1}))
 %plot 1 vs. 4
@@ -512,8 +514,7 @@ for ii=options.sessionSelect
 end
 
 %TS - B
-%for B tuned matching day 2 day (relative to D1)
-%for each session (relative to D1
+%for each session against each session
 for ii=options.sessionSelect
     for ss=options.sessionSelect
         %get index of matches for filtered match matrix
@@ -534,30 +535,187 @@ end
 %SI - A trials and B trials
 for ii = options.sessionSelect
     for ss = options.sessionSelect
-        TCcorr_all_ses_neuron_count.ts.A(ii,ss) = size(TCcorr_all_ses.si.A{ii,ss},1);
-        TCcorr_all_ses_neuron_count.si.B(ii,ss) = size(TCcorr_all_ses.si.B{ii,ss},1);
+        TCcorr_all_ses_neuron_count.ts.A(ii,ss) = size(TCcorr_all_ses.ts.A{ii,ss},1);
+        TCcorr_all_ses_neuron_count.ts.B(ii,ss) = size(TCcorr_all_ses.ts.B{ii,ss},1);
     end
 end
 
-%QC check - CORRECT FOR SI TUNED - THESE ARE ALREADY min 5 event filtered
+%% QC check - CORRECT FOR SI TUNED - THESE ARE ALREADY min 5 event filtered
 %and 1 PF filtered
 
 %then check that these values are the same as generated from D1 comparisons
-isequal(TCcorr_rel_d1.si.A{4-1},TCcorr_all_ses.si.A{1,4})
+% isequal(TCcorr_rel_d1.ts.B{6-1},TCcorr_all_ses.ts.B{1,6})
+% 
+% %first check the correlation values are different across time (diagonal)
+% figure
+% hold on
+% title('Diagonals for TC correlations between different sessions - T.S. tuned neurons')
+% %plot self
+% plot(diag(TCcorr_all_ses.ts.A{1,1}))
+% %plot 1 vs. 4
+% plot(diag(TCcorr_all_ses.ts.A{1,4}))
+% %plot 3 vs. 4
+% plot(diag(TCcorr_all_ses.ts.A{3,4}))
+% %plot 3 vs. 5
+% plot(diag(TCcorr_all_ses.ts.A{3,5}))
 
-%first check the correlation values are different across time (diagonal)
-figure
-hold on
-title('Diagonals for TC correlations between different sessions')
-%plot self
-plot(diag(TCcorr_all_ses.si.A{1,1}))
-%plot 1 vs. 4
-plot(diag(TCcorr_all_ses.si.A{1,4}))
-%plot 3 vs. 4
-plot(diag(TCcorr_all_ses.si.A{3,4}))
-%plot 3 vs. 5
-plot(diag(TCcorr_all_ses.si.A{3,5}))
+%% A&B SI tuned neurons  
+% CORRELATION FOR A&B neurons will serve as a control to the code that
+%is already written for Figure 4H - implemented below
 
+for ii=options.sessionSelect
+    for ss=options.sessionSelect
+        %get index of matches for filtered match matrix
+        non_nan_idx = find(sum(~isnan(matching_list_filtered.si_AB_filt_event_filt(:,[ii,ss])),2) == 2);
+        
+        %generate day2 day match matrix
+        d2d_match_list = matching_list_filtered.si_AB_filt_event_filt(non_nan_idx,[ii,ss]);
+        
+        %if there are matching neurons
+        if ~isempty(d2d_match_list)
+            %generate the matching nonnormalized STCs
+            AB_combined_nonNorm_STCs.si{ii,ss} = [A_STC_noNorm{ii}(:,d2d_match_list(:,1))', B_STC_noNorm{ii}(:,d2d_match_list(:,1))';
+                A_STC_noNorm{ss}(:,d2d_match_list(:,2))', B_STC_noNorm{ss}(:,d2d_match_list(:,2))'];
+            
+            %split into separate cells to make correlations easier (same format
+            %as above just split into cells
+            AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{1,1} = A_STC_noNorm{ii}(:,d2d_match_list(:,1))';
+            AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{1,2} = B_STC_noNorm{ii}(:,d2d_match_list(:,1))';
+            AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{2,1} = A_STC_noNorm{ss}(:,d2d_match_list(:,2))';
+            AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{2,2} = B_STC_noNorm{ss}(:,d2d_match_list(:,2))';
+        
+            %A vs B TC correlation matrix on first session across days for
+            %A&B neurons
+            TCcorr_all_ses.si.AB.first{ii,ss} = corr(A_STC_noNorm{ii}(:,d2d_match_list(:,1)),B_STC_noNorm{ii}(:,d2d_match_list(:,1)), 'type','Pearson','rows','complete');
+            TCcorr_all_ses.si.AB.second{ii,ss} = corr(A_STC_noNorm{ss}(:,d2d_match_list(:,2)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+       
+        else %fill this up with nans
+            TCcorr_all_ses.si.AB.first{ii,ss} = nan;
+            TCcorr_all_ses.si.AB.second{ii,ss} = nan;
+            AB_combined_nonNorm_STCs.si{ii,ss} = nan;
+            AB_combined_nonNorm_STCs_cell_split.si{ii,ss} = nan;
+        end
+    end
+end
+
+%get neuron number counts for each neuron
+%SI A&B neurons - A trials and B trials
+for ii = options.sessionSelect
+    for ss = options.sessionSelect
+        TCcorr_all_ses_neuron_count.si.AB(ii,ss) = size(TCcorr_all_ses.si.AB.first{ii,ss},1);
+    end
+end
+
+%% QC Check SI
+%generate list of day 1 correlations
+% for ii=options.sessionSelect
+%     first_corr(ii) = mean(diag(TCcorr_all_ses.si.AB.first{1, ii}));
+%     second_corr(ii) = mean(diag(TCcorr_all_ses.si.AB.second{1, ii}));
+% end
+% 
+% figure
+% hold on
+% plot(first_corr)
+% plot(second_corr)
+% 
+% %checked - works
+% %QC check above split
+% %isequal(AB_combined_nonNorm_STCs{2,4}, cell2mat( AB_combined_nonNorm_STCs_cell_split{2,4}))
+% 
+% 
+% [~,maxBin_all_A] = max(AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{1,1}', [], 1,'includenan');
+% %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+% [~,sortOrder_all_A] = sort(maxBin_all_A,'ascend');
+% 
+% figure
+% subplot(2,2,1)
+% imagesc(AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{1,1}(sortOrder_all_A,:))
+% subplot(2,2,2)
+% imagesc(AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{1,2}(sortOrder_all_A,:))
+% subplot(2,2,3)
+% imagesc(AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{2,1}(sortOrder_all_A,:))
+% subplot(2,2,4)
+% imagesc(AB_combined_nonNorm_STCs_cell_split.si{ii,ss}{2,2}(sortOrder_all_A,:))
+
+
+%% A&B TS tuned neurons  
+% CORRELATION FOR A&B neurons will serve as a control to the code that
+%is already written for Figure 4H - implemented below
+
+for ii=options.sessionSelect
+    for ss=options.sessionSelect
+        %get index of matches for filtered match matrix
+        non_nan_idx = find(sum(~isnan(matching_list_filtered.ts_AB_filt_event_filt(:,[ii,ss])),2) == 2);
+        
+        %generate day2 day match matrix
+        d2d_match_list = matching_list_filtered.ts_AB_filt_event_filt(non_nan_idx,[ii,ss]);
+        
+        %if there are matching neurons
+        if ~isempty(d2d_match_list)
+            %generate the matching nonnormalized STCs
+            AB_combined_nonNorm_STCs.ts{ii,ss} = [A_STC_noNorm{ii}(:,d2d_match_list(:,1))', B_STC_noNorm{ii}(:,d2d_match_list(:,1))';
+                A_STC_noNorm{ss}(:,d2d_match_list(:,2))', B_STC_noNorm{ss}(:,d2d_match_list(:,2))'];
+            
+            %split into separate cells to make correlations easier (same format
+            %as above just split into cells
+            AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{1,1} = A_STC_noNorm{ii}(:,d2d_match_list(:,1))';
+            AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{1,2} = B_STC_noNorm{ii}(:,d2d_match_list(:,1))';
+            AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{2,1} = A_STC_noNorm{ss}(:,d2d_match_list(:,2))';
+            AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{2,2} = B_STC_noNorm{ss}(:,d2d_match_list(:,2))';
+        
+            %A vs B TC correlation matrix on first session across days for
+            %A&B neurons
+            TCcorr_all_ses.ts.AB.first{ii,ss} = corr(A_STC_noNorm{ii}(:,d2d_match_list(:,1)),B_STC_noNorm{ii}(:,d2d_match_list(:,1)), 'type','Pearson','rows','complete');
+            TCcorr_all_ses.ts.AB.second{ii,ss} = corr(A_STC_noNorm{ss}(:,d2d_match_list(:,2)),B_STC_noNorm{ss}(:,d2d_match_list(:,2)), 'type','Pearson','rows','complete');
+       
+        else %fill this up with nans
+            TCcorr_all_ses.ts.AB.first{ii,ss} = nan;
+            TCcorr_all_ses.ts.AB.second{ii,ss} = nan;
+            AB_combined_nonNorm_STCs.ts{ii,ss} = nan;
+            AB_combined_nonNorm_STCs_cell_split.ts{ii,ss} = nan;
+        end
+    end
+end
+
+
+%get neuron number counts for each neuron
+%SI A&B neurons - A trials and B trials
+for ii = options.sessionSelect
+    for ss = options.sessionSelect
+        TCcorr_all_ses_neuron_count.ts.AB(ii,ss) = size(TCcorr_all_ses.ts.AB.first{ii,ss},1);
+    end
+end
+
+%% QC Check TS
+%generate list of day 1 correlations
+% for ii=options.sessionSelect
+%     first_corr(ii) = mean(diag(TCcorr_all_ses.ts.AB.first{1, ii}));
+%     second_corr(ii) = mean(diag(TCcorr_all_ses.ts.AB.second{1, ii}));
+% end
+% 
+% figure
+% hold on
+% plot(first_corr)
+% plot(second_corr)
+% 
+% %checked - works
+% %QC check above split
+% %isequal(AB_combined_nonNorm_STCs{2,4}, cell2mat( AB_combined_nonNorm_STCs_cell_split{2,4}))
+% 
+% 
+% [~,maxBin_all_A] = max(AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{1,1}', [], 1,'includenan');
+% %sortIdx - arrangment of ROIs after sorting by max spatial bin acitivity
+% [~,sortOrder_all_A] = sort(maxBin_all_A,'ascend');
+% 
+% figure
+% subplot(2,2,1)
+% imagesc(AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{1,1}(sortOrder_all_A,:))
+% subplot(2,2,2)
+% imagesc(AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{1,2}(sortOrder_all_A,:))
+% subplot(2,2,3)
+% imagesc(AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{2,1}(sortOrder_all_A,:))
+% subplot(2,2,4)
+% imagesc(AB_combined_nonNorm_STCs_cell_split.ts{ii,ss}{2,2}(sortOrder_all_A,:))
 
 %% Plot - tuning curve correlations
 
@@ -609,6 +767,8 @@ PV_TC_corr.TC_same_day_diag = TCcorr_all_same_day_diag;
 PV_TC_corr.TCcorr_all_ses = TCcorr_all_ses;
 PV_TC_corr.TCcorr_all_ses_neuron_count = TCcorr_all_ses_neuron_count;
 
+PV_TC_corr.AB_combined_nonNorm_STCs = 
+PV_TC_corr.AB_combined_nonNorm_STCs_cell_split = 
 
 %PV CORRELATION DATA FOR EXPORT
 

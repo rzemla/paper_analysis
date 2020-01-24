@@ -2,7 +2,7 @@ function [cent_diff,pf_vector_max] = centroid_diff_multi_ses(session_vars,tunedL
 
 %% Import variables
 
-matching_list = registered.multi.assigned_all;
+%matching_list = registered.multi.assigned_all;
 
 
 %% Define tuned combinations
@@ -248,7 +248,7 @@ hold off
 
 %combined into single matrix
 for ss=options.sessionSelect
-    comb_place_field_max{ss} = [place_field_centers_max{ss}{options.selectTrial(1)};place_field_centers_max{ss}{options.selectTrial(1)}];
+    comb_place_field_max{ss} = [place_field_centers_max{ss}{options.selectTrial(1)};place_field_centers_max{ss}{options.selectTrial(2)}];
 end
 
 %ALL NEURONS

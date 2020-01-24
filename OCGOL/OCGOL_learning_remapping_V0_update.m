@@ -21,6 +21,12 @@ options.selectTrial = [4 5];
 %for use in global workspace
 selectTrial = options.selectTrial;
 
+%flag to all A or B trial or only correct A or B trials
+%all correct = 0 ==> uses trials 4,5 (set for learning data)
+%all correct = 1 ==> uses trials 1,2 (set for recall data)
+options.allCorrect = 0;
+
+
 %ANIMAL #1
 %I56_RTLS
 %input directories to matching function
@@ -260,10 +266,6 @@ end
 %% Define tuned logical vectors
 %SAME FUNCTION AS USED FOR SINGLE SESSION DATA
 
-%flag to all A or B trial or only correct A or B trials
-%all correct = 0 ==> uses trials 4,5
-%all correct = 1 ==> uses trials 1,2
-options.allCorrect = 0;
 %select which session to use
 %options.sessionSelect = [1 2 3 4 5 6];
 %returns struct of structs
@@ -345,8 +347,13 @@ save(fullfile(crossdir,'pf_vector_max.mat'),'pf_vector_max');
 %% TC correlation for matching (+/-) tuned ROIs - using Tuning Specificity only
 %already filtered for at least 1 sig place field and 5 distinct in-field events
 %these outputs are used to matching tuning curve day to day correlations
-tc_corr_match.STC_mat_AB_A
-tc_corr_match.STC_mat_AB_B
+% tc_corr_match.STC_mat_AB_A
+% tc_corr_match.STC_mat_AB_B
+
+% figure
+% imagesc(tc_corr_match.STC_mat_AB_A{1, 4})
+% hold on
+% colorbar
 
 [tc_corr_match] = tc_corr_matching_neurons(session_vars,registered,options);
 
@@ -356,7 +363,7 @@ save(fullfile(crossdir,'tc_corr_match.mat'),'tc_corr_match')
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 
 %set option as to how to select neurons for plots
-options.tuning_criterion = 'si'; %si or ts
+%options.tuning_criterion = 'si'; %si or ts
 %options.sessionSelect = [1 2 3 4 5 6 ];
 %options.selectSes = [4 5];
 %learning or recall datasets
@@ -443,6 +450,8 @@ options.tuning_criterion = 'si'; %si or ts
 %% Calculate fraction tuned S.I. vs T.S for every session
 %QC checked
 
+%output from tuned logicals is already filtered for min 5 events and 1 sig
+%place field
 [tuned_fractions,tuned_logicals] = fractionTuned_multi_ses(tunedLogical,pf_count_filtered_log,options);
 
 %save fractional count
@@ -535,10 +544,10 @@ for ss=options.sessionSelect
 end
 
 %extract 2 session index
-ses_comp = [4,5];
-selMatchIdxs = find(sum(~isnan(match_mat(:,ses_comp)),2)==2);
-
-cat_registered_cell(selMatchIdxs,ses_comp);
+% ses_comp = [4,5];
+% selMatchIdxs = find(sum(~isnan(match_mat(:,ses_comp)),2)==2);
+% 
+% cat_registered_cell(selMatchIdxs,ses_comp);
 
 %% Extract normalized events
 tic;
@@ -569,9 +578,11 @@ options.tuning_criterion = 'si'; %si or ts
 %options.sessionSelect = [1 2 3 4 5 6];
 %chose all A/B (learning) vs. only correct A/B (recall)
 %options.selectTrial = [4,5];
-%is it a learning set (for plot/raster annotation)
+
+%is it a learning set (for plot/raster annotation); no effect on
+%calculations
 options.learning_data = 1;
-non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
+%non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
 
 
 %% Generate STC maps of neurons tuned in either session and plot side by side
@@ -635,5 +646,6 @@ if 0
     %set option as to how to select neurons for plots
     % options.tuning_criterion = 'si'; %si or ts
     % non_norm_matching_STC_rasters_learning(session_vars,tunedLogical,registered,options)
+    
 end
 
