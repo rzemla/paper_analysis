@@ -265,9 +265,8 @@ for ii=sessionSelect
             TC_corr_all_day{ii, jj}.AB_AB_early = corr(STC_mat_AB_A_sort{ii,jj}(:,1:100)',STC_mat_AB_B_sortRelA{ii,jj}(:,1:100)','Type','Pearson','rows','all');
             TC_corr_all_day{ii, jj}.AB_AB_later = corr(STC_mat_AB_A_sort{ii,jj}(:,101:200)',STC_mat_AB_B_sortRelA{ii,jj}(:,101:200)','Type','Pearson','rows','all');
             
-            %non-sorted A vs. B
-            TC_corr_all_day_nonsorted{ii, jj}.AB_AB_early = corr(STC_mat_AB_A{ii,jj}(:,1:100)',STC_mat_AB_B{ii,jj}(:,1:100)','Type','Pearson','rows','all');
-            TC_corr_all_day_nonsorted{ii, jj}.AB_AB_later = corr(STC_mat_AB_A{ii,jj}(:,101:200)',STC_mat_AB_B{ii,jj}(:,101:200)','Type','Pearson','rows','all');
+            TC_corr_all_day{ii, jj}.AB_AB_early = corr(STC_mat_AB_A{ii,jj}(:,1:100)',STC_mat_AB_B_sortRelA{ii,jj}(:,1:100)','Type','Pearson','rows','all');
+            TC_corr_all_day{ii, jj}.AB_AB_later = corr(STC_mat_AB_A_sort{ii,jj}(:,101:200)',STC_mat_AB_B_sortRelA{ii,jj}(:,101:200)','Type','Pearson','rows','all');
             
             
             PV_corr_all_day{ii, jj}.AB_AB_early = corr(STC_mat_AB_A_sort{ii,jj}(:,1:100),STC_mat_AB_B_sortRelA{ii,jj}(:,1:100),'Type','Pearson','rows','all');
@@ -276,21 +275,13 @@ for ii=sessionSelect
         else
             TC_corr_all_day{ii, jj}.AB_AB_early = [];
             TC_corr_all_day{ii, jj}.AB_AB_later = [];
-            
-            TC_corr_all_day_nonsorted{ii, jj}.AB_AB_early = [];
-            TC_corr_all_day_nonsorted{ii, jj}.AB_AB_later = [];
-            
             PV_corr_all_day{ii, jj}.AB_AB_early = [];
             PV_corr_all_day{ii, jj}.AB_AB_later = [];
         end
         
     end
 end
- %RESUME HERE
-%QC check
-%check if they are the same
-% mean(diag(TC_corr_all_nonsorted{2,7}.A)),mean(diag(TC_corr_all_day{2,7}.A))
-% mean(diag(TC_corr_all_nonsorted{2,7}.B)),mean(diag(TC_corr_all_day{2,7}.B))
+
 
 
 
