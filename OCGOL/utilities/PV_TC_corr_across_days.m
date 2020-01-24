@@ -842,6 +842,9 @@ end
 PV_TC_corr.TCcorr_all_ses = TCcorr_all_ses;
 PV_TC_corr.TCcorr_all_ses_neuron_count = TCcorr_all_ses_neuron_count;
 
+%STCs used to generate TC correlations for A and B cells across days 
+PV_TC_corr.TCcorr_all_ses_STCs = TCcorr_all_ses_STCs;
+
 %A&B tuned neurons compared against each session for sis and ts
 PV_TC_corr.AB_combined_nonNorm_STCs = AB_combined_nonNorm_STCs;
 PV_TC_corr.AB_combined_nonNorm_STCs_cell_split = AB_combined_nonNorm_STCs_cell_split;
