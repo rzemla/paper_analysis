@@ -357,6 +357,12 @@ save(fullfile(crossdir,'pf_vector_max.mat'),'pf_vector_max');
 
 [tc_corr_match] = tc_corr_matching_neurons(session_vars,registered,options);
 
+
+%% Get the same output from the function above but for SI tuned neurons using a hack on the inputs to the above function
+
+%load the SI values into the existing TS tuned values
+[tc_corr_match] = tc_corr_matching_neurons_si_output_hack(session_vars,registered,options,tc_corr_match);
+
 %save to output file for cumulative analysis
 save(fullfile(crossdir,'tc_corr_match.mat'),'tc_corr_match')
 

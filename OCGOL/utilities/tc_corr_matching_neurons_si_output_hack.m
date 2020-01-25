@@ -1,4 +1,4 @@
-function [tc_corr_match] = tc_corr_matching_neurons(session_vars,registered,options)
+function [tc_corr_match] = tc_corr_matching_neurons_si_output_hack(session_vars,registered,options,tc_corr_match)
 
 
 %% Parameters
@@ -51,17 +51,15 @@ end
 %# of ROIs in match list
 nbROI_match_list = size(registered.multi.assigned_filtered,1);
 
+% (1)Need to change this to get a hack workaround for SI scores
 %ROIs for A and B trials (TS)
-matchROI_ts_event.A = registered.multi.matching_list_filtered.ts_Aall_filt_event_filt(:,1:sessionSelect(end));
-matchROI_ts_event.B = registered.multi.matching_list_filtered.ts_Ball_filt_event_filt(:,1:sessionSelect(end));
+matchROI_ts_event.A = registered.multi.matching_list_filtered.si_Aall_filt_event_filt(:,1:sessionSelect(end));
+matchROI_ts_event.B = registered.multi.matching_list_filtered.si_Ball_filt_event_filt(:,1:sessionSelect(end));
 
-%ROIs for A and B trials (SI)
-% matchROI_si_event.A = registered.multi.matching_list_filtered.si_Aall_filt_event_filt(:,1:sessionSelect(end));
-% matchROI_si_event.B = registered.multi.matching_list_filtered.si_Ball_filt_event_filt(:,1:sessionSelect(end));
-
+% (2) Need to change this to get a hack workaround for SI scores
 %construct ROI matrix for both A and B tuned  (TS)
-A_filt_log = ~isnan(registered.multi.matching_list_filtered.ts_Aall_filt_event_filt(:,1:sessionSelect(end)));
-B_filt_log = ~isnan(registered.multi.matching_list_filtered.ts_Ball_filt_event_filt(:,1:sessionSelect(end)));
+A_filt_log = ~isnan(registered.multi.matching_list_filtered.si_Aall_filt_event_filt(:,1:sessionSelect(end)));
+B_filt_log = ~isnan(registered.multi.matching_list_filtered.si_Ball_filt_event_filt(:,1:sessionSelect(end)));
 
 %combined A and B filtered logical
 AB_filt_log = A_filt_log & B_filt_log;
@@ -127,6 +125,12 @@ for ii=sessionSelect
         STC_mat_A{ii,jj} = cell2mat(matching_ROI_all_day_STC.ts.A{ii,jj}')';
         STC_mat_B{ii,jj} = cell2mat(matching_ROI_all_day_STC.ts.B{ii,jj}')';
         
+        %get count of neurons in each session
+        %A to A matches ROIs 
+        TC_corr_counts.ts.A(ii,jj) = size(matching_ROI_all_day_idx.ts.A{ii,jj},1);
+        %B to B matches ROIs
+        TC_corr_counts.ts.B(ii,jj) = size(matching_ROI_all_day_idx.ts.B{ii,jj},1);
+        
         %sort by d1
         %maxBin - spatial bin where activity is greatest for each ROI
         [~,maxBin_all_A] = max(STC_mat_A{ii,jj}(:,1:100)', [], 1,'includenan');
@@ -148,26 +152,27 @@ for ii=sessionSelect
             %this is using sorted data
             TC_corr_all_day{ii,jj}.A = corr(STC_mat_A_sort{ii,jj}(:,1:100)',STC_mat_A_sort{ii,jj}(:,101:200)','Type','Pearson','rows','all');
             %this is using unsorted data
-            TC_corr_all_nonsorted{ii,jj}.A = corr(STC_mat_A{ii,jj}(:,1:100)',STC_mat_A{ii,jj}(:,101:200)','Type','Pearson','rows','all');
+            TC_corr_all_day_nonsorted{ii,jj}.A = corr(STC_mat_A{ii,jj}(:,1:100)',STC_mat_A{ii,jj}(:,101:200)','Type','Pearson','rows','all');
             %this is sorted
             PV_corr_all_day{ii,jj}.A = corr(STC_mat_A_sort{ii,jj}(:,1:100),STC_mat_A_sort{ii,jj}(:,101:200),'Type','Pearson','rows','all');
         else
             TC_corr_all_day{ii,jj}.A = [];
             PV_corr_all_day{ii,jj}.A = [];
-            TC_corr_all_nonsorted{ii,jj}.A = [];
+            TC_corr_all_day_nonsorted{ii,jj}.A = [];
         end
         
         %correlation for B
         if ~isempty(STC_mat_B_sort{ii,jj})
             TC_corr_all_day{ii,jj}.B = corr(STC_mat_B_sort{ii,jj}(:,1:100)',STC_mat_B_sort{ii,jj}(:,101:200)','Type','Pearson','rows','all');
             %this is using unsorted data
-            TC_corr_all_nonsorted{ii,jj}.B = corr(STC_mat_B{ii,jj}(:,1:100)',STC_mat_B{ii,jj}(:,101:200)','Type','Pearson','rows','all');            
+            TC_corr_all_day_nonsorted{ii,jj}.B = corr(STC_mat_B{ii,jj}(:,1:100)',STC_mat_B{ii,jj}(:,101:200)','Type','Pearson','rows','all');            
             
             PV_corr_all_day{ii,jj}.B = corr(STC_mat_B_sort{ii,jj}(:,1:100),STC_mat_B_sort{ii,jj}(:,101:200),'Type','Pearson','rows','all');
         else
             TC_corr_all_day{ii,jj}.B = [];
             PV_corr_all_day{ii,jj}.B = [];
-            TC_corr_all_nonsorted{ii,jj}.B = [];
+            
+            TC_corr_all_day_nonsorted{ii,jj}.B
         end
     end
 end
@@ -211,6 +216,9 @@ for ii=sessionSelect
         % index these STCs -TODO
         STC_mat_AB_A{ii,jj} = cell2mat(matching_ROI_all_day_STC.ts.AB.A{ii, jj}')';
         STC_mat_AB_B{ii,jj} = cell2mat(matching_ROI_all_day_STC.ts.AB.B{ii, jj}')';
+        
+        %A&B matches
+        TC_corr_counts.ts.AB(ii,jj) = size(matching_ROI_all_day_idx.ts.AB{ii,jj},1);
         
         %sort by d1
         %maxBin - spatial bin where activity is greatest for each ROI
@@ -262,19 +270,25 @@ for ii=sessionSelect
         
         if ~isempty(STC_mat_AB_A_sort{ii,jj}) || ~isempty(STC_mat_AB_B_sortRelA{ii,jj})
             %A vs.B correlation on each day
+            %TC
             TC_corr_all_day{ii, jj}.AB_AB_early = corr(STC_mat_AB_A_sort{ii,jj}(:,1:100)',STC_mat_AB_B_sortRelA{ii,jj}(:,1:100)','Type','Pearson','rows','all');
             TC_corr_all_day{ii, jj}.AB_AB_later = corr(STC_mat_AB_A_sort{ii,jj}(:,101:200)',STC_mat_AB_B_sortRelA{ii,jj}(:,101:200)','Type','Pearson','rows','all');
             
-            TC_corr_all_day{ii, jj}.AB_AB_early = corr(STC_mat_AB_A{ii,jj}(:,1:100)',STC_mat_AB_B_sortRelA{ii,jj}(:,1:100)','Type','Pearson','rows','all');
-            TC_corr_all_day{ii, jj}.AB_AB_later = corr(STC_mat_AB_A_sort{ii,jj}(:,101:200)',STC_mat_AB_B_sortRelA{ii,jj}(:,101:200)','Type','Pearson','rows','all');
+            %non-sorted A vs. B
+            TC_corr_all_day_nonsorted{ii, jj}.AB_AB_early = corr(STC_mat_AB_A{ii,jj}(:,1:100)',STC_mat_AB_B{ii,jj}(:,1:100)','Type','Pearson','rows','all');
+            TC_corr_all_day_nonsorted{ii, jj}.AB_AB_later = corr(STC_mat_AB_A{ii,jj}(:,101:200)',STC_mat_AB_B{ii,jj}(:,101:200)','Type','Pearson','rows','all');
             
-            
+            %PV
             PV_corr_all_day{ii, jj}.AB_AB_early = corr(STC_mat_AB_A_sort{ii,jj}(:,1:100),STC_mat_AB_B_sortRelA{ii,jj}(:,1:100),'Type','Pearson','rows','all');
             PV_corr_all_day{ii, jj}.AB_AB_later = corr(STC_mat_AB_A_sort{ii,jj}(:,101:200),STC_mat_AB_B_sortRelA{ii,jj}(:,101:200),'Type','Pearson','rows','all');
             
         else
             TC_corr_all_day{ii, jj}.AB_AB_early = [];
             TC_corr_all_day{ii, jj}.AB_AB_later = [];
+            
+            TC_corr_all_day_nonsorted{ii, jj}.AB_AB_early = [];
+            TC_corr_all_day_nonsorted{ii, jj}.AB_AB_later = [];
+            
             PV_corr_all_day{ii, jj}.AB_AB_early = [];
             PV_corr_all_day{ii, jj}.AB_AB_later = [];
         end
@@ -282,8 +296,34 @@ for ii=sessionSelect
     end
 end
 
+%QC check
+%check if they are the same
+%A&B A vs. A
+%A&B B vs. B
+%A&B A vs. B
+
+%QC checked
+%A&B A vs. A
+% mean(diag(TC_corr_all_day{2,7}.AB_A)),mean(diag(TC_corr_all_day_nonsorted{2,7}.AB_A))
+% %A&B B vs. B
+% mean(diag(TC_corr_all_day{2,7}.AB_B)),mean(diag(TC_corr_all_day_nonsorted{2,7}.AB_B))
+% %early
+% mean(diag(TC_corr_all_day{2,7}.AB_AB_early)),mean(diag(TC_corr_all_day_nonsorted{2,7}.AB_AB_early))
+% %late
+% mean(diag(TC_corr_all_day{2,7}.AB_AB_later)),mean(diag(TC_corr_all_day_nonsorted{2,7}.AB_AB_later))
 
 
+% TC_corr_all_day{ii, jj}.AB_A
+% TC_corr_all_day_nonsorted{ii, jj}.AB_A
+% 
+% TC_corr_all_day{ii, jj}.AB_B
+% TC_corr_all_day_nonsorted{ii, jj}.AB_B
+% 
+% TC_corr_all_day{ii, jj}.AB_AB_early
+% TC_corr_all_day{ii, jj}.AB_AB_later
+% 
+% TC_corr_all_day_nonsorted{ii, jj}.AB_AB_early
+% TC_corr_all_day_nonsorted{ii, jj}.AB_AB_later
 
 % %For visualization
 % test_STC  =cell2mat({matching_ROI_all_day_STC.ts.AB.A{1, 3}{2} matching_ROI_all_day_STC.ts.AB.B{1, 3}{2} }')';
@@ -379,22 +419,40 @@ end
 
 
 %% Export correlations for analysis
+
+%TC correlations are most important here
+%correlation matrix that is not sorted (same results as sorted one, but
+%can match to ROIs later)
+tc_corr_match.si.TC_corr_all_day_nonsorted = TC_corr_all_day_nonsorted;
+tc_corr_match.si.TC_corr_all_day = TC_corr_all_day;
+
+%spatial tuning curves for A&B tuned neurons
+tc_corr_match.si.STC_mat_AB_A = STC_mat_AB_A;
+tc_corr_match.si.STC_mat_AB_B = STC_mat_AB_B;
+
+%spatial tuning curves for A tuned neurons
+tc_corr_match.si.STC_mat_A  = STC_mat_A;
+%spatial tuning curves for B tuned neurons
+tc_corr_match.si.STC_mat_B = STC_mat_B;
+
+%number of neurons counted for each A,B, and A&B correlation
+tc_corr_match.si.TC_corr_counts = TC_corr_counts;
+
+%export matching indices (already paired for each day)
+tc_corr_match.si.matching_ROI_all_day_idx = matching_ROI_all_day_idx.ts;
+
+
 %export computed values
-tc_corr_match.ts.PV_corr_all_day = PV_corr_all_day;
-tc_corr_match.ts.TC_corr_all_day = TC_corr_all_day;
+tc_corr_match.si.PV_corr_all_day = PV_corr_all_day;
+
 
 tc_corr_match.tex_pos = tex_pos;
 tc_corr_match.rew_pos = rew_pos;
 
-
 % all STCs below
-tc_corr_match.ts.matching_ROI_all_day_STC = matching_ROI_all_day_STC;
+tc_corr_match.si.matching_ROI_all_day_STC = matching_ROI_all_day_STC;
 
-tc_corr_match.ts.STC_mat_AB_A = STC_mat_AB_A;
-tc_corr_match.ts.STC_mat_AB_B = STC_mat_AB_B;
 
-tc_corr_match.ts.STC_mat_A  = STC_mat_A;
-tc_corr_match.ts.STC_mat_B = STC_mat_B;
 
 
 end
