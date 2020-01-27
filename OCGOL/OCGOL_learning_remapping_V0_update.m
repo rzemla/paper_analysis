@@ -26,6 +26,10 @@ selectTrial = options.selectTrial;
 %all correct = 1 ==> uses trials 1,2 (set for recall data)
 options.allCorrect = 0;
 
+%this is just for controlling the display of labels across sessions/days
+%doesn't control anything else
+options.learning_data = 0;
+
 
 %ANIMAL #1
 %I56_RTLS
@@ -366,6 +370,8 @@ save(fullfile(crossdir,'pf_vector_max.mat'),'pf_vector_max');
 %save to output file for cumulative analysis
 save(fullfile(crossdir,'tc_corr_match.mat'),'tc_corr_match')
 
+% isequal(cell2mat(tc_corr_match.ts.matching_ROI_all_day_STC.ts.A{1, 2}'),tc_corr_match.ts.STC_mat_A{1, 2}')
+
 %% PV and TC correlations for all matching neurons (PV) in A and B trials across days (line plot); TC corr (for A tuned or B tuned on both days)
 
 %set option as to how to select neurons for plots
@@ -374,9 +380,6 @@ save(fullfile(crossdir,'tc_corr_match.mat'),'tc_corr_match')
 %options.selectSes = [4 5];
 %learning or recall datasets
 
-%this is just for controlling the display of labels across sessions/days
-%doesn't control anything else
-options.learning_data = 1;
 [PV_TC_corr] = PV_TC_corr_across_days(session_vars,tunedLogical,registered,options);
 
 %save to output file for cumulative analysis
@@ -587,7 +590,7 @@ options.tuning_criterion = 'si'; %si or ts
 
 %is it a learning set (for plot/raster annotation); no effect on
 %calculations
-options.learning_data = 1;
+%options.learning_data = 1;
 %non_norm_matching_STC_rasters(session_vars,tunedLogical,registered,options,crossdir)
 
 

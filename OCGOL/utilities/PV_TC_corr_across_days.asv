@@ -660,7 +660,7 @@ end
 % %plot 3 vs. 5
 % plot(diag(TCcorr_all_ses.ts.A{3,5}))
 
-%% A&B SI tuned neurons  - SI
+%% A&B SI tuned neurons  
 % CORRELATION FOR A&B neurons will serve as a control to the code that
 %is already written for Figure 4H - implemented below
 
@@ -673,7 +673,7 @@ for ii=options.sessionSelect
         d2d_match_list = matching_list_filtered.si_AB_filt_event_filt(non_nan_idx,[ii,ss]);
         
         %matching idxs
-        TCcorr_idx_match.si.AB{ii,ss} = d2d_match_list;
+        TCcorr_idx_match.si.AB.A{ii,ss} = d2d_match_list;
         
         %if there are matching neurons
         if ~isempty(d2d_match_list)
@@ -753,10 +753,6 @@ for ii=options.sessionSelect
         
         %generate day2 day match matrix
         d2d_match_list = matching_list_filtered.ts_AB_filt_event_filt(non_nan_idx,[ii,ss]);
-        
-        %matching idxs
-        TCcorr_idx_match.ts.AB{ii,ss} = d2d_match_list;
-        
         
         %if there are matching neurons
         if ~isempty(d2d_match_list)
@@ -873,9 +869,6 @@ PV_TC_corr.TCcorr_all_ses_STCs = TCcorr_all_ses_STCs;
 PV_TC_corr.AB_combined_nonNorm_STCs = AB_combined_nonNorm_STCs;
 PV_TC_corr.AB_combined_nonNorm_STCs_cell_split = AB_combined_nonNorm_STCs_cell_split;
 
-%idxs of TC correlated neurons
-PV_TC_corr.TCcorr_idx_match = TCcorr_idx_match;
-
 %PV CORRELATION DATA FOR EXPORT (ALL NEURONS)
 %PV correlation matrices - same results
 PV_TC_corr.PVcorr_all_ses_no_nan = PVcorr_all_ses_no_nan;
@@ -884,7 +877,7 @@ PV_TC_corr.PVcorr_all_ses = PVcorr_all_ses;
 %numbers of ROIs PV correlated against any 2 sessions
 PV_TC_corr.PV_corr_ROI_count = PV_corr_ROI_count;
 %idxs of neurons being matched across days
-PV_TC_corr.PV_corr_idx_match = PV_corr_idx_match;
+PV_TC_corr.PV_corr_idx_match;
 
 %STCs used to generate PV correlations
 PV_TC_corr.PVcorr_all_ses_no_nan_STCs = PVcorr_all_ses_no_nan_STCs;
