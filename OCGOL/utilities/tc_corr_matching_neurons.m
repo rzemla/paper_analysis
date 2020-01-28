@@ -172,7 +172,7 @@ for ii=sessionSelect
             TC_corr_all_day{ii,jj}.B = [];
             PV_corr_all_day{ii,jj}.B = [];
             
-            TC_corr_all_day_nonsorted{ii,jj}.B
+            TC_corr_all_day_nonsorted{ii,jj}.B = [];
         end
     end
 end
