@@ -1,4 +1,4 @@
-%% Define the directories for processing
+%% Define the directories for processing - SHORT TERM RECALL
 
 %ANIMAL #1
 %I42R 1
@@ -60,6 +60,42 @@ path_dir{5} = {'G:\OCGOL_stability_recall\I47_LP\I47_LP_AB_d1_062018_1',...
 % %cross session directory
 crossdir{5} = 'G:\OCGOL_stability_recall\I47_LP\crossSession_update';
 
+%% LONG-TERM (30 day sessions) %%
+
+%ANIMAL #1
+%I47_LP
+path_dir{1} = {'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d1_062018_1',...
+     'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d6_062518_2',...
+     'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d16_070518_3',...
+     'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d20_070918_4',...
+     'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d25_071318_5',...
+     'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d30_071818_6'};
+%cross session directory
+crossdir{1} = 'D:\OCGOL_learning_long_term\I47_LP\crossSession_update';
+
+%ANIMAL #2
+%I45 RT
+path_dir{2} = {'D:\OCGOL_learning_long_term\I45_RT\I45_RT_AB_d1_062018_1',...
+     'D:\OCGOL_learning_long_term\I45_RT\I45_RT_AB_d6_062518_2',...
+     'D:\OCGOL_learning_long_term\I45_RT\I45_RT_AB_d16_070518_3',...
+     'D:\OCGOL_learning_long_term\I45_RT\I45_RT_AB_d20_070918_4',...
+     'D:\OCGOL_learning_long_term\I45_RT\I45_RT_AB_d25_071318_5',...
+     'D:\OCGOL_learning_long_term\I45_RT\I45_RT_AB_d30_071818_6'};
+%cross session directory
+crossdir{2} = 'D:\OCGOL_learning_long_term\I45_RT\crossSession_update';
+
+%ANIMAL #3
+%I46
+path_dir{3} = {'D:\OCGOL_learning_long_term\I46\I46_AB_d1_062018_1',...
+     'D:\OCGOL_learning_long_term\I46\I46_AB_d6_062518_2',...
+     'D:\OCGOL_learning_long_term\I46\I46_AB_d16_070518_3',...
+     'D:\OCGOL_learning_long_term\I46\I46_AB_d20_070918_4',...
+     'D:\OCGOL_learning_long_term\I46\I46_AB_d25_071318_5',...
+     'D:\OCGOL_learning_long_term\I46\I46_AB_d30_071818_6'};
+%cross session directory
+crossdir{3} = 'D:\OCGOL_learning_long_term\I46\crossSession_update';
+
+
 %% Import variables and define options (set options to use to run global script) - LEARNING PARAMETERS
 
 %run componenet registration across sessions
@@ -98,7 +134,7 @@ options.learning_data = 0;
 
 %% Run processing of data for generation of Figure 4
 
-for ii=[1 2 3 4 5]
+for ii=[1 2 3]
     disp(['Running: ', num2str(ii)])
     OCGOL_global_remapping_V0_update(path_dir{ii},crossdir{ii},options)
 end

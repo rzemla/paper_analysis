@@ -87,6 +87,8 @@ options.selectTrial = [1 2];
 
 
                             %%%%% LONG-TERM (30 day sessions) %%%%
+
+%ANIMAL #1
 %I47_LP
 % path_dir = {'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d1_062018_1',...
 %      'D:\OCGOL_learning_long_term\I47_LP\I47_LP_AB_d6_062518_2',...
@@ -97,6 +99,7 @@ options.selectTrial = [1 2];
 % %cross session directory
 % crossdir = 'D:\OCGOL_learning_long_term\I47_LP\crossSession';
 
+%ANIMAL #2
 %I45 RT
 % path_dir = {'D:\OCGOL_learning_long_term\I45_RT\I45_RT_AB_d1_062018_1',...
 %      'D:\OCGOL_learning_long_term\I45_RT\I45_RT_AB_d6_062518_2',...
@@ -107,6 +110,7 @@ options.selectTrial = [1 2];
 % %cross session directory
 % crossdir = 'D:\OCGOL_learning_long_term\I45_RT\crossSession';
 
+%ANIMAL #3
 %I46
 % path_dir = {'D:\OCGOL_learning_long_term\I46\I46_AB_d1_062018_1',...
 %      'D:\OCGOL_learning_long_term\I46\I46_AB_d6_062518_2',...
