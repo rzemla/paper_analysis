@@ -36,10 +36,14 @@ cumulative_performance_plot(short_term_learn,short_term_recall)
 plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_frac, long_term_recall.tuned_frac)
 
 
-
 %% Construct PV correlation plots from non-normalized maps for all 3 classes of neurons
 %
-PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall) 
+PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan) 
+
+
+%% Plot the output of PV and TC correlations for each category of experiments
+
+
 
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)
