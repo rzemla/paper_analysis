@@ -50,11 +50,11 @@ if exp_type == 2
         for dd=4:5
             %if making day 4 substitution, get day 2 and day 6 ses
             if dd==4
-                ses2day_idx(1) = find(excl_day_combined_day_nan{aa,exp_type}(2,:) == 2);
+                ses2day_idx(1) = find(excl_day_combined_day_nan{aa,exp_type}(2,:) == 3);
                 ses2day_idx(2) = find(excl_day_combined_day_nan{aa,exp_type}(2,:) == 6);
                 
             elseif dd==5
-                ses2day_idx(1) = find(excl_day_combined_day_nan{aa,exp_type}(2,:) == 2);
+                ses2day_idx(1) = find(excl_day_combined_day_nan{aa,exp_type}(2,:) == 3);
                 ses2day_idx(2) = find(excl_day_combined_day_nan{aa,exp_type}(2,:) == 7);
                 
             end

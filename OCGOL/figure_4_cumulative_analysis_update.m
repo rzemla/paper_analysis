@@ -37,13 +37,19 @@ plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_
 
 
 %% Construct PV correlation plots from non-normalized maps for all 3 classes of neurons
-%
-PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan) 
 
+[corr_analysis] = PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan);
+
+
+%PV data - for export to Prism for 2-way repeated measures ANOVA test
+%(D4/D5 substitution) - QC check
+A_st_learn = corr_analysis.st_learn.raw.day_PV_diag_mean.A';
+A_st_recall = corr_analysis.st_recall.raw.day_PV_diag_mean.A';
+A_st_recall_all_corr = corr_analysis.st_recall.raw.all_coor.PV_diag_distance_mean.A';
 
 %% Plot the output of PV and TC correlations for each category of experiments
 
-
+PV_TC_correlation_plotter(corr_analysis)
 
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)

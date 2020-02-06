@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan)
+function [corr_analysis] = PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan)
 
 
 
@@ -15,181 +15,117 @@ function [outputArg1,outputArg2] = PV_TC_correlation_analysis(short_term_learn, 
 %short term learn
 exp_type =1;
 day_range = 1:9;
-
-[st_learn.mean_PV,st_learn.sem_PV] = filter_convert_day_return_mean_sem_PV(short_term_learn,excl_day_combined_day_nan,exp_type,day_range);
+%outputs
+%(1) mean, (2) sem, (3) prism output data
+[st_learn.mean_PV,st_learn.sem_PV,st_learn.raw] = filter_convert_day_return_mean_sem_PV(short_term_learn,excl_day_combined_day_nan,exp_type,day_range);
 
 %short term recall (fills in day 4 and day 5)
 exp_type =2;
 day_range = 1:9;
 
-[st_recall.mean_PV,st_recall.sem_PV] = filter_convert_day_return_mean_sem_PV(short_term_recall,excl_day_combined_day_nan,exp_type,day_range);
+[st_recall.mean_PV,st_recall.sem_PV,st_recall.raw] = filter_convert_day_return_mean_sem_PV(short_term_recall,excl_day_combined_day_nan,exp_type,day_range);
 
 %long term recall
 exp_type =3;
 day_range = [1 6 16 20 25 30];
 
-[lt_recall.mean_PV,lt_recall.sem_PV] = filter_convert_day_return_mean_sem_PV(long_term_recall,excl_day_combined_day_nan,exp_type,day_range);
+[lt_recall.mean_PV,lt_recall.sem_PV,lt_recall.raw] = filter_convert_day_return_mean_sem_PV(long_term_recall,excl_day_combined_day_nan,exp_type,day_range);
 
 
-
-%% Plot PV as function of time with sem
-
-%short term plots
-figure
-hold on
-ylim([0 1])
-%plot(mean_PV.A(1:7),'b--')
-title('PV correlation - all neurons')
-errorbar(1:7, st_learn.mean_PV.A(1:7),st_learn.sem_PV.A(1:7))
-errorbar(1:7, st_learn.mean_PV.B(1:7),st_learn.sem_PV.B(1:7))
-
-errorbar(1:9, st_recall.mean_PV.A(1:9),st_recall.sem_PV.A(1:9))
-errorbar(1:9, st_recall.mean_PV.B(1:9),st_recall.sem_PV.B(1:9))
-
-%long term plots
-figure
-hold on
-title('PV correlation - all neurons')
-ylim([0 1])
-plot_days = [1 6 16 20 25 30];
-xticks(plot_days)
-errorbar(plot_days, lt_recall.mean_PV.A(plot_days),lt_recall.sem_PV.A(plot_days))
-errorbar(plot_days, lt_recall.mean_PV.B(plot_days),lt_recall.sem_PV.B(plot_days))
-
-%% TC correlation - TS
+%% TC correlation - TS (non-normalized TC correlations)
 
 %short term learn
 exp_type =1;
 day_range = 1:9;
 tuning_type = 'ts';
 
-[st_learn.ts.mean_TC,st_learn.ts.sem_TC] = filter_convert_day_return_mean_sem_TC_global(short_term_learn,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+[st_learn.ts.mean_TC,st_learn.ts.sem_TC,st_learn.ts.raw] = filter_convert_day_return_mean_sem_TC_global(short_term_learn,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
 %short term recall (fills in day 4 and day 5)
 exp_type =2;
 day_range = 1:9;
 tuning_type = 'ts';
 
-[st_recall.ts.mean_TC,st_recall.ts.sem_TC] = filter_convert_day_return_mean_sem_TC_global(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+[st_recall.ts.mean_TC,st_recall.ts.sem_TC,st_recall.ts.raw] = filter_convert_day_return_mean_sem_TC_global(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
 
 %long term recall
 exp_type =3;
 day_range = [1 6 16 20 25 30];
 tuning_type = 'ts';
-[lt_recall.ts.mean_TC,lt_recall.ts.sem_TC] = filter_convert_day_return_mean_sem_TC_global(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+[lt_recall.ts.mean_TC,lt_recall.ts.sem_TC,lt_recall.ts.raw] = filter_convert_day_return_mean_sem_TC_global(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
 
-%% Run TC correlation analysis on NORMALIZED spatial tuning curves (control for non-norm)
-%modify filter_convert_day_return _mean_sem_TC_global
+%% Run TC correlation analysis on NORMALIZED spatial tuning curves (control for non-norm) - TS
+%modify filter_convert_day_return _mean_sem_TC_global - done
 exp_type =1;
 day_range = 1:9;
 tuning_type = 'ts';
 
 [st_learn.ts.norm.mean_TC,st_learn.ts.norm.sem_TC] = filter_convert_day_return_mean_sem_TC_global_normalized(short_term_learn,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
+%short term recall (fills in day 4 and day 5)
+exp_type =2;
+day_range = 1:9;
+tuning_type = 'ts';
 
-%% TC correlation - SI
+[st_recall.ts.norm.mean_TC,st_recall.ts.norm.sem_TC] = filter_convert_day_return_mean_sem_TC_global_normalized(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+%long term recall
+exp_type =3;
+day_range = [1 6 16 20 25 30];
+tuning_type = 'ts';
+[lt_recall.ts.norm.mean_TC,lt_recall.ts.norm.sem_TC] = filter_convert_day_return_mean_sem_TC_global_normalized(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+
+%% TC correlation - SI - non-normalized
 
 %short term learn
 exp_type =1;
 day_range = 1:9;
 tuning_type = 'si';
 
-[st_learn.si.mean_TC,st_learn.si.sem_TC] = filter_convert_day_return_mean_sem_TC_global(short_term_learn,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+[st_learn.si.mean_TC,st_learn.si.sem_TC,st_learn.si.raw] = filter_convert_day_return_mean_sem_TC_global(short_term_learn,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
 %short term recall (fills in day 4 and day 5)
 exp_type =2;
 day_range = 1:9;
 tuning_type = 'si';
 
-[st_recall.si.mean_TC,st_recall.si.sem_TC] = filter_convert_day_return_mean_sem_TC_global(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+[st_recall.si.mean_TC,st_recall.si.sem_TC,st_recall.si.raw] = filter_convert_day_return_mean_sem_TC_global(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
 %long term recall
 exp_type =3;
 day_range = [1 6 16 20 25 30];
 tuning_type = 'si';
-[lt_recall.si.mean_TC,lt_recall.si.sem_TC] = filter_convert_day_return_mean_sem_TC_global(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+[lt_recall.si.mean_TC,lt_recall.si.sem_TC,lt_recall.si.raw] = filter_convert_day_return_mean_sem_TC_global(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
+%% Run TC correlation analysis on NORMALIZED spatial tuning curves (control for non-norm) - SI
+%modify filter_convert_day_return _mean_sem_TC_global - done
+exp_type =1;
+day_range = 1:9;
+tuning_type = 'si';
 
+[st_learn.si.norm.mean_TC,st_learn.si.norm.sem_TC] = filter_convert_day_return_mean_sem_TC_global_normalized(short_term_learn,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
-%% Short term - Plot TC as function of time with sem - T.S - by animal
+%short term recall (fills in day 4 and day 5)
+exp_type =2;
+day_range = 1:9;
+tuning_type = 'si';
 
-%short term plots
-figure('Position', [2136 350 1031 420])
-subplot(1,2,1)
-hold on
-title('TC - ts - by animal')
-ylim([0 1])
-errorbar(1:7, st_learn.ts.mean_TC.animal.A(1:7),st_learn.ts.sem_TC.animal.A(1:7))
-errorbar(1:7, st_learn.ts.mean_TC.animal.B(1:7),st_learn.ts.sem_TC.animal.B(1:7))
+[st_recall.si.norm.mean_TC,st_recall.si.norm.sem_TC] = filter_convert_day_return_mean_sem_TC_global_normalized(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
-errorbar(1:9, st_recall.ts.mean_TC.animal.A(1:9),st_recall.ts.sem_TC.animal.A(1:9))
-errorbar(1:9, st_recall.ts.mean_TC.animal.B(1:9),st_recall.ts.sem_TC.animal.B(1:9))
+%long term recall
+exp_type =3;
+day_range = [1 6 16 20 25 30];
+tuning_type = 'si';
+[lt_recall.si.norm.mean_TC,lt_recall.si.norm.sem_TC] = filter_convert_day_return_mean_sem_TC_global_normalized(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
-%% Short term - Plot TC as function of time with sem - T.S - by neuron
+%% Export mean and sem from this function for each class of experiments
 
-%short term plots
-subplot(1,2,2)
-hold on
-title('TC - ts - by neuron')
-ylim([0 1])
-errorbar(1:7, st_learn.ts.mean_TC.neuron.A(1:7),st_learn.ts.sem_TC.neuron.A(1:7))
-errorbar(1:7, st_learn.ts.mean_TC.neuron.B(1:7),st_learn.ts.sem_TC.neuron.B(1:7))
-
-errorbar(1:9, st_recall.ts.mean_TC.neuron.A(1:9),st_recall.ts.sem_TC.neuron.A(1:9))
-errorbar(1:9, st_recall.ts.mean_TC.neuron.B(1:9),st_recall.ts.sem_TC.neuron.B(1:9))
-
-%% Long term recall TC plots - TS - by animal
-
-figure('Position', [2136 350 1031 420])
-subplot(1,2,1)
-hold on
-title('TC correlation -  LT - TS - by animal')
-ylim([0 1])
-plot_days = [1 6 16 20 25 30];
-xticks(plot_days)
-errorbar(plot_days, lt_recall.ts.mean_TC.animal.A(plot_days),lt_recall.ts.sem_TC.animal.A(plot_days))
-errorbar(plot_days, lt_recall.ts.mean_TC.animal.B(plot_days),lt_recall.ts.sem_TC.animal.B(plot_days))
-
-
-%% Long term recall TC plots - TS - by neuron
-
-subplot(1,2,2)
-hold on
-title('TC correlation -  LT - TS - by neuron')
-ylim([0 1])
-plot_days = [1 6 16 20 25 30];
-xticks(plot_days)
-errorbar(plot_days, lt_recall.ts.mean_TC.neuron.A(plot_days),lt_recall.ts.sem_TC.neuron.A(plot_days))
-errorbar(plot_days, lt_recall.ts.mean_TC.neuron.B(plot_days),lt_recall.ts.sem_TC.neuron.B(plot_days))
-
-
-%% Plot TC as function of time with sem - S.I. - by animal
-
-figure('Position', [2136 350 1031 420])
-subplot(1,2,1)
-hold on
-title('TC - si - by animal')
-ylim([0 1])
-errorbar(1:7, st_learn.si.mean_TC.animal.A(1:7),st_learn.si.sem_TC.animal.A(1:7))
-errorbar(1:7, st_learn.si.mean_TC.animal.B(1:7),st_learn.si.sem_TC.animal.B(1:7))
-
-errorbar(1:9, st_recall.si.mean_TC.animal.A(1:9),st_recall.si.sem_TC.animal.A(1:9))
-errorbar(1:9, st_recall.si.mean_TC.animal.B(1:9),st_recall.si.sem_TC.animal.B(1:9))
-
-%% Plot TC as function of time with sem - S.I. - by neuron
-
-%short term plots
-subplot(1,2,2)
-hold on
-title('TC - si - by neuron')
-ylim([0 1])
-errorbar(1:7, st_learn.si.mean_TC.neuron.A(1:7),st_learn.si.sem_TC.neuron.A(1:7))
-errorbar(1:7, st_learn.si.mean_TC.neuron.B(1:7),st_learn.si.sem_TC.neuron.B(1:7))
-
-errorbar(1:9, st_recall.si.mean_TC.neuron.A(1:9),st_recall.si.sem_TC.neuron.A(1:9))
-errorbar(1:9, st_recall.si.mean_TC.neuron.B(1:9),st_recall.si.sem_TC.neuron.B(1:9))
+corr_analysis.st_learn = st_learn;
+corr_analysis.st_recall = st_recall;
+corr_analysis.lt_recall = lt_recall;
 
 %% DEVELOPMENT CODE USED TO GENERATE FUNCTION ABOVE
 
