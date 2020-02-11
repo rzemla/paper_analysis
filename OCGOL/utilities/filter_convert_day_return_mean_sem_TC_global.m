@@ -275,8 +275,14 @@ if exp_type == 2
     TC_diag_distance_neuron_mean.A = cellfun(@nanmean,TC_diag_distance_neuron.A);
     TC_diag_distance_neuron_mean.B = cellfun(@nanmean,TC_diag_distance_neuron.B);
     
-    %get sem  
-    %RESUME HERE
+    %get sem
+    %A trials
+    TC_diag_distance_neuron_sem.A = cellfun(@nanstd,TC_diag_distance_neuron.A)./...   
+    sqrt(cellfun(@sum,(cellfun(@(x) ~isnan(x),TC_diag_distance_neuron.A,'UniformOutput',false))));
+
+    %B trials
+    TC_diag_distance_neuron_sem.B = cellfun(@nanstd,TC_diag_distance_neuron.B)./...   
+    sqrt(cellfun(@sum,(cellfun(@(x) ~isnan(x),TC_diag_distance_neuron.B,'UniformOutput',false))));    
     
     %get mean from each day from merging all neurons from all animals from
     %all distance day correlations
@@ -284,7 +290,12 @@ if exp_type == 2
     TC_diag_distance_all_neuron_mean.B = cellfun(@nanmean,TC_diag_distance_all_neuron.B);
     
     %get sem
-    
+    %A
+    TC_diag_distance_all_neuron_sem.A = cellfun(@nanstd,TC_diag_distance_all_neuron.A)./...
+    sqrt(cellfun(@sum,(cellfun(@(x) ~isnan(x),TC_diag_distance_all_neuron.A,'UniformOutput',false))));
+    %B
+    TC_diag_distance_all_neuron_sem.B = cellfun(@nanstd,TC_diag_distance_all_neuron.B)./...
+    sqrt(cellfun(@sum,(cellfun(@(x) ~isnan(x),TC_diag_distance_all_neuron.B,'UniformOutput',false))));    
      
 end
 
@@ -353,8 +364,43 @@ if exp_type == 2
     sem_TC.all_corr.B = day_TC_distance_mean_sem.B;
     
     %means used to calculate the mean (export data for analysis)
-    raw.all_coor.TC_diag_distance_mean.A = TC_diag_distance_mean.A;
-    raw.all_coor.TC_diag_distance_mean.B = TC_diag_distance_mean.B;
+    raw.all_corr.TC_diag_distance_mean.A = TC_diag_distance_mean.A;
+    raw.all_corr.TC_diag_distance_mean.B = TC_diag_distance_mean.B;
+    
+    %export neuron merge mean and sem data
+    %cumulative mean from merging all animal data into distance-day
+    %analysis
+    
+    %%% means from all neuron bundled by animals across days
+    %each point is a mean taken for that day from the neurons of all
+    %animals
+    
+    %mean
+    mean_TC.all_corr.neuron_mean_day.A = TC_diag_distance_neuron_mean.A;
+    mean_TC.all_corr.neuron_mean_day.B = TC_diag_distance_neuron_mean.B;
+    
+    %sem
+    sem_TC.all_corr.neuron_mean_day.A = TC_diag_distance_neuron_sem.A;
+    sem_TC.all_corr.neuron_mean_day.B = TC_diag_distance_neuron_sem.B;
+    
+    %raw
+    raw.all_corr.neuron_mean_day.TC_diag_distance_neuron.A = TC_diag_distance_neuron.A;
+    raw.all_corr.neuron_mean_day.TC_diag_distance_neuron.B = TC_diag_distance_neuron.B;
+    
+    %%% all neurons taken together
+    
+    %mean
+    mean_TC.all_corr.neuron_ind_all.A = TC_diag_distance_all_neuron_mean.A;
+    mean_TC.all_corr.neuron_ind_all.B = TC_diag_distance_all_neuron_mean.B;
+    %sem
+    sem_TC.all_corr.neuron_ind_all.A = TC_diag_distance_all_neuron_sem.A;
+    sem_TC.all_corr.neuron_ind_all.B = TC_diag_distance_all_neuron_sem.B;
+    
+    %raw
+    raw.all_corr.neuron_ind_all.TC_diag_distance_all_neuron.A = TC_diag_distance_all_neuron.A;
+    raw.all_corr.neuron_ind_all.TC_diag_distance_all_neuron.B = TC_diag_distance_all_neuron.B;
+    
+    %DONE - make sure to label variables in Word document
     
 end
 

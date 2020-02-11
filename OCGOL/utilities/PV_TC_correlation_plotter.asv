@@ -65,59 +65,7 @@ legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location
 
 
 %% Equivalent plots for short term data for SI - supplement/thesis data
-st_learn_day_range = 1:7;
-st_recall_day_range = 1:9;
 
-figure('Position',[2272 370 1007 420])
-%PV plot - all neurons
-subplot(1,2,1)
-hold on 
-axis square
-title('PV correlation - all')
-ylim([0 1])
-xlim([0 10])
-xticks(1:9)
-yticks(0:0.2:1)
-xlabel('Days')
-ylabel('Correlation score')
-
-%Learn
-lA = errorbar(st_learn_day_range,st_learn.mean_PV.A(st_learn_day_range),st_learn.sem_PV.A(st_learn_day_range),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-lB = errorbar(st_learn_day_range,st_learn.mean_PV.B(st_learn_day_range),st_learn.sem_PV.B(st_learn_day_range),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
-
-%Recall
-rA = errorbar(st_recall_day_range,st_recall.mean_PV.all_corr.A(st_recall_day_range),st_recall.sem_PV.all_corr.A(st_recall_day_range),'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
-rB = errorbar(st_recall_day_range,st_recall.mean_PV.all_corr.B(st_recall_day_range),st_recall.sem_PV.all_corr.B(st_recall_day_range),'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
-
-set(gca,'FontSize',16)
-set(gca,'Linewidth',2)
-
-legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
-
-subplot(1,2,2)
-hold on 
-axis square
-title('TC correlation - si')
-ylim([0 1])
-xlim([0 10])
-xticks(1:9)
-yticks(0:0.2:1)
-xlabel('Days')
-ylabel('Correlation score')
-
- 
-%Learn
-lA = errorbar(st_learn_day_range,st_learn.si.mean_TC.animal.A(st_learn_day_range),st_learn.si.sem_TC.animal.A(st_learn_day_range),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
-lB = errorbar(st_learn_day_range,st_learn.si.mean_TC.animal.B(st_learn_day_range),st_learn.si.sem_TC.animal.B(st_learn_day_range),'LineStyle','--','Linewidth',2,'Color',[220,20,60]/255);
-
-%Recall
-rA = errorbar(st_recall_day_range,st_recall.si.mean_TC.all_corr.A(st_recall_day_range),st_recall.si.sem_TC.all_corr.A(st_recall_day_range),'LineStyle','-','Linewidth',2,'Color',[65,105,225]/255);
-rB = errorbar(st_recall_day_range,st_recall.si.mean_TC.all_corr.B(st_recall_day_range),st_recall.si.sem_TC.all_corr.B(st_recall_day_range),'LineStyle','-','Linewidth',2,'Color',[220,20,60]/255);
-
-set(gca,'FontSize',16)
-set(gca,'Linewidth',2)
-
-legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
 
 
 %% Below are control\QC plots 
