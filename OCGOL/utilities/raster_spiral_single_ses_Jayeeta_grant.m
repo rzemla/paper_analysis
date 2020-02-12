@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
+function [outputArg1,outputArg2] = raster_spiral_single_ses_Jayeeta_grant(session_vars,CNMF_vars,removeROI,templates,options)
 
 %% Define/load variables for each session
 

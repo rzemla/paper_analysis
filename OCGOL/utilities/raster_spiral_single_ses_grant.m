@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
+function [outputArg1,outputArg2] = raster_spiral_single_ses_grant(session_vars,CNMF_vars,removeROI,templates,options)
 
 %% Define/load variables for each session
 
@@ -293,19 +293,31 @@ if 0
 end
 
 %% Plot figure 2b traces 
+
+subplot_matrix = 1:25;
+subplot_matrix = reshape(subplot_matrix,5,5)';
+%seconds
+x_time_lim = 10.3;
+y_dFF_lim = 2.7;
+
+%with global remapper
+%ROI_all = [234,246,197,24];
+ROI_all = [234,246,197,181]
+for xx=1
 if options.plotFigure2 ==1
     
     %number of each type of ROI - A,B,common
-    ROI_all = [234,246,197] 
+    %ROI_all = [234,246,197] 
+    
     %ROI_all = [398	404	455];
     %ROI_all = [111, 246, 197];
-    ROI_colors = {'b','r','m'};
-    ROI_outline_order = [1,6,11];
+    ROI_colors = {'b','r','m','m'};
+    ROI_outline_order = [1,6,11,16];
     
     figure('Position',[1920 40 1920 960],'Renderer','painters')
     %Show spatial outline of the component
-    for rr=1:3
-        subplot(4,5,ROI_outline_order(rr))
+    for rr=1:4
+        subplot(5,5,ROI_outline_order(rr))
         imagesc(templates{1}.template);
         hold on
         title(num2str(ROI_all(rr)))
@@ -324,12 +336,12 @@ if options.plotFigure2 ==1
     end
 
 %show color-coded (by trial) calcium traces of the component
-ROI_trace_order = [2,3,4; 7 8 9; 12 13 14];
-for rr=1:3
-    subplot(4,5,ROI_trace_order(rr,:))
+ROI_trace_order = [2,3,4; 7 8 9; 12 13 14; 17 18 19];
+for rr=1:4
+    subplot(5,5,ROI_trace_order(rr,:))
     hold on
-    xlim([0.1 18.2])
-    ylim([-0.2 4])
+    xlim([0.1 x_time_lim])
+    ylim([-0.2 y_dFF_lim])
     yticks([0 1 2])
     ylabel('dF/F');
     xticks(0:3:15.5);
@@ -350,17 +362,17 @@ for rr=1:3
     end
 end
 
-ROI_polar_order = [5,10,15];
-for rr=1:3
+ROI_polar_order = [5,10,15,20];
+for rr=1:4
     %tuning vectors of the component
-    pax1 = subplot(4,5,ROI_polar_order(rr),polaraxes);
+    pax1 = subplot(5,5,ROI_polar_order(rr),polaraxes);
     hold on
     pax1.FontSize = 14;
     angles = 0;
     pax1.ThetaTick = angles;
     thetaticklabels(pax1,{'lap start'});
     rticks(pax1, []);
-    rlim(pax1,[0 25]);
+    rlim(pax1,[0 21]);
     
     polarplot(x{1},r_scaled{1},'k','Linewidth',1.5)
     
@@ -397,13 +409,13 @@ end
 %polarplot([0+0i,Place_cell{1}{1}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
 
 %plot normalized position
-subplot(4,5,[17 18 19])
+subplot(5,5,[22 23 24])
 hold on
 yticks([0 0.5 1])
 ylabel('Normalized position')
 xlabel('Time [min]');
 xticks(0:3:9.5);
-xlim([0.1 10.2])
+xlim([0.1 x_time_lim])
 ylim([0 1])
 set(gca,'FontSize',14)
 set(gca,'LineWidth',1)
@@ -428,6 +440,7 @@ end
 %clf;
 
     
+end
 end
 
 %% NOT USED IMPORTED CODE

@@ -120,12 +120,6 @@ if 0
     options.plotFigure2 = 1;
     raster_spiral_single_ses(session_vars,CNMF_vars,removeROI,templates,options)
     
-    %% For grant added global remapper (McKnight - like)
-    
-    %adds a global remapper to the existing 3 types of neurons
-    options.plotFigure2 = 1;
-    raster_spiral_single_ses_grant(session_vars,CNMF_vars,removeROI,templates,options)
-    
     %% Generate partial remapper display for supplement figure
     
     %partial_idx_by_animal_zone - not used, but can provide the indices
