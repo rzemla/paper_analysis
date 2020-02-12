@@ -1,7 +1,7 @@
 function figure_2_3_analysis(path_dir)
 %% Set to not display figures when running in serial export fashion
 
-set(0,'DefaultFigureVisible','off'); 
+%set(0,'DefaultFigureVisible','off'); 
 
 %% Import variables and define options
 
@@ -578,6 +578,8 @@ selectVis =1;
 
 %show only select neurons for localization purposes
 selectedROI_idx =[627 416 269 524 458];
+%global remapping supplement
+selectedROI_idx =[556 400 424];
 
 %plot BW outline of the component
 figure

@@ -1,4 +1,4 @@
-%% Load  data from learn and recall animals
+%% Load data from learn and recall animals
 
 %skip loading of session var data
 options.skipSesVars = 1;
@@ -9,6 +9,23 @@ tic;
         short_term_learn,short_term_recall,long_term_recall] = figure4_load_data(options);
 toc;
 
+%% Create look-up tables that give correspondence between sessions and days as well as which session to discard
+%also return number of animals and number of sessions per animal by
+%asbolute, filtered session, filtered day
+%returns cell with each row corresponding to animal and each column to
+%experiment type
+%column index
+%(1) - short-term learn
+%(2) - short-term recall
+%(3) - long-term recall
+
+%top vector refers to which sessions to exclude
+%bottom refers to the equivalent day for that session
+%the second variable day_nan has the respective days remove to correspond
+%to bad sessions
+
+[excl_day_combined,excl_day_combined_day_nan] = generate_filter_LUTs(short_term_learn, short_term_recall, long_term_recall);
+
 %% Learning performance line plot
 
 cumulative_performance_plot(short_term_learn,short_term_recall)
@@ -18,7 +35,39 @@ cumulative_performance_plot(short_term_learn,short_term_recall)
 %update script uses updated processing pipeline output
 plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_frac, long_term_recall.tuned_frac)
 
-%% Construct PV correlation plots from non-normalized maps for all 3 
+
+%% Construct PV correlation plots from non-normalized maps for all 3 classes of neurons
+
+[corr_analysis] = PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan);
+
+
+%PV data - for export to Prism for 2-way repeated measures ANOVA test
+%(D4/D5 substitution) - QC check
+
+%% Matrices for Prism export for PV analysis (Figure 4F)
+
+%%%% PV data %%%%
+
+%PV learning data
+PV_A_st_learn = corr_analysis.st_learn.raw.day_PV_diag_mean.A';
+%all correlated for A
+PV_A_st_recall_all_corr = corr_analysis.st_recall.raw.all_coor.PV_diag_distance_mean.A';
+%raw with D4/D5 substitution
+PV_A_st_recall_d4_5_sub = corr_analysis.st_recall.raw.day_PV_diag_mean.A';
+
+
+%%%% TC TS %%%% Raw Data
+%A
+TC.ts.st_learn.A = corr_analysis.st_learn.ts.raw.animal.day_TC_diag_mean.exp.A';
+TC.ts.st_recall.d4_d5_sub.A = corr_analysis.st_recall.ts.raw.animal.day_TC_diag_mean.exp.A';
+%B
+TC.ts.st_learn.B = corr_analysis.st_learn.ts.raw.animal.day_TC_diag_mean.exp.B';
+TC.ts.st_recall.d4_d5_sub.B = corr_analysis.st_recall.ts.raw.animal.day_TC_diag_mean.exp.B';
+
+
+%% Plot the output of PV and TC correlations for each category of experiments
+
+PV_TC_correlation_plotter(corr_analysis)
 
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)

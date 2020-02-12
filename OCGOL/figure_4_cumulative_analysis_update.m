@@ -45,9 +45,47 @@ plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_
 %(D4/D5 substitution) - QC check
 
 %% Matrices for Prism export for PV analysis (Figure 4F)
-PV_A_st_learn = corr_analysis.st_learn.raw.day_PV_diag_mean.A';
-PV_A_st_recall_all_corr = corr_analysis.st_recall.raw.all_coor.PV_diag_distance_mean.A';
-PV_A_st_recall_all_corr = corr_analysis.st_recall.raw.all_coor.PV_diag_distance_mean.A';
+
+%%%% PV data %%%%
+%A
+%PV learning data
+PV.st_learn.A = corr_analysis.st_learn.raw.day_PV_diag_mean.A';
+%all correlated for A
+PV.st_recall.all_corr.A = corr_analysis.st_recall.raw.all_coor.PV_diag_distance_mean.A';
+%raw with D4/D5 substitution
+PV.st_recall.d4_d5_sub.A= corr_analysis.st_recall.raw.day_PV_diag_mean.A';
+
+%B
+%PV learning data
+PV.st_learn.B = corr_analysis.st_learn.raw.day_PV_diag_mean.B';
+%all correlated for A
+PV.st_recall.all_corr.B = corr_analysis.st_recall.raw.all_coor.PV_diag_distance_mean.B';
+%raw with D4/D5 substitution
+PV.st_recall.d4_d5_sub.B = corr_analysis.st_recall.raw.day_PV_diag_mean.B';
+
+
+%%%% TC TS %%%% Raw Data and all_corr data for ST Recall
+%A
+TC.ts.st_learn.A = corr_analysis.st_learn.ts.raw.animal.day_TC_diag_mean.exp.A';
+TC.ts.st_recall.d4_d5_sub.A = corr_analysis.st_recall.ts.raw.animal.day_TC_diag_mean.exp.A';
+TC.ts.st_recall.all_corr.A = corr_analysis.st_recall.ts.raw.all_corr.TC_diag_distance_mean.A';
+
+%B
+TC.ts.st_learn.B = corr_analysis.st_learn.ts.raw.animal.day_TC_diag_mean.exp.B';
+TC.ts.st_recall.d4_d5_sub.B = corr_analysis.st_recall.ts.raw.animal.day_TC_diag_mean.exp.B';
+TC.ts.st_recall.all_corr.B = corr_analysis.st_recall.ts.raw.all_corr.TC_diag_distance_mean.B';
+
+%%%% TC SI %%%% Raw Data
+%A
+TC.si.st_learn.A = corr_analysis.st_learn.si.raw.animal.day_TC_diag_mean.exp.A';
+TC.si.st_recall.d4_d5_sub.A = corr_analysis.st_recall.si.raw.animal.day_TC_diag_mean.exp.A';
+TC.si.st_recall.all_corr.A = corr_analysis.st_recall.si.raw.all_corr.TC_diag_distance_mean.A';
+
+%B
+TC.si.st_learn.B = corr_analysis.st_learn.si.raw.animal.day_TC_diag_mean.exp.B';
+TC.si.st_recall.d4_d5_sub.B = corr_analysis.st_recall.si.raw.animal.day_TC_diag_mean.exp.B';
+TC.si.st_recall.all_corr.B = corr_analysis.st_recall.si.raw.all_corr.TC_diag_distance_mean.B';
+
 
 %% Plot the output of PV and TC correlations for each category of experiments
 
