@@ -297,10 +297,17 @@ end
 subplot_matrix = 1:25;
 subplot_matrix = reshape(subplot_matrix,5,5)';
 %seconds
+%length of x time axis in seconds
 x_time_lim = 10.3;
+%height of dF/F axis
 y_dFF_lim = 2.7;
+%size of zoom in around ROI window (pixels)
+outline_zoom = 20;
 
-%with global remapper
+%for grant using older ROIs with global remapper
+
+%ROI_all = [yy,171,182,197];
+%current plots
 %ROI_all = [234,246,197,24];
 ROI_all = [234,246,197,181]
 for xx=1
@@ -315,6 +322,8 @@ if options.plotFigure2 ==1
     ROI_outline_order = [1,6,11,16];
     
     figure('Position',[1920 40 1920 960],'Renderer','painters')
+    %for yy=9:298
+    
     %Show spatial outline of the component
     for rr=1:4
         subplot(5,5,ROI_outline_order(rr))
@@ -331,8 +340,8 @@ if options.plotFigure2 ==1
         %plot componenet outline
         plot(coor_keep_sel{ROI_all(rr)}(1,:),coor_keep_sel{ROI_all(rr)}(2,:),ROI_colors{rr}, 'LineWidth',1);
         %zoom into component based on center of mass calculation
-        xlim([A_keep_sel_com(ROI_all(rr),2)-30, A_keep_sel_com(ROI_all(rr),2)+30])
-        ylim([A_keep_sel_com(ROI_all(rr),1)-30, A_keep_sel_com(ROI_all(rr),1)+30])
+        xlim([A_keep_sel_com(ROI_all(rr),2)-outline_zoom, A_keep_sel_com(ROI_all(rr),2)+outline_zoom])
+        ylim([A_keep_sel_com(ROI_all(rr),1)-outline_zoom, A_keep_sel_com(ROI_all(rr),1)+outline_zoom])
     end
 
 %show color-coded (by trial) calcium traces of the component
@@ -436,10 +445,10 @@ end
 %scatter(event_norm_time.A{ROI},event_norm_pos_run.A{ROI},[],[0 0 1],'*')
 %B 
 %scatter(event_norm_time.B{ROI},event_norm_pos_run.B{ROI},[],[1 0 0],'*')
-%pause;
-%clf;
+% pause;
+% clf;
 
-    
+    %end    
 end
 end
 
