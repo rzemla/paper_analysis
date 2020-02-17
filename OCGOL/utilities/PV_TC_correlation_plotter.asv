@@ -142,10 +142,6 @@ figure('Position', [2283 474 923 358])
 %learn vs raw PV
 subplot(1,2,1)
 hold on
-xlabel('Relative Day to D1')
-ylabel('Corr. score')
-xticks([1:9])
-xticklabels({'0','1','2','3','4','5','6','7','8'})
 title('PV correlation - raw')
 %learn
 lA = plot_error_line(PV_mean_sem.st_learn.A,'--',2,[65,105,225]/255);
@@ -163,10 +159,6 @@ set(gca,'Linewidth',2)
 %learn vs cross-correlated ST RECALL PV
 subplot(1,2,2)
 hold on
-xlabel('Relative Day to D1')
-ylabel('Corr. score')
-xticks([1:9])
-xticklabels({'0','1','2','3','4','5','6','7','8'})
 title('PV correlation - cross correlation')
 %learn
 lA = plot_error_line(PV_mean_sem.st_learn.A,'--',2,[65,105,225]/255);
@@ -184,14 +176,10 @@ set(gca,'Linewidth',2)
 %% Plot TC with raw results and cross correlated data (ST RECALL)
 
 %TC TS
-figure('Position', [2050 107 829 824])
+figure('Position', [2283 474 923 358])
 %learn vs raw PV
 subplot(2,2,1)
 hold on
-xlabel('Relative Day to D1')
-ylabel('Corr. score')
-xticks([1:9])
-xticklabels({'0','1','2','3','4','5','6','7','8'})
 title('TC TS correlation - raw')
 %learn
 lA = plot_error_line(TC_mean_sem.ts.st_learn.A,'--',2,[65,105,225]/255);
@@ -209,10 +197,6 @@ set(gca,'Linewidth',2)
 %learn vs cross-correlated ST RECALL TC
 subplot(2,2,2)
 hold on
-xlabel('Relative Day to D1')
-ylabel('Corr. score')
-xticks([1:9])
-xticklabels({'0','1','2','3','4','5','6','7','8'})
 title('TC TS correlation - cross correlation')
 %learn
 lA = plot_error_line(TC_mean_sem.ts.st_learn.A,'--',2,[65,105,225]/255);
@@ -230,10 +214,6 @@ set(gca,'Linewidth',2)
 %TC SI
 subplot(2,2,3)
 hold on
-xlabel('Relative Day to D1')
-ylabel('Corr. score')
-xticks([1:9])
-xticklabels({'0','1','2','3','4','5','6','7','8'})
 title('TC SI correlation - raw')
 %learn
 lA = plot_error_line(TC_mean_sem.si.st_learn.A,'--',2,[65,105,225]/255);
@@ -251,10 +231,6 @@ set(gca,'Linewidth',2)
 
 subplot(2,2,4)
 hold on
-xlabel('Relative Day to D1')
-ylabel('Corr. score')
-xticks([1:9])
-xticklabels({'0','1','2','3','4','5','6','7','8'})
 title('TC SI correlation - cross correlation')
 %learn
 lA = plot_error_line(TC_mean_sem.si.st_learn.A,'--',2,[65,105,225]/255);

@@ -1,0 +1,10 @@
+function [lA] = plot_error_line(range_l,mean_l, sem_l,style_l,color_l)
+%UNTITLED2 Summary of this function goes here
+%   Detailed explanation goes here
+
+
+lA = errorbar(range_1,st_learn.ts.mean_TC.animal.A(st_learn_day_range),st_learn.ts.sem_TC.animal.A(st_learn_day_range),'LineStyle','--','Linewidth',2,'Color',[65,105,225]/255);
+
+
+end
+
