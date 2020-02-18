@@ -40,8 +40,8 @@ end
 if exp_type == 2
     for aa=1:nb_animal
         
-        %for day 4 substitution = Day 2 vs. Day 6
-        %for day 5 substitution = Day 2 vs. Day 7
+        %for day 4 substitution = Day 3 vs. Day 6
+        %for day 5 substitution = Day 3 vs. Day 7
         for dd=4:5
             %if making day 4 substitution, get day 2 and day 6 ses
             if dd==4
@@ -82,7 +82,7 @@ end
 
 %if short term recall experiment
 if exp_type == 2
-    %extract PV correlation matrices for each animal that are day matched
+    %extract TC correlation matrices for each animal that are day matched
     for aa=1:nb_animal
         %for each day
         for dd1 = day_range

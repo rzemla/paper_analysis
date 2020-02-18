@@ -55,6 +55,10 @@ day_range = [1 6 16 20 25 30];
 tuning_type = 'ts';
 [lt_recall.ts.mean_TC,lt_recall.ts.sem_TC,lt_recall.ts.raw] = filter_convert_day_return_mean_sem_TC_global(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
+%% Extract neighboring day TC correlations
+
+
+
 
 %% Run TC correlation analysis on NORMALIZED spatial tuning curves (control for non-norm) - TS
 %modify filter_convert_day_return _mean_sem_TC_global - done
