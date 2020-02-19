@@ -1,4 +1,6 @@
-function [outputArg1,outputArg2] = corr_score_scatter(path_dir)
+function [r_global] = corr_score_scatter(path_dir)
+%%
+%output: export global remapping neuron r values (Grant)
 
 
 %% Load place cells defined according to correlation sig criteria (updated)
@@ -243,6 +245,8 @@ legend([s1 s2],{'Common','Global'},'location','northwest')
 % scatter(r_global_merge,(p_global_merge),14,'filled')
 % scatter(r_rate_merge,(p_rate_merge),14,'filled')
 % 
+
+
 
 end
 

@@ -44,6 +44,10 @@ plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_
 %PV data - for export to Prism for 2-way repeated measures ANOVA test
 %(D4/D5 substitution) - QC check
 
+%% Plot the output of PV and TC correlations for each category of experiments
+
+PV_TC_correlation_plotter(corr_analysis)
+
 %% Matrices for Prism export for PV analysis (Figure 4F)
 
 %%%% PV data %%%%
@@ -86,10 +90,12 @@ TC.si.st_learn.B = corr_analysis.st_learn.si.raw.animal.day_TC_diag_mean.exp.B';
 TC.si.st_recall.d4_d5_sub.B = corr_analysis.st_recall.si.raw.animal.day_TC_diag_mean.exp.B';
 TC.si.st_recall.all_corr.B = corr_analysis.st_recall.si.raw.all_corr.TC_diag_distance_mean.B';
 
+%% Matrices for Prism export for PV/TC analysis Neighboring days (Figure 4G)
 
-%% Plot the output of PV and TC correlations for each category of experiments
 
-PV_TC_correlation_plotter(corr_analysis)
+
+
+
 
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)

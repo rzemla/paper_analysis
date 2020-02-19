@@ -178,13 +178,13 @@ TC_mean_sem.neighbor.si.st_recall.A = [[1 2 6 7 8]; st_recall.neighbor.si.mean_T
 TC_mean_sem.neighbor.si.st_recall.B = [[1 2 6 7 8]; st_recall.neighbor.si.mean_TC.animal.B([1 2 6 7 8]); st_recall.neighbor.si.sem_TC.animal.B(([1 2 6 7 8]))];
 
 %% Plot neighboring correlations for replacement of Figure 4G
-figure('Position', [2272 370 1007 420])
+figure('Position', [2283 474 923 358])
 %learn vs raw PV
 subplot(1,2,1)
 hold on
 ylim([0 1])
 xlabel('Day comparison')
-ylabel('Correlation score')
+ylabel('Corr. score')
 xticks([1:8])
 xlim([0 9])
 xticklabels({'1 vs. 2','2 vs. 3','3 vs. 4','4 vs. 5','5 vs. 6','6 vs. 7','7 vs. 8','8 vs. 9'})
@@ -207,10 +207,8 @@ hold on
 xlim([0 9])
 ylim([0 1])
 xlabel('Day comparison')
-ylabel('Correlation score')
-xticks([1:8])
-xlim([0 9])
-xticklabels({'1 vs. 2','2 vs. 3','3 vs. 4','4 vs. 5','5 vs. 6','6 vs. 7','7 vs. 8','8 vs. 9'})
+xticks([1 2 6 7 8])
+xticklabels({'1 vs. 2','2 vs. 3','6 vs. 7','7 vs. 8','8 vs. 9'})
 xtickangle(45)
 title('TC correlation - TS')
 %learn
@@ -223,7 +221,7 @@ rB = plot_error_line(TC_mean_sem.neighbor.ts.st_recall.B,'-',2,[220,20,60]/255);
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
-legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location','northeast')
+legend([rA,rB],{'Recall A','Recall B'},'location','northeast')
 
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)

@@ -111,8 +111,15 @@ lap_speed_by_animal(path_dir)
 event_speed_scatter(path_dir)
 
 %% Generate scatterplot with correlation against p-value for supplement
+%return global correlation scores for each animal/FOV
 
-corr_score_scatter(path_dir)
+[r_global] = corr_score_scatter(path_dir);
+
+%export this value
+save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','r_global.mat'),'r_global');
+
+%mean ~ -0.09 
+%mean(cellfun(@mean,r_global))
 
 %% REMAPPING RELATED (FIGURE 3)
 

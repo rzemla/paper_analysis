@@ -31,6 +31,28 @@ day_range = [1 6 16 20 25 30];
 
 [lt_recall.mean_PV,lt_recall.sem_PV,lt_recall.raw] = filter_convert_day_return_mean_sem_PV(long_term_recall,excl_day_combined_day_nan,exp_type,day_range);
 
+%% PV correlation neighboring days
+
+%short term learn
+exp_type =1;
+day_range = 1:9;
+%outputs
+%(1) mean, (2) sem, (3) prism output data
+[st_learn.neighbor.mean_PV,st_learn.neighbor.sem_PV,st_learn.neighbor.raw] = filter_convert_day_return_mean_sem_PV_neighbor(short_term_learn,excl_day_combined_day_nan,exp_type,day_range);
+
+%short term recall (fills in day 4 and day 5)
+exp_type =2;
+day_range = 1:9;
+
+[st_recall.neighbor.mean_PV,st_recall.neighbor.sem_PV,st_recall.neighbor.raw] = filter_convert_day_return_mean_sem_PV_neighbor(short_term_recall,excl_day_combined_day_nan,exp_type,day_range);
+
+%long term recall
+exp_type =3;
+day_range = [1 6 16 20 25 30];
+
+[lt_recall.neighbor.mean_PV,lt_recall.neighbor.sem_PV,lt_recall.neighbor.raw] = filter_convert_day_return_mean_sem_PV_neighbor(long_term_recall,excl_day_combined_day_nan,exp_type,day_range);
+
+
 
 %% TC correlation - TS (non-normalized TC correlations)
 
@@ -55,8 +77,27 @@ day_range = [1 6 16 20 25 30];
 tuning_type = 'ts';
 [lt_recall.ts.mean_TC,lt_recall.ts.sem_TC,lt_recall.ts.raw] = filter_convert_day_return_mean_sem_TC_global(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
-%% Extract neighboring day TC correlations
+%% Extract neighboring day TC correlations - TS
 
+%short term learn
+exp_type =1;
+day_range = 1:9;
+tuning_type = 'ts';
+
+[st_learn.neighbor.ts.mean_TC,st_learn.neighbor.ts.sem_TC,st_learn.neighbor.ts.raw] = filter_convert_day_return_mean_sem_TC_global_neighbor(short_term_learn,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+%short term recall
+exp_type =2;
+day_range = 1:9;
+tuning_type = 'ts';
+
+[st_recall.neighbor.ts.mean_TC,st_recall.neighbor.ts.sem_TC,st_recall.neighbor.ts.raw] = filter_convert_day_return_mean_sem_TC_global_neighbor(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+%long term recall
+exp_type =3;
+day_range = [1 6 16 20 25 30];
+tuning_type = 'ts';
+[lt_recall.neighbor.ts.mean_TC,lt_recall.neighbor.ts.sem_TC,lt_recall.neighbor.ts.raw] = filter_convert_day_return_mean_sem_TC_global_neighbor(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
 
 
@@ -103,6 +144,30 @@ exp_type =3;
 day_range = [1 6 16 20 25 30];
 tuning_type = 'si';
 [lt_recall.si.mean_TC,lt_recall.si.sem_TC,lt_recall.si.raw] = filter_convert_day_return_mean_sem_TC_global(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+%% Extract neighboring day TC correlations - SI
+
+%short term learn
+exp_type =1;
+day_range = 1:9;
+tuning_type = 'si';
+
+[st_learn.neighbor.si.mean_TC,st_learn.neighbor.si.sem_TC,st_learn.neighbor.si.raw] = filter_convert_day_return_mean_sem_TC_global_neighbor(short_term_learn,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+%short term recall
+exp_type =2;
+day_range = 1:9;
+tuning_type = 'si';
+
+[st_recall.neighbor.si.mean_TC,st_recall.neighbor.si.sem_TC,st_recall.neighbor.si.raw] = filter_convert_day_return_mean_sem_TC_global_neighbor(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+%long term recall
+exp_type =3;
+day_range = [1 6 16 20 25 30];
+tuning_type = 'si';
+[lt_recall.neighbor.si.mean_TC,lt_recall.neighbor.si.sem_TC,lt_recall.neighbor.si.raw] = filter_convert_day_return_mean_sem_TC_global_neighbor(long_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+
 
 %% Run TC correlation analysis on NORMALIZED spatial tuning curves (control for non-norm) - SI
 %modify filter_convert_day_return _mean_sem_TC_global - done
