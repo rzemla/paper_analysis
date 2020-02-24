@@ -126,15 +126,6 @@ TC.neighbor.ts.st_recall.B = corr_analysis.st_recall.neighbor.ts.raw.animal.day_
 TC.neighbor.si.st_recall.A = corr_analysis.st_recall.neighbor.si.raw.animal.day_TC_diag_mean.A;
 TC.neighbor.si.st_recall.B = corr_analysis.st_recall.neighbor.si.raw.animal.day_TC_diag_mean.B;
 
-%lt recall - TC - TS
-TC.neighbor.ts.lt_recall.A = corr_analysis.lt_recall.neighbor.ts.raw.animal.day_TC_diag_mean.A;
-TC.neighbor.ts.lt_recall.B = corr_analysis.lt_recall.neighbor.ts.raw.animal.day_TC_diag_mean.B;
-
-%lt recall - TC - SI
-TC.neighbor.si.lt_recall.A = corr_analysis.lt_recall.neighbor.si.raw.animal.day_TC_diag_mean.A;
-TC.neighbor.si.lt_recall.B = corr_analysis.lt_recall.neighbor.si.raw.animal.day_TC_diag_mean.B;
-
-%RESUME PLAN: run stats on TC data above and move to next figure analysis when back
 
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)
