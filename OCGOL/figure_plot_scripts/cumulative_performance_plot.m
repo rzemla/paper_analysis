@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = cumulative_performance_plot(short_term_learn,short_term_recall)
+function [outputArg1,outputArg2] = cumulative_performance_plot(short_term_learn,short_term_recall,excl_day_combined_day_nan)
 
 %function of sessions and not days
 
@@ -23,6 +23,11 @@ end
 for aa=1:nb_recall
     recall_ses_nb(aa) = size(perf_recall{aa}.ses_perf,2);
 end
+
+%% Insert filter for each animal - based on which sessions are used 
+
+%RESUME HERE
+
 
 %% Make one 3-D matrix with fractional performance from all animals
 

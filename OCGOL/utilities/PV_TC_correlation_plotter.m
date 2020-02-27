@@ -116,7 +116,6 @@ PV_mean_sem.neighbor.lt_recall.A = [[1 2 3 4 5];lt_recall.neighbor.mean_PV.A([1 
 PV_mean_sem.neighbor.lt_recall.B = [[1 2 3 4 5];lt_recall.neighbor.mean_PV.B([1 2 3 4 5]); lt_recall.neighbor.sem_PV.B(([1 2 3 4 5]))];
 
 
-
 %% Organize TC data for plotting
 %range, mean, sem (rows)
 %TS learn A/B
@@ -198,6 +197,77 @@ TC_mean_sem.neighbor.si.lt_recall.B = [[1 2 3 4 5]; lt_recall.neighbor.si.mean_T
 plot_sup_neighboring_corr(PV_mean_sem,TC_mean_sem)
 
 %figure('Position', [2272 370 1007 420])
+
+%% Package A&B correlation data
+%pooled neurons
+%day label,median, 95%,
+
+%TS learn AB
+TC_med_95.ABcorr.ts.st_learn.AB = [[1 2 3 4 5 6 7];st_learn.AB_corr.ts.mean_TC.pooled.AB_corr_ratio_median([1 2 3 4 5 6 7]); st_learn.AB_corr.ts.sem_TC.pooled.AB_corr_ratio_95ci(([1 2 3 4 5 6 7]))];
+
+%SI learn AB
+TC_med_95.ABcorr.si.st_learn.AB = [[1 2 3 4 5 6 7];st_learn.AB_corr.si.mean_TC.pooled.AB_corr_ratio_median([1 2 3 4 5 6 7]); st_learn.AB_corr.si.sem_TC.pooled.AB_corr_ratio_95ci(([1 2 3 4 5 6 7]))];
+
+%TS recall AB
+TC_med_95.ABcorr.ts.st_recall.AB = [[1 2 3 6 7 8 9]; st_recall.AB_corr.ts.mean_TC.pooled.AB_corr_ratio_median([1 2 3 6 7 8 9]); st_recall.AB_corr.ts.sem_TC.pooled.AB_corr_ratio_95ci(([1 2 3 6 7 8 9]))];
+
+%SI recall AB
+TC_med_95.ABcorr.si.st_recall.AB = [[1 2 3 6 7 8 9];  st_recall.AB_corr.si.mean_TC.pooled.AB_corr_ratio_median([1 2 3 6 7 8 9]); st_recall.AB_corr.si.sem_TC.pooled.AB_corr_ratio_95ci(([1 2 3 6 7 8 9]))];
+
+%% Plot for main figure (learn vs recall TC)
+ 
+
+input_data.AB{1} = TC_med_95.ABcorr.ts.st_learn.AB;
+input_data.AB{2} = TC_med_95.ABcorr.ts.st_recall.AB;
+
+input_data.AB{3} = TC_med_95.ABcorr.si.st_learn.AB;
+input_data.AB{4} = TC_med_95.ABcorr.si.st_recall.AB;
+
+title_labels{1} = 'A&B TC correlation Learn - TS';
+title_labels{2} = 'A&B TC correlation Recall - TS';
+
+title_labels{3} = 'A&B TC correlation Learn - SI';
+title_labels{4} = 'A&B TC correlation Recall - SI';
+
+figure('Position', [2274 120 720 770])
+for ii=1:4
+    %learn vs raw PV
+    subplot(2,2,ii)
+    hold on
+    axis square
+    ylim([0 1.5])
+    xlabel('Relative day')
+    ylabel('Normalized correlation score')
+    %if learn (left side)
+    if rem(ii,2) == 1
+        xticks([1:7])
+        xlim([0 8])
+        xticklabels({'1','2','3','4','5','6','7'})
+            %dashed 1 reference line
+    plot([0 8],[1 1],'--','Color',[0.5 0.5 0.5])
+    else %recall
+        xticks([1:9])
+        xlim([0 10])
+        xticklabels({'1','2','3','4','5','6','7','8','9'})
+            %dashed 1 reference line
+    plot([0 10],[1 1],'--','Color',[0.5 0.5 0.5])
+    end
+    
+    %xtickangle(45)
+    title(title_labels{ii})
+    
+
+    
+    %learn
+    lA = plot_error_line(input_data.AB{ii},'-',2,[139,0,139]/255);
+    %lB = plot_error_line(input_data.B{ii},'-',2,[220,20,60]/255);
+    
+    set(gca,'FontSize',12)
+    set(gca,'Linewidth',2)
+    
+    %legend([lA,lB],{'A','B'},'location','northeast')
+    
+end
 
 
 %% Supplementary plot for neighboring correlation for PV and TC (Long Term recall)

@@ -28,7 +28,7 @@ toc;
 
 %% Learning performance line plot
 
-cumulative_performance_plot(short_term_learn,short_term_recall)
+cumulative_performance_plot(short_term_learn,short_term_recall,excl_day_combined_day_nan)
 
 %% Plot A/B/AB/neither distributions for short term learning/recall across sessions
 
@@ -39,7 +39,6 @@ plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_
 %% Construct PV correlation plots from non-normalized maps for all 3 classes of neurons
 
 [corr_analysis] = PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan);
-
 
 %PV data - for export to Prism for 2-way repeated measures ANOVA test
 %(D4/D5 substitution) - QC check
