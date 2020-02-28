@@ -27,8 +27,11 @@ toc;
 [excl_day_combined,excl_day_combined_day_nan] = generate_filter_LUTs(short_term_learn, short_term_recall, long_term_recall);
 
 %% Learning performance line plot
+%returns mean and sem for animals used below, filtered for quality sessions
+%and arranged by day
 
-cumulative_performance_plot(short_term_learn,short_term_recall)
+[perf_mean_sem_exp] = cumulative_performance_plot(short_term_learn,short_term_recall,excl_day_combined_day_nan);
+
 
 %% Plot A/B/AB/neither distributions for short term learning/recall across sessions
 
@@ -40,13 +43,13 @@ plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_
 
 [corr_analysis] = PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan);
 
-
 %PV data - for export to Prism for 2-way repeated measures ANOVA test
 %(D4/D5 substitution) - QC check
 
 %% Plot the output of PV and TC correlations for each category of experiments
 
-PV_TC_correlation_plotter(corr_analysis)
+%takes in performance data for Figure 4H plotting
+PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
 
 %% Matrices for Prism export for PV analysis (Figure 4F)
 
@@ -126,6 +129,15 @@ TC.neighbor.ts.st_recall.B = corr_analysis.st_recall.neighbor.ts.raw.animal.day_
 TC.neighbor.si.st_recall.A = corr_analysis.st_recall.neighbor.si.raw.animal.day_TC_diag_mean.A;
 TC.neighbor.si.st_recall.B = corr_analysis.st_recall.neighbor.si.raw.animal.day_TC_diag_mean.B;
 
+%lt recall - TC - TS
+TC.neighbor.ts.lt_recall.A = corr_analysis.lt_recall.neighbor.ts.raw.animal.day_TC_diag_mean.A;
+TC.neighbor.ts.lt_recall.B = corr_analysis.lt_recall.neighbor.ts.raw.animal.day_TC_diag_mean.B;
+
+%lt recall - TC - SI
+TC.neighbor.si.lt_recall.A = corr_analysis.lt_recall.neighbor.si.raw.animal.day_TC_diag_mean.A;
+TC.neighbor.si.lt_recall.B = corr_analysis.lt_recall.neighbor.si.raw.animal.day_TC_diag_mean.B;
+
+%RESUME PLAN: run stats on TC data above and move to next figure analysis when back
 
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)

@@ -27,8 +27,11 @@ toc;
 [excl_day_combined,excl_day_combined_day_nan] = generate_filter_LUTs(short_term_learn, short_term_recall, long_term_recall);
 
 %% Learning performance line plot
+%returns mean and sem for animals used below, filtered for quality sessions
+%and arranged by day
 
-cumulative_performance_plot(short_term_learn,short_term_recall,excl_day_combined_day_nan)
+[perf_mean_sem_exp] = cumulative_performance_plot(short_term_learn,short_term_recall,excl_day_combined_day_nan);
+
 
 %% Plot A/B/AB/neither distributions for short term learning/recall across sessions
 
@@ -45,7 +48,8 @@ plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_
 
 %% Plot the output of PV and TC correlations for each category of experiments
 
-PV_TC_correlation_plotter(corr_analysis)
+%takes in performance data for Figure 4H plotting
+PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
 
 %% Matrices for Prism export for PV analysis (Figure 4F)
 

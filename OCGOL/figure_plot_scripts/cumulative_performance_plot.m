@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = cumulative_performance_plot(short_term_learn,short_term_recall,excl_day_combined_day_nan)
+function [perf_mean_sem_exp] = cumulative_performance_plot(short_term_learn,short_term_recall,excl_day_combined_day_nan)
 
 %function of sessions and not days
 
@@ -24,9 +24,90 @@ for aa=1:nb_recall
     recall_ses_nb(aa) = size(perf_recall{aa}.ses_perf,2);
 end
 
-%% Insert filter for each animal - based on which sessions are used 
+%% Filter for each animal by session and animal - based on which sessions are used and rearrange order by days
 
-%RESUME HERE
+%filter LUT variable
+%cell structure: animal x exp. type
+%exp_type: (1) - ST LEARN; (2) - ST RECALL; (3) - LT RECALL;
+%within each cell: 
+%top row - session inclusion;
+%bottom row - day to which it corresponds
+excl_day_combined_day_nan;
+
+%ST LEARN rearrangement and filter
+%for each animal
+for aa=1:nb_learn
+    %rearrange based on days
+    for dd=1:9
+        %index corresponding to day
+        session_day_idx = find(excl_day_combined_day_nan{aa,1}(2,:) == dd);
+        if ~isempty(session_day_idx)
+            %get combined, A, and B performance
+            perf_learn_day_filt(:,dd,aa) = perf_learn{aa}.ses_perf(:,session_day_idx);
+        else
+            perf_learn_day_filt(:,dd,aa) = nan;
+        end
+    end
+end
+
+%ST RECALL rearrangement and filter
+%for each animal
+for aa=1:nb_recall
+    %rearrange based on days
+    for dd=1:9
+        %index corresponding to day
+        session_day_idx = find(excl_day_combined_day_nan{aa,2}(2,:) == dd);
+        if ~isempty(session_day_idx)
+            %get combined, A, and B performance
+            perf_recall_day_filt(:,dd,aa) = perf_recall{aa}.ses_perf(:,session_day_idx);
+        else
+            perf_recall_day_filt(:,dd,aa) = nan;
+        end
+    end
+end
+
+
+%% Get mean and sem for each animal by day
+
+%learn mean and sem
+mean_learn_filt_day  = nanmean(perf_learn_day_filt,3);
+sem_learn_filt_day = nanstd(perf_learn_day_filt,0,3)./sqrt(sum(~isnan(perf_learn_day_filt),3));
+
+%recall mean and sem
+mean_recall_filt_day  = nanmean(perf_recall_day_filt,3);
+sem_recall_filt_day = nanstd(perf_recall_day_filt,0,3)./sqrt(sum(~isnan(perf_recall_day_filt),3));
+
+
+%% Export mean and sem for short term learning/recall 
+
+perf_mean_sem_exp.st_learn.mean = mean_learn_filt_day;
+perf_mean_sem_exp.st_learn.sem = sem_learn_filt_day;
+
+perf_mean_sem_exp.st_recall.mean = mean_recall_filt_day;
+perf_mean_sem_exp.st_recall.sem = sem_recall_filt_day;
+
+
+%% Updated plot for Figure 4B - code below 
+
+%% Plot
+%recall - dash
+%learning - solid
+f = figure('Position',[2210 350 510 470]);
+hold on
+title('Updated performance plot - day filt');
+set(f,'color','w');
+axis square
+xlim([0.5 7.5])
+ylim([0 1.1])
+set(gca,'linewidth',2)
+set(gca,'FontSize',20)
+yticks(0:0.2:1)
+ylabel('Fraction of correct trials')
+xticks((1:7))
+xticklabels({'D1 - 5A5B','D2 - 5A5B','D3 - 3A3B','D4 - 3A3B','D5 - Random','D6 - Random','D7 - Random'})
+xtickangle(45)
+errorbar(1:7,mean_learn_filt_day(1,1:7),sem_learn_filt_day(1,1:7),'Color', [139, 0, 139]/255, 'LineStyle', '-','LineWidth',1.5)
+
 
 
 %% Make one 3-D matrix with fractional performance from all animals
