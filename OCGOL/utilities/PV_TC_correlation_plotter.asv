@@ -214,6 +214,22 @@ TC_med_95.ABcorr.ts.st_recall.AB = [[1 2 3 6 7 8 9]; st_recall.AB_corr.ts.mean_T
 %SI recall AB
 TC_med_95.ABcorr.si.st_recall.AB = [[1 2 3 6 7 8 9];  st_recall.AB_corr.si.mean_TC.pooled.AB_corr_ratio_median([1 2 3 6 7 8 9]); st_recall.AB_corr.si.sem_TC.pooled.AB_corr_ratio_95ci(([1 2 3 6 7 8 9]))];
 
+%% Package A&B correlation by animal data
+%each neuron normalized, but mean and sem taken for each animal for the
+%normalized neurons
+
+%TS learn AB
+TC_mean_sem.ABcorr_animal.ts.st_learn.AB = [[1 2 3 4 5 6 7];st_learn.AB_corr.ts.mean_TC.neuron.AB_corr_ratio([1 2 3 4 5 6 7]); st_learn.AB_corr.ts.sem_TC.neuron.AB_corr_ratio(([1 2 3 4 5 6 7]))];
+
+%SI learn AB
+TC_mean_sem.ABcorr_animal.si.st_learn.AB = [[1 2 3 4 5 6 7];st_learn.AB_corr.si.mean_TC.neuron.AB_corr_ratio([1 2 3 4 5 6 7]); st_learn.AB_corr.si.sem_TC.neuron.AB_corr_ratio(([1 2 3 4 5 6 7]))];
+
+%TS recall AB
+TC_mean_sem.ABcorr_animal.ts.st_recall.AB = [[1 2 3 6 7 8 9];st_recall.AB_corr.ts.mean_TC.neuron.AB_corr_ratio([1 2 3 6 7 8 9]); st_recall.AB_corr.ts.sem_TC.neuron.AB_corr_ratio(([1 2 3 6 7 8 9]))];
+
+%SI recall AB
+TC_mean_sem.ABcorr_animal.si.st_recall.AB = [[1 2 3 6 7 8 9];st_recall.AB_corr.si.mean_TC.neuron.AB_corr_ratio([1 2 3 6 7 8 9]); st_recall.AB_corr.si.sem_TC.neuron.AB_corr_ratio(([1 2 3 6 7 8 9]))];
+
 
 %% Package performance data
 %ST learn
@@ -237,6 +253,78 @@ title_labels{2} = 'A&B TC correlation Recall - TS';
 
 title_labels{3} = 'A&B TC correlation Learn - SI';
 title_labels{4} = 'A&B TC correlation Recall - SI';
+
+figure('Position', [2274 120 720 770])
+for ii=1:4
+    %learn vs raw PV
+    subplot(2,2,ii)
+    hold on
+    axis square
+    yyaxis left
+    ylim([0 1.2])
+    xlabel('Relative day')
+    ylabel('Normalized correlation score')
+    %if learn (left side)
+    if rem(ii,2) == 1
+        xticks([1:7])
+        xlim([0 8])
+        xticklabels({'1','2','3','4','5','6','7'})
+            %dashed 1 reference line
+    plot([0 8],[1 1],'--','Color',[0.5 0.5 0.5])
+    else %recall
+        xticks([1:9])
+        xlim([0 10])
+        xticklabels({'1','2','3','4','5','6','7','8','9'})
+            %dashed 1 reference line
+    plot([0 10],[1 1],'--','Color',[0.5 0.5 0.5])
+    end
+    
+    %xtickangle(45)
+    title(title_labels{ii})
+    
+    %plot correlation on left y axis
+    %learn
+    lA = plot_error_line(input_data.AB{ii},'-',2,[139,0,139]/255);
+    %lB = plot_error_line(input_data.B{ii},'-',2,[220,20,60]/255);
+    
+    %plot correlation on right y axis
+    yyaxis right
+    ylabel('Performance')
+    ylim([0 1.2])
+    yticks([0.2 0.4 0.6 0.8 1])
+    if rem(ii,2) == 1
+        plot_error_line(performance_mean_sem.st_learn,'-',2,[34,139,34]/255);
+    else
+        plot_error_line(performance_mean_sem.st_recall,'-',2,[34,139,34]/255);
+    end
+    
+    set(gca,'FontSize',12)
+    set(gca,'Linewidth',2)
+    
+    ax = gca;
+    %set left axis color
+    ax.YAxis(1).Color = [139,0,139]/255;
+    %set right axis color
+    ax.YAxis(2).Color = [34,139,34]/255;
+    
+    %legend([lA,lB],{'A','B'},'location','northeast')
+    
+end
+
+%% Plot for main figure (learn vs recall TC) by animal (each neuron normalized)
+ 
+
+input_data.AB{1} = TC_mean_sem.ABcorr_animal.ts.st_learn.AB;
+input_data.AB{2} = TC_mean_sem.ABcorr_animal.ts.st_recall.AB;
+
+input_data.AB{3} = TC_mean_sem.ABcorr_animal.si.st_learn.AB;
+input_data.AB{4} = TC_mean_sem.ABcorr_animal.si.st_recall.AB;
+
+title_labels{1} = 'A&B TC correlation Learn by animal - TS';
+title_labels{2} = 'A&B TC correlation Recall by animal - TS';
+
+title_labels{3} = 'A&B TC correlation Learn by animal - SI';
+title_labels{4} = 'A&B TC correlation Recall by animal - SI';
 
 figure('Position', [2274 120 720 770])
 for ii=1:4
