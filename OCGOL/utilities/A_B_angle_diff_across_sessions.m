@@ -20,6 +20,12 @@ blank_log.A = zeros(size(match_ROI.all,1),size(match_ROI.all,2));
 blank_log.B = zeros(size(match_ROI.all,1),size(match_ROI.all,2));
 blank_log.AB = zeros(size(match_ROI.all,1),size(match_ROI.all,2));
 
+%% Insert si output here as well and run same function, but yield different outputs based on selected function
+
+switch options.tuning_type
+    %if tuning specificity
+    case 'ts'
+
 for ss=sessionSelect
     %all A
     %get tuned indices for each session
@@ -39,6 +45,33 @@ for ss=sessionSelect
     blank_log.B(column_match_idx.B{ss},ss) = 1;
     %nan non-matching ROIs
     match_ROI.allB(~blank_log.B(:,ss),ss) = nan;
+end
+
+case 'si'
+   
+    for ss=sessionSelect
+        %all A
+        %get tuned indices for each session
+        tuned_idx.allA = find(tuned_log_learning{aa}.tuned_logicals.tuned_log_filt_si{ss}.allA  ==1 );
+        [match_idx_A, column_match_idx.A{ss},~]  =  intersect(match_ROI.allA(:,ss),tuned_idx.allA);
+        disp(length(match_idx_A))
+        %translate match to logical value
+        blank_log.A(column_match_idx.A{ss},ss) = 1;
+        %nan non-matching ROIs
+        match_ROI.allA(~blank_log.A(:,ss),ss) = nan;
+        
+        %all B
+        tuned_idx.allB = find(tuned_log_learning{aa}.tuned_logicals.tuned_log_filt_si{ss}.allB  ==1 );
+        [match_idx_B, column_match_idx.B{ss},~]  =  intersect(match_ROI.allB(:,ss),tuned_idx.allB);
+        disp(length(match_idx_B))
+        %translate match to logical value
+        blank_log.B(column_match_idx.B{ss},ss) = 1;
+        %nan non-matching ROIs
+        match_ROI.allB(~blank_log.B(:,ss),ss) = nan;
+    end
+    
+    otherwise
+        warning('Incorrect tuning option selected!')
 end
 
 %% Extract the tuning vectors for each class across days

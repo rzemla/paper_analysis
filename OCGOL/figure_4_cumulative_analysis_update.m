@@ -43,8 +43,6 @@ plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_
 
 [corr_analysis] = PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan);
 
-%PV data - for export to Prism for 2-way repeated measures ANOVA test
-%(D4/D5 substitution) - QC check
 
 %% Plot the output of PV and TC correlations for each category of experiments
 
@@ -157,9 +155,19 @@ combine_STC_plot_multi_animal_short_vs_long_term(short_term_learn.TC_corr_match,
 
 AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
 
-%% Centroid difference across sessions
+%% Centroid difference across sessions - new code
+%returns the angle differences by animal and for pooled neurons
+%does for TS tuning neurons across days as well as SI tuned neurons between
+%days
+options.tuning_type = 'ts';
+[return_angle_diff.ts] = centroid_diff_sessions_update(short_term_learn,short_term_recall,reg_learn, reg_recall, excl_day_combined_day_nan,options);
 
-centroid_diff_sessions(short_term_learn,short_term_recall,reg_learn, reg_recall)
+options.tuning_type = 'si';
+[return_angle_diff.si] = centroid_diff_sessions_update(short_term_learn,short_term_recall,reg_learn, reg_recall, excl_day_combined_day_nan,options);
+
+%% Centroid difference plotter
+
+cent_diff_plotter(return_angle_diff)
 
 %% Recurrence analysis
 
@@ -168,6 +176,12 @@ recurrence_cum_analysis(short_term_recall,long_term_recall)
 
 %learning only
 recurrence_cum_analysis_learn(short_term_learn)
+
+
+%% Centroid difference across sessions - OLD code
+%work on this
+centroid_diff_sessions(short_term_learn,short_term_recall,reg_learn, reg_recall)
+
 
 %% Examine spatial trajectories for across time
 

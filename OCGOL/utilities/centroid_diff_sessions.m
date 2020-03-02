@@ -12,112 +12,6 @@ pf_vector_max_learning = short_term_learn.pf_vector_max;
 tuned_log_recall = short_term_recall.tuned_log;
 pf_vector_max_recall = short_term_recall.pf_vector_max;
 
-%% Distance relative to respective reward zones!!! - T.S. neurons for now (add option for SI)
-
-%% Compare the distance to start of reward zone A and reward zone B for learning/recall
-% LEARNING SETS
-%ADD SELECTOR FOR TS AND SI TUNED HERE
-%for each animal
-options.selectTrial = [4,5];
-%flag to indicate if this is a learning or recall set
-%options.learnSet = 1;
-%for each animal
-for aa=1:6
-    [theta_reward_zone_learn{aa}] = A_B_angle_diff_across_sessions_reward_zones(reg_learn,tuned_log_learning,pf_vector_max_learning,aa,options);
-end
-
-% RECALL SETS
-options.selectTrial = [1,2];
-%flag to indicate if this is a learning or recall set
-%options.learnSet = 0;
-for aa =1:5
-    [theta_reward_zone_recall{aa}] = A_B_angle_diff_across_sessions_reward_zones(reg_recall,tuned_log_recall,pf_vector_max_recall,aa,options);
-end
-
-
-%% Parse session in distance into day distance based on imaging schedule for each animal
-
-%merge animals according to day distance for learning (diff from rew zone
-%for each 
-%LEARNING MERGE FOR DAY ALIGNMENT
-[merge_theta_rew_zones_learn_days] = arrange_learning_session_days_rew_dist(theta_reward_zone_learn);
-
-%RECALL MERGE FOR DAY ALIGNMENT
-[merge_theta_rew_zones_recall_days] = arrange_recall_session_rew_dist_days(theta_reward_zone_recall);
-
-%merge across all animals for learning
-for dd=1:9
-    merge_theta_learn_rew_zone_days_all.A{dd} = cell2mat(merge_theta_rew_zones_learn_days.A.rewA(:,dd));
-    merge_theta_learn_rew_zone_days_all.B{dd} = cell2mat(merge_theta_rew_zones_learn_days.B.rewB(:,dd));
-end
-
-%merge across all animals for recall
-for dd=1:9
-    merge_theta_recall_rew_zone_days_all.A{dd} = cell2mat(merge_theta_rew_zones_recall_days.A.rewA(:,dd));
-    merge_theta_recall_rew_zone_days_all.B{dd} = cell2mat(merge_theta_rew_zones_recall_days.B.rewB(:,dd));
-end
-
-%% Look at distribution of centroid differences in histograms - consistent with bar charts
-%Relative to reward zones
-
-subplot_indices = [1:8; 9:16];
-%learning
-figure
-for ii=2:9
-    subplot(2,8,subplot_indices(1,ii-1))
-hold on
-ylim([0 0.7])
-xlim([0 pi])
-title('Learning - dist to rew zone');
-ylabel('Normalized density')
-xlabel('Angular diff. [rad]')
-    histogram(merge_theta_learn_rew_zone_days_all.A{ii},'Normalization','probability','BinEdges',0:(pi/9):pi)
-end
-%recall
-for ii=2:9
-    subplot(2,8,subplot_indices(2,ii-1))
-    hold on
-    ylim([0 0.7])
-    xlim([0 pi])
-    title('Recall - dist to rew zone')
-    ylabel('Normalized density')
-    xlabel('Angular diff. [rad]')
-    histogram(merge_theta_recall_rew_zone_days_all.A{ii},'Normalization','probability','BinEdges',0:(pi/9):pi)
-end
-
-
-%% Get mean for learn and recall of centroid difference relative to reward zone
-
-%TODO = check for nan values to prevent skew of sem calculation
-
-%
-
-%%%%%% A %%%%%%%
-%get mean
-mean_rew_zone.learn.A = cellfun(@nanmean, merge_theta_learn_rew_zone_days_all.A(2:end));
-mean_rew_zone.recall.A = cellfun(@nanmean, merge_theta_recall_rew_zone_days_all.A(2:end));
-
-%number of neurons
-nb_rew_zone.learn.A = cellfun(@(x) size(x,1), merge_theta_learn_rew_zone_days_all.A);
-nb_rew_zone.recall.A = cellfun(@(x) size(x,1), merge_theta_recall_rew_zone_days_all.A);
-
-%sem
-sem_rew_zone.learn.A = cellfun(@nanstd, merge_theta_learn_rew_zone_days_all.A(2:end))./sqrt(nb_rew_zone.learn.A(2:end));
-sem_rew_zone.recall.A = cellfun(@nanstd,  merge_theta_recall_rew_zone_days_all.A(2:end))./sqrt(nb_rew_zone.recall.A(2:end));
-
-%%%%% B %%%%%
-%get mean
-mean_rew_zone.learn.B = cellfun(@nanmean, merge_theta_learn_rew_zone_days_all.B(2:end));
-mean_rew_zone.recall.B = cellfun(@nanmean, merge_theta_recall_rew_zone_days_all.B(2:end));
-
-%number of neurons
-nb_rew_zone.learn.B = cellfun(@(x) size(x,1), merge_theta_learn_rew_zone_days_all.B);
-nb_rew_zone.recall.B = cellfun(@(x) size(x,1), merge_theta_recall_rew_zone_days_all.B);
-
-%sem
-sem_rew_zone.learn.B = cellfun(@nanstd, merge_theta_learn_rew_zone_days_all.B(2:end))./sqrt(nb_rew_zone.learn.B(2:end));
-sem_rew_zone.recall.B = cellfun(@nanstd,  merge_theta_recall_rew_zone_days_all.B(2:end))./sqrt(nb_rew_zone.recall.B(2:end));
-
 %% Make assignments based on tuning state - all cross tuning sessions
 %Calculate difference relative to D1 (for A, for B, for A vs.B - TS tuned/ min 5 events)
 
@@ -363,6 +257,116 @@ set(gca,'LineWidth',1.5)
 
 legend([hb(1),hb(2)],{'Learning','Recall'},'location','northwest');
 
+%% Distance relative to reward zone - old code
+%{
+
+%% Distance relative to respective reward zones!!! - T.S. neurons for now (add option for SI)
+
+
+%% Compare the distance to start of reward zone A and reward zone B for learning/recall
+% LEARNING SETS
+%ADD SELECTOR FOR TS AND SI TUNED HERE
+%for each animal
+options.selectTrial = [4,5];
+%flag to indicate if this is a learning or recall set
+%options.learnSet = 1;
+%for each animal
+for aa=1:6
+    [theta_reward_zone_learn{aa}] = A_B_angle_diff_across_sessions_reward_zones(reg_learn,tuned_log_learning,pf_vector_max_learning,aa,options);
+end
+
+% RECALL SETS
+options.selectTrial = [1,2];
+%flag to indicate if this is a learning or recall set
+%options.learnSet = 0;
+for aa =1:5
+    [theta_reward_zone_recall{aa}] = A_B_angle_diff_across_sessions_reward_zones(reg_recall,tuned_log_recall,pf_vector_max_recall,aa,options);
+end
+
+
+%% Parse session in distance into day distance based on imaging schedule for each animal
+
+%merge animals according to day distance for learning (diff from rew zone
+%for each 
+%LEARNING MERGE FOR DAY ALIGNMENT
+[merge_theta_rew_zones_learn_days] = arrange_learning_session_days_rew_dist(theta_reward_zone_learn);
+
+%RECALL MERGE FOR DAY ALIGNMENT
+[merge_theta_rew_zones_recall_days] = arrange_recall_session_rew_dist_days(theta_reward_zone_recall);
+
+%merge across all animals for learning
+for dd=1:9
+    merge_theta_learn_rew_zone_days_all.A{dd} = cell2mat(merge_theta_rew_zones_learn_days.A.rewA(:,dd));
+    merge_theta_learn_rew_zone_days_all.B{dd} = cell2mat(merge_theta_rew_zones_learn_days.B.rewB(:,dd));
+end
+
+%merge across all animals for recall
+for dd=1:9
+    merge_theta_recall_rew_zone_days_all.A{dd} = cell2mat(merge_theta_rew_zones_recall_days.A.rewA(:,dd));
+    merge_theta_recall_rew_zone_days_all.B{dd} = cell2mat(merge_theta_rew_zones_recall_days.B.rewB(:,dd));
+end
+
+%% Look at distribution of centroid differences in histograms - consistent with bar charts
+%Relative to reward zones
+
+subplot_indices = [1:8; 9:16];
+%learning
+figure
+for ii=2:9
+    subplot(2,8,subplot_indices(1,ii-1))
+hold on
+ylim([0 0.7])
+xlim([0 pi])
+title('Learning - dist to rew zone');
+ylabel('Normalized density')
+xlabel('Angular diff. [rad]')
+    histogram(merge_theta_learn_rew_zone_days_all.A{ii},'Normalization','probability','BinEdges',0:(pi/9):pi)
+end
+%recall
+for ii=2:9
+    subplot(2,8,subplot_indices(2,ii-1))
+    hold on
+    ylim([0 0.7])
+    xlim([0 pi])
+    title('Recall - dist to rew zone')
+    ylabel('Normalized density')
+    xlabel('Angular diff. [rad]')
+    histogram(merge_theta_recall_rew_zone_days_all.A{ii},'Normalization','probability','BinEdges',0:(pi/9):pi)
+end
+
+
+%% Get mean for learn and recall of centroid difference relative to reward zone
+
+%TODO = check for nan values to prevent skew of sem calculation
+
+%
+
+%%%%%% A %%%%%%%
+%get mean
+mean_rew_zone.learn.A = cellfun(@nanmean, merge_theta_learn_rew_zone_days_all.A(2:end));
+mean_rew_zone.recall.A = cellfun(@nanmean, merge_theta_recall_rew_zone_days_all.A(2:end));
+
+%number of neurons
+nb_rew_zone.learn.A = cellfun(@(x) size(x,1), merge_theta_learn_rew_zone_days_all.A);
+nb_rew_zone.recall.A = cellfun(@(x) size(x,1), merge_theta_recall_rew_zone_days_all.A);
+
+%sem
+sem_rew_zone.learn.A = cellfun(@nanstd, merge_theta_learn_rew_zone_days_all.A(2:end))./sqrt(nb_rew_zone.learn.A(2:end));
+sem_rew_zone.recall.A = cellfun(@nanstd,  merge_theta_recall_rew_zone_days_all.A(2:end))./sqrt(nb_rew_zone.recall.A(2:end));
+
+%%%%% B %%%%%
+%get mean
+mean_rew_zone.learn.B = cellfun(@nanmean, merge_theta_learn_rew_zone_days_all.B(2:end));
+mean_rew_zone.recall.B = cellfun(@nanmean, merge_theta_recall_rew_zone_days_all.B(2:end));
+
+%number of neurons
+nb_rew_zone.learn.B = cellfun(@(x) size(x,1), merge_theta_learn_rew_zone_days_all.B);
+nb_rew_zone.recall.B = cellfun(@(x) size(x,1), merge_theta_recall_rew_zone_days_all.B);
+
+%sem
+sem_rew_zone.learn.B = cellfun(@nanstd, merge_theta_learn_rew_zone_days_all.B(2:end))./sqrt(nb_rew_zone.learn.B(2:end));
+sem_rew_zone.recall.B = cellfun(@nanstd,  merge_theta_recall_rew_zone_days_all.B(2:end))./sqrt(nb_rew_zone.recall.B(2:end));
+%}
 
 %% Plot bar charts for change in distance to A vs. B reward zone for learning vs. recall - REWARD ZONES (SKIP)
 if 0
