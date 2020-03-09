@@ -518,9 +518,9 @@ set(gca,'Linewidth',2)
 
 
 
-%% Final plot for Figure 4F (PV correlation raw and TC TS correlation raw)
+%% FINAL plot for Figure 4F (PV correlation raw and TC TS correlation raw)
 
-figure('Position', [2283 474 923 358])
+figure('Position', [2272 370 1007 420])
 %learn vs raw PV
 subplot(1,2,1)
 hold on

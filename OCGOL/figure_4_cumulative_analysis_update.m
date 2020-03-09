@@ -169,6 +169,11 @@ options.tuning_type = 'si';
 
 cent_diff_plotter(return_angle_diff)
 
+
+return_angle_diff.ts.st_learn.animal.raw.A'
+
+return_angle_diff.ts.st_recall.animal.raw.A'
+
 %% Recurrence analysis
 
 %short and long recall
