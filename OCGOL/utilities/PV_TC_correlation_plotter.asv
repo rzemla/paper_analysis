@@ -96,6 +96,13 @@ PV_mean_sem.st_recall.all_corr.A = [[1 2 3 4 5 6 7 8 9];st_recall.mean_PV.all_co
 %B
 PV_mean_sem.st_recall.all_corr.B = [[1 2 3 4 5 6 7 8 9];st_recall.mean_PV.all_corr.B([1 2 3 4 5 6 7 8 9]); st_recall.sem_PV.all_corr.B(([1 2 3 4 5 6 7 8 9]))];
 
+
+%long term recall
+PV_mean_sem.lt_recall.A = [[1 6 16 20 25 30];lt_recall.mean_PV.A([1 6 16 20 25 30]); lt_recall.sem_PV.A(([1 6 16 20 25 30]))];
+%B
+PV_mean_sem.lt_recall.B = [[1 6 16 20 25 30];lt_recall.mean_PV.B([1 6 16 20 25 30]); lt_recall.sem_PV.B(([1 6 16 20 25 30]))];
+
+
 %% Organize NEIGHBORING PV data for plotting
 
 %short term learn
@@ -153,6 +160,20 @@ TC_mean_sem.ts.st_recall.all_corr.B = [[1:9]; st_recall.ts.mean_TC.all_corr.B([1
 TC_mean_sem.si.st_recall.all_corr.A = [[1:9]; st_recall.si.mean_TC.all_corr.A([1:9]); st_recall.si.sem_TC.all_corr.A(([1:9]))];
 %B
 TC_mean_sem.si.st_recall.all_corr.B = [[1:9]; st_recall.si.mean_TC.all_corr.B([1:9]); st_recall.si.sem_TC.all_corr.B(([1:9]))];
+
+%TS long recall A/B
+%A
+TC_mean_sem.ts.lt_recall.A = [[1 6 16 20 25 30]; lt_recall.ts.mean_TC.animal.A([1 6 16 20 25 30]); lt_recall.ts.sem_TC.animal.A(([1 6 16 20 25 30]))];
+%B
+TC_mean_sem.ts.lt_recall.B = [[1 6 16 20 25 30]; lt_recall.ts.mean_TC.animal.B([1 6 16 20 25 30]); lt_recall.ts.sem_TC.animal.B(([1 6 16 20 25 30]))];
+
+%SI long recall A/B
+%A
+TC_mean_sem.si.lt_recall.A = [[1 6 16 20 25 30]; lt_recall.si.mean_TC.animal.A([1 6 16 20 25 30]); lt_recall.si.sem_TC.animal.A(([1 6 16 20 25 30]))];
+%B
+TC_mean_sem.si.lt_recall.B = [[1 6 16 20 25 30]; lt_recall.si.mean_TC.animal.B([1 6 16 20 25 30]); lt_recall.si.sem_TC.animal.B(([1 6 16 20 25 30]))];
+
+
 
 %% Organize NEIGHBORING TC data for plotting
 %range, mean, sem (rows)
@@ -383,8 +404,47 @@ for ii=1:4
     
 end
 
+%% Supplementary plot for Relative to D1 correlation for PV and TC (Long Term recall)
 
-%% Supplementary plot for neighboring correlation for PV and TC (Long Term recall)
+input_data.A{1} = PV_mean_sem.lt_recall.A;
+input_data.B{1} = PV_mean_sem.lt_recall.B;
+
+input_data.A{2} = TC_mean_sem.ts.lt_recall.A;
+input_data.B{2} = TC_mean_sem.ts.lt_recall.B;
+
+input_data.A{3} = TC_mean_sem.si.lt_recall.A;
+input_data.B{3} = TC_mean_sem.si.lt_recall.B; 
+
+title_labels{1} = 'PV correlation - LT';
+title_labels{2} = 'TC correlation LT - TS';
+title_labels{3} = 'TC correlation LT - SI';
+
+figure('Position', [2283 474 923 358])
+for ii=1:3
+    %learn vs raw PV
+    subplot(1,3,ii)
+    hold on
+    axis square
+    ylim([0 1])
+    xlabel('Day')
+    ylabel('Corr. score')
+    xticks([1,6,16,20,25,30])
+    xlim([0 31])
+    xticklabels({'1','6','16','20','25','30'})
+    xtickangle(45)
+    title(title_labels{ii})
+    %learn
+    lA = plot_error_line(input_data.A{ii},'-',2,[65,105,225]/255);
+    lB = plot_error_line(input_data.B{ii},'-',2,[220,20,60]/255);
+    
+    set(gca,'FontSize',12)
+    set(gca,'Linewidth',2)
+    
+    legend([lA,lB],{'A','B'},'location','northeast')
+    
+end
+
+%% Supplementary plot for NEIGHBORING correlation for PV and TC (Long Term recall)
 
 input_data.A{1} = PV_mean_sem.neighbor.lt_recall.A;
 input_data.B{1} = PV_mean_sem.neighbor.lt_recall.B;
