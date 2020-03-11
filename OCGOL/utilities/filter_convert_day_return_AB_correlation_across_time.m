@@ -76,9 +76,11 @@ nb_animal = sum(~cellfun(@isempty,excl_day_combined_day_nan(:,exp_type)));
            for dd1 = 1:size(day_range,2)
                for dd2 = 1:size(day_range,2)
                    %for A trials
-                   crossday_compress_TC_mat.exp(aa).A{dd1,dd2} = crossday_TC_mat.exp(aa).A{day_range(dd1),day_range(dd2)};
+                   crossday_compress_TC_mat.exp(aa).AB_early{dd1,dd2} = crossday_TC_mat.exp(aa).AB_early{day_range(dd1),day_range(dd2)};
+                   %crossday_compress_TC_mat.exp(aa).A{dd1,dd2} = crossday_TC_mat.exp(aa).A{dd1,dd2};
                    %for B trials
-                   crossday_compress_TC_mat.exp(aa).B{dd1,dd2} = crossday_TC_mat.exp(aa).B{day_range(dd1),day_range(dd2)};
+                   crossday_compress_TC_mat.exp(aa).AB_later{dd1,dd2} = crossday_TC_mat.exp(aa).AB_later{day_range(dd1),day_range(dd2)};
+                   %crossday_compress_TC_mat.exp(aa).B{dd1,dd2} = crossday_TC_mat.exp(aa).B{dd1,dd2};
                end
            end
        end

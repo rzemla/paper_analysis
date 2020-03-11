@@ -93,6 +93,14 @@ tuning_type = 'ts';
 
 [st_recall.AB_corr.ts.mean_TC,st_recall.AB_corr.ts.sem_TC,st_recall.AB_corr.ts.raw] = filter_convert_day_return_AB_correlation_across_time(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
+%long term recall (compression of matrix)
+exp_type =3;
+day_range = [1 6 16 20 25 30];
+tuning_type = 'ts';
+
+[lt_recall.AB_corr.ts.mean_TC,lt_recall.AB_corr.ts.sem_TC,lt_recall.AB_corr.ts.raw] = filter_convert_day_return_AB_correlation_across_time(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
+
+
 %% Correlation of A&B tuned neurons across time - TC SI short term
 
 %short term learn
@@ -109,6 +117,13 @@ tuning_type = 'si';
 
 [st_recall.AB_corr.si.mean_TC,st_recall.AB_corr.si.sem_TC,st_recall.AB_corr.si.raw] = filter_convert_day_return_AB_correlation_across_time(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
+
+%long term recall (compression of matrix)
+exp_type =3;
+day_range = [1 6 16 20 25 30];
+tuning_type = 'si';
+
+[lt_recall.AB_corr.si.mean_TC,lt_recall.AB_corr.si.sem_TC,lt_recall.AB_corr.si.raw] = filter_convert_day_return_AB_correlation_across_time(short_term_recall,excl_day_combined_day_nan,exp_type,day_range,tuning_type);
 
 
 %% Extract neighboring day TC correlations - TS

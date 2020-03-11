@@ -235,7 +235,14 @@ TC_med_95.ABcorr.ts.st_recall.AB = [[1 2 3 6 7 8 9]; st_recall.AB_corr.ts.mean_T
 %SI recall AB
 TC_med_95.ABcorr.si.st_recall.AB = [[1 2 3 6 7 8 9];  st_recall.AB_corr.si.mean_TC.pooled.AB_corr_ratio_median([1 2 3 6 7 8 9]); st_recall.AB_corr.si.sem_TC.pooled.AB_corr_ratio_95ci(([1 2 3 6 7 8 9]))];
 
-%% Package A&B correlation by animal data
+%TS LT recall AB
+TC_med_95.ABcorr.ts.lt_recall.AB = [1:6; lt_recall.AB_corr.ts.mean_TC.pooled.AB_corr_ratio_median(1:6); lt_recall.AB_corr.ts.sem_TC.pooled.AB_corr_ratio_95ci(1:6)];
+
+%SI LT recall AB
+TC_med_95.ABcorr.si.lt_recall.AB = [1:6; lt_recall.AB_corr.si.mean_TC.pooled.AB_corr_ratio_median(1:6); lt_recall.AB_corr.si.sem_TC.pooled.AB_corr_ratio_95ci(1:6)];
+
+
+%% Package A&B correlation by animal data (not used)
 %each neuron normalized, but mean and sem taken for each animal for the
 %normalized neurons
 
@@ -251,6 +258,13 @@ TC_mean_sem.ABcorr_animal.ts.st_recall.AB = [[1 2 3 6 7 8 9];st_recall.AB_corr.t
 %SI recall AB
 TC_mean_sem.ABcorr_animal.si.st_recall.AB = [[1 2 3 6 7 8 9];st_recall.AB_corr.si.mean_TC.neuron.AB_corr_ratio([1 2 3 6 7 8 9]); st_recall.AB_corr.si.sem_TC.neuron.AB_corr_ratio(([1 2 3 6 7 8 9]))];
 
+%TS LT recall AB
+TC_mean_sem.ABcorr_animal.ts.lt_recall.AB = [1:6;lt_recall.AB_corr.ts.mean_TC.neuron.AB_corr_ratio(1:6); lt_recall.AB_corr.ts.sem_TC.neuron.AB_corr_ratio((1:6))];
+
+%SI LT recall AB
+TC_mean_sem.ABcorr_animal.si.lt_recall.AB = [1:6;lt_recall.AB_corr.si.mean_TC.neuron.AB_corr_ratio(1:6); lt_recall.AB_corr.si.sem_TC.neuron.AB_corr_ratio((1:6))];
+
+
 
 %% Package performance data
 %ST learn
@@ -259,10 +273,12 @@ performance_mean_sem.st_learn = [[1 2 3 4 5 6 7]; perf_mean_sem_exp.st_learn.mea
 %ST recall
 performance_mean_sem.st_recall = [[1 2 3 6 7 8 9]; perf_mean_sem_exp.st_recall.mean(1,[1 2 3 6 7 8 9]); perf_mean_sem_exp.st_recall.sem(1,[1 2 3 6 7 8 9])];
 
+%LT recall
+performance_mean_sem.lt_recall = [[1 6 16 20 25 30]; perf_mean_sem_exp.lt_recall.mean(1,[1 6 16 20 25 30]); perf_mean_sem_exp.lt_recall.sem(1,[1 6 16 20 25 30])];
+
 
 %% Plot for main figure (learn vs recall TC)
  
-
 input_data.AB{1} = TC_med_95.ABcorr.ts.st_learn.AB;
 input_data.AB{2} = TC_med_95.ABcorr.ts.st_recall.AB;
 
@@ -318,6 +334,61 @@ for ii=1:4
     else
         plot_error_line(performance_mean_sem.st_recall,'-',2,[34,139,34]/255);
     end
+    
+    set(gca,'FontSize',12)
+    set(gca,'Linewidth',2)
+    
+    ax = gca;
+    %set left axis color
+    ax.YAxis(1).Color = [139,0,139]/255;
+    %set right axis color
+    ax.YAxis(2).Color = [34,139,34]/255;
+    
+    %legend([lA,lB],{'A','B'},'location','northeast')
+    
+end
+
+
+%% Plot for main figure (LT 30-day recall TC)
+
+input_data.AB{1} = TC_med_95.ABcorr.si.lt_recall.AB;
+input_data.AB{2} = TC_med_95.ABcorr.ts.lt_recall.AB;
+
+title_labels{1} = 'A&B TC correlation Recall - SI';
+title_labels{2} = 'A&B TC correlation Recall - TS';
+
+figure('Position', [2175 701 720 407])
+for ii=1:2
+    %learn vs raw PV
+    subplot(1,2,ii)
+    hold on
+    axis square
+    yyaxis left
+    ylim([0 1.3])
+    xlabel('Relative day')
+    ylabel('Normalized correlation score')
+
+    xticks([1:6])
+    xlim([0 7])
+    xticklabels({'1','6','16','20','25','30'})
+    %dashed 1 reference line
+    plot([0 10],[1 1],'--','Color',[0.5 0.5 0.5])
+    
+    %xtickangle(45)
+    title(title_labels{ii})
+    
+    %plot correlation on left y axis
+    %learn
+    lA = plot_error_line(input_data.AB{ii},'-',2,[139,0,139]/255);
+    %lB = plot_error_line(input_data.B{ii},'-',2,[220,20,60]/255);
+    
+    %plot correlation on right y axis
+    yyaxis right
+    ylabel('Performance')
+    ylim([0 1.3])
+    yticks([0.2 0.4 0.6 0.8 1])
+    plot_error_line(performance_mean_sem.lt_recall,'-',2,[34,139,34]/255);
+
     
     set(gca,'FontSize',12)
     set(gca,'Linewidth',2)

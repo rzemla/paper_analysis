@@ -1,4 +1,4 @@
-function [perf_mean_sem_exp] = cumulative_performance_plot(short_term_learn,short_term_recall,excl_day_combined_day_nan)
+function [perf_mean_sem_exp] = cumulative_performance_plot(short_term_learn,short_term_recall,long_term_recall,excl_day_combined_day_nan)
 
 %function of sessions and not days
 
@@ -6,13 +6,14 @@ function [perf_mean_sem_exp] = cumulative_performance_plot(short_term_learn,shor
 
 perf_learn = short_term_learn.perf;
 perf_recall = short_term_recall.perf;
-
+perf_lt_recall = long_term_recall.perf;
 
 %% Sessions for each animal
 
 %number of animals for learn and recall
 nb_learn = size(perf_learn,2); 
 nb_recall = size(perf_recall,2); 
+nb_lt_recall = size(perf_lt_recall,2);
 
 %learn
 for aa=1:nb_learn
@@ -23,6 +24,12 @@ end
 for aa=1:nb_recall
     recall_ses_nb(aa) = size(perf_recall{aa}.ses_perf,2);
 end
+
+%lt recall
+for aa=1:nb_lt_recall
+    lt_recall_ses_nb(aa) = size(perf_lt_recall{aa}.ses_perf,2);
+end
+
 
 %% Filter for each animal by session and animal - based on which sessions are used and rearrange order by days
 
@@ -66,6 +73,21 @@ for aa=1:nb_recall
     end
 end
 
+%LT RECALL rearrangent by day
+%for each animal
+for aa=1:nb_lt_recall
+    %rearrange based on days
+    for dd=1:30
+        %index corresponding to day
+        session_day_idx = find(excl_day_combined_day_nan{aa,3}(2,:) == dd);
+        if ~isempty(session_day_idx)
+            %get combined, A, and B performance
+            perf_lt_recall_day_filt(:,dd,aa) = perf_lt_recall{aa}.ses_perf(:,session_day_idx);
+        else
+            perf_lt_recall_day_filt(:,dd,aa) = nan;
+        end
+    end
+end
 
 %% Get mean and sem for each animal by day
 
@@ -77,6 +99,10 @@ sem_learn_filt_day = nanstd(perf_learn_day_filt,0,3)./sqrt(sum(~isnan(perf_learn
 mean_recall_filt_day  = nanmean(perf_recall_day_filt,3);
 sem_recall_filt_day = nanstd(perf_recall_day_filt,0,3)./sqrt(sum(~isnan(perf_recall_day_filt),3));
 
+%lt recall mean and sem
+mean_lt_recall_filt_day  = nanmean(perf_lt_recall_day_filt,3);
+sem_lt_recall_filt_day = nanstd(perf_lt_recall_day_filt,0,3)./sqrt(sum(~isnan(perf_lt_recall_day_filt),3));
+
 
 %% Export mean and sem for short term learning/recall 
 
@@ -86,10 +112,12 @@ perf_mean_sem_exp.st_learn.sem = sem_learn_filt_day;
 perf_mean_sem_exp.st_recall.mean = mean_recall_filt_day;
 perf_mean_sem_exp.st_recall.sem = sem_recall_filt_day;
 
+perf_mean_sem_exp.lt_recall.mean = mean_lt_recall_filt_day;
+perf_mean_sem_exp.lt_recall.sem = sem_lt_recall_filt_day;
 
 %% Updated plot for Figure 4B - code below 
 
-%% Plot
+%% Plot - ST Learn
 %recall - dash
 %learning - solid
 f = figure('Position',[2210 350 510 470]);
@@ -108,6 +136,26 @@ xticklabels({'D1 - 5A5B','D2 - 5A5B','D3 - 3A3B','D4 - 3A3B','D5 - Random','D6 -
 xtickangle(45)
 errorbar(1:7,mean_learn_filt_day(1,1:7),sem_learn_filt_day(1,1:7),'Color', [139, 0, 139]/255, 'LineStyle', '-','LineWidth',1.5)
 
+%% Plot - LT Recall
+%recall - dash
+%learning - solid
+f = figure('Position',[2210 350 510 470]);
+hold on
+title('LT Recall');
+set(f,'color','w');
+axis square
+xlim([0.5 7.5])
+ylim([0 1.1])
+set(gca,'linewidth',2)
+set(gca,'FontSize',20)
+yticks(0:0.2:1)
+ylabel('Fraction of correct trials')
+xticks((1:6))
+xticklabels({'1','6','16','20','25','30'})
+xlabel('Day')
+xtickangle(45)
+errorbar(1:6,mean_lt_recall_filt_day(1,[1 6 16 20 25 30]),sem_lt_recall_filt_day(1,[1 6 16 20 25 30]),'Color', [139, 0, 139]/255, 'LineStyle', '-','LineWidth',1.5)
+
 
 
 %% Make one 3-D matrix with fractional performance from all animals
@@ -116,6 +164,12 @@ errorbar(1:7,mean_learn_filt_day(1,1:7),sem_learn_filt_day(1,1:7),'Color', [139,
 for aa = 1:size(perf_recall,2)
     perf_recall_comb(:,:,aa) = perf_recall{aa}.ses_perf;
 end
+
+%lt recall 
+for aa = 1:size(perf_lt_recall,2)
+    perf_lt_recall_comb(:,:,aa) = perf_lt_recall{aa}.ses_perf;
+end
+
 
 %learning
 %make blank matrix (rows - combined,A,B; col - consecutive ses, 3rd dim -
@@ -128,18 +182,22 @@ end
 
 %get means
 mean_recall_perf = nanmean(perf_recall_comb,3);
+mean_lt_recall_perf = nanmean(perf_lt_recall_comb,3);
 mean_learn_perf = nanmean(perf_learn_comb,3);
 
 %get stds
 std_recall_perf = nanstd(perf_recall_comb,0,3);
+std_lt_recall_perf = nanstd(perf_lt_recall_comb,0,3);
 std_learn_perf = nanstd(perf_learn_comb,0,3);
 
 %get number of animals per session (learning)
 nb_learn_per_ses = sum(~isnan(perf_learn_comb),3);
 nb_recall_per_ses = sum(~isnan(perf_recall_comb),3);
+nb_lt_recall_per_ses = sum(~isnan(perf_lt_recall_comb),3);
 
 %get sems
 sem_recall_perf = std_recall_perf./sqrt(nb_recall_per_ses);
+sem_lt_recall_perf = std_lt_recall_perf./sqrt(nb_lt_recall_per_ses);
 sem_learn_perf = std_learn_perf./sqrt(nb_learn_per_ses);
 
 %% Plot
