@@ -166,6 +166,8 @@ options.tuning_type = 'ts';
 options.tuning_type = 'si';
 [return_angle_diff.si] = centroid_diff_sessions_update(short_term_learn,short_term_recall,reg_learn, reg_recall, excl_day_combined_day_nan,options);
 
+
+
 %% Centroid difference plotter
 
 cent_diff_plotter(return_angle_diff)
