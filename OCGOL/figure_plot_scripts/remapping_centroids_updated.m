@@ -1043,7 +1043,10 @@ end
 
 %% Statistics (combined dataset)
 
-[h,p] = kstest2(partial_A_common_far_input(:,2), partial_B_common_far_input(:,2));
+[h,p,ksstat] = kstest2(partial_A_common_far_input(:,2), partial_B_common_far_input(:,2));
+
+%number of neurons used in kstest
+nb_partial_ks_test = [size(partial_A_common_far_input(:,2),1), size(partial_B_common_far_input(:,2),1)];
 
 %% Minaturized normalized histogram for each set of partial remapping neurons (inset)
 %cdf
