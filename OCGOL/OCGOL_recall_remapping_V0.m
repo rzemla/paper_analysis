@@ -12,7 +12,7 @@ options.load_ROI_zooms_outlines = 1;
 %visualize ROI outlines of matches across sessions
 options.visualize_match = 0;
 
-%load SCE data shuffled n=50/100 (re-shuffle later on cluster with n =1000)
+%load SCE data shuffled n=50/100 (re-shuffle later on cluster with n = 1000)
 options.loadSCE = 0;
 
 options.selectTrial = [1 2];
@@ -39,15 +39,15 @@ options.selectTrial = [1 2];
 
 %ANIMAL #2
 % I46
-%  path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d3_062218_3',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d6_062518_4',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d7_062618_5',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d8_062718_6',...
-%      'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
-% %cross session directory
-% crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
+ path_dir = {'G:\OCGOL_stability_recall\I46\I46_AB_d1_062018_1',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d2_062118_2',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d3_062218_3',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d6_062518_4',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d7_062618_5',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d8_062718_6',...
+     'G:\OCGOL_stability_recall\I46\I46_AB_d9_062818_7'};
+%cross session directory
+crossdir = 'G:\OCGOL_stability_recall\I46\crossSession';
 
 %ANIMAL #3
 %I45
@@ -498,6 +498,15 @@ cat_registered_cell(selMatchIdxs,ses_comp)
 % save this in the future as well and load
 options.spiral_width = 0.1;
 [plot_raster_vars] = prepare_inputs_raster_spiral_multi_ses(session_vars,options);
+
+
+%% Raster, STC, ROI image across days - used this to plot in supplement or main figure
+%plots zoom on of ROI, spiral plot,
+%need to add normalized STC below as for
+%single session data
+
+plot_raster_spiral_STC_ROI_multi_ses(plot_raster_vars,session_vars,registered,cat_registered_cell,ROI_zooms,ROI_outlines,options)
+
 
 %% Plot spiral raster using inputs
 

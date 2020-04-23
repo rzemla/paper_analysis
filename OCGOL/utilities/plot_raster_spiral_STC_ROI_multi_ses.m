@@ -24,10 +24,10 @@ matrix_order = [1:7;8:14;15:21];
 
 figure('Position',[560 327 1114 517]);
 %for each matching sets of ROIs
-for ii=1:size(match_mat,1) %with nans where no match
+for ii=130:size(match_mat,1) %with nans where no match
 
     %for each session
-    for ss=sessionSelect
+    for ss=sessionSelect(1:end-1)
         
         ROI = match_mat(ii,ss);
         %skip of nan value
@@ -56,30 +56,30 @@ for ii=1:size(match_mat,1) %with nans where no match
             
             %spiral plot early in learning
             subplot(3,size(sessionSelect,2),matrix_order(2,ss))
-            polarplot(x{ss},r_scaled{ss},'k','Linewidth',1.5)
+            polarplot(x{ss},r_scaled{ss},'k','Linewidth',1.0)
             hold on
             %plot remapping label and index number of the neuron
             title([cat_registered_cell{ii,ss}, '\newline', num2str(match_mat(ii,ss))]);
             %title([cat_registered_cell{ii,ss}, '\newline','SCE all: ',num2str(multi_ses_SCE_data.SCE_all_ROI_engage(ii,ss))]);
             %plot A (2) trial events
             for ll=1:size(idxMin{ss}{1},2)
-                polarscatter(angle(posVectorApprox{ss}{1}{ll}{ROI}),r_scaled{ss}(idxMin{ss}{1}{ll}{ROI}),'bo','MarkerFaceColor','b')
+                polarscatter(angle(posVectorApprox{ss}{1}{ll}{ROI}),r_scaled{ss}(idxMin{ss}{1}{ll}{ROI}),'filled','MarkerFaceColor',[0.254901960784314,0.411764705882353,0.882352941176471])
                 %place field center
                 %polarscatter(centerA_angle(ii), 20, 'b*','MarkerFaceColor','b');
             end
             
             %plot tuning specificity vector for all A trials (unfiltered)
-            polarplot([0+0i,15*session_vars{ss}.Place_cell{selectTrial(1)}.Tuning_Specificity.tuning_vector_specificity(ROI)],'b-','LineWidth',2)
+            polarplot([0+0i,15*session_vars{ss}.Place_cell{selectTrial(1)}.Tuning_Specificity.tuning_vector_specificity(ROI)],'-','Color',[0.254901960784314,0.411764705882353,0.882352941176471],'LineWidth',1)
             
             %plot B (3) trial events
             for ll=1:size(idxMin{ss}{2},2)
-                polarscatter(angle(posVectorApprox{ss}{2}{ll}{ROI}),r_scaled{ss}(idxMin{ss}{2}{ll}{ROI}),'ro','MarkerFaceColor','r')
+                polarscatter(angle(posVectorApprox{ss}{2}{ll}{ROI}),r_scaled{ss}(idxMin{ss}{2}{ll}{ROI}),'filled','MarkerFaceColor',[0.862745098039216,0.0784313725490196,0.235294117647059])
                 %place field center
                 %polarscatter(centerB_angle(ii), 20, 'r*','MarkerFaceColor','r');
             end
             
             %plot tuning specificity vector for all B trials
-            polarplot([0+0i,15*session_vars{ss}.Place_cell{selectTrial(2)}.Tuning_Specificity.tuning_vector_specificity(ROI)],'r-','LineWidth',2)
+            polarplot([0+0i,15*session_vars{ss}.Place_cell{selectTrial(2)}.Tuning_Specificity.tuning_vector_specificity(ROI)],'-','Color',[0.862745098039216,0.0784313725490196,0.235294117647059],'LineWidth',1)
             
             hold off
 

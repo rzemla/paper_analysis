@@ -303,7 +303,7 @@ end
 options.select_adj_vec = 1;
 [max_bin_rate,max_transient_peak] = max_transient_rate_multi_ses(session_vars,field_event_rates,pf_vector,options);
 
-%% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in firld
+%% Filter filtered matching components for SI or TS tuning for at least on id'd place field and 5 events in field
 %QC checked
 
 %which trials to use to calculate the in field transient rate
@@ -332,6 +332,8 @@ save(fullfile(crossdir,'recurrence.mat'),'recurr','frac_active','recurr_ex','fra
 
 %export the matching STCs
 save(fullfile(crossdir,'matching_tun_curves.mat'),'matching_tun_curves');
+
+%% Export 
 
 %% Centroid difference (max transient rate)
 %QC checked
