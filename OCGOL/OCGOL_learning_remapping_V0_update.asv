@@ -345,9 +345,8 @@ save(fullfile(crossdir,'matching_tun_curves.mat'),'matching_tun_curves');
 %lick signal (binary) vector
 %trial type vector (2  = A), (3 = B)
 
-%transients (binary) matrix ROI idx x time(frames) - these need to be
-%extracted from the match indexes
-
+%transients (binary) matrix ROI idx x time(frames) - these need to be part
+%of a match
 
 %time resampled
 session_vars{1, 1}.Behavior.resampled.time
