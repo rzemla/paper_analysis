@@ -341,49 +341,102 @@ save(fullfile(crossdir,'matching_tun_curves.mat'),'matching_tun_curves');
 %position vector  in cm - ok
 %position vector normalized - ok
 %speed vector - ok
+%lick signal (binary) vector - ok
 
-%lick signal (binary) vector
 %trial type vector (2  = A), (3 = B)
+%trial correct vector 1 = correct; 0 - incorrect
 
-%transients (binary) matrix ROI idx x time(frames) - these need to be part
-%of a match
+%transients (binary) matrix ROI idx x time(frames) - these need to be
+%extracted from the match indexes
+
+
+%create a function to extact this data from each animal and then run
+%through each and save as mat file
 
 %time resampled
 session_vars{1, 1}.Behavior.resampled.time
 %run state
 session_vars{1, 1}.Behavior.run_ones  
 %position (cm)
-session_vars{1, 1}.Behavior.resampled.position
+p_cm = session_vars{1, 1}.Behavior.resampled.position;
 %position norm
-session_vars{1, 1}.Behavior.resampled.normalizedposition
+p_n = session_vars{1, 1}.Behavior.resampled.normalizedposition;
 %lap number
 session_vars{1, 1}.Behavior.resampled.lapNb
 %speed
 session_vars{1, 1}.Behavior.speed  
 
 %constuct binary lick vector from time and position
-%this all lick data - check if aligns with resampled data or includes the
-%timepoints that are not on the imaging timeline, if all data - approximate
-%to the nearest timepoint
+%this all lick data - need to align this data since it has not been
+%resampled for performance analysis
 
-x  = session_vars{1, 1}.Behavior.lick.time;
+%align these event to the imaging time
+x = session_vars{1, 1}.Behavior.lick.time;
 y = session_vars{1, 1}.Behavior.resampled.time;
 
-z = ismember(x,y)
 
-session_vars{1, 1}.Behavior.lick.time  
+%filter to not go beyond the edges of the complete lap data timepoints
+%clip off timepoints that are outside of the complete lap time series
+clip_idx = ~(x<y(1)| x>y(end));
+lick_times_clipped =x(clip_idx);
 
-session_vars{1, 1}.Behavior.lick.position  
+%return the index for each lick timepoint that is closest to the imaging
+%time
+%find the minimum lick index
+min_diff = @(f)min(abs(f-y));
+[~,z] = arrayfun(min_diff,lick_times_clipped,'UniformOutput',true);
 
+%generate binary lick vector of equivalent length to imaging frames
+lick_vec = zeros(size(y,1),1);
+%populate the vector
+lick_vec(z) = 1;
+
+%plot position time and lick
+% figure
+% hold on
+% plot(y,lick_vec)
+% plot(y,p -1)
 
 %TRIAL INFORMATION AND CORRECT DATA
 %contruct A, B, punish vector 
-%check which one of these had the discarded information data
+%check which one of these had the discarded trial information data
 
-session_vars{1, 1}.Behavior.lap_id.trial_based  
+%legend for trialOrder and trialCorrect vector
+
+% session_vars{}.Behavior.performance.trialCorrect 
+% 0 means incorrect trial
+% 1 mean correct trial
+% -2 means punish lap
+%-1 means technical exclusion
+
+% session_vars{}.Behavior.performance.trialOrder 
+% 2 – correct A trial
+% 3 – correct B trial
+% 20 – incorrect A trial
+% 30 – incorrect B trial
+% -10 – punish trial
+% -1 - techical exclusion
+
+%find A or B trials (20 and 2) - A incorr/corr and (30 and 3) - B incorr/corr
+t_order = session_vars{1}.Behavior.performance.trialOrder;
+%lap indices of A trials
+A_lap_idx = find(t_order == 2 | t_order == 20);
+%lap indices of A trials
+B_lap_idx = find(t_order == 3 | t_order == 30);
+%find punish laps
+punish_lap_idx = find(t_order == -10);
+
+%all else = technical problems on lap and excluded from analysis
+
+%lap number (complete) of each frame
+lap_nb = session_vars{1, 1}.Behavior.resampled.lapNb;
+
+%make empty vector for trial type
+trial_type_vec = zeroes(
 
 
-session_vars{1, 1}.Behavior.lap_id.reward_based 
+
+
 
 session_vars{1, 1}.Behavior.performance.trialCorrect
 
