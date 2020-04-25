@@ -335,8 +335,9 @@ save(fullfile(crossdir,'matching_tun_curves.mat'),'matching_tun_curves');
 
 %% Export all lap data calcium transients for model/prediction (place cell recruitment by learning) for Jason/Clopath modeling
 
-
-[all_lap_data_transients] = extract_all_lap_data(session_vars)
+%input: session variables and registered list of matching ROIs (manually
+%filtered)
+[all_lap_data_transients] = extract_all_lap_data(session_vars,registered);
 
 
 %% Centroid difference (max transient rate)

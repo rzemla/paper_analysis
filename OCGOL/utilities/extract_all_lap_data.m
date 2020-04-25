@@ -1,4 +1,4 @@
-function [all_lap_data_transients] = extract_all_lap_data(session_vars)
+function [all_lap_data_transients] = extract_all_lap_data(session_vars,registered)
 
 %complete  lap data only
 %get all of the data below for each session 
@@ -73,32 +73,29 @@ end
 for ss=1:size(session_vars,2)
     %correct vs. incorrect vector
     %1 = correct lap; 0 = incorrect lap; nan = technical or punish lap
-    t_corr = session_vars{1, 1}.Behavior.performance.trialCorrect;
+    t_corr = session_vars{ss}.Behavior.performance.trialCorrect;
     %extract the trials for each session
     [all_data{ss}.trialCorr] = return_trial_corr(t_corr,all_data{ss}.lap_nb);
 end
 
 %% Make calcium transient matrix (binary - all events run and no run)
-%RESUME HERE - last thing is to return the transients and QC them
-%ADD OTHER VECTORs FOR EASE OF BROWSING IN THE FUTURE
 
-
-%match list to all sessions
+%match list to all sessions (ROI match list 
 match_list = registered.multi.assigned_filtered;
 
-%make blank 2D matrix for each each assigned and not assigned neuron for
-%give session
-transient_mat_all = nan(size(match_list,1),size(lap_nb,1));
-%fill indexes
-neuron_occup_log = ~isnan(match_list(:,1));
-%ROIs corresponding to the matching indices
-neuron_idx_ordered = match_list(neuron_occup_log,1);
-%all the binary events corresponding to the imaging frames
-event_onset_all = session_vars{1, 1}.Events.onset_binary';
-%assign these event maps to the matching transient matrix
-transient_mat_all(neuron_occup_log,:) = event_onset_all(neuron_idx_ordered,:);
+for ss=1:size(session_vars,2)
+    %all the binary events corresponding to the imaging frames
+    event_onset_all = session_vars{ss}.Events.onset_binary';
+    [all_data{ss}.transient_mat] = return_transient_matrix(event_onset_all,match_list,all_data{ss}.lap_nb,ss);
+end
 
+%% QC check - plot and see how the data aligns
+%RESUME HERE - QC them - make sure the extractions are correct
+%ADD OTHER DATA VECTORS FOR EASE OF INFO EXTRACTION IN THE FUTURE
 
+%add lap descriptors to output
+
+%% Plot all and sub-section of data for any given dataset
 
 
 end
