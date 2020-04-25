@@ -90,6 +90,7 @@ for ss=1:size(session_vars,2)
 end
 
 %% QC check - plot and see how the data aligns
+%{
 %take random ROIs from match list, get transient vector and compare
 ROI_nb_match = 150;
 ses_nb = 2;
@@ -97,21 +98,64 @@ ROI_test = match_list(ROI_nb_match,ses_nb);
 event_test_mat = session_vars{ses_nb}.Events.onset_binary';
 
 %check if the match indexes correspond to the the correct ROI on that day
-isequal(event_test_mat(ROI_test,:),all_data{ses_nb}.transient_mat(ROI_nb_match,:))
+isequal(event_test_mat(ROI_test,:),all_data{ses_nb}.transient_mat(ROI_nb_match,:));
+%}
 
-%% Export additional lap des
-%trial order
+%% Export additional lap descriptive data
 
+for ss=1:size(session_vars,2)
+    %lap time onset/offset - complete data
+    all_data{ss}.lap_data.lap_onset_offset = session_vars{ss}.Behavior.lap;
+    %lap/trial type based on reward signal and trial signal
+    all_data{ss}.lap_data.id = session_vars{ss}.Behavior.lap_id;
+    %performance data merge with lap
+    all_data{ss}.lap_data.performance = session_vars{ss}.Behavior.performance;
+end
 
-%lap start/stop time(s) - complete laps only
-session_vars{1, 1}.Behavior.lap
-%lap/trial type based on reward signal and trial signal
-session_vars{1, 1}.Behavior.lap_id  
-%performance data merge with lap
-session_vars{1, 1}.Behavior.performance  
-%add lap descriptors to output
 
 %% Plot all and sub-section of data for any given dataset
+
+%choose random ROI
+ROI_nb = randi(size(match_list,1));
+
+%for each session
+for ss=1:size(session_vars,2)
+    figure
+    subplot(5,1,1)
+    hold on
+    title('Normalized postion and Ca2+ transients (binary)')
+    plot(all_data{ss}.time,all_data{ss}.position_norm)
+    plot(all_data{ss}.time,all_data{ss}.transient_mat(ROI_nb,:))
+    
+    subplot(5,1,2)
+    hold on
+    title('Normalized postion and lick')
+    plot(all_data{ss}.time,all_data{ss}.position_norm)
+    plot(all_data{ss}.time,all_data{ss}.lick)
+    
+    subplot(5,1,3)
+    hold on
+    title('Normalized postion and run state')
+    plot(all_data{ss}.time,all_data{ss}.position_norm)
+    plot(all_data{ss}.time,all_data{ss}.run_state)
+    
+    subplot(5,1,4)
+    hold on
+    title('Speed')
+    xlabel('cm/s')
+    plot(all_data{ss}.time,all_data{ss}.speed)
+    
+    subplot(5,1,5)
+    hold on
+    plot(all_data{ss}.time,all_data{ss}.trialType)
+    %plot animal position between trial correct and trial type
+    plot(all_data{ss}.time,all_data{ss}.position_norm+1)
+    %correct or incorrect trial
+    plot(all_data{ss}.time,all_data{ss}.trialCorr)
+    
+end
+
+
 
 
 end

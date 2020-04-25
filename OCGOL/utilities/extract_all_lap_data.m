@@ -115,6 +115,53 @@ end
 
 %% Plot all and sub-section of data for any given dataset
 
+%choose random ROI
+ROI_nb = randi(size(match_list,1));
+
+%for each session
+for ss=1:size(session_vars,2)
+    figure
+    subplot(5,1,1)
+    hold on
+    title('Normalized postion and Ca2+ transients (binary)')
+    xlabel('Time [s]')
+    plot(all_data{ss}.time,all_data{ss}.position_norm)
+    plot(all_data{ss}.time,all_data{ss}.transient_mat(ROI_nb,:))
+    
+    subplot(5,1,2)
+    hold on
+    title('Normalized postion and lick')
+    xlabel('Time [s]')
+    plot(all_data{ss}.time,all_data{ss}.position_norm)
+    plot(all_data{ss}.time,all_data{ss}.lick)
+    
+    subplot(5,1,3)
+    hold on
+    title('Normalized postion and run state')
+    xlabel('Time [s]')
+    plot(all_data{ss}.time,all_data{ss}.position_norm)
+    plot(all_data{ss}.time,all_data{ss}.run_state)
+    
+    subplot(5,1,4)
+    hold on
+    title('Speed')
+    ylabel('cm/s')
+    xlabel('Time [s]')
+    plot(all_data{ss}.time,all_data{ss}.speed)
+    
+    subplot(5,1,5)
+    hold on
+    ylim([-10, 3])
+    title('Trial type and trial correct')
+    xlabel('Time [s]')
+    plot(all_data{ss}.time,all_data{ss}.trialType)
+    %plot animal position between trial correct and trial type
+    plot(all_data{ss}.time,all_data{ss}.position_norm+1)
+    %correct or incorrect trial
+    plot(all_data{ss}.time,all_data{ss}.trialCorr)
+    
+end
+
 
 end
 
