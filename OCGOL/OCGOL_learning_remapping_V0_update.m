@@ -337,7 +337,8 @@ save(fullfile(crossdir,'matching_tun_curves.mat'),'matching_tun_curves');
 
 %input: session variables and registered list of matching ROIs (manually
 %filtered)
-[all_lap_data_transients] = extract_all_lap_data(session_vars,registered);
+[matching_ROI_bin_transient_lap_data] = extract_all_lap_data(session_vars,registered);
+
 
 
 %% Centroid difference (max transient rate)

@@ -1,4 +1,4 @@
-function [all_lap_data_transients] = extract_all_lap_data(session_vars,registered)
+function [all_data] = extract_all_lap_data(session_vars,registered)
 
 %complete  lap data only
 %get all of the data below for each session 
@@ -90,10 +90,28 @@ for ss=1:size(session_vars,2)
 end
 
 %% QC check - plot and see how the data aligns
-%RESUME HERE - QC them - make sure the extractions are correct
-%ADD OTHER DATA VECTORS FOR EASE OF INFO EXTRACTION IN THE FUTURE
+%{
+%take random ROIs from match list, get transient vector and compare
+ROI_nb_match = 150;
+ses_nb = 2;
+ROI_test = match_list(ROI_nb_match,ses_nb);
+event_test_mat = session_vars{ses_nb}.Events.onset_binary';
 
-%add lap descriptors to output
+%check if the match indexes correspond to the the correct ROI on that day
+isequal(event_test_mat(ROI_test,:),all_data{ses_nb}.transient_mat(ROI_nb_match,:));
+%}
+
+%% Export additional lap descriptive data
+
+for ss=1:size(session_vars,2)
+    %lap time onset/offset - complete data
+    all_data{ss}.lap_data.lap_onset_offset = session_vars{ss}.Behavior.lap;
+    %lap/trial type based on reward signal and trial signal
+    all_data{ss}.lap_data.id = session_vars{ss}.Behavior.lap_id;
+    %performance data merge with lap
+    all_data{ss}.lap_data.performance = session_vars{ss}.Behavior.performance;
+end
+
 
 %% Plot all and sub-section of data for any given dataset
 
