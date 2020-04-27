@@ -9,7 +9,7 @@
      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_no_punish_041619_6',...
      'G:\OCGOL_learning_short_term\I56_RTLS\I56_RTLS_ABrand_punish_041719_7'};
 
- crossdir{1} = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession_update';
+ crossdir{1} = 'G:\OCGOL_learning_short_term\I56_RTLS\crossSession';
  
 %ANIMAL #2
 %I57_RTLS
@@ -22,7 +22,7 @@
      'G:\OCGOL_learning_short_term\I57_RTLS\I57_RTLS_ABrand_punish_041719_7'};
  
 %cross session directory
-crossdir{2} = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession_update';
+crossdir{2} = 'G:\OCGOL_learning_short_term\I57_RTLS\crossSession';
 
 %ANIMAL #3
 %I57_LT
@@ -35,7 +35,7 @@ path_dir{3} = {'G:\OCGOL_learning_short_term\I57_LT\I57_LT_5A5B_041619_1',...
      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042219_7',...
      'G:\OCGOL_learning_short_term\I57_LT\I57_LT_ABrand_punish_042319_8'};
 %  
-crossdir{3} = 'G:\OCGOL_learning_short_term\I57_LT\crossSession_update';
+crossdir{3} = 'G:\OCGOL_learning_short_term\I57_LT\crossSession';
 
 
 %ANIMAL #4
@@ -51,7 +51,7 @@ crossdir{3} = 'G:\OCGOL_learning_short_term\I57_LT\crossSession_update';
      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_punish_080619_8',...
      'E:\OCGOL_learning_short_term\I58_RT\I58_RT_randAB_punish_080719_9'};
 % %cross session directory
-crossdir{4} = 'E:\OCGOL_learning_short_term\I58_RT\crossSession_update';
+crossdir{4} = 'E:\OCGOL_learning_short_term\I58_RT\crossSession';
 
 %ANIMAL #5
 %I58 LT
@@ -63,7 +63,7 @@ path_dir{5} = {'E:\OCGOL_learning_short_term\I58_LT\I58_LT_5A5B_080419_1',...
      'E:\OCGOL_learning_short_term\I58_LT\I58_LT_randAB_no_punish_080919_6',...
      'E:\OCGOL_learning_short_term\I58_LT\I58_LT_randAB_punish_081119_7'};
 %cross session directory
-crossdir{5} = 'E:\OCGOL_learning_short_term\I58_LT\crossSession_update';
+crossdir{5} = 'E:\OCGOL_learning_short_term\I58_LT\crossSession';
 
 %ANIMAL #6
 %I58 RTLP
@@ -75,7 +75,7 @@ path_dir{6} = {'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_5A5B_080419_1',..
      'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_randAB_no_punish_080919_6'};
 
 %cross session directory
-crossdir{6} = 'E:\OCGOL_learning_short_term\I58_RTLP\crossSession_update';
+crossdir{6} = 'E:\OCGOL_learning_short_term\I58_RTLP\crossSession';
  
 
 %% Run the analysis for STC export for splitter cell analysis
@@ -93,11 +93,8 @@ for ii=[1 2 3 4 5 6]
 end
 
 %% Run export of matching all_lap transients for learning matched transients for Jason/Clopath
-%performance data included
 for ii=[1 2 3 4 5 6]
-    disp(['Running: ', num2str(ii)])
-    OCGOL_learning_remapping_V0_update_export_transients_Jason(path_dir{ii},crossdir{ii})
-end
+OCGOL_learning_remapping_V0_update_export_transients_Jason(path_dir,crossdir)
 
 
 
