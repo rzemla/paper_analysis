@@ -50,6 +50,32 @@ plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_
 %takes in performance data for Figure 4H plotting
 PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
 
+%% Extract long term recall data for Extended Data 10 Correlation analysis
+
+%PV correlation rel d1
+corr_analysis.lt_recall.raw.day_PV_diag_mean.A
+
+%TC SI correlation rel d1
+corr_analysis.lt_recall.si.raw.animal.day_TC_diag_mean.exp.A  
+
+%TC TS correlation rel d1
+
+%PV neighbor correlation rel d1
+corr_analysis.lt_recall.neighbor.raw.day_PV_diag_mean.A
+
+%TC SI neighbor correlation rel d1
+corr_analysis.lt_recall.neighbor.si.raw.animal.day_TC_diag_mean.A
+
+%TC TS neighbor correlation rel d1
+corr_analysis.lt_recall.neighbor.ts.raw.animal.day_TC_diag_mean.A
+
+%AB map correlation norm to d1 - SI
+corr_analysis.lt_recall.AB_corr.si.raw
+
+%AB map correlation norm to d1 - TS
+corr_analysis.lt_recall.AB_corr.ts.raw
+
+
 %% Matrices for Prism export for PV analysis (Figure 4F)
 
 %%%% PV data %%%%
