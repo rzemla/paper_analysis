@@ -66,7 +66,13 @@ function [ROI_sig] = whichSignificant2(Place_cell)
     ROI_sig.Info_Content.ovo = find(pval_original_v_original2'<0.05 & (nEvents>=minEvents));
     ROI_sig.Info_Content.cvo = find(pval_corrected_v_original2'<0.05 & (nEvents>=minEvents));
     
+    %updated score (used the info rate score for the paper)
     ROI_sig.Info_Rate.cvc = find(pval_corrected_v_corrected'<0.05 & (nEvents>=minEvents));
+    %extract associated p values for all the updated neurons
+    ROI_sig.Info_Rate.cvc_pvals = pval_corrected_v_corrected';
+    %ROI information rate scores
+    ROI_sig.Info_Rate.cvc_scores = maxInfo_corrected_info;
+    
     ROI_sig.Info_Rate.ovo = find(pval_original_v_original'<0.05 & (nEvents>=minEvents));
     ROI_sig.Info_Rate.cvo = find(pval_corrected_v_original'<0.05 & (nEvents>=minEvents));
     

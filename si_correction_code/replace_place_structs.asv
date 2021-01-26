@@ -1,0 +1,85 @@
+%% Load in all the animal directories
+
+[path_dir_learn, crossdir_learn,...
+            path_dir_st_recall, crossdir_st_recall,...
+            path_dir_lt_recall, crossdir_lt_recall,...
+            path_dir_task_sel] = return_animal_dirs();
+        
+        
+%% Place all functions below into another function
+%set path_dir directory here
+
+%set which trials should be used here
+%correct trials 1 - A correct; 2 - B correct
+%all trials 4 - all A; 5 - all B;
+trial_type = [1,2];
+%trial_type = [4,5];
+
+%% Make copy of Place_cell_struct and save in archive folder
+
+%create archive folder for each imaging session for each animal
+%navigate to animal session folder
+for ii=1:numel(path_dir_st_recall)
+    for jj=1:numel(path_dir_st_recall{ii})
+        cd(path_dir_st_recall{ii}{jj})
+        %check if archive folder already exisits
+        if ~logical(exist(fullfile(path_dir_st_recall{ii}{jj},'archive'),'dir'))
+            %create folder if it does not exist
+            mkdir(path_dir_st_recall{ii}{jj},'archive')
+        end
+    end
+end
+
+%% Extract Place_cell structs for each session
+%flag to select partcular struct or all structs
+select_all = 1;
+range_animal = 1;
+range_days = 1;
+[place_structs] = extract_place_struct(path_dir_st_recall,range_animal,range_days,select_all);
+
+%% Save in archive folder for each animal
+for ii=1%:numel(path_dir_st_recall)
+    for jj=1:numel(path_dir_st_recall{ii})
+        cd(fullfile(path_dir_st_recall{ii}{jj},'archive'))
+        Place_cell = place_structs(ii, jj).Place_cell;
+        %check if file already exists
+        %append current date and time to the struct
+        save('Place_cell.mat','Place_cell','-v7.3')
+    end
+end
+
+%% Run the correction code from Jason 
+%run Jason's correction code
+%original SI tuned indices
+%orig_ts_idx = find(Place_cell{1, 1}.Tuning_Specificity.significant_ROI ==1);
+
+for ii =1:1%numel(path_dir_st_recall)
+    for jj=1:1%numel(path_dir_st_recall{ii})
+        disp([ii,jj])
+        %make this parameter adjustable
+        for tt=trial_type %for only correct A or B trials
+            %input place struct; 1 - A corr, 2 - B corr, 4 - all A, 5 - all B
+            place_struct_input = place_structs(ii, jj).Place_cell{1, tt};
+            
+            %original indices
+            orig_si_idx = find(place_struct_input.Spatial_Info.significant_ROI ==1);
+            %corrected indices of tuned ROIs
+            out_temp = whichSignificant2(place_struct_input);
+            if tt==1
+                [animal_recall(ii).sum_rowA(jj,:), animal_recall(ii).si_dataA] = export_si_diff(orig_si_idx,out_temp,place_struct_input);
+            elseif tt==2
+                [animal_recall(ii).sum_rowB(jj,:), animal_recall(ii).si_dataB] = export_si_diff(orig_si_idx,out_temp,place_struct_input);
+            end
+        end
+        
+    end
+end
+
+%% Generate new Place_struct with updated variables
+%extract and replace p-vals
+
+
+
+%% Overwrite exisiting Place_cell struct
+
+

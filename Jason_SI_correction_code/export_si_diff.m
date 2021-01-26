@@ -1,4 +1,4 @@
-function [sum_row] = export_si_diff(orig_si_idx,out_temp, place_struct_input)
+function [sum_row,si_data] = export_si_diff(orig_si_idx,out_temp, place_struct_input)
 
 %% Make table for export for each animal and session
 %index (file name), Original SI #, Corrected SI #, # difference, % difference, %
@@ -26,6 +26,11 @@ sum_row = [sum_row, (sum_row([1,2,5])./sum_row(6))*100];
 
 %round to 2nd sig digit
 sum_row = round(sum_row,2);
+
+%extract all indices, p-values, and SI scores
+si_data.sig_ROI_idx = out_temp.Info_Rate.cvc;
+si_data.p_val = out_temp.Info_Rate.cvc_pvals;
+si_data.si_scores = out_temp.Info_Rate.cvc_scores;
 
 end
 
