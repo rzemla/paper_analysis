@@ -84,17 +84,49 @@ for ii =1:numel(path_dir)
             %corrected indices of tuned ROIs
             out_temp = whichSignificant2(place_struct_input);
             if tt==1
-                [animal(ii).sum_rowA(jj,:), animal(ii).si_dataA] = export_si_diff(orig_si_idx,out_temp,place_struct_input);
+                [animal(ii).sum_rowA(jj,:), animal(ii).si_dataA(jj)] = export_si_diff(orig_si_idx,out_temp,place_struct_input);
             elseif tt==2
-                [animal(ii).sum_rowB(jj,:), animal(ii).si_dataB] = export_si_diff(orig_si_idx,out_temp,place_struct_input);
+                [animal(ii).sum_rowB(jj,:), animal(ii).si_dataB(jj)] = export_si_diff(orig_si_idx,out_temp,place_struct_input);
             end
         end
         
     end
 end
 
-%% Generate new Place_struct with updated variables
-%extract and replace p-vals
+%% Generate new Place_struct with updated variables - CONTINUE HERE
+%replace p-values and significant ROIs
+%place the sig ROIs, p-values 
+%(8th row - 100 bins) - check how it compare to max score obtained from
+%Jason - not the same b/c these are adjusted compared to max
+
+for ii =1%:numel(path_dir)
+    %check that this works for the other animal/session combos (should
+    %work)
+    for jj=1%:numel(path_dir{ii})
+        %for each trial type
+        for tt=trial_type
+            %table of spatial info for each spatial bin size
+            si_info_table_ori_temp = place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.Spatial_Info ;
+            %original p-values
+            si_pval_ori_temp = place_structs(1).Place_cell{1, 1}.Spatial_Info.ROI_pvalue;
+            
+        end
+    end
+end
+
+
+
+
+
+place_structs(1).Place_cell{1, 1}.Spatial_Info.significant_ROI
+
+place_structs(1).Place_cell{1, 1}.Tuned_ROI
+
+place_structs(1).Place_cell{1,1}.Tuned_ROI_mak
+
+%make a copy within the struct itself in archive
+
+%recalculate shared ROIs
 
 
 
