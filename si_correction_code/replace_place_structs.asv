@@ -99,23 +99,100 @@ end
 %(8th row - 100 bins) - check how it compare to max score obtained from
 %Jason - not the same b/c these are adjusted compared to max
 
+for ii =1%:numel(path_dir)
+    %check that this works for the other animal/session combos (should
+    %work)
+    for jj=1%:numel(path_dir{ii})
+        %for each trial type
+        for tt=trial_type
+            %table of spatial info for each spatial bin size
+            si_info_table_ori_temp = place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.Spatial_Info;
+            %original p-values
+            si_pval_ori_temp = place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.ROI_pvalue;
+            %original ROIs (logical)
+            roi_logical_ori_temp = place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.significant_ROI;
+            %tuned both criteria original ROI idxs
+            Tuned_ROI_ori_temp = place_structs(ii,jj).Place_cell{1, tt}.Tuned_ROI;
+            %tuned both vector (double, not logical)
+            Tuned_ROI_mask_ori_temp = place_structs(ii,jj).Place_cell{1,tt}.Tuned_ROI_mask;
+            
+            %place these into archive substruct
+            %check if archive struct exists, if yes then skip
+            if ~isfield(place_structs(ii,jj).Place_cell{1, tt},'archive')
+                place_structs(ii,jj).Place_cell{1, tt}.archive.Spatial_Info.Spatial_Info = si_info_table_ori_temp;
+                place_structs(ii,jj).Place_cell{1, tt}.archive.Spatial_Info.ROI_pvalue = si_pval_ori_temp;
+                place_structs(ii,jj).Place_cell{1, tt}.archive.Spatial_Info.significant_ROI = roi_logical_ori_temp;
+                place_structs(ii,jj).Place_cell{1, tt}.archive.Tuned_ROI = Tuned_ROI_ori_temp;
+                place_structs(ii,jj).Place_cell{1, tt}.archive.Tuned_ROI_mask = Tuned_ROI_mask_ori_temp;
+            end
+            
+            %A - need split for A vs. B trials (si_dataA vs. si_dataB)
+            if tt == 1 || tt == 4 %(correct or all A trials) 
+                %save scores in separate struct
+                place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.corr_si_scores = animal(ii).si_dataA(jj).si_scores;
+                %save ROI idxs in separate struct
+                place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.corr_sigROIs = animal(ii).si_dataA(jj).sig_ROI_idx;
+                
+                %number of ROIs
+                nbROI = numel(animal(1).si_dataA(jj).p_val);
+                %make empty 0 vector
+                sig_ROI_log = zeros(1,nbROI);
+                %populate vector
+                sig_ROI_log(animal(ii).si_dataA(jj).sig_ROI_idx) = 1;
+                %convert logical
+                sig_ROI_log = logical(sig_ROI_log);
+                %replace significant logical vector
+                place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.significant_ROI = sig_ROI_log;
+                %replace p-values
+                place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.ROI_pvalue = animal(ii).si_dataA(jj).p_val; 
+                
+ 
+            %B
+            elseif tt == 2 || tt == 5 %(correct of all B trials)
+                %save scores in separate struct
+                place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.corr_si_scores = animal(ii).si_dataB(jj).si_scores;
+                %save ROI idxs in separate struct
+                place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.corr_sigROIs = animal(ii).si_dataB(jj).sig_ROI_idx;
+                
+                
+                %number of ROIs
+                nbROI = numel(animal(1).si_dataB(jj).p_val);
+                %make empty 0 vector
+                sig_ROI_log = zeros(1,nbROI);
+                %populate vector
+                sig_ROI_log(animal(ii).si_dataB(jj).sig_ROI_idx) = 1;
+                %convert logical
+                sig_ROI_log = logical(sig_ROI_log);
+                %replace significant logical vector
+                place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.significant_ROI = sig_ROI_log;
+                %replace p-values
+                place_structs(ii,jj).Place_cell{1, tt}.Spatial_Info.ROI_pvalue = animal(ii).si_dataB(jj).p_val; 
+                
+            end
+            %get the common ROIs and ROI logical mask
+            %significant TS ROIs logical
+            sig_TS_log = place_structs(ii,jj).Place_cell{1, tt}.Tuning_Specificity.significant_ROI;
+            
+            %replace tuned ROI mask (both SI and TS)
+            place_structs(ii,jj).Place_cell{1, tt}.Tuned_ROI_mask = sig_ROI_log & sig_TS_log;
+            %replace tuned ROIs (both SI and TS)
+            place_structs(ii,jj).Place_cell{1, tt}.Tuned_ROI = find((sig_ROI_log & sig_TS_log) == 1);
+            
+        end
+    end
+end
 
-place_structs(1).Place_cell{1, 1}.Spatial_Info.Spatial_Info
+%% Overwrite exisiting Place_cell struct (enire)
 
-place_structs(1).Place_cell{1, 1}.Spatial_Info.ROI_pvalue
-
-place_structs(1).Place_cell{1, 1}.Spatial_Info.significant_ROI
-
-place_structs(1).Place_cell{1, 1}.Tuned_ROI
-
-place_structs(1).Place_cell{1,1}.Tuned_ROI_mak
-
-%make a copy within the struct itself in archive
-
-%recalculate shared ROIs
-
-
-
-%% Overwrite exisiting Place_cell struct
-
-
+for ii =1%:numel(path_dir)
+    %check that this works for the other animal/session combos (should
+    %work)
+    for jj=1%:numel(path_dir{ii})
+        %for each trial type
+        %create temporary structure
+        Place_cell = place_structs(ii,jj).Place_cell;
+        %overwrite the Place_cell struct
+        dir_temp = dir(fullfile(path_dir{ii}{jj},'output','))
+        save(fullfile(path_dir{ii}{jj},'output')
+    end
+end
