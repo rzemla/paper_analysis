@@ -8,8 +8,6 @@ function [outputArg1,outputArg2] = fig3_master_plotter(remap_rate_maps)
 first_col_STCs = remap_rate_maps.first_col_STCs;
 second_col_STCs = remap_rate_maps.second_col_STCs;
 
-%merge into one cell and add activity remapping map here
-
 %add activity remapping here
 
 
