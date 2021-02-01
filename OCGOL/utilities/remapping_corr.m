@@ -1,4 +1,4 @@
-function [cutoffs_95] = remapping_corr(path_dir)
+function [cutoffs_95,remap_rate_maps] = remapping_corr(path_dir)
 
 %% Load in remapping idx data
 
@@ -59,10 +59,12 @@ cutoffs_95.bin = bin_cutoff_95;
 cutoffs_95.cm = cm_cutoff_95;
 cutoffs_95.ang = ang_cutoff_95;
 
+if 0
 %plot histogram (supplement)
 figure
 hold on
 histogram(cell2mat(bin_dist),30)
+end
 
 %% Combined into single matrix
 for ss=1:size(remap_corr_idx,2)
@@ -106,8 +108,6 @@ partial_comb = cell2mat(partial_idx);
 
 %unclassfied com
 unclass_comb = cell2mat(unclass_idx);
-
-
 
 %% Extract each class STC
 for aa=1:size(path_dir,2)
@@ -188,7 +188,24 @@ STC_tn_partial_nonsorted = cell2mat(STC_tn_partial');
 %use common idx of A tuned neurons to sort
 STC_tn_partial_all_sorted = STC_tn_partial_nonsorted(A_partial_com_sort_all,:);
 
-%% dF/F STC plot for each neuron
+%% Plot normalized STCs against each cell using diff colored maps
+
+% STC_tn_common_all_sorted
+% STC_tn_global_all_sorted
+% STC_tn_rate_all_sorted
+% STC_tn_partial_all_sorted
+% STC_tn_unclass_all_sorted
+
+%first column: common - rate - global 
+first_col_STCs = {STC_tn_common_all_sorted; STC_tn_rate_all_sorted; STC_tn_global_all_sorted};
+second_col_STCs = {STC_tn_partial_all_sorted; STC_tn_unclass_all_sorted};
+%second column: rate - global far - mixed
+
+%% Export the STCs for plotting in master plotter for Fig 3
+
+remap_rate_maps.map_labels = {'common','rate','global','partial','unclassifled'};
+remap_rate_maps.first_col_STCs = first_col_STCs;
+remap_rate_maps.second_col_STCs = second_col_STCs;
 
 
 %% Gaussian kernel smoothing filter
@@ -199,7 +216,7 @@ options.sigma_filter = 3;
 gaussFilter = define_Gaussian_kernel(options);
 
 %% Smooth extended_rate_map
-
+if 0
 %return sort order for rate remapping neurons and plot associated dF/F
 rate_dFF_mean_sorted_all = rate_dFF_combined(sortSTC(rate_dFF_combined,1:100),:);
 
@@ -254,6 +271,7 @@ caxis([0 2])
 colormap('jet')
  end
  
+end
 %% Compare partial remapping neurons curve by curve
 
 if 0
@@ -300,7 +318,7 @@ end
 
 
 %% Plot combined all sorted global, common, rate STCs
-
+if 0
 figure
 imagesc(STC_tn_common_all_sorted)
 hold on
@@ -335,205 +353,9 @@ hold on
 title('Unclassified')
 caxis([0 1])
 colormap('jet')
-
-%% Plot normalized STCs against each cell using diff colored maps
-
-STC_tn_common_all_sorted
-STC_tn_global_all_sorted
-STC_tn_rate_all_sorted
-STC_tn_partial_all_sorted
-STC_tn_unclass_all_sorted
-
-%red and blue colormaps
-cmap_blue=cbrewer('seq', 'Blues', 32);
-cmap_red=cbrewer('seq', 'Reds', 32);
-
-%set bottom value to red to bottom value of blue
-cmap_red(1,:) = [1 1 1];
-cmap_blue(1,:) = [1 1 1];
-
-%first column: common - rate - global 
-first_col_STCs = {STC_tn_common_all_sorted; STC_tn_rate_all_sorted; STC_tn_global_all_sorted};
-second_col_STCs = {STC_tn_partial_all_sorted; STC_tn_unclass_all_sorted};
-%second column: rate - global far - mixed
-
-%% first column plot
-ROI_type_order = [1 2; 3 4; 5 6];
-subplot_order = [1 3 5; 2 4 6]';
-f = figure('Position', [2475 75 372 898]); % event based STC;
-for cc =1:3
-    
-    %subplot(3,2,subplot_order(cc))
-    subaxis(3,2,subplot_order(cc,1),'SpacingHorizontal', 0.02,...
-        'SpacingVertical',0.01,...
-        'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-    
-    imagesc(first_col_STCs{cc,1}(:,1:100))
-    hold on
-    ax1 = gca;
-    %set(gca,'FontSize',14)
-    %title('5A5B')
-    %c1= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax1,cmap_blue)
-    caxis(ax1,[0 1])
-    if cc ~= 3
-        xticks(ax1,[]);
-        %ax1.YTick = [];
-        ax1.YAxis.TickLength = [0 0];
-    else
-        %ax1.YTick = [1,100];
-        ax1.XTick = [1,100];
-        ax1.XTickLabel = {'0','1'};
-        ax1.YAxis.TickLength = [0 0];
-    end
-    %A/B vertical separator line
-    %plot([100 100],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'k','LineWidth', 1.5);
-    %plot reward zones as dashed lines
-    
-    %B zone
-    plot([32 32],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    plot([74 74],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    
-    %B zone
-    %plot([132 132],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    %plot([174 174],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    
 end
 
-for cc =1:3
-    
-    subaxis(3,2,subplot_order(cc,2),'SpacingHorizontal', 0.015,...
-        'SpacingVertical',0.01,...
-        'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-    imagesc(first_col_STCs{cc,1}(:,101:200))
-    %title('5A5B')
-    hold on
-    ax2 = gca;
-    %cbar= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax2,cmap_red)
-    caxis(ax2,[0 1])
-    if cc ~= 3
-        xticks(ax2,[]);
-        ax2.YTick = [];
-        ax2.YAxis.TickLength = [0 0];
-    else
-        ax2.YTick = [];%[1,100];
-        ax2.XTick = [1 100];%[1,100];
-        ax2.XTickLabel = {'0','1'};
-        ax2.YAxis.TickLength = [0 0];
-    end
-    %yticks(ax2,[]);
-    %A/B vertical separator line
-    %plot([100 100],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'k','LineWidth', 1.5);
-    %plot reward zones as dashed lines
-    
-    %B zone
-    plot([32 32],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    plot([74 74],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    
-    %plot([130 130],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    %plot([170 170],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %hold off
-end
 
-%export rasters fpr first colum
-%mkdir(fullfile(path_dir{1},'example_STCs_Fig3D'))
-%disp(['Saving raster: 1'])
-%export_fig(f ,fullfile(path_dir{1},'example_STCs_Fig3D',[num2str(1),'_300.png']),'-r300')
-
-%% second column plot
-ROI_type_order = [1 2; 3 4; 5 6];
-subplot_order = [1 3 5; 2 4 6]';
-f = figure('Position', [2475 75 372 898]); % event based STC;
-for cc =1:2
-    
-    %subplot(3,2,subplot_order(cc))
-subaxis(3,2,subplot_order(cc,1),'SpacingHorizontal', 0.02,...
-    'SpacingVertical',0.01,...
-    'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-
-    imagesc(second_col_STCs{cc,1}(:,1:100))
-    hold on
-    ax1 = gca;
-    %title('5A5B')
-    %c1= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax1,cmap_blue)
-    caxis(ax1,[0 1])
-    if cc ~= 3
-        xticks(ax1,[]);
-        %ax1.YTick = [];
-        ax1.YAxis.TickLength = [0 0];
-    else
-        %ax1.YTick = [1,100];
-        ax1.XTick = [1,100];
-        ax1.XTickLabel = {'0','1'};
- ax1.YAxis.TickLength = [0 0];
-    end
-    %A/B vertical separator line
-    %plot([100 100],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'k','LineWidth', 1.5);
-    %plot reward zones as dashed lines
-
-    %B zone
-    plot([32 32],[1,size(second_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    plot([74 74],[1,size(second_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-        
-    
-    %plot([130 130],[1,size(STC_norm_trials_AB{ROI_type_order(cc,2)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    %plot([170 170],[1,size(STC_norm_trials_AB{ROI_type_order(cc,2)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-end
-
-for cc =1:2
-    
-    subaxis(3,2,subplot_order(cc,2),'SpacingHorizontal', 0.015,...
-    'SpacingVertical',0.01,...
-    'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-    imagesc(second_col_STCs{cc,1}(:,101:200))
-    %title('5A5B')
-    hold on
-    ax2 = gca;
-    %cbar= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax2,cmap_red)
-    caxis(ax2,[0 1])
-    if cc ~= 3
-        xticks(ax2,[]);
-        ax2.YTick = [];
-        ax2.YAxis.TickLength = [0 0];
-    else
-        ax2.YTick = [];%[1,100];
-        ax2.XTick = [1 100];%[1,100];
-    ax2.XTickLabel = {'0','1'};
-ax2.YAxis.TickLength = [0 0];
-    end
-    %yticks(ax2,[]);
-    %A/B vertical separator line
-    %plot([100 100],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'k','LineWidth', 1.5);
-    %plot reward zones as dashed lines
-
-    %B zone
-    plot([32 32],[1,size(second_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    plot([74 74],[1,size(second_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-     
-    
-    %plot([130 130],[1,size(STC_norm_trials_AB{ROI_type_order(cc,2)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    %plot([170 170],[1,size(STC_norm_trials_AB{ROI_type_order(cc,2)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    hold off
-end
 
 %export rasters fpr first colum
 %mkdir(fullfile(path_dir{1},'example_STCs_Fig3D'))

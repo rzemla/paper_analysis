@@ -90,14 +90,14 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distanc
 %STCs of the different categories of neurons are here (Figure 3C)
 %use this as definition for the separation of fields (common and partial
 %field) for partially remapping neurons
-[common_cutoffs_95] = remapping_corr(path_dir);
+[common_cutoffs_95,remap_rate_maps] = remapping_corr(path_dir);
 
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cutoff.mat'),'common_cutoffs_95');
 
 
 %% Master plotter for Figure 3
 
-fig3_master_plotter
+fig3_master_plotter(remap_rate_maps)
 
 %% Generate mean/SEM traces for rate remapping neurons - Figure 3 rate remapping (supplement activity remap and Fig 3c data)
 %also calculate A-B/A+B index and compare against common neurons
