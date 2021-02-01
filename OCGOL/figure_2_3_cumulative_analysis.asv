@@ -62,23 +62,22 @@ task_sel_STC_data = cumulative_task_sel_STC(path_dir);
 %3 - 50 (every 2) relative to 100 bins
 options.bin_choose = 2;
 
-centroid_dist_data = centroid_dist_selective(path_dir,reward_zones_all_animal,options);
+centroid_dist_selective(path_dir,reward_zones_all_animal,options)
 
 %% AUC/min scatterplots of A vs B neurons for each animal 
 
-AUC_data = auc_scatterplots(path_dir);
+auc_scatterplots(path_dir)
 
 %% PV/TC correlation
 
-tc_corr_sel_data = tc_pv_correlation_task_sel(path_dir);
+tc_pv_correlation_task_sel(path_dir)
 
 %% Master plotter for Figure 2
 
 fig2_master_plotter(fraction_place_plot_data,si_ts_score_dist_data,...
-        task_sel_STC_data,centroid_dist_data,AUC_data, tc_corr_sel_data);
-    
+        task_sel_STC_data);
 
-%% FIGURE 3
+%
 %% Place field A&B distance separation (global remapper distance distribution - supplement)
 
 [combined_distances,combined_dist_metric] = place_AB_distance_separation(path_dir);
@@ -86,7 +85,7 @@ fig2_master_plotter(fraction_place_plot_data,si_ts_score_dist_data,...
 %export the lap speed data and event speed data for cumulative analysis
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distances_A&B_neurons.mat'),'combined_distances', 'combined_dist_metric');
 
-%% Remapping ROIs based on correlation map criteria and return quantile for common field separation (Fig 3c)
+%% Remapping ROIs based on correlation map criteria and return quantile for common field separation
 %STCs of the different categories of neurons are here (Figure 3C)
 %use this as definition for the separation of fields (common and partial
 %field) for partially remapping neurons
@@ -95,11 +94,7 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distanc
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cutoff.mat'),'common_cutoffs_95');
 
 
-%% Master plotter for Figure 3
-
-fig3_master_plotter
-
-%% Generate mean/SEM traces for rate remapping neurons - Figure 3 rate remapping (supplement activity remap and Fig 3c data)
+%% Generate mean/SEM traces for rate remapping neurons - Figure 3 rate remapping
 %also calculate A-B/A+B index and compare against common neurons
 rate_remap_traces(path_dir)
 
@@ -110,7 +105,7 @@ rate_remap_traces(path_dir)
 
 
 
-%% Place field analysis (width and number for selective neurons) - supplement place field data
+%% Place field analysis (width and number for selective neurons)
 
 place_field_analysis(path_dir)
 
@@ -120,11 +115,11 @@ lap_speed_by_animal(path_dir)
 
 %save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
 
-%% Event vs speed scatterplot for task selective neurons for supplement (Sup 3 - distributions)
+%% Event vs speed scatterplot for task selective neurons for supplement (Sup 3)
 
 event_speed_scatter(path_dir)
 
-%% Generate scatterplot with correlation against p-value for supplement (supplement data)
+%% Generate scatterplot with correlation against p-value for supplement
 %return global correlation scores for each animal/FOV
 
 [r_global] = corr_score_scatter(path_dir);
@@ -141,7 +136,7 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','r_global.m
 frac_remapping_neurons_corr_criteria(path_dir) 
 
 
-%% Modification to original code (updated using established criteria - majority of Figure 3 data is here)
+%% Modification to original code (updated using established criteria)
 %return bin position of the respective reward zones
 [reward_zones_all_animal,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir);
 

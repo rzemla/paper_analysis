@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = tc_pv_correlation_task_sel(path_dir)
+function [tc_corr_sel_data] = tc_pv_correlation_task_sel(path_dir)
 
 %read relevant data
 for ee=1:size(path_dir,2)
@@ -18,8 +18,9 @@ std_diag_PVcorr = std(diag_PVcorr_mat,0,1);
 %get sem at each spatial bin
 sem_diag_PVcorr = std_diag_PVcorr./sqrt(size(diag_PVcorr_mat,1));
 
-%plot the pv correlation (each animal) across track length and assn sem at
+%% plot the pv correlation (each animal) across track length and assn sem at
 %each bin (around mean)
+if 0
 figure('Position',[2050 530 1380 420]);
 hold on
 ylim([-0.05 1])
@@ -51,8 +52,9 @@ plot([70 70],[-0.05 1],'b--','LineWidth',1.5);
 text([71 71],[0.9 0.9],'Reward zone A','Color','b','FontSize',14)
 plot([10 10],[-0.05 1],'--','Color',[0 153 153]/255,'LineWidth',1.5);
 text([11 11],[0.9 0.9],'Odor zone end','Color',[0 153 153]/255,'FontSize',14)
+end
 
-%% Tuning curve (TC) correlation
+%% Tuning curve (TC) correlation (export this data and related curve!!!)
 
 %place in separate cells (combine diagnonal values)
 for ee=1:size(path_dir,2)
@@ -95,30 +97,17 @@ merge_new{1} =  mean_TC.Asel;
 merge_new{2} = mean_TC.Bsel;
 merge_new{3} = mean_TC.AB;
 
-xlab={'1','2','3'} 
-col=[220,20,60, 255; 65,105,225, 255; 139, 0, 139, 255];  
-col=col/255;
+%% Export data for TC correlation boxplots
 
-f=figure('Position',[2263 287 377 460])
-hold on
-title('Change colors manually in illustrator')
-%plot zone separator lines
-%colors go in by group (not by each x label)
-[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A&B','B','A'},col(1,:)') 
-%overlay boxplot to add median line 
-z= boxplot(x,group, 'positions', positions);
-lines = findobj(z, 'type', 'line', 'Tag', 'Median');
-set(lines, 'Color', 'k');
-set(lines, 'LineWidth',2)
-xticks([1.25, 1.75, 2.25])
-yticks([0.1 0.3 0.5 0.7])
-%ylim
-xticklabels({'A selective', 'B selective', 'A&B'})
-ylabel('Correlation coef.')
-%plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
-%plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
-set(gca,'FontSize',16)
+tc_corr_sel_data.mean_TC.Asel = mean_TC.Asel;
+tc_corr_sel_data.mean_TC.Bsel = mean_TC.Bsel;
+tc_corr_sel_data.mean_TC.AB = mean_TC.AB;
+%add individual neurons
+tc_corr_sel_data.all_neurons.Asel = diag_TC.Asel; 
+tc_corr_sel_data.all_neurons.Bsel = diag_TC.Bsel;
+tc_corr_sel_data.all_neurons.AB = diag_TC.AB; 
 
+if 0
 %% Separate plot that includes the global remapping correlation scores (for grant)
 
 %load the global r scores
@@ -252,7 +241,7 @@ xticks([-0.5 0 0.5 1])
 axis square
 set(gca,'FontSize', 12)
 set(gca,'LineWidth',2)
-
+end
 
 end
 

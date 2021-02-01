@@ -59,7 +59,7 @@ cutoffs_95.bin = bin_cutoff_95;
 cutoffs_95.cm = cm_cutoff_95;
 cutoffs_95.ang = ang_cutoff_95;
 
-%plot histogram
+%plot histogram (supplement)
 figure
 hold on
 histogram(cell2mat(bin_dist),30)
@@ -215,6 +215,7 @@ for rr = 1:64
     gauss_smoothed_dFF.B(rr,:) = conv(rate_dFF_mean_sorted.B(rr,:),gaussFilter, 'same');
 end
 
+if 0
 figure
 for ii=1:64
     hold on
@@ -223,10 +224,12 @@ for ii=1:64
     pause
     clf
 end
+end
 
 %sort by peak difference of dF/F
  [~,sort_max_dff_diff] = sort(max(gauss_smoothed_dFF.A,[],2) - max(gauss_smoothed_dFF.B,[],2),'ascend')
 
+ if 0
 figure
 hold on
 idx_step = 0;
@@ -249,9 +252,11 @@ imagesc(gauss_smoothed_dFF.B)
 hold on
 caxis([0 2])
 colormap('jet')
-
+ end
+ 
 %% Compare partial remapping neurons curve by curve
 
+if 0
 figure
 for rr=1:427
     hold on
@@ -259,6 +264,7 @@ for rr=1:427
     plot(STC_tn_partial_all_sorted(rr,101:200),'r')
     %pause
     clf
+end
 end
 
 %% Plot individually sorted global, common, rate STCs
