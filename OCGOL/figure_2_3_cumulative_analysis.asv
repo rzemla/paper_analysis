@@ -94,15 +94,13 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distanc
 
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cutoff.mat'),'common_cutoffs_95');
 
-%% Generate mean/SEM traces for rate remapping neurons - Figure 3 rate remapping (supplement activity remap and Fig 3c data)
-%also calculate A-B/A+B index and compare against common neurons
-activity_remap = rate_remap_traces(path_dir);
-
 %% Master plotter for Figure 3
 
-fig3_master_plotter(remap_rate_maps,activity_remap)
+fig3_master_plotter(remap_rate_mapsactivity_remap)
 
-
+%% Generate mean/SEM traces for rate remapping neurons - Figure 3 rate remapping (supplement activity remap and Fig 3c data)
+%also calculate A-B/A+B index and compare against common neurons
+rate_remap_traces(path_dir)
 
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 
 %scatterplot of centroid difference as a function of center between

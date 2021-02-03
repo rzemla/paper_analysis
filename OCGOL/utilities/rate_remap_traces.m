@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = rate_remap_traces(path_dir)
+function [activity_remap] = rate_remap_traces(path_dir)
 
 %% Load in data (includes common neurons as well)
 for aa=1:size(path_dir,2)
@@ -46,20 +46,20 @@ end
 
 auc_min_activity_remap_rate = cell2mat(auc_min_activity_remap);
 
-mean(auc_min_activity_remap_rate,2)
-
-figure
-subplot(1,2,1)
-hold on
-ylim([0 25])
-title('A >= B')
-plot(auc_min_activity_remap_rate(:, auc_min_activity_remap_rate(1,:)>=auc_min_activity_remap_rate(2,:)))
-
-subplot(1,2,2)
-hold on
-ylim([0 25])
-title('A < B')
-plot(auc_min_activity_remap_rate(:, auc_min_activity_remap_rate(1,:)<auc_min_activity_remap_rate(2,:)))
+% mean(auc_min_activity_remap_rate,2)
+% 
+% figure
+% subplot(1,2,1)
+% hold on
+% ylim([0 25])
+% title('A >= B')
+% plot(auc_min_activity_remap_rate(:, auc_min_activity_remap_rate(1,:)>=auc_min_activity_remap_rate(2,:)))
+% 
+% subplot(1,2,2)
+% hold on
+% ylim([0 25])
+% title('A < B')
+% plot(auc_min_activity_remap_rate(:, auc_min_activity_remap_rate(1,:)<auc_min_activity_remap_rate(2,:)))
 
 
 %% Assemble into more compact representation (activity remapping neurons) - these are the traces 
@@ -239,17 +239,17 @@ set(gca,'FontSize',14)
 set(gca,'LineWidth',1)
 
 %% Calculate area under mean of the curve and calculate index
-% area_mean_pk_A_value_remap = trapz(mean_dff_matrix.remap.A');
-% area_mean_pk_B_value_remap = trapz(mean_dff_matrix.remap.B');
-% 
-% area_mean_pk_A_value_com = trapz(mean_dff_matrix.com.A');
-% area_mean_pk_B_value_com = trapz(mean_dff_matrix.com.B');
-% 
-% remap_idx_area_values = abs(area_mean_pk_A_value_remap - area_mean_pk_B_value_remap)./...
-%         (area_mean_pk_A_value_remap + area_mean_pk_B_value_remap);
-% 
-% com_idx_area_values = abs(area_mean_pk_A_value_com - area_mean_pk_B_value_com)./...
-%         (area_mean_pk_A_value_com + area_mean_pk_B_value_com);    
+area_mean_pk_A_value_remap = trapz(mean_dff_matrix.remap.A');
+area_mean_pk_B_value_remap = trapz(mean_dff_matrix.remap.B');
+
+area_mean_pk_A_value_com = trapz(mean_dff_matrix.com.A');
+area_mean_pk_B_value_com = trapz(mean_dff_matrix.com.B');
+
+remap_idx_area_values = abs(area_mean_pk_A_value_remap - area_mean_pk_B_value_remap)./...
+        (area_mean_pk_A_value_remap + area_mean_pk_B_value_remap);
+
+com_idx_area_values = abs(area_mean_pk_A_value_com - area_mean_pk_B_value_com)./...
+        (area_mean_pk_A_value_com + area_mean_pk_B_value_com);    
     
 
 %% Subtract the maps from one another and get max value and calculate index
@@ -269,6 +269,11 @@ hold on
 histogram(common_idx_values,20,'Normalization','probability','DisplayStyle','stairs')
 histogram(remap_idx_values,20,'Normalization','probability','DisplayStyle','stairs')
 
+
+%% Export activity remap data
+
+activity_remap.mean_diff_sort_timeA = mean_dff_matrix.remap.A(I_sort,1:200);
+activity_remap.mean_diff_sort_timeB = mean_dff_matrix.remap.B(I_sort,1:200);
 
 %% Plot columns in same order as below except use same jet colormap
 
@@ -336,62 +341,62 @@ colorbar
 
 %% first column plot
 
-cmap_blue=cbrewer('seq', 'Blues', 32);
-cmap_red=cbrewer('seq', 'Reds', 32);
-
-%set bottom value to red to bottom value of blue
-cmap_red(1,:) = [1 1 1];
-cmap_blue(1,:) = [1 1 1];
-
-ROI_type_order = [1 2; 3 4; 5 6];
-subplot_order = [1 3 5; 2 4 6]';
-f = figure('Position', [2475 75 372 898]); % event based STC;
-for cc =1
-    
-    %subplot(3,2,subplot_order(cc))
-    subaxis(3,2,subplot_order(cc,1),'SpacingHorizontal', 0.02,...
-        'SpacingVertical',0.01,...
-        'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-    
-    imagesc(mean_dff_matrix.remap.A(I_sort,1:200))
-    hold on
-    ax1 = gca;
-    
-    colormap(ax1,cmap_blue)
-    caxis(ax1,[0 3])
-    
-    %ax1.YTick = [1,100];
-    ax1.XTick = [1,30,90,150];
-    ax1.XTickLabel = {'0','1','3','5'};
-    ax1.YAxis.TickLength = [0 0];
-    
-end
-
-for cc =1
-    
-    subaxis(3,2,subplot_order(cc,2),'SpacingHorizontal', 0.015,...
-        'SpacingVertical',0.01,...
-        'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-    imagesc(mean_dff_matrix.remap.B(I_sort,1:200))
-    %title('5A5B')
-    hold on
-    ax2 = gca;
-    %cbar= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax2,cmap_red)
-    caxis(ax2,[0 3])
-
-        ax2.YTick = [];%[1,100];
-        ax2.XTickLabel = {'0','1'};
-        ax2.YAxis.TickLength = [0 0];
-
-            %ax1.YTick = [1,100];
-    ax2.XTick = [1,30,90,150];
-    ax2.XTickLabel = {'0','1','3','5'};
-    ax2.YAxis.TickLength = [0 0];
-
-end
+% cmap_blue=cbrewer('seq', 'Blues', 32);
+% cmap_red=cbrewer('seq', 'Reds', 32);
+% 
+% %set bottom value to red to bottom value of blue
+% cmap_red(1,:) = [1 1 1];
+% cmap_blue(1,:) = [1 1 1];
+% 
+% ROI_type_order = [1 2; 3 4; 5 6];
+% subplot_order = [1 3 5; 2 4 6]';
+% f = figure('Position', [2475 75 372 898]); % event based STC;
+% for cc =1
+%     
+%     %subplot(3,2,subplot_order(cc))
+%     subaxis(3,2,subplot_order(cc,1),'SpacingHorizontal', 0.02,...
+%         'SpacingVertical',0.01,...
+%         'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
+%     
+%     imagesc(mean_dff_matrix.remap.A(I_sort,1:200))
+%     hold on
+%     ax1 = gca;
+%     
+%     colormap(ax1,cmap_blue)
+%     caxis(ax1,[0 3])
+%     
+%     %ax1.YTick = [1,100];
+%     ax1.XTick = [1,30,90,150];
+%     ax1.XTickLabel = {'0','1','3','5'};
+%     ax1.YAxis.TickLength = [0 0];
+%     
+% end
+% 
+% for cc =1
+%     
+%     subaxis(3,2,subplot_order(cc,2),'SpacingHorizontal', 0.015,...
+%         'SpacingVertical',0.01,...
+%         'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
+%     imagesc(mean_dff_matrix.remap.B(I_sort,1:200))
+%     %title('5A5B')
+%     hold on
+%     ax2 = gca;
+%     %cbar= colorbar;
+%     %cbar.Label.String = 'Normalized activity';
+%     %cbar.Ticks = [0 1];
+%     colormap(ax2,cmap_red)
+%     caxis(ax2,[0 3])
+% 
+%         ax2.YTick = [];%[1,100];
+%         ax2.XTickLabel = {'0','1'};
+%         ax2.YAxis.TickLength = [0 0];
+% 
+%             %ax1.YTick = [1,100];
+%     ax2.XTick = [1,30,90,150];
+%     ax2.XTickLabel = {'0','1','3','5'};
+%     ax2.YAxis.TickLength = [0 0];
+% 
+% end
 
 %% Get range of pk idxs for supplement visualization purposes
 %min(cell2mat(activity_remap_pk_idx_split'))
@@ -483,7 +488,7 @@ paper_cmap = return_paper_colormap;
     ylabel('AUC/min')
     b =bar([1 2],activity_remap_mean_AUC_min','FaceColor','flat')
     errorbar([1 2],activity_remap_mean_AUC_min, activity_remap_sem_AUC_min,'LineStyle','none','LineWidth',1.5,'Color','k')
-    sigstar([1 2])
+    %sigstar([1 2])
     axis square
     set(gca,'FontSize',14)
     set(gca,'LineWidth',1.5)    

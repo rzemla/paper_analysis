@@ -1,29 +1,24 @@
-function [outputArg1,outputArg2] = fig3_master_plotter(remap_rate_maps)
-
-
-
+function [outputArg1,outputArg2] = fig3_master_plotter(remap_rate_maps,activity_remap)
 %% Unload the data
 
 %rate maps (common, rate, global, partial, unclassified
 first_col_STCs = remap_rate_maps.first_col_STCs;
 second_col_STCs = remap_rate_maps.second_col_STCs;
+%activity remapping dF/F over time (5s)
+mean_activityA = activity_remap.mean_diff_sort_timeA;
+mean_activityB = activity_remap.mean_diff_sort_timeB;
 
-%add activity remapping here
+%merge into one cell and add activity remapping map here
+%common(1) activity/rate(2), activity dF/F(3), global(4), partial (5), unclass (6), 
+rasters = [first_col_STCs(1:2); {[mean_activityA, mean_activityB]};...
+    first_col_STCs(3); second_col_STCs(1:2)];
 
+%% Paper colors
+paper_cmap = return_paper_colormap;
 
-%% Figure 3c rate maps
-
-%red and blue colormaps
-cmap_blue=cbrewer('seq', 'Blues', 32);
-cmap_red=cbrewer('seq', 'Reds', 32);
-
-%set bottom value to red to bottom value of blue
-cmap_red(1,:) = [1 1 1];
-cmap_blue(1,:) = [1 1 1];
-
-%% first column plot
-ROI_type_order = [1 2; 3 4; 5 6];
-subplot_order = [1 3 5; 2 4 6]';
+%% Figure 3c Raster rate plots
+%still have to make separate titledlayout with colorbar(can't integrate to
+%show in only one tile)
 
 fig = figure; % event based STC;
 fig.Units = 'centimeters';
@@ -32,220 +27,164 @@ fig.Position(2) = 1;
 fig.Position(3) = 20;
 fig.Position(4) = 24;
 
+%master layout
 gridSize = [3,2];
 t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','compact','Units','centimeters');
 
-%global subplot
-s1 = tiledlayout(t1,1,2);
-%A
-nexttile(s1)
-imagesc(first_col_STCs{cc,1}(:,1:100))
-hold on
-ax1 = gca;
-colormap(ax1,cmap_blue)
-caxis(ax1,[0 1])
-ax1.XTick = [1,100];
-ax1.XTickLabel = {'0','1'};
-ax1.YAxis.TickLength = [0 0];
-%xticks(ax1,[]);
-ax1.YAxis.TickLength = [0 0];
+%common subplot
+s1 = tiledlayout(t1,1,2,'TileSpacing','compact','Padding','compact','Units','centimeters');
+s1.Layout.Tile = 1;
+s1.Layout.TileSpan = [1,1];
+%subplot title
+set_subplot_title(s1,'Common', 'Arial', 16,'bold')
 
-%B zone
-plot([32 32],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-%A zone
-plot([74 74],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
+%A
+nexttile(s1,1)
+raster_plot(rasters{1}(:,1:100),'blue')
+set_title('A trials',12,'Arial', 'italic',paper_cmap(1,:),0,'west')
+ylabel('Neuron #');
+
 
 %B
-nexttile(s1)
-imagesc(first_col_STCs{cc,1}(:,101:200))
-hold on
-ax2 = gca;
-colormap(ax2,cmap_red)
-caxis(ax2,[0 1])
-ax2.XTick = [1,100];
-ax2.XTickLabel = {'0','1'};
-ax2.YAxis.TickLength = [0 0];
-        
-%B zone
-plot([32 32],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-%A zone
-plot([74 74],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);        
+nexttile(s1,2)
+raster_plot(rasters{1}(:,101:200),'red')
+set_title('B trials',12,'Arial', 'italic',paper_cmap(2,:),0,'west')
+yticks([]);
+
+%cba.Layout.Location = 'eastoutside';
+%set_bar(s1,'west',paper_cmap(2,:))
 
 
+%global subplot
+s2 = tiledlayout(t1,1,2,'TileSpacing','compact','Padding','compact','Units','centimeters');
+s2.Layout.Tile = 2;
+s2.Layout.TileSpan = [1,1];
+%subplot title
+set_subplot_title(s2,'Global', 'Arial', 16,'bold')
 
 
-for cc =1:3
-    
-    %subplot(3,2,subplot_order(cc))
-    subaxis(3,2,subplot_order(cc,1),'SpacingHorizontal', 0.02,...
-        'SpacingVertical',0.01,...
-        'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-    
-    imagesc(first_col_STCs{cc,1}(:,1:100))
-    hold on
-    ax1 = gca;
-    %set(gca,'FontSize',14)
-    %title('5A5B')
-    %c1= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax1,cmap_blue)
-    caxis(ax1,[0 1])
-    if cc ~= 3
-        xticks(ax1,[]);
-        %ax1.YTick = [];
-        ax1.YAxis.TickLength = [0 0];
-    else
-        %ax1.YTick = [1,100];
-        ax1.XTick = [1,100];
-        ax1.XTickLabel = {'0','1'};
-        ax1.YAxis.TickLength = [0 0];
+%A
+nexttile(s2)
+raster_plot(rasters{4}(:,1:100),'blue')
+set_title('A trials',12,'Arial', 'italic',paper_cmap(1,:),'0','west')
+
+%B
+nexttile(s2)
+raster_plot(rasters{4}(:,101:200),'red')
+set_title('B trials',12,'Arial', 'italic',paper_cmap(2,:),0,'west')
+yticks([]);
+
+
+%activity subplot
+s3 = tiledlayout(t1,1,2,'TileSpacing','compact','Padding','compact','Units','centimeters');
+s3.Layout.Tile = 3;
+s3.Layout.TileSpan = [1,1];
+set_subplot_title(s3,'Activity', 'Arial', 16,'bold')
+%shared x-axis label
+xlabel(s3,'Normalized Position','FontName', 'Arial', 'FontSize', 14)
+
+%A
+nexttile(s3)
+raster_plot(rasters{2}(:,1:100),'blue')
+set_title('A trials',12,'Arial', 'italic',paper_cmap(1,:),0,'west')
+ylabel('Neuron #');
+%B
+nexttile(s3)
+raster_plot(rasters{2}(:,101:200),'red')
+set_title('B trials',12,'Arial', 'italic',paper_cmap(2,:),0,'west')
+yticks([]);
+
+%partial subplot
+s4 = tiledlayout(t1,1,2,'TileSpacing','compact','Padding','compact','Units','centimeters');
+s4.Layout.Tile = 4;
+s4.Layout.TileSpan = [1,1];
+set_subplot_title(s4,'Partial', 'Arial', 16,'bold')
+%A
+nexttile(s4)
+raster_plot(rasters{5}(:,1:100),'blue')
+set_title('A trials',12,'Arial', 'italic',paper_cmap(1,:),0,'west')
+%B
+nexttile(s4)
+raster_plot(rasters{5}(:,101:200),'red')
+set_title('B trials',12,'Arial', 'italic',paper_cmap(2,:),0,'west')
+yticks([]);
+
+%dF/F activity subplot
+s5 = tiledlayout(t1,1,2,'TileSpacing','compact','Padding','compact','Units','centimeters');
+s5.Layout.Tile = 5;
+s5.Layout.TileSpan = [1,1];
+set_subplot_title(s5,'Activity', 'Arial', 16,'bold')
+%subtitle properties for this sublayout
+s5.Subtitle.String ='\Delta Ca^{\it2+} event magnitude';
+s5.Subtitle.FontAngle = 'italic';
+xlabel(s5,'Time since event onset [s]','FontName', 'Arial', 'FontSize', 14)
+ylabel(s5,'Neuron #');
+%A
+nexttile(s5)
+raster_plot(rasters{3}(:,1:200),'jet')
+set_title('A trials',12,'Arial', 'italic',paper_cmap(1,:),0,'west')
+%B
+nexttile(s5)
+raster_plot(rasters{3}(:,201:400),'jet')
+set_title('B trials',12,'Arial', 'italic',paper_cmap(2,:),0,'west')
+yticks([]);
+
+%unclassified subplot
+s6 = tiledlayout(t1,1,2,'TileSpacing','compact','Padding','compact','Units','centimeters');
+s6.Layout.Tile = 6;
+s6.Layout.TileSpan = [1,1];
+set_subplot_title(s6,'Unclassified', 'Arial', 16,'bold')
+%shared x-axis label
+xlabel(s6,'Normalized Position','FontName', 'Arial', 'FontSize', 14)
+
+%A
+nexttile(s6)
+raster_plot(rasters{6}(:,1:100),'blue')
+set_title('A trials',12,'Arial', 'italic',paper_cmap(1,:),0,'west')
+%B
+nexttile(s6)
+raster_plot(rasters{6}(:,101:200),'red')
+set_title('B trials',12,'Arial', 'italic',paper_cmap(2,:),0,'west')
+yticks([]);
+
+
+%set axis font/label and font size
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
+'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
+
+% Set subplot tile title
+    function set_title(t_name,t_size,t_font, t_angle,t_color,set_bar,bar_where)
+        t = title(t_name);
+        t.FontSize = t_size;
+        t.FontName = t_font;
+        t.FontAngle = t_angle;
+        t.Color = t_color;
+        if set_bar == 1
+            cb = colorbar();
+            cb.Layout.Tile = bar_where;
+        end
     end
-    %A/B vertical separator line
-    %plot([100 100],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'k','LineWidth', 1.5);
-    %plot reward zones as dashed lines
-    
-    %B zone
-    plot([32 32],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    plot([74 74],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    
-    %B zone
-    %plot([132 132],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    %plot([174 174],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    
-end
+%set subplotbar
+%     function set_bar(tx,bar_where,color_map)
+%             colormap(tx,color_map)
+%             cb = colorbar(tx);
+%             cb.Layout.Tile = bar_where;
+%     end
 
-for cc =1:3
-    
-    subaxis(3,2,subplot_order(cc,2),'SpacingHorizontal', 0.015,...
-        'SpacingVertical',0.01,...
-        'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-    imagesc(first_col_STCs{cc,1}(:,101:200))
-    %title('5A5B')
-    hold on
-    ax2 = gca;
-    %cbar= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax2,cmap_red)
-    caxis(ax2,[0 1])
-    if cc ~= 3
-        xticks(ax2,[]);
-        ax2.YTick = [];
-        ax2.YAxis.TickLength = [0 0];
-    else
-        ax2.YTick = [];%[1,100];
-        ax2.XTick = [1 100];%[1,100];
-        ax2.XTickLabel = {'0','1'};
-        ax2.YAxis.TickLength = [0 0];
+    function set_subplot_title(sub,t_string, t_name, t_size,t_weight)
+        sub.Title.String = t_string;
+        sub.Title.FontName = t_name;
+        sub.Title.FontSize = t_size;
+        sub.Title.FontWeight = t_weight;
     end
-    %yticks(ax2,[]);
-    %A/B vertical separator line
-    %plot([100 100],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'k','LineWidth', 1.5);
-    %plot reward zones as dashed lines
-    
-    %B zone
-    plot([32 32],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    plot([74 74],[1,size(first_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    
-    %plot([130 130],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    %plot([170 170],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %hold off
-end
+
 
 %export rasters fpr first colum
 %mkdir(fullfile(path_dir{1},'example_STCs_Fig3D'))
 %disp(['Saving raster: 1'])
 %export_fig(f ,fullfile(path_dir{1},'example_STCs_Fig3D',[num2str(1),'_300.png']),'-r300')
 
-%% second column plot
-ROI_type_order = [1 2; 3 4; 5 6];
-subplot_order = [1 3 5; 2 4 6]';
-f = figure('Position', [2475 75 372 898]); % event based STC;
-for cc =1:2
-    
-    %subplot(3,2,subplot_order(cc))
-subaxis(3,2,subplot_order(cc,1),'SpacingHorizontal', 0.02,...
-    'SpacingVertical',0.01,...
-    'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
 
-    imagesc(second_col_STCs{cc,1}(:,1:100))
-    hold on
-    ax1 = gca;
-    %title('5A5B')
-    %c1= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax1,cmap_blue)
-    caxis(ax1,[0 1])
-    if cc ~= 3
-        xticks(ax1,[]);
-        %ax1.YTick = [];
-        ax1.YAxis.TickLength = [0 0];
-    else
-        %ax1.YTick = [1,100];
-        ax1.XTick = [1,100];
-        ax1.XTickLabel = {'0','1'};
- ax1.YAxis.TickLength = [0 0];
-    end
-    %A/B vertical separator line
-    %plot([100 100],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'k','LineWidth', 1.5);
-    %plot reward zones as dashed lines
-
-    %B zone
-    plot([32 32],[1,size(second_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    plot([74 74],[1,size(second_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-        
-    
-    %plot([130 130],[1,size(STC_norm_trials_AB{ROI_type_order(cc,2)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    %plot([170 170],[1,size(STC_norm_trials_AB{ROI_type_order(cc,2)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-end
-
-for cc =1:2
-    
-    subaxis(3,2,subplot_order(cc,2),'SpacingHorizontal', 0.015,...
-    'SpacingVertical',0.01,...
-    'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
-    imagesc(second_col_STCs{cc,1}(:,101:200))
-    %title('5A5B')
-    hold on
-    ax2 = gca;
-    %cbar= colorbar;
-    %cbar.Label.String = 'Normalized activity';
-    %cbar.Ticks = [0 1];
-    colormap(ax2,cmap_red)
-    caxis(ax2,[0 1])
-    if cc ~= 3
-        xticks(ax2,[]);
-        ax2.YTick = [];
-        ax2.YAxis.TickLength = [0 0];
-    else
-        ax2.YTick = [];%[1,100];
-        ax2.XTick = [1 100];%[1,100];
-    ax2.XTickLabel = {'0','1'};
-ax2.YAxis.TickLength = [0 0];
-    end
-    %yticks(ax2,[]);
-    %A/B vertical separator line
-    %plot([100 100],[1,size(STC_norm_trials_AB{ROI_type_order(cc,1)}{1}{1},1)], 'k','LineWidth', 1.5);
-    %plot reward zones as dashed lines
-
-    %B zone
-    plot([32 32],[1,size(second_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    plot([74 74],[1,size(second_col_STCs{cc}(:,1:100),1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-     
-    
-    %plot([130 130],[1,size(STC_norm_trials_AB{ROI_type_order(cc,2)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    %A zone
-    %plot([170 170],[1,size(STC_norm_trials_AB{ROI_type_order(cc,2)}{1}{1},1)], 'Color', 0*[1 1 1], 'LineStyle','--','LineWidth', 1.5);
-    hold off
-end
 end
 
