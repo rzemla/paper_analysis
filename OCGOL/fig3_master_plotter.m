@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = fig3_master_plotter(remap_rate_maps,activity_remap)
+function [outputArg1,outputArg2] = fig3_master_plotter(remap_rate_maps,activity_remap,frac_remapping,remap_prop_figs)
 %% Unload the data
 
 %rate maps (common, rate, global, partial, unclassified
@@ -179,6 +179,184 @@ set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
         sub.Title.FontWeight = t_weight;
     end
 
+%% Remapping properies plots in Fig. 3
+
+%unload the data
+%frac remap bar plot (3d)
+class_names = frac_remapping.class_names;
+class_mean = frac_remapping.class_mean ;
+class_sem = frac_remapping.class_sem;
+
+fig = figure; % event based STC;
+fig.Units = 'centimeters';
+fig.Position(1) = 8;
+fig.Position(2) = 1;
+fig.Position(3) = 20;
+fig.Position(4) = 24;
+
+%master layout
+gridSize = [3,2];
+t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','normal','Units','centimeters');
+
+%3d fractional distribution of each class of remapping neurons
+nexttile(t1, 1)
+hold on
+
+bar(class_mean,'FaceColor',[139, 0, 139]/255)
+%add significance bars
+xticks([1:5])
+xticklabels({'Common','Rate','Global','Partial','Unclassified'})
+%sigstar({[1,2], [1,3],[1,4]})
+xtickangle(45)
+errorbar([1:5],class_mean,class_sem,'k.')
+ylim([0 0.4])
+ylabel('Fraction of remapping neurons')
+
+%unload data
+common_bins_combined = remap_prop_figs.common_dist.common_bins_combined;
+B_zone_end = remap_prop_figs.common_dist.B_zone_end; 
+A_zone_end = remap_prop_figs.common_dist.A_zone_end;  
+
+%3e common place field distribution (add manual zone labels)
+nexttile(t1,2)
+hold on
+ylim([0 0.2])
+yticks([0 0.05 0.1 0.15 0.2])
+h1 = histogram(common_bins_combined(1,:),0:10:100,'Normalization','probability');
+xticks([0 100])
+xticklabels({'0','1'})
+xlabel('Normalized position')
+ylabel('Normalized density')
+h1.FaceColor = [139 0 139]./255;
+h1.FaceAlpha = 1;
+
+%place an annotation for each zone (later)
+
+%annotation('textbox',[1 1 1 1],'String','Zone I','FitBoxToText','on','Units','centimeters');
+
+plot([B_zone_end B_zone_end], [0 0.2],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
+plot([A_zone_end A_zone_end], [0 0.2],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
+%3x2 subplot for partial 3h
+
+%fig 3f shift of place fields in reward zones between A and B trials
+%unload data
+zoneI_diff = remap_prop_figs.global_remap_shift.zoneI_diff;
+zoneII_diff = remap_prop_figs.global_remap_shift.zoneII_diff;
+zoneIII_diff = remap_prop_figs.global_remap_shift.zoneIII_diff;
+zone_med = remap_prop_figs.global_remap_shift.zone_med;
+zone_sem = remap_prop_figs.global_remap_shift.zone_sem;
+
+nexttile(t1,3)
+hold on
+xlim([0 4])
+ylim([-0.5 0.6])
+xticks([1 2 3])
+yticks([-0.4, -0.2, 0, 0.2, 0.4])
+xticklabels({'Zone I','Zone II','Zone III'})
+xlabel('\newline Relative to A place field');
+ylabel({'Fraction of B fields before A fields', '- expected fraction'});
+dot_size = 14;
+scatter(ones(1,size(zoneI_diff,2)),zoneI_diff,dot_size,'filled','MarkerFaceColor',[0.5 0.5 0.5])
+scatter(2*ones(1,size(zoneII_diff,2)),zoneII_diff,dot_size,'filled','MarkerFaceColor',[0.5 0.5 0.5])
+scatter(3*ones(1,size(zoneIII_diff,2)),zoneIII_diff,dot_size,'filled','MarkerFaceColor',[0.5 0.5 0.5])
+bar([1 2 3],zone_med,'FaceColor',[139, 0, 139]/255,'EdgeColor',[0 0 0]/255,'FaceAlpha',0.3,'BarWidth', 0.6)
+errorbar([1 2 3],zone_med,zone_sem,'LineStyle','none','Color', [0 0 0])
+%0 dash line
+%plot([0 4],[0 0],'--','Color',[0.5 0.5 0.5],'LineWidth',1)
+
+%fig 3g - global remapping between zones
+%unload data
+frac_zones = remap_prop_figs.global_zones.frac_zones;
+mean_fraction_zone_split = remap_prop_figs.global_zones.mean_fraction_zone_split;
+sem_fraction_zone_split = remap_prop_figs.global_zones.sem_fraction_zone_split;
+
+nexttile(t1,4)
+hold on
+bar([1 2 3 4.5 5.5 7 8 9.5 10.5], mean(frac_zones,1),'FaceColor',[139, 0, 139]/255)
+xticks([1 2 3 4.5 5.5 7 8 9.5 10.5])
+errorbar([1 2 3 4.5 5.5 7 8 9.5 10.5],mean_fraction_zone_split,sem_fraction_zone_split,'k.')
+xticklabels({'AI,BI','AII, BII','AIII, BIII','AI, BII','AII, BI',...
+    'AII, BIII','AIII, BII','AI, BIII','AIII, BI'})
+xtickangle(45)
+%zone I,II,III switches
+%sigstar({[1,2], [1,3], [2,3]})
+%I vs. II switch, II vs. III switch, I vs. III
+%sigstar({[4.5 5.5],[7 8],[9.5 10.5]})
+yticks([0 0.1 0.2 0.3])
+ylabel('Fraction of neurons');
+
+%3h partial place field remapping (main) + inset(histogram dists)
+%unload data
+partial_A_common_far_input = remap_prop_figs.partial_remap.partial_A_common_far_input;
+partial_B_common_far_input = remap_prop_figs.partial_remap.partial_B_common_far_input;
+B_zone_end = remap_prop_figs.partial_remap.B_zone_end;
+A_zone_end = remap_prop_figs.partial_remap.A_zone_end;
+
+%cdf here
+nexttile(t1,5)
+hold on
+%title('Distribution of partially remapping fields')
+[fA,xA] = ecdf(partial_A_common_far_input(:,2));
+[fB,xB] = ecdf(partial_B_common_far_input(:,2));
+ap = stairs(xA,fA,'LineWidth',2,'Color',[65,105,225]/255);
+bp = stairs(xB,fB,'LineWidth',2,'Color',[220,20,60]/255);
+xlabel(gca,'Normalized positon')
+ylabel('Cumulative probability')
+
+xticks([0 100])
+xticklabels({'0','1'})
+%set(gca,'LineWidth',1.5)
+%set(gca,'FontSize',16)
+legend([ap bp],{'A','B'},'Location','northwest','AutoUpdate','off')
+
+plot([B_zone_end B_zone_end], [0 1],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 1],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+%make subplot for partial field position distribution (3h ctd)
+%unload data
+partial_A_common_far_input = remap_prop_figs.partial_remap.insets.partial_A_common_far_input;
+partial_B_common_far_input = remap_prop_figs.partial_remap.insets.partial_B_common_far_input;
+B_zone_end = remap_prop_figs.partial_remap.insets.B_zone_end;
+A_zone_end = remap_prop_figs.partial_remap.insets.A_zone_end;
+
+s2 = tiledlayout(t1,2,2,'TileSpacing','normal','Padding','normal','Units','centimeters');
+s2.Layout.Tile = 6;
+s2.Layout.TileSpan = [1,1];
+
+nexttile(s2,1,[1,1])
+hold on;
+ylabel(s2,'Norm. density')
+ylim([0 0.2])
+yticks([0 0.1 0.2])
+xticks([0 50 100])
+xticklabels({'0','0.5','1'})
+%ylabel('Norm. \newline density')
+%set(gca,'FontSize',16)
+histogram(partial_A_common_far_input(:,2),[0:10:100],'Normalization','probability','FaceColor', [65,105,225]/255,'FaceAlpha',1)
+
+plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+nexttile(s2,3,[1,1])
+hold on
+ylim([0 0.2])
+yticks([0 0.1 0.2])
+xticks([0 50 100])
+xticklabels({'0','0.5','1'})
+
+xlabel({'Normalized','position'})
+%set(gca,'FontSize',16)
+histogram(partial_B_common_far_input(:,2),[0:10:100],'Normalization','probability','FaceColor',[220,20,60]/255,'FaceAlpha',1)
+
+plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
+plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
+
+%set axis font/label and font size
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
+'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
+
+%% Export figs to folder (future)
 
 %export rasters fpr first colum
 %mkdir(fullfile(path_dir{1},'example_STCs_Fig3D'))

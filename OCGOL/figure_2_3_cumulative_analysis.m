@@ -98,17 +98,35 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cut
 %also calculate A-B/A+B index and compare against common neurons
 activity_remap = rate_remap_traces(path_dir);
 
+
+%% Fractional remapping using updated criteria - fraction of each class
+
+frac_remapping =frac_remapping_neurons_corr_criteria(path_dir);
+
+%% Generate scatterplot with correlation against p-value for supplement (supplement data)
+%return global correlation scores for each animal/FOV
+
+[r_global] = corr_score_scatter(path_dir);
+
+%export this value
+save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','r_global.mat'),'r_global');
+
+%% Modification to original code (updated using established criteria - majority of Figure 3 data is here)
+
+%return bin position of the respective reward zones
+[reward_zones_all_animal,partial_idx_by_animal_zone,remap_prop_figs] = remapping_centroids_updated(path_dir);
+
+save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','partial_idx_by_animal.mat'),'partial_idx_by_animal_zone');
+
+%save the reward zone endpoints (100 bins) into a common file for use by functions
+%above
+save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zones_all_animals.mat'),'reward_zones_all_animal');
+
+
+
 %% Master plotter for Figure 3
-
-fig3_master_plotter(remap_rate_maps,activity_remap)
-
-
-
-%% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin 
-%scatterplot of centroid difference as a function of center between
-%centroid of max place field - not used
-%centroid_difference(path_dir)
-
+%load frac remapping data
+fig3_master_plotter(remap_rate_maps,activity_remap,frac_remapping,remap_prop_figs)
 
 
 %% Place field analysis (width and number for selective neurons) - supplement place field data
@@ -125,32 +143,10 @@ lap_speed_by_animal(path_dir)
 
 event_speed_scatter(path_dir)
 
-%% Generate scatterplot with correlation against p-value for supplement (supplement data)
-%return global correlation scores for each animal/FOV
-
-[r_global] = corr_score_scatter(path_dir);
-
-%export this value
-save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','r_global.mat'),'r_global');
-
-%mean ~ -0.09 
-%mean(cellfun(@mean,r_global))
-
-%% REMAPPING RELATED (FIGURE 3)
-
-%% Fractional remapping using updated criteria - use this for plotting
-frac_remapping_neurons_corr_criteria(path_dir) 
-
-
-%% Modification to original code (updated using established criteria - majority of Figure 3 data is here)
-%return bin position of the respective reward zones
-[reward_zones_all_animal,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir);
-
-save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','partial_idx_by_animal.mat'),'partial_idx_by_animal_zone');
-
-%save the reward zone endpoints (100 bins) into a common file for use by functions
-%above
-save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zones_all_animals.mat'),'reward_zones_all_animal');
+%% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin (OLD)
+%scatterplot of centroid difference as a function of center between
+%centroid of max place field - not used
+%centroid_difference(path_dir)
 
 %% Remapping centroids (OLD)
 %Figure 3E/F ( all Figure 3 code is here - organize this)
@@ -161,5 +157,3 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zon
 %% Fractional distribution of remapping neuron subtypes - Figure 3C (OLD)
 
 %frac_remapping_neurons(path_dir)
-
-

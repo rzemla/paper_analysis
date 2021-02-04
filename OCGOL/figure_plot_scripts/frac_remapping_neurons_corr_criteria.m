@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = frac_remapping_neurons_corr_criteria(path_dir)
+function [frac_remapping] = frac_remapping_neurons_corr_criteria(path_dir)
 
 
 
@@ -15,6 +15,7 @@ for ee=1:size(path_dir,2)
 end
 
 remapping_ROI_data{1, 1}.remapping_corr_idx.final.unclass
+
 %% Get fraction relative to total A&B neurons for animal
 
 %order: common, rate, global, partial, unclassified
@@ -42,6 +43,28 @@ total_neurons = sum(sum(total_remap,1),2);
 class_mean = mean(fraction_remap,1);
 class_std = std(fraction_remap,[],1);
 class_sem = class_std./sqrt(size(total_remap,1));
+
+%% Export data
+
+frac_remapping.class_names = {'Common','Activity','Global','Partial', 'Unclassified'};
+frac_remapping.class_mean = class_mean;
+frac_remapping.class_sem = class_sem;
+
+%% Plot bars
+
+figure()
+hold on
+ylabel('Fraction of total remapping neurons')
+bar(class_mean,'FaceColor',[139, 0, 139]/255)
+%add significance bars
+xticks([1:5])
+xticklabels({'Common','Rate','Global','Partial','Unclassified'})
+%sigstar({[1,2], [1,3],[1,4]})
+xtickangle(45)
+set(gca,'FontSize',16)
+errorbar([1:5],class_mean,class_sem,'k.')
+ylim([0 0.4])
+
 
 %% Rearrange order to match that of color scheme below
 %from: near, far rate, common, partial, mixed
@@ -85,24 +108,6 @@ class_sem = class_std./sqrt(size(total_remap,1));
 %order common - rate - near - far - partial - mixed
 
 %% Perform Kruskall Wallis - refer to prism for this
-
-
-
-%% Plot bars
-
-figure('Position',[2704 336 641 500])
-hold on
-ylabel('Fraction of total remapping neurons')
-bar(class_mean,'FaceColor',[139, 0, 139]/255)
-%add significance bars
-xticks([1:5])
-xticklabels({'Common','Rate','Global','Partial','Unclassified'})
-sigstar({[1,2], [1,3],[1,4]})
-xtickangle(45)
-set(gca,'FontSize',16)
-errorbar([1:5],class_mean,class_sem,'k.')
-ylim([0 0.4])
-
 
 end
 

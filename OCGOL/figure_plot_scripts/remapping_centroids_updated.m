@@ -1,4 +1,4 @@
-function [reward_zones_all_animal,partial_idx_by_animal_zone] = remapping_centroids_updated(path_dir)
+function [reward_zones_all_animal,partial_idx_by_animal_zone,remap_prop_figs] = remapping_centroids_updated(path_dir)
 
 %% Load in data from each session directory
 for ee=1:size(path_dir,2)
@@ -55,7 +55,7 @@ reward_zones_all_animal.A_zone_end = A_zone_end;
 reward_zones_all_animal.B_zone_end = B_zone_end;
 
 
-%% Simple scatter plot for common/global remapper
+%% Simple scatter plot for common/global remapper (global remapping field scatter for supplement figure)
 
 figure
 hold on
@@ -85,19 +85,19 @@ plot([0 100],[0 100],'k','LineWidth',2)
 plot([B_zone_end B_zone_end], [0 100],'k--', 'LineWidth',2)
 plot([A_zone_end A_zone_end], [0 100],'k--', 'LineWidth',2)
 
-figure
-hold on
-title('Common')
-xlabel('Center location of Place field A')
-ylabel('Center location of Place field B')
-for ee=1:size(path_dir,2)
-    scatter(binCenter_data{ee}.bin_center.final.common(1,:),binCenter_data{ee}.bin_center.final.common(2,:),'filled','m')
-end
-
-plot([0 100],[0 100],'k--')
-
-plot([B_zone_end B_zone_end], [0 B_zone_end],'k--')
-plot([A_zone_end A_zone_end], [0 A_zone_end],'k--')
+% figure
+% hold on
+% title('Common')
+% xlabel('Center location of Place field A')
+% ylabel('Center location of Place field B')
+% for ee=1:size(path_dir,2)
+%     scatter(binCenter_data{ee}.bin_center.final.common(1,:),binCenter_data{ee}.bin_center.final.common(2,:),'filled','m')
+% end
+% 
+% plot([0 100],[0 100],'k--')
+% 
+% plot([B_zone_end B_zone_end], [0 B_zone_end],'k--')
+% plot([A_zone_end A_zone_end], [0 A_zone_end],'k--')
 
 
 %% Look for difference and scatter
@@ -120,10 +120,10 @@ A_minus_B_global = global_bins_combined(1,:) - global_bins_combined(2,:);
 A_minus_B_common = common_bins_combined(1,:) - common_bins_combined(2,:);
 
 %scatter of A-B
-figure
-hold on
-ylabel('A-B')
-boxplot(A_minus_B_global)
+% figure
+% hold on
+% ylabel('A-B')
+% boxplot(A_minus_B_global)
 %scatter(ones(size(A_minus_B_global)),A_minus_B_global)
 
 [p,h,~] = signrank(A_minus_B_common)
@@ -218,17 +218,17 @@ all_zone_counts = [ct.zoneI, ct.zoneII, ct.zoneIII, ct.zoneI_II,ct.zoneI_III,...
     ct.zoneII_I, ct.zoneII_III, ct.zoneIII_II,ct.zoneIII_I];
 
 %plot bar chart
-figure
-hold on
-bar(all_zone_counts)
-xticks(1:9)
-xticklabels({'I-I','II-II','III-III','I-II','I-III','II-I','II-III','III-II','III-I'})
+% figure
+% hold on
+% bar(all_zone_counts)
+% xticks(1:9)
+% xticklabels({'I-I','II-II','III-III','I-II','I-III','II-I','II-III','III-II','III-I'})
 
 % zone_global_idx(1).A = find(global_far.A > 0 & global_far.A <= B_zone_end);
 % zone_global_idx(2).A = find(global_far.A > B_zone_end & global_far.A <= A_zone_end);
 % zone_global_idx(3).A = find(global_far.A > A_zone_end & global_far.A <= 100);
 
-%% Split global remappers between A & B into distinct zones (combined)
+%% Split global remappers between A & B into distinct zones (combined) (Fig. 3g)
 %QC checked
 
 session_nb = size(A_global_bincenter,2);
@@ -354,13 +354,20 @@ xticklabels({'AI <--> BI','AII <--> BII','AIII <--> BIII','AI --> BII','BI --> A
     'AII --> BIII','BII --> AIII','AI --> BIII','BI --> AIII'})
 xtickangle(45)
 %zone I,II,III switches
-sigstar({[1,2], [1,3], [2,3]})
+%sigstar({[1,2], [1,3], [2,3]})
 %I vs. II switch, II vs. III switch, I vs. III
-sigstar({[4.5 5.5],[7 8],[9.5 10.5]})
+%sigstar({[4.5 5.5],[7 8],[9.5 10.5]})
 yticks([0 0.1 0.2 0.3])
 ylabel('Fraction of neurons');
 
-%% Plot common histogram
+%% Export Fig 3g data (global remapping between reward zones)
+
+remap_prop_figs.global_zones.frac_zones = frac_zones;
+remap_prop_figs.global_zones.mean_fraction_zone_split = mean_fraction_zone_split;
+remap_prop_figs.global_zones.sem_fraction_zone_split = sem_fraction_zone_split;
+
+
+%% Plot common histogram (Fig 3e)
 figure;
 hold on;
 scatter(binCenter_data{1}.bin_center.final.common(1,:),binCenter_data{1}.bin_center.final.common(2,:))
@@ -386,7 +393,14 @@ h1.FaceAlpha = 1;
 plot([B_zone_end B_zone_end], [0 0.2],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
 plot([A_zone_end A_zone_end], [0 0.2],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
 
+%% Common place field distribution (relative to A place field center bins - 3e)
+
+remap_prop_figs.common_dist.common_bins_combined = common_bins_combined;
+remap_prop_figs.common_dist.B_zone_end = B_zone_end;
+remap_prop_figs.common_dist.A_zone_end = A_zone_end;
+
 %% Split into animal by animal plot - display histogram for each animal
+if 0
 figure('Position', [2663 91 301 887])
 for ee=1:size(path_dir,2)
     subplot(6,2,ee)
@@ -414,8 +428,9 @@ for ee=1:size(path_dir,2)
         xlabel('Normalized position')
     end
 end
+end
 
-%% Generate mean and sem for common neurons for supplement
+%% Generate mean and sem for common neurons for supplement (not used)
 
 for ee=1:size(path_dir,2)
     %get normalization counts
@@ -425,6 +440,7 @@ end
 %get standard error of mean
 sem_counts = std(N,0,1)./sqrt(11);
 
+if 0
 figure
 hold on
 yticks([0 0.05 0.1 0.15 0.2])
@@ -440,6 +456,7 @@ h1.FaceAlpha = 1;
 
 plot([B_zone_end B_zone_end], [0 0.25],'LineStyle','--', 'LineWidth',2,'Color',[220,20,60]./255)
 plot([A_zone_end A_zone_end], [0 0.25],'LineStyle','--', 'LineWidth',2,'Color',[65,105,225]./255)
+end
 
 %% Do Rayleigh test of uniformity on dataset
 %convert bins to radians
@@ -598,7 +615,7 @@ zone_sem(2) = std(zoneII_diff)./sqrt(size(zoneII_diff,2));
 zone_sem(3) = std(zoneIII_diff)./sqrt(size(zoneIII_diff,2));
 
 
-%% Difference plot from expected fraction of B before A
+%% Difference plot from expected fraction of B before A (Fig. 3f)
 figure('renderer','painters','Position',[2186 348 341 420])
 hold on
 xlim([0 4])
@@ -615,6 +632,14 @@ errorbar([1 2 3],zone_med,zone_sem,'LineStyle','none','Color', [0 0 0])
 %0 dash line
 %plot([0 4],[0 0],'--','Color',[0.5 0.5 0.5],'LineWidth',1)
 
+%% Export data (4f - global remapping field shift A relative to B)
+
+remap_prop_figs.global_remap_shift.zoneI_diff = zoneI_diff;
+remap_prop_figs.global_remap_shift.zoneII_diff = zoneII_diff;
+remap_prop_figs.global_remap_shift.zoneIII_diff = zoneIII_diff;
+remap_prop_figs.global_remap_shift.zone_med = zone_med;
+remap_prop_figs.global_remap_shift.zone_sem = zone_sem;
+
 %% Generate table with values of number of neurons in each category
 
 zone_fraction_ct = [length(find(zone1_shifts < 0)),0,length(zone1_idx);
@@ -626,7 +651,8 @@ for ii=1:3
 end
 
 
-%% Plot stacked columns
+%% Plot stacked columns (not used)
+if 0
 figure
 hold on
 % ba = bar([ratio_pos_neg.I, 1-ratio_pos_neg.I; ratio_pos_neg.II, 1-ratio_pos_neg.II; ratio_pos_neg.III, 1-ratio_pos_neg.III],...
@@ -655,6 +681,7 @@ ba(1).CData = [0,100,0]/255;
 ba(2).CData = [1,1,1]*0.8;
 set(gca,'FontSize',18)
 set(gca,'LineWidth',2)
+end
 
 %% Partial remapping neurons distribution (updated)
 
@@ -824,12 +851,13 @@ col=[220,20,60, 255;
 %0, 0, 255, 200]; 
 col=col/255;
 
+if 0
 f=figure 
 hold on
 %plot zone separator lines
-[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A','B'},col');
+%[f2,x,group,positions,labelpos] =  multiple_boxplot(merge_new',xlab,{'A','B'},col');
 %overlay boxplot to add median line 
-z= boxplot(x,group, 'positions', positions);
+%z= boxplot(x,group, 'positions', positions);
 lines = findobj(z, 'type', 'line', 'Tag', 'Median');
 set(lines, 'Color', 'k');
 set(lines, 'LineWidth',2)
@@ -842,6 +870,8 @@ ylabel('Place field position')
 plot([1.7500 ,1.7500],[-10 110],'k--','LineWidth',1.5)
 plot([2.500 ,2.500],[-10 110],'k--','LineWidth',1.5)
 set(gca,'FontSize',16)
+
+end
 
 %% Make plot of of scatter and bars to show bimodal distribution of A lap neurons
 
@@ -881,9 +911,9 @@ bar(8, median(merge_new{2,3}),'FaceColor','none','EdgeColor',paper_cmap(2,:),'Li
 scatter(8*ones(1,size(merge_new{2,3},1)),merge_new{2,3},marker_size,'filled','MarkerFaceColor',paper_cmap(2,:))
 
 %add significance lines
-sigstar([1,2])
-sigstar([4,5])
-sigstar([7,8])
+% sigstar([1,2])
+% sigstar([4,5])
+% sigstar([7,8])
 
 set(gca,'FontSize',16)
 set(gca,'LineWidth',1.5)
@@ -945,7 +975,7 @@ if 1
 end
 
 
-%% Distribution of partially remapping fields for A and B plot and KS test for significance (Figure 2F)
+%% Distribution of partially remapping fields for A and B plot and KS test for significance (Figure 3H)
 
 figure('Position',[2200 317 508 433])
 hold on
@@ -966,9 +996,16 @@ legend([ap bp],{'A','B'},'Location','northwest','AutoUpdate','off')
 plot([B_zone_end B_zone_end], [0 1],'--','Color',[220,20,60]/255, 'LineWidth',2)
 plot([A_zone_end A_zone_end], [0 1],'--','Color',[65,105,225]/255, 'LineWidth',2)
 
-%% Plot cumulative density function (CDF) for each animal
+%% Export Fig. 3h data partial field remap
 
-figure('Position',[2683 74 456 907])
+remap_prop_figs.partial_remap.partial_A_common_far_input = partial_A_common_far_input;
+remap_prop_figs.partial_remap.partial_B_common_far_input = partial_B_common_far_input;
+remap_prop_figs.partial_remap.B_zone_end = B_zone_end;
+remap_prop_figs.partial_remap.A_zone_end = A_zone_end;
+
+%% Plot cumulative density function (CDF) for each animal (not used)
+if 0
+figure
 title('Distribution of partially remapping fields for each animal')
 for ii=1:11
     subplot(6,2,ii)
@@ -1003,6 +1040,7 @@ for ii=1:11
     if ii ==10 || ii==11
         xlabel('Normalized position')
     end
+end
 end
 
 %% Make histograms for partial fields (skip for now - come back if necessary)
@@ -1048,7 +1086,7 @@ end
 %number of neurons used in kstest
 nb_partial_ks_test = [size(partial_A_common_far_input(:,2),1), size(partial_B_common_far_input(:,2),1)];
 
-%% Minaturized normalized histogram for each set of partial remapping neurons (inset)
+%% Minaturized normalized histogram for each set of partial remapping neurons (Fig 3h insets)
 %cdf
 figure('Position',[1199 400 208 420])
 subplot(2,1,1)
@@ -1078,6 +1116,12 @@ histogram(partial_B_common_far_input(:,2),[0:10:100],'Normalization','probabilit
 plot([B_zone_end B_zone_end], [0 0.2],'--','Color',[220,20,60]/255, 'LineWidth',2)
 plot([A_zone_end A_zone_end], [0 0.2],'--','Color',[65,105,225]/255, 'LineWidth',2)
 
+%% Export Fig. 3h data partial field remap (insets)
+
+remap_prop_figs.partial_remap.insets.partial_A_common_far_input = partial_A_common_far_input;
+remap_prop_figs.partial_remap.insets.partial_B_common_far_input = partial_B_common_far_input;
+remap_prop_figs.partial_remap.insets.B_zone_end = B_zone_end;
+remap_prop_figs.partial_remap.insets.A_zone_end = A_zone_end;
 
 %% OLD
 
