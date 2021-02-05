@@ -9,19 +9,19 @@
 %% Place all functions below into another function
 %set path_dir directory here
 %directories for task selective neurons in Fig. 2 and 3
-path_dir = path_dir_task_sel;
+%path_dir = path_dir_task_sel;
 %directories for short term_learning
-%path_dir = path_dir_learn;
+path_dir = path_dir_learn;
 %directories for short term recall
 %path_dir = path_dir_st_recall;
 %directories for long term recall
-%path_dir = path dir_lt_recall;
+%path_dir = path_dir_lt_recall;
 
 %set which trials should be used here
 %correct trials 1 - A correct; 2 - B correct
 %all trials 4 - all A; 5 - all B;
-trial_type = [1,2];
-%trial_type = [4,5];
+%trial_type = [1,2];
+trial_type = [4,5];
 
 %% Make copy of Place_cell_struct and save in archive folder
 
@@ -83,9 +83,9 @@ for ii =1:numel(path_dir)
             orig_si_idx = find(place_struct_input.Spatial_Info.significant_ROI ==1);
             %corrected indices of tuned ROIs
             out_temp = whichSignificant2(place_struct_input);
-            if tt==1
+            if tt==1 || tt==4
                 [animal(ii).sum_rowA(jj,:), animal(ii).si_dataA(jj)] = export_si_diff(orig_si_idx,out_temp,place_struct_input);
-            elseif tt==2
+            elseif tt==2 || tt==5
                 [animal(ii).sum_rowB(jj,:), animal(ii).si_dataB(jj)] = export_si_diff(orig_si_idx,out_temp,place_struct_input);
             end
         end

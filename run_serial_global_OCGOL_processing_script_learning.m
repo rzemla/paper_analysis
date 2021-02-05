@@ -111,7 +111,7 @@ options.learning_data = 1;
 
 %% Run processing of data for generation of Figure 4
 
-for ii=[5 6]
+for ii=[1 2 4 5 6]%1:6
     disp(['Running: ', num2str(ii)])
     OCGOL_global_remapping_V0_update(path_dir{ii},crossdir{ii},options)
 end

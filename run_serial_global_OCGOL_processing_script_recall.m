@@ -141,9 +141,9 @@ end
 
 %% Transients extraction for recall cohort as a control for the learning animals
 
-for ii=[1 2 3 4 5]
-    disp(['Running: ', num2str(ii)])
-    OCGOL_recall_remapping_Jason_export_transients_shortened_V0(path_dir{ii},crossdir{ii})
-end
+% for ii=[1 2 3 4 5]
+%     disp(['Running: ', num2str(ii)])
+%     OCGOL_recall_remapping_Jason_export_transients_shortened_V0(path_dir{ii},crossdir{ii})
+% end
 
 

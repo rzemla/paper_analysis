@@ -162,10 +162,32 @@ TC.neighbor.ts.lt_recall.B = corr_analysis.lt_recall.neighbor.ts.raw.animal.day_
 TC.neighbor.si.lt_recall.A = corr_analysis.lt_recall.neighbor.si.raw.animal.day_TC_diag_mean.A;
 TC.neighbor.si.lt_recall.B = corr_analysis.lt_recall.neighbor.si.raw.animal.day_TC_diag_mean.B;
 
-%RESUME PLAN: run stats on TC data above and move to next figure analysis when back
+%% Centroid difference across sessions - new code
+%returns the angle differences by animal and for pooled neurons
+%does for TS tuning neurons across days as well as SI tuned neurons between
+%days
+options.tuning_type = 'ts';
+[return_angle_diff.ts] = centroid_diff_sessions_update(short_term_learn,short_term_recall,reg_learn, reg_recall, excl_day_combined_day_nan,options);
+
+options.tuning_type = 'si';
+[return_angle_diff.si] = centroid_diff_sessions_update(short_term_learn,short_term_recall,reg_learn, reg_recall, excl_day_combined_day_nan,options);
+
+%% Centroid difference plotter
+
+cent_diff_plotter(return_angle_diff)
+
+return_angle_diff.ts.st_learn.animal.raw.A'
+
+return_angle_diff.ts.st_recall.animal.raw.A'
+
+%% Create Figure 4 master and supplement figure plotter here
 
 
-%% Combine STC matches across time relative to D1 and neighboring days (all animals into 1)
+%% Create new function here for plotting matching STCs here for Fig. 4 using new inputs
+
+%% Turn in to new script with relevant functions and archive this one
+
+%% Combine STC matches across time relative to D1 and neighboring days (all animals into 1) - OLD
 %also orient maps by day (T.S.) only tuned for now for learning and recall
 
 %short term learning vs recall
@@ -182,26 +204,6 @@ combine_STC_plot_multi_animal_short_vs_long_term(short_term_learn.TC_corr_match,
 
 AandB_corr_rel_d1(short_term_learn.TC_corr_match,short_term_recall.TC_corr_match)
 
-%% Centroid difference across sessions - new code
-%returns the angle differences by animal and for pooled neurons
-%does for TS tuning neurons across days as well as SI tuned neurons between
-%days
-options.tuning_type = 'ts';
-[return_angle_diff.ts] = centroid_diff_sessions_update(short_term_learn,short_term_recall,reg_learn, reg_recall, excl_day_combined_day_nan,options);
-
-options.tuning_type = 'si';
-[return_angle_diff.si] = centroid_diff_sessions_update(short_term_learn,short_term_recall,reg_learn, reg_recall, excl_day_combined_day_nan,options);
-
-
-
-%% Centroid difference plotter
-
-cent_diff_plotter(return_angle_diff)
-
-
-return_angle_diff.ts.st_learn.animal.raw.A'
-
-return_angle_diff.ts.st_recall.animal.raw.A'
 
 %% Recurrence analysis
 
