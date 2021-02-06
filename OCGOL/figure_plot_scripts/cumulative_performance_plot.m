@@ -1,4 +1,4 @@
-function [perf_mean_sem_exp] = cumulative_performance_plot(short_term_learn,short_term_recall,long_term_recall,excl_day_combined_day_nan)
+function [perf_mean_sem_exp,perf_data_plotting] = cumulative_performance_plot(short_term_learn,short_term_recall,long_term_recall,excl_day_combined_day_nan)
 
 %function of sessions and not days
 
@@ -136,6 +136,13 @@ xticklabels({'D1 - 5A5B','D2 - 5A5B','D3 - 3A3B','D4 - 3A3B','D5 - Random','D6 -
 xtickangle(45)
 errorbar(1:7,mean_learn_filt_day(1,1:7),sem_learn_filt_day(1,1:7),'Color', [139, 0, 139]/255, 'LineStyle', '-','LineWidth',1.5)
 
+
+%% Export plot data (short term)
+perf_data_plotting.stl.mean_learn_filt_day = mean_learn_filt_day;
+perf_data_plotting.stl.sem_learn_filt_day = sem_learn_filt_day;
+perf_data_plotting.stl.learning_stage_labels = {'D1 - 5A5B','D2 - 5A5B','D3 - 3A3B',...
+    'D4 - 3A3B','D5 - Random','D6 - Random','D7 - Random'};
+
 %% Plot - LT Recall
 %recall - dash
 %learning - solid
@@ -156,7 +163,10 @@ xlabel('Day')
 xtickangle(45)
 errorbar(1:6,mean_lt_recall_filt_day(1,[1 6 16 20 25 30]),sem_lt_recall_filt_day(1,[1 6 16 20 25 30]),'Color', [139, 0, 139]/255, 'LineStyle', '-','LineWidth',1.5)
 
-
+%% Export data (long term recall)
+perf_data_plotting.ltr.mean_lt_recall_filt_day = mean_lt_recall_filt_day;
+perf_data_plotting.ltr.sem_lt_recall_filt_day = sem_lt_recall_filt_day;
+perf_data_plotting.ltr.long_recall_labels ={'1','6','16','20','25','30'};
 
 %% Make one 3-D matrix with fractional performance from all animals
 
