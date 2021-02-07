@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = plot_fraction_tuned_update(tuned_frac_learning,tuned_frac_recall,tuned_frac_long_recall)
+function [frac_tuned_across_days] = plot_fraction_tuned_update(tuned_frac_learning,tuned_frac_recall,tuned_frac_long_recall)
 
 %% Get number of session in learning and recall
 
@@ -240,7 +240,7 @@ sem_recall_si = nanstd(frac_recall_all_si,0,3)./sqrt(size(tuned_frac_recall,2));
 sem_recall_ts = nanstd(frac_recall_all_ts,0,3)./sqrt(size(tuned_frac_recall,2));
 
 
-%% Export T.S. data for figure 4C
+%% Export T.S. data for figure 4C -SI
 bar_colorset = [65,105,225; 220,20,60; 139, 0, 139; 128 128 128]./255;
 
 figure('Position' ,[2016 473 1016 307])
@@ -252,7 +252,7 @@ xlabel('Sessions')
 ylabel('Fraction tuned')
 yticks([0 0.2 0.4 0.6 0.8 1])
 xticks(1:6)
-title('Learning')
+title('Learning SI')
 sh1 = bar(mean_learning_si,'stacked');
 set(gca,'FontSize',18)
 set(gca,'LineWidth',2)
@@ -270,7 +270,7 @@ ylim([0 1.2])
 xlabel('Sessions')
 yticks([0 0.2 0.4 0.6 0.8 1])
 xticks(1:7)
-title('Recall')
+title('Recall SI')
 sh2 = bar(mean_recall_si,'stacked');
 set(gca,'FontSize',18)
 set(gca,'LineWidth',2)
@@ -302,6 +302,7 @@ end
 
 
 legend({'A','B','A&B','Neither'})
+
 
 %% Export T.S. data for figure 4C (Day)
 bar_colorset = [65,105,225; 220,20,60; 139, 0, 139; 128 128 128]./255;
@@ -499,6 +500,18 @@ end
 
 
 legend({'A','B','A&B','Neither'})
+
+%% Export data for plotting
+
+frac_tuned_across_days.mean_learning_si = mean_learning_si;
+frac_tuned_across_days.mean_recall_si = mean_recall_si;
+frac_tuned_across_days.mean_learning_ts_day = mean_learning_ts_day;
+frac_tuned_across_days.mean_recall_ts = mean_recall_ts;
+frac_tuned_across_days.mean_learning_si_day = mean_learning_si_day;
+frac_tuned_across_days.mean_recall_si = mean_recall_si;
+frac_tuned_across_days.mean_long_recall_si = mean_long_recall_si;
+frac_tuned_across_days.mean_long_recall_ts = mean_long_recall_ts;
+
 
 end
 

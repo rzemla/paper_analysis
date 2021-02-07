@@ -36,7 +36,7 @@ toc;
 %% Plot A/B/AB/neither distributions for short term learning/recall across sessions
 
 %update script uses updated processing pipeline output
-plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_frac, long_term_recall.tuned_frac)
+frac_tuned_across_days = plot_fraction_tuned_update(short_term_learn.tuned_frac, short_term_recall.tuned_frac, long_term_recall.tuned_frac);
 
 
 %% Construct PV correlation plots from non-normalized maps for all 3 classes of neurons
@@ -185,9 +185,9 @@ return_angle_diff.ts.st_recall.animal.raw.A';
 
 show_component_match(CNMF_learn,reg_learn)
 
-%% Create Figure 4 master and supplement figure plotter here (TS/SI/LT recall figure)
+%% Create Figure 4 master and supplement figure 9 and 10 plotter here (TS/SI/LT recall figure)
 
-master_plotter_fig4()
+master_plotter_fig4(perf_data_plotting, frac_tuned_across_days)
 
 %% Create new function here for plotting matching STCs here for Fig. 4 using new inputs
 
