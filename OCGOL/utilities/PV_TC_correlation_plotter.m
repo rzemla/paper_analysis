@@ -1,4 +1,4 @@
-function [PV_TC_plot_data] = PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
+function [PV_TC_plot_data,performance_mean_sem] = PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
 
 %% Export the structures
 
@@ -277,7 +277,7 @@ performance_mean_sem.st_recall = [[1 2 3 6 7 8 9]; perf_mean_sem_exp.st_recall.m
 performance_mean_sem.lt_recall = [[1 6 16 20 25 30]; perf_mean_sem_exp.lt_recall.mean(1,[1 6 16 20 25 30]); perf_mean_sem_exp.lt_recall.sem(1,[1 6 16 20 25 30])];
 
 
-%% Plot for main figure (learn vs recall TC)
+%% Plot for main figure (learn vs recall TC) - pooled data - use this in main figure
  
 input_data.AB{1} = TC_med_95.ABcorr.ts.st_learn.AB;
 input_data.AB{2} = TC_med_95.ABcorr.ts.st_recall.AB;
@@ -285,7 +285,7 @@ input_data.AB{2} = TC_med_95.ABcorr.ts.st_recall.AB;
 input_data.AB{3} = TC_med_95.ABcorr.si.st_learn.AB;
 input_data.AB{4} = TC_med_95.ABcorr.si.st_recall.AB;
 
-title_labels{1} = 'A&B TC correlation Learn - TS';
+title_labels{1} = 'A&B TC correlation Learn - TS - pooled';
 title_labels{2} = 'A&B TC correlation Recall - TS';
 
 title_labels{3} = 'A&B TC correlation Learn - SI';
@@ -348,6 +348,13 @@ for ii=1:4
     
 end
 
+%% Export A&B tuned neuron A vs. B lap TC correlation
+
+PV_TC_plot_data.ABcorr.ts.st_learn.AB = TC_med_95.ABcorr.ts.st_learn.AB;
+PV_TC_plot_data.ABcorr.ts.st_recall.AB = TC_med_95.ABcorr.ts.st_recall.AB;
+
+PV_TC_plot_data.ABcorr.si.st_learn.AB = TC_med_95.ABcorr.si.st_learn.AB;
+PV_TC_plot_data.ABcorr.si.st_recall.AB = TC_med_95.ABcorr.si.st_recall.AB;
 
 %% Plot for main figure (LT 30-day recall TC)
 

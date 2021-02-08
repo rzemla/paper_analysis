@@ -49,7 +49,7 @@ frac_tuned_across_days = plot_fraction_tuned_update(short_term_learn.tuned_frac,
 %PV, TC, rel D1 and neighbor, A&B performance
 
 %takes in performance data for Figure 4H plotting
-PV_TC_plot_data = PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp);
+[PV_TC_plot_data,performance_mean_sem] = PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp);
 
 %% Extract long term recall data for Extended Data 10 Correlation analysis
 
@@ -175,7 +175,7 @@ options.tuning_type = 'si';
 
 %% Centroid difference plotter
 
-cent_diff_plotter(return_angle_diff)
+centroid_data = cent_diff_plotter(return_angle_diff);
 
 return_angle_diff.ts.st_learn.animal.raw.A';
 
@@ -186,12 +186,19 @@ return_angle_diff.ts.st_recall.animal.raw.A';
 
 show_component_match(CNMF_learn,reg_learn)
 
-%% Create Figure 4 master and supplement figure 9 and 10 plotter here (TS/SI/LT recall figure)
+%% Figure 4 master plotter (TS) and  and 10 plotter here (TS/SI/LT recall figure)
 
-master_plotter_fig4(perf_data_plotting, frac_tuned_across_days)
+master_plotter_fig4(perf_data_plotting, frac_tuned_across_days, PV_TC_plot_data,centroid_data)
 
 %% Create new function here for plotting matching STCs here for Fig. 4 using new inputs
 
+%do last
+
+%% Supplement figure 9 plotter
+
+master_si_sup_fig_plotter(performance_mean_sem,frac_tuned_across_days,PV_TC_plot_data,centroid_data)
+
+%export A&B TC correlation
 %% Turn in to new script with relevant functions and archive this one
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1) - OLD

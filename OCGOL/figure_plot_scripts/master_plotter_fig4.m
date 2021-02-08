@@ -85,7 +85,7 @@ for ii = 1:size(sh2,2)
     sh2(ii).CData = bar_colorset(ii,:);
 end
 
-legend({'A','B','A&B','Neither'},'Location','northoutside','Orientation','horizontal')
+legend({'A','B','A&B','Neither'},'Location','northoutside','Orientation','horizontal','NumColumns',2)
 
 %unload data
 PV_mean_sem = PV_TC_plot_data.PV_mean_sem;

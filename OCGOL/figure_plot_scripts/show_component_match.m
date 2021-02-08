@@ -44,6 +44,7 @@ subaxis(1,3,1, 'SpacingHorizontal', 0.0015,...
 %subplot(1,3,1)
 imagesc(CNMF_learn.templates_learn{learn_animal}{ses_comp(1)}.template);
 hold on
+title('Day 1')
 axes(gca);
 axis square
 xticks(gca,[])
@@ -55,9 +56,9 @@ colormap(gca,grayMap)
 for ROI = vis_match_matrix(:,1)'
     %plot componenet outline
     
-    %plot(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'g', 'LineWidth',1);
-    f1= fill(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'c', 'LineWidth',1,'EdgeColor','none');
-    alpha(f1,0.5)
+    plot(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'c', 'LineWidth',1);
+    %f1= fill(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'c', 'LineWidth',1,'EdgeColor','none');
+    %alpha(f1,0.5)
 end
 
 %subplot(1,3,2)
@@ -66,6 +67,7 @@ subaxis(1,3,2,'SpacingHorizontal', 0.0015,...
     'MarginLeft',0.05,'MarginRight',0.05,'MarginTop',0.1,'MarginBottom',0.1);
 imagesc(CNMF_learn.templates_learn{learn_animal}{ses_comp(2)}.template);
 hold on
+title('Day 3')
 axes(gca);
 axis square
 xticks(gca,[])
@@ -75,9 +77,9 @@ colormap(gca,grayMap)
 %plot all selected ROIs as green
 for ROI = vis_match_matrix(:,2)'
     %plot componenet outline
-    %plot(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m', 'LineWidth',1);
-        f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'y', 'LineWidth',1,'EdgeColor','none');
-    alpha(f2,0.5)
+    plot(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m', 'LineWidth',1);
+    %    f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'y', 'LineWidth',1,'EdgeColor','none');
+    %alpha(f2,0.5)
 end
 
 %combined
@@ -87,6 +89,7 @@ subaxis(1,3,3, 'SpacingHorizontal', 0.0015,...
 
 imagesc(CNMF_learn.templates_learn{learn_animal}{ses_comp(1)}.template);
 hold on
+title('Merge')
 axes(gca);
 axis square
 xticks(gca,[])
@@ -98,22 +101,22 @@ colormap(gca,grayMap)
 for ROI = vis_match_matrix(:,1)'
     %plot componenet outline
     
-    %plot(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'g--', 'LineWidth',1);
-     f1= fill(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'y', 'LineWidth',1,'EdgeColor','none');
-    alpha(f1,0.5)
+    plot(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'c', 'LineWidth',1);
+     %f1= fill(coor_keep{1}{ROI}(1,:),coor_keep{1}{ROI}(2,:),'y', 'LineWidth',1,'EdgeColor','none');
+    %alpha(f1,0.5)
 end
 
 for ROI = vis_match_matrix(:,2)'
     %plot componenet outline
-    %plot(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m-', 'LineWidth',1);
-f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m','EdgeColor','none')
- alpha(f2,0.5)
+    plot(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m', 'LineWidth',1);
+%f2= fill(coor_keep{2}{ROI}(1,:),coor_keep{2}{ROI}(2,:),'m','EdgeColor','none')
+ %alpha(f2,0.5)
 end
 
 %save figure 4a component match example learning
-disp('Saving match ROIs STC ')
-export_fig(f ,fullfile('G:\Google_drive\task_selective_place_paper\input_figures_to_illustrator\Figure_4_figures',...
-    'componenent_matching.png'),'-r300')
+%disp('Saving match ROIs STC ')
+%export_fig(f ,fullfile('G:\Google_drive\task_selective_place_paper\input_figures_to_illustrator\Figure_4_figures',...
+ %   'componenent_matching.png'),'-r300')
 
 
 %% Plot match filtered componenets between the selected sessions - EXCLUDED
@@ -130,6 +133,7 @@ imagesc(CNMF_learn.templates_learn{learn_animal}{ses_comp(1)}.template);
 hold on
 axes(gca);
 axis square
+title('Day 1')
 xticks(gca,[])
 yticks(gca,[])
 grayMap = brighten(gray,0.2);
