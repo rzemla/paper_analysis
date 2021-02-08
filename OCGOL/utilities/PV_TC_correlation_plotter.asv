@@ -1,4 +1,4 @@
-function [PV_TC_plot_data] = PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
+function [outputArg1,outputArg2] = PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
 
 %% Export the structures
 
@@ -694,10 +694,7 @@ legend([lA,lB,rA,rB],{'Learning A','Learning B','Recall A','Recall B'},'location
 set(gca,'FontSize',16)
 set(gca,'Linewidth',2)
 
-%% Export plotting data
 
-PV_TC_plot_data.TC_mean_sem = TC_mean_sem;
-PV_TC_plot_data.PV_mean_sem = PV_mean_sem;
 
 %% Plot PV with raw results and cross correlated data (ST RECALL)
 figure('Position', [2283 474 923 358])

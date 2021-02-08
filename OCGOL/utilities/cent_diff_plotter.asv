@@ -1,4 +1,4 @@
-function [centroid_data] = cent_diff_plotter(return_angle_diff)
+function [outputArg1,outputArg2] = cent_diff_plotter(return_angle_diff)
 
 
 
@@ -212,8 +212,8 @@ end
 
 %% Export data
 %A
-centroid_data.st_learn.ts.A = st_learn.animal.ts.A;
-centroid_data.st_recall.ts.A = st_recall.animal.ts.A;
+centroid_data.st_learnA = st_learn.animal.ts.A;
+centroid_data.A = st_recall.animal.ts.A;
 %B
 centroid_data.st_learn.ts.B = st_learn.animal.ts.B;
 centroid_data.st_recall.ts.B = st_recall.animal.ts.B;
