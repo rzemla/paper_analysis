@@ -356,6 +356,10 @@ PV_TC_plot_data.ABcorr.ts.st_recall.AB = TC_med_95.ABcorr.ts.st_recall.AB;
 PV_TC_plot_data.ABcorr.si.st_learn.AB = TC_med_95.ABcorr.si.st_learn.AB;
 PV_TC_plot_data.ABcorr.si.st_recall.AB = TC_med_95.ABcorr.si.st_recall.AB;
 
+%long term recall (si and ts criteria)
+PV_TC_plot_data.ABcorr.si.lt_recall.AB = TC_med_95.ABcorr.si.lt_recall.AB;
+PV_TC_plot_data.ABcorr.ts.lt_recall.AB = TC_med_95.ABcorr.ts.lt_recall.AB;
+
 %% Plot for main figure (LT 30-day recall TC)
 
 input_data.AB{1} = TC_med_95.ABcorr.si.lt_recall.AB;

@@ -1,4 +1,4 @@
-function [PV_TC_plot_data] = PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
+function [PV_TC_plot_data,performance_mean_sem] = PV_TC_correlation_plotter(corr_analysis,perf_mean_sem_exp)
 
 %% Export the structures
 
@@ -355,6 +355,10 @@ PV_TC_plot_data.ABcorr.ts.st_recall.AB = TC_med_95.ABcorr.ts.st_recall.AB;
 
 PV_TC_plot_data.ABcorr.si.st_learn.AB = TC_med_95.ABcorr.si.st_learn.AB;
 PV_TC_plot_data.ABcorr.si.st_recall.AB = TC_med_95.ABcorr.si.st_recall.AB;
+
+%lo
+PV_TC_plot_data.ABcorr.si.lt_recall.AB = TC_med_95.ABcorr.si.st_recall.AB;
+PV_TC_plot_data.ABcorr.ts.st_recall.AB = TC_med_95.ABcorr.ts.st_recall.AB;
 
 %% Plot for main figure (LT 30-day recall TC)
 

@@ -44,7 +44,7 @@ frac_tuned_across_days = plot_fraction_tuned_update(short_term_learn.tuned_frac,
 [corr_analysis] = PV_TC_correlation_analysis(short_term_learn, short_term_recall, long_term_recall,excl_day_combined_day_nan);
 
 
-%% Plot the output of PV and TC correlations for each category of experiments
+%% Plot the output of PV and TC correlations for each category of experiments - export much of data for master plotters
 %extract processed data for plotting
 %PV, TC, rel D1 and neighbor, A&B performance
 
@@ -200,7 +200,7 @@ master_si_sup_fig_plotter(performance_mean_sem,frac_tuned_across_days,PV_TC_plot
 
 %% Supplement long term recall figure
 
-master_lt_figure_plotter(frac_tuned_across_days)
+master_lt_figure_plotter(frac_tuned_across_days,perf_data_plotting,PV_TC_plot_data,performance_mean_sem)
 
 %% Turn in to new script with relevant functions and archive this one
 
