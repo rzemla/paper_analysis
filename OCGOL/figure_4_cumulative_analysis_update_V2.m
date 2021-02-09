@@ -198,7 +198,10 @@ master_plotter_fig4(perf_data_plotting, frac_tuned_across_days, PV_TC_plot_data,
 
 master_si_sup_fig_plotter(performance_mean_sem,frac_tuned_across_days,PV_TC_plot_data,centroid_data)
 
-%export A&B TC correlation
+%% Supplement long term recall figure
+
+master_lt_figure_plotter(frac_tuned_across_days)
+
 %% Turn in to new script with relevant functions and archive this one
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1) - OLD
