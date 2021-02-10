@@ -186,9 +186,13 @@ return_angle_diff.ts.st_recall.animal.raw.A';
 
 show_component_match(CNMF_learn,reg_learn)
 
-%% Figure 4 master plotter (TS) and  and 10 plotter here (TS/SI/LT recall figure)
+%% Figure 4 master plotter (TS)
 
 master_plotter_fig4(perf_data_plotting, frac_tuned_across_days, PV_TC_plot_data,centroid_data)
+
+%% Figure 5 master plotter (TS)
+
+master_plotter_fig5(PV_TC_plot_data,performance_mean_sem)
 
 %% Create new function here for plotting matching STCs here for Fig. 4 using new inputs
 
