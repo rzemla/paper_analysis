@@ -293,7 +293,7 @@ frac_corr_B_ses = squeeze(corr_mat(:,2,:))';
 [~,p_perf_Bzone(3),ci_perf_Bzone(3,:),stats_perf_Bzone(3)] =ttest(frac_corr_B_ses(:,3),frac_corr_B_ses(:,4));
 
 
-%% Generate histogram for figure animal
+%% Generate lick histogram for figure animal
 
 %which animal to generate plot from
 aa=2;

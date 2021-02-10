@@ -132,7 +132,7 @@ for aa=1:4
     end
 end
 
-%% Plot
+%% Plot - example 
 figure('Position', [1150 85 534 830])
 
 %RF plot
