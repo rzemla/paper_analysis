@@ -24,12 +24,12 @@ fig = figure;
 fig.Units = 'centimeters';
 fig.Position(1) = 7;
 fig.Position(2) = 0;
-fig.Position(3) = 30;
-fig.Position(4) = 36;
+fig.Position(3) = 24;
+fig.Position(4) = 30;
 
 %master layout
 gridSize = [2,2];
-t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
+t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','compact','Units','centimeters');
 
 %fraction of licks subplot
 
@@ -41,7 +41,7 @@ s1.Layout.TileSpan = [1,1];
 
 nexttile(s1,1)
 hold on
-%axis square
+axis square
 xlim([0.5 4.5])
 xticks(1:4)
 xticklabels({'Random\newline foraging' ,'5A5B','3A3B','Random\newline AB'})
@@ -59,14 +59,14 @@ legend([ae be],{'A','B'},'Location','northwest')
 %line plot
 nexttile(s1,2)
 hold on
-%axis square
+axis square
 xlim([0.5 4.5])
 xticks(1:4)
 xticklabels({'Random\newline foraging' ,'5A5B','3A3B','Random\newline AB'})
-%xtickangle(45)
+xtickangle(45)
 ylim([0 1.2])
 yticks([0:0.2:1])
-ylabel('Fraction of correct trials')
+ylabel('Fraction correct')
 %mean A corr
 ae = errorbar(mean_corr(:,1),sem_corr(:,1),'Color',[65,105,225]./255,'LineWidth',2);
 %mean B corr
@@ -94,32 +94,36 @@ nexttile(s21,1,[1,2])
 hold on
 title('Random')
 plotHisto(cell2mat(lick_lap_norm{aa}{1}'),edges,green);
-plot_orderA = [0 3 5 7];
-plot_orderB = [0 4 6 8];
 
-%A lick histograms
-for ii=2:4
-    nexttile(s2,plot_orderA(ii),[1,1])
-    hold on
-    title('A')
-    plotHisto(cell2mat(lick_lap_norm_A{aa}{ii}'),edges,blue);
-    if ii~=4
-    xlabel('')
-    end
-end
+nexttile(s2,3,[1,1])
+hold on
+title('A')
+plotHisto(cell2mat(lick_lap_norm_A{aa}{2}'),edges,blue);
 
-%B lick histograms
-for ii=2:4
-nexttile(s2,plot_orderB(ii),[1,1])
+nexttile(s2,4,[1,1])
 hold on
 title('B')
-plotHisto(cell2mat(lick_lap_norm_B{aa}{ii}'),edges,red);
-    if ii~=4
-    xlabel('')
-    end
-    %turn off ylabel
-    ylabel('')
-end
+plotHisto(cell2mat(lick_lap_norm_B{aa}{2}'),edges,red);
+
+nexttile(s2,5,[1,1])
+hold on
+title('A')
+plotHisto(cell2mat(lick_lap_norm_A{aa}{3}'),edges,blue);
+
+nexttile(s2,6,[1,1])
+hold on
+title('B')
+plotHisto(cell2mat(lick_lap_norm_B{aa}{3}'),edges,red);
+
+nexttile(s2,7,[1,1])
+hold on
+title('A')
+plotHisto(cell2mat(lick_lap_norm_A{aa}{4}'),edges,blue);
+
+nexttile(s2,8,[1,1])
+hold on
+title('B')
+plotHisto(cell2mat(lick_lap_norm_B{aa}{4}'),edges,red);
 
 %lick histograms
 s3 = tiledlayout(t1,4,2,'TileSpacing','normal','Padding','compact','Units','centimeters');
@@ -136,7 +140,6 @@ nexttile(s31,1,[1,2])
 hold on
 ylabel({'Mean Speed' ; '[cm/s]'})
 xlabel('Time [s]')
-title('Random')
 set(gca,'FontSize',12)
 set(gca,'linewidth',2)
 ylim([0 30])
@@ -165,13 +168,28 @@ s2.patch.FaceColor = [220,20,60]/255;
 %plot reward zones start line
 plot([76,76],[0 30],'Color',[0.5 0.5 0.5],'LineStyle','--','LineWidth',2)
 
-%plot A lick speeds
+
+nexttile(s3,3,[1,1])
+
+
+%set axis font/label and font size
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
+    'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
+
+%% Figure 1e/ef plot - Speed example trace around reward zone in Fig 1e/f
+figure('Position', [1150 85 534 830])
+
+%RF plot
+subplot(4,2,[1 2])
+
+
+%A trials
 sub_orderA = [0 3 5 7];
 
 for ii=2:4
-    nexttile(s3,sub_orderA(ii),[1,1])
+    subplot(4,2,sub_orderA(ii))
     hold on
-    title('A')
     ylabel({'Mean Velocity' ; '[cm/s]'})
     if ii == 4
     xlabel('Time [s]')
@@ -205,13 +223,11 @@ set(gca,'linewidth',2)
 plot([76,76],[0 30],'Color',[0.5 0.5 0.5],'LineStyle','--','LineWidth',2)
 
 end
-
 %B trials
 sub_orderB = [0 4 6 8];
 for ii=2:4
-    nexttile(s3,sub_orderB(ii),[1,1])
+    subplot(4,2,sub_orderB(ii))
     hold on
-    title('B')
     yticks([0 10 20 30])
     %ylabel('Mean Velocity [cm/s]')
     if ii == 4
@@ -251,8 +267,3 @@ end
 % 76 = 0s
 % 106 = 1s
 % 136 = 2s
-
-
-%set axis font/label and font size
-set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
-    'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
