@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = event_speed_scatter(path_dir)
+function [event_speed_plot] = event_speed_scatter(path_dir)
 
 
 %% Load in lap speed data
@@ -167,7 +167,12 @@ plot([0 30],[0 30],'k--')
 set(gca,'FontSize',12)
 set(gca,'LineWidth',1.5)
 
+%% Export plotting data
 
+event_speed_plot.Asel_speed_diff = Asel_speed_diff;
+event_speed_plot.Bsel_speed_diff = Bsel_speed_diff;
+event_speed_plot.Asel_speed_cum = Asel_speed_cum;
+event_speed_plot.Bsel_speed_cum = Bsel_speed_cum;
 
 end
 

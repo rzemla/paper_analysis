@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = place_field_analysis(path_dir)
+function [pf_prop_data] = place_field_analysis(path_dir)
 
 %% Load relevant place field data
 
@@ -226,6 +226,20 @@ set(gca,'LineWidth',1.5)
 %             (sum(pf_count_mat_B,1)./sum(sum(pf_count_mat_B,1)))'];
 %         
 
+%% Export data for plotting
+
+pf_prop_data.cum_prob_AB_A = cum_prob_AB_A;
+pf_prop_data.cum_prob_AB_B = cum_prob_AB_B;
+pf_prop_data.cum_prob_A_sel = cum_prob_A_sel;
+pf_prop_data.cum_prob_B_sel = cum_prob_B_sel;
+
+pf_prop_data.sem_cum_prob_AB_A = sem_cum_prob_AB_A;
+pf_prop_data.sem_cum_prob_AB_B = sem_cum_prob_AB_B;
+pf_prop_data.sem_cum_prob_A = sem_cum_prob_A;
+pf_prop_data.sem_cum_prob_B = sem_cum_prob_B;
+
+pf_prop_data.grouped_norm_mean = grouped_norm_mean;
+pf_prop_data.grouped_norm_sem = grouped_norm_sem;
 
 end
 

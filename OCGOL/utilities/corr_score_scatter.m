@@ -172,9 +172,9 @@ legend([p1 p2],{'A','B'},'location','northeast','AutoUpdate','off')
 %plot odor dash
 plot([10 10],[0 1 ],'k--')
 %plot reward zone A start
-plot([71 71],[0 1 ],'k--')
+plot([71 71],[0 1 ],'--','Color',cmap_paper(1,:))
 %plot reward zone B start
-plot([30 30],[0 1 ],'k--')
+plot([30 30],[0 1 ],'--','Color',cmap_paper(2,:))
 
 subplot(1,3,2)
 hold on
@@ -194,9 +194,9 @@ legend([p1 p2],{'A','B'},'location','northeast','AutoUpdate','off')
 %plot odor dash
 plot([10 10],[0 1 ],'k--')
 %plot reward zone A start
-plot([71 71],[0 1 ],'k--')
+plot([71 71],[0 1 ],'--','Color',cmap_paper(1,:))
 %plot reward zone B start
-plot([30 30],[0 1 ],'k--')
+plot([30 30],[0 1 ],'--','Color',cmap_paper(2,:))
 
 subplot(1,3,3)
 axis square

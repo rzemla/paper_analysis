@@ -134,12 +134,12 @@ event_speed_plot = event_speed_scatter(path_dir);
 
 %% Place field analysis (width and number for selective neurons) - supplement place field data (Ex fig 4)
 
-pf_prop_data = place_field_analysis(path_dir);
+place_field_analysis(path_dir)
 
 
 %% Supplement Figure 4 speed of animal in place cells and place field props
 
-fig_sup_speed_place_field_master(event_speed_plot,pf_prop_data)
+fig_sup_speed_place_field_master(event_speed_plot)
 
 %% Speed analysis for each animal used in Figure 2/3 (mean bin speed on A/B laps) (Sup 2)
 
