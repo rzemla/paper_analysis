@@ -1,4 +1,5 @@
-function [centroid_dist_data] = centroid_dist_selective(path_dir,reward_zones_all_animal,options)
+function [centroid_dist_data,source_data_task_sel_remap] = ...
+    centroid_dist_selective(path_dir,reward_zones_all_animal,options,source_data_task_sel_remap)
 
 %read relevant data
 for ee=1:size(path_dir,2)
@@ -110,6 +111,13 @@ center_bin_radians_B_all = circ_ang2rad(cell2mat(bin_assign.B)./100.*360);
 %get similar result
 [pval_B_test_all, z_B_test_all] = circ_rtest(center_bin_radians_B_all);
 
+%% export source data
+
+source_data_task_sel_remap.pf_dist.center_bin_radians = center_bin_radians;
+source_data_task_sel_remap.pf_dist.pooled_A_counts = pooled_A_counts;
+source_data_task_sel_remap.pf_dist.pooled_B_counts = pooled_B_counts;
+source_data_task_sel_remap.pf_dist.bin_spacing = bin_spacing;
+
 %% Run ks test between the all neurons and generate cdf plot 
 
 %all neurons
@@ -130,6 +138,11 @@ cum_prob_B_sel = cumsum(N_Bsel,2);
 %get sem at each fractional point
 sem_cum_prob_A = nanstd(cum_prob_A_sel,0,1)./sqrt(size(path_dir,2));
 sem_cum_prob_B = nanstd(cum_prob_B_sel,0,1)./sqrt(size(path_dir,2));
+
+
+%% export source data
+
+source_data_task_sel_remap.pf_dist_all.bin_assign = bin_assign;
 
 
 %% Export data for plotting

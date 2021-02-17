@@ -1,4 +1,4 @@
-function [tc_corr_sel_data] = tc_pv_correlation_task_sel(path_dir)
+function [tc_corr_sel_data,source_data_task_sel_remap] = tc_pv_correlation_task_sel(path_dir,source_data_task_sel_remap)
 
 %read relevant data
 for ee=1:size(path_dir,2)
@@ -106,6 +106,9 @@ tc_corr_sel_data.mean_TC.AB = mean_TC.AB;
 tc_corr_sel_data.all_neurons.Asel = diag_TC.Asel; 
 tc_corr_sel_data.all_neurons.Bsel = diag_TC.Bsel;
 tc_corr_sel_data.all_neurons.AB = diag_TC.AB; 
+
+%export source data
+source_data_task_sel_remap.mean_TC = mean_TC;
 
 if 0
 %% Separate plot that includes the global remapping correlation scores (for grant)

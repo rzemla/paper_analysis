@@ -1,4 +1,4 @@
-function [activity_remap] = rate_remap_traces(path_dir)
+function [activity_remap,remap_sup_plot_data] = rate_remap_traces(path_dir)
 
 %% Load in data (includes common neurons as well)
 for aa=1:size(path_dir,2)
@@ -237,6 +237,12 @@ ylabel('Cumulative fraction')
 legend([e1 e2],'Common','Activity remapping','location','southeast')
 set(gca,'FontSize',14)
 set(gca,'LineWidth',1)
+
+
+%% Export remap sup plot data
+
+remap_sup_plot_data.common_idx_values = common_idx_values;
+remap_sup_plot_data.remap_idx_values = remap_idx_values;
 
 %% Calculate area under mean of the curve and calculate index
 area_mean_pk_A_value_remap = trapz(mean_dff_matrix.remap.A');
@@ -512,6 +518,18 @@ paper_cmap = return_paper_colormap;
 % b(1).CData(1,:) =  paper_cmap(1,:);
 % %set B group bars to red
 % b(2).CData(1,:) =  paper_cmap(2,:);
+
+%% Export supplement data
+
+remap_sup_plot_data.frames_sec = frames_sec;
+remap_sup_plot_data.A_sel_idx = A_sel_idx;
+remap_sup_plot_data.B_sel_idx = B_sel_idx;
+remap_sup_plot_data.remap_traces_idx = remap_traces_idx;
+remap_sup_plot_data.activity_remap_pk_idx_split = activity_remap_pk_idx_split;
+remap_sup_plot_data.activity_remap_mean_AUC_min = activity_remap_mean_AUC_min;
+remap_sup_plot_data.activity_remap_sem_AUC_min = activity_remap_sem_AUC_min;
+
+
     %% Sign rank test to test where activity rate is different between A and B trials (no diff)
     %export this data to prism and run there
     p = signrank(auc_min_activity_remap_rate(1,:),auc_min_activity_remap_rate(2,:))

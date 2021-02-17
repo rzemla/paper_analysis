@@ -1,4 +1,4 @@
-function [combined_distances,combined_dist_metric] = place_AB_distance_separation(path_dir)
+function [combined_distances,combined_dist_metric,global_pf_dist] = place_AB_distance_separation(path_dir)
 
 %% Load in place field distance data
 
@@ -93,8 +93,9 @@ set(gca,'LineWidth',1.5);
 
 %export_fig(f ,fullfile('G:\Google_drive\task_selective_place_paper\input_figures_to_illustrator\Figure_3_figures','global_AB_dist.eps'))
 
-
-
+%% Export place field separation data for global remappers
+global_pf_dist.combined_final_global_dist = combined_final_global_dist;
+global_pf_dist.median_dist = median_dist;
 
 end
 

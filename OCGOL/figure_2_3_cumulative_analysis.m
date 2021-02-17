@@ -42,9 +42,13 @@ path_dir{11} = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'
 load(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zones_all_animals.mat'));
 
 
+%% Source data export struct
+
+source_data_task_sel_remap = struct();
+
 %% Fraction of place cell (A sel, B sel, A&B remapping,neither) - bar chart and pie chart
 %Figure 2C
-fraction_place_plot_data = fraction_place_cells(path_dir);
+[fraction_place_plot_data,source_data_task_sel_remap] = fraction_place_cells(path_dir,source_data_task_sel_remap);
 
 %% A/B/A&B/N cell SI/TS score distributions plots (Figure 2C/D)
 %export these values and feed into master plotter
@@ -62,15 +66,16 @@ task_sel_STC_data = cumulative_task_sel_STC(path_dir);
 %3 - 50 (every 2) relative to 100 bins
 options.bin_choose = 2;
 
-centroid_dist_data = centroid_dist_selective(path_dir,reward_zones_all_animal,options);
+[centroid_dist_data,source_data_task_sel_remap] = ...
+    centroid_dist_selective(path_dir,reward_zones_all_animal,options,source_data_task_sel_remap);
 
 %% AUC/min scatterplots of A vs B neurons for each animal 
 
-AUC_data = auc_scatterplots(path_dir);
+[AUC_data,source_data_task_sel_remap] = auc_scatterplots(path_dir,source_data_task_sel_remap);
 
 %% PV/TC correlation
 
-tc_corr_sel_data = tc_pv_correlation_task_sel(path_dir);
+[tc_corr_sel_data,source_data_task_sel_remap] = tc_pv_correlation_task_sel(path_dir,source_data_task_sel_remap);
 
 %% Master plotter for Figure 2
 
@@ -81,7 +86,7 @@ fig2_master_plotter(fraction_place_plot_data,si_ts_score_dist_data,...
 %% FIGURE 3
 %% Place field A&B distance separation (global remapper distance distribution - supplement)
 
-[combined_distances,combined_dist_metric] = place_AB_distance_separation(path_dir);
+[combined_distances,combined_dist_metric,global_pf_dist] = place_AB_distance_separation(path_dir);
 
 %export the lap speed data and event speed data for cumulative analysis
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','pf_distances_A&B_neurons.mat'),'combined_distances', 'combined_dist_metric');
@@ -96,8 +101,12 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cut
 
 %% Generate mean/SEM traces for rate remapping neurons - Figure 3 rate remapping (supplement activity remap and Fig 3c data)
 %also calculate A-B/A+B index and compare against common neurons
-activity_remap = rate_remap_traces(path_dir);
+%extract supplement data
+[activity_remap,remap_sup_plot_data] = rate_remap_traces(path_dir);
 
+%% Activity remap supplement figure
+
+fig_sup_activity_remap_master(remap_sup_plot_data)
 
 %% Fractional remapping using updated criteria - fraction of each class
 
@@ -112,9 +121,10 @@ frac_remapping =frac_remapping_neurons_corr_criteria(path_dir);
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','r_global.mat'),'r_global');
 
 %% Modification to original code (updated using established criteria - majority of Figure 3 data is here)
+%extract scatterplot points for for global remappers from here
 
 %return bin position of the respective reward zones
-[reward_zones_all_animal,partial_idx_by_animal_zone,remap_prop_figs] = remapping_centroids_updated(path_dir);
+[reward_zones_all_animal,partial_idx_by_animal_zone,remap_prop_figs,global_dist_scatter] = remapping_centroids_updated(path_dir);
 
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','partial_idx_by_animal.mat'),'partial_idx_by_animal_zone');
 
@@ -140,6 +150,10 @@ pf_prop_data = place_field_analysis(path_dir);
 %% Supplement Figure 4 speed of animal in place cells and place field props
 
 fig_sup_speed_place_field_master(event_speed_plot,pf_prop_data)
+
+%% Supplement plotter global remappers
+
+fig_sup_global_remap_master(global_pf_dist,global_dist_scatter,reward_zones_all_animal)
 
 %% Speed analysis for each animal used in Figure 2/3 (mean bin speed on A/B laps) (Sup 2)
 

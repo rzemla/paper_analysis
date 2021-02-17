@@ -1,4 +1,4 @@
-function [reward_zones_all_animal,partial_idx_by_animal_zone,remap_prop_figs] = remapping_centroids_updated(path_dir)
+function [reward_zones_all_animal,partial_idx_by_animal_zone,remap_prop_figs,global_dist_scatter] = remapping_centroids_updated(path_dir)
 
 %% Load in data from each session directory
 for ee=1:size(path_dir,2)
@@ -84,6 +84,11 @@ plot([0 100],[0 100],'k','LineWidth',2)
 
 plot([B_zone_end B_zone_end], [0 100],'k--', 'LineWidth',2)
 plot([A_zone_end A_zone_end], [0 100],'k--', 'LineWidth',2)
+
+%% Export scatter data
+
+global_dist_scatter.binCenter_data = binCenter_data;
+
 
 % figure
 % hold on

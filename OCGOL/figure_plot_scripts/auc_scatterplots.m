@@ -1,4 +1,4 @@
-function [AUC_data] = auc_scatterplots(path_dir)
+function [AUC_data,source_data_task_sel_remap] = auc_scatterplots(path_dir,source_data_task_sel_remap)
 
 for ee=1:size(path_dir,2)
     load_data_path_auc{ee} = fullfile(path_dir{ee},'cumul_analysis','auc.mat');
@@ -84,6 +84,9 @@ AUC_data.grouped_sem_run = grouped_sem_run;
 AUC_data.grouped_means_norun = grouped_means_norun;
 AUC_data.grouped_sem_norun = grouped_sem_norun;
 AUC_data.mean_AUC = mean_AUC;
+
+%export AUC data (Fig 2c)
+source_data_task_sel_remap.mean_AUC = mean_AUC;
 
 %% Plot scatter of no run activity (some neurons are sp tuned in one, yet very active - participate in ctx discrimation) 
 % figure

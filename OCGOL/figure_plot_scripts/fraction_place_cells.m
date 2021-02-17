@@ -1,4 +1,4 @@
-function [plot_data] = fraction_place_cells(path_dir)
+function [plot_data,source_data_task_sel_remap] = fraction_place_cells(path_dir,source_data_task_sel_remap)
 
 %variables ending with _filt - filtered to make sure minimum of 5 events in
 %field and sig field identified in addition to meeting stat sig. for SI or
@@ -58,6 +58,11 @@ frac_tuned_each_sem.ts = frac_tuned_each_std.ts./sqrt(size(frac_tuned_each.ts,1)
 %fraction of all neurons tuned in each subgroup (cumulative)
 frac_all_si = tuned_counts_si/total_neurons;
 frac_all_ts = tuned_counts_ts/total_neurons;
+
+%% Export source data
+
+source_data_task_sel_remap.frac_tuned = frac_tuned_each;
+
 
 %% Statistics on fraction data (by animals)
 %fraction of neurons tuned in each category by SI/TS criteria
