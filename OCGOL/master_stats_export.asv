@@ -129,15 +129,9 @@ p_adj = holm_sidak_p_adj(p,c,alpha);
 
 %% Place code for each test here ...
 
-
-%% 1-way Repeated Measures ANOVA
-
-
 %repeated measures 1-way ANOVA
 %paired t-test
 %Rayleigh test of circular uniformity
 %unpaired t-test
 %kruskall wallis test
-%write up functions for each test
-%import all matlab data here
-
+% 
