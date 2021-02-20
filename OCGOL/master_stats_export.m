@@ -8,7 +8,7 @@
 load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
 
 
-%% Fig 2c AUC analysis
+%% Fig 2c AUC analysis RUN
 %AUC run data for A and B selective place cells
 
 %AUC/min RUN A,B, AB
@@ -57,20 +57,86 @@ p = [stats.run.A(1) stats.run.B(1) stats.run.AB(1)]';
 p_adj = holm_sidak_p_adj(p,c,alpha);
 sig_level = check_p_value_sig(p_adj);
 
-%crate RUN AUC/min table
+%create RUN AUC/min table
 t_auc_run = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
             'VariableNames',{'Figure','Subfigure','Data aggregation',...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
         
-%write to Excel spreadsheet
-writetable(t_auc_run,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true)
-
 %create source data spreadsheet
 
+%% Fig 2c AUC analysis no RUN
+%AUC run data for A and B selective place cells
 
-%% Friedman test
+%AUC/min RUN A,B, AB
+AUC_A_sel_noRUN = source_data_task_sel_remap.mean_AUC.norun.Asel;
+AUC_B_sel_noRUN = source_data_task_sel_remap.mean_AUC.norun.Bsel;
+AUC_AB_noRUN = source_data_task_sel_remap.mean_AUC.norun.AB;
+
+%paired wilcoxon A, B, AB sel on A vs B laps during RUN epochs
+%A selective
+stats.norun.A = paired_wilcoxon_signrank(AUC_A_sel_noRUN(:,1),AUC_A_sel_noRUN(:,2));
+
+%B selective
+stats.norun.B = paired_wilcoxon_signrank(AUC_B_sel_noRUN(:,1),AUC_B_sel_noRUN(:,2));
+
+%AB
+stats.norun.AB = paired_wilcoxon_signrank(AUC_AB_noRUN(:,1),AUC_AB_noRUN(:,2));
+
+%3-way Holm-Sidak correction for AUC RUN comparison
+%significance level
+alpha = 0.05;
+%# of comparisons
+c = 3; 
+%input p-value vector
+p = [stats.norun.A(1) stats.norun.B(1) stats.norun.AB(1)];
+
+%create excel importable table data
+
+%create AUC/min table
+%Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+fig_num = repmat(2,3,1);
+fig_sub = repmat('c',3,1);
+data_agg = repmat('by animal',3,1);
+comp_descrip = {'AUC/min difference btn A vs. B laps in NO RUN - A sel.';...
+                'AUC/min difference btn A vs. B laps in NO RUN - B sel.';...
+                'AUC/min difference btn A vs. B laps in NO RUN - A&B'};
+n_sample = [stats.norun.A(3), stats.norun.B(3),stats.norun.AB(3)]';
+test_name = repmat('Paired Wilcoxon Sign Rank',3,1);
+n_dof = [stats.norun.A(4), stats.norun.B(4),stats.norun.AB(4)]';
+test_statistic = [stats.norun.A(2) stats.norun.B(2) stats.norun.AB(2)]';
+adj_method = repmat('Holm-Sidak (3-way)', 3,1);
+p = [stats.norun.A(1) stats.norun.B(1) stats.norun.AB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig(p_adj);
+
+%create noRUN AUC/min table
+t_auc_norun = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+        
+%% Combine Figure 2 stat tables
+t1 = repmat({' '},1,12);
+
+%combined table
+t_fig2_all = [t_auc_run; t_auc_norun;];
+
+%exported Excel spreadsheet
+%write to Excel spreadsheet
+writetable(t_auc_run,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_auc_norun,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
+%% Figure 2d - fraction tuned by SI and TS
+
+frac_si_tuned = 
+
+
 [p,tbl,stats] = friedman(friedman_test_mat);
 
 
