@@ -4,8 +4,86 @@
 
 %import data for each figure
 
+%figure 2 source data
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
 
-source_data_task_sel_remap
+
+%% Fig 2c AUC analysis
+%AUC run data for A and B selective place cells
+
+%AUC/min RUN A,B, AB
+AUC_A_sel_RUN = source_data_task_sel_remap.mean_AUC.run.Asel;
+AUC_B_sel_RUN = source_data_task_sel_remap.mean_AUC.run.Bsel;
+AUC_AB_RUN = source_data_task_sel_remap.mean_AUC.run.AB;
+
+%paired wilcoxon A, B, AB sel on A vs B laps during RUN epochs
+%A selective
+stats.run.A = paired_wilcoxon_signrank(AUC_A_sel_RUN(:,1),AUC_A_sel_RUN(:,2));
+
+%B selective
+stats.run.B = paired_wilcoxon_signrank(AUC_B_sel_RUN(:,1),AUC_B_sel_RUN(:,2));
+
+%AB
+stats.run.AB = paired_wilcoxon_signrank(AUC_AB_RUN(:,1),AUC_AB_RUN(:,2));
+
+%3-way Holm-Sidak correction for AUC RUN comparison
+%significance level
+alpha = 0.05;
+%# of comparisons
+c = 3; 
+%input p-value vector
+p = [stats.run.A(1) stats.run.B(1) stats.run.AB(1)];
+%return adjustment p-values for AUC RUN comparison
+p_adj = holm_sidak_p_adj(p,c,alpha);
+
+%create excel importable table data
+
+%create AUC/min table
+%Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+fig_num = repmat(2,3,1);
+fig_sub = repmat('c',3,1);
+data_agg = repmat('by animal',3,1);
+comp_descrip = {'AUC/min difference btn A vs. B laps in RUN - A sel.';...
+                'AUC/min difference btn A vs. B laps in RUN - B sel.';...
+                'AUC/min difference btn A vs. B laps in RUN - A&B'};
+n_sample = [stats.run.A(3), stats.run.B(3),stats.run.AB(3)]';
+test_name = repmat('Paired Wilcoxon Sign Rank',3,1);
+n_dof = [stats.run.A(4), stats.run.B(4),stats.run.AB(4)]';
+test_statistic = [stats.run.A(2) stats.run.B(2) stats.run.AB(2)]';
+adj_method = repmat('Holm-Sidak (3-way)', 3,1);
+p = [stats.run.A(1) stats.run.B(1) stats.run.AB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig(p_adj);
+
+%crate RUN AUC/min table
+t_auc_run = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+        
+%write to Excel spreadsheet
+writetable(t_auc_run,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true)
+
+%create source data spreadsheet
+
+
+%% Friedman test
+[p,tbl,stats] = friedman(friedman_test_mat);
+
+
+%% Paired Wilcoxon Sign Rank
+% returns positive sum of ranks W+ (Prsm returns sum of positive and
+% negative ranks)
+
+[p,h,stats] = signrank(mileage(:,2),33)
+
+%% Rayleigh test of circular uniformity
+
+%% 2-sample Kolmogorov-Smirnov Test
+
 
 %% Linear mixed effects model test in matlab - 2way repeated measures mixed effects ANOVA (equivalent to PRISM output)
 %test_data  = [];
@@ -96,19 +174,11 @@ lme1_stats = anova(lme1,'DFMethod','satterthwaite');
 % lme1_stats_spher = anova(lme1_spher,'DFMethod','satterthwaite');
 
 
-%% Friedman test
-[p,tbl,stats] = friedman(friedman_test_mat);
 
 
-%% Paired Wilcoxon Sign Rank
-
-[p,h,stats] = signrank(mileage(:,2),33)
-
-%friedman_test_mat = [];
+%% Excel spreadsheet output ...
 
 %% 1-sample Wilcoxon sign rank test  here
-
-%% 2-sample Kolmogorov-Smirnov Test
 
 
 %% Holm-Bonferroni adjustment here
@@ -130,12 +200,32 @@ p_adj = holm_sidak_p_adj(p,c,alpha);
 %% Place code for each test here ...
 
 
-%% 1-way Repeated Measures ANOVA
+%% Focus on all the stats functions for generating Figure 2 data
 
+%% 
+
+
+%% 1-way Repeated Measures ANOVA - deal with this later
+
+%rm_sample_data = [];
+
+% training_groups = repmat([1:4],4,1);
+% training_groups = training_groups(:);
+% 
+% rm_table = table(rm_sample_data(:),training_groups,'VariableNames', {'score','t_grps'});
+% 
+% 
+% rm_model = fitrm(rm_table,'score~t_grps','WithinModel','separatemeans')
+% 
+% rm_model = fitrm(rm_table,'score~t_grps','WithinDesign',table(rm_sample_data'))
+% 
+% rm_anova = ranova(rm_model)
+% 
+% anova_rm(rm_sample_data)
 
 %repeated measures 1-way ANOVA
 %paired t-test
-%Rayleigh test of circular uniformity
+
 %unpaired t-test
 %kruskall wallis test
 %write up functions for each test

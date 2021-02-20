@@ -81,7 +81,13 @@ options.bin_choose = 2;
 
 fig2_master_plotter(fraction_place_plot_data,si_ts_score_dist_data,...
         task_sel_STC_data,centroid_dist_data,AUC_data, tc_corr_sel_data);
-    
+
+%% Export source data Figure 2
+
+%navigate to matlab summary stats directory
+cd('G:\Google_drive\task_selective_place_paper\matlab_data')
+
+save('source_data_fig2.mat', 'source_data_task_sel_remap','-v7.3');
 
 %% FIGURE 3
 %% Place field A&B distance separation (global remapper distance distribution - supplement)
