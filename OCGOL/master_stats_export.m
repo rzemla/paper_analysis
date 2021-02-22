@@ -92,8 +92,6 @@ c = 3;
 %input p-value vector
 p = [stats.norun.A(1) stats.norun.B(1) stats.norun.AB(1)];
 
-%create excel importable table data
-
 %create AUC/min table
 %Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
 %Test statistic, p-value, p-value adjusted, ad. method, Significance
@@ -120,6 +118,109 @@ t_auc_norun = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
         
+
+%% Figure 2d - fraction tuned by SI
+
+frac_si_tuned = source_data_task_sel_remap.frac_tuned.si;
+
+%si tuned fractions - group comparison
+[friedman_stats] = friedman_test(frac_si_tuned);
+
+%AvsB
+stats.frac_tuned.AvB = paired_wilcoxon_signrank(frac_si_tuned(:,1),frac_si_tuned(:,2));
+
+%AvsA&B selective
+stats.frac_tuned.AvAB = paired_wilcoxon_signrank(frac_si_tuned(:,1),frac_si_tuned(:,3));
+
+%BvsAB
+stats.frac_tuned.BvAB = paired_wilcoxon_signrank(frac_si_tuned(:,2),frac_si_tuned(:,3));
+
+%3-way Holm-Sidak correction for AUC RUN comparison (inputs)
+%significance level
+alpha = 0.05;
+%# of comparisons
+c = 3; 
+%input p-value vector
+p = [stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)];
+
+%create AUC/min table
+%Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+fig_num = repmat(2,4,1);
+fig_sub = repmat('d',4,1);
+data_agg = repmat('by animal',4,1);
+comp_descrip = {'Fraction of A,B, A&B tuned, neither - Spatial info.';...
+                'Fraction of neurons tuned - A vs. B - Spatial info.';...
+                'Fraction of neurons tuned - A vs. A&B - Spatial info.';...
+                'Fraction of neurons tuned - B vs. A&B - Spatial info.'};
+n_sample = [friedman_stats(3), stats.frac_tuned.AvB(3) stats.frac_tuned.AvAB(3) stats.frac_tuned.BvAB(3)]';
+test_name = [{'Friedman test'}; repmat({'Paired Wilcoxon Sign Rank'},3,1)];
+n_dof = [friedman_stats(4), stats.frac_tuned.AvB(4) stats.frac_tuned.AvAB(4) stats.frac_tuned.BvAB(4)]';
+test_statistic = [friedman_stats(2), stats.frac_tuned.AvB(2) stats.frac_tuned.AvAB(2) stats.frac_tuned.BvAB(2)]';
+adj_method = ['N/A'; repmat({'Holm-Sidak (3-way)'}, 3,1)];
+p_all = [friedman_stats(1) stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig([p_all(1), p_adj]);
+
+%create noRUN AUC/min table
+t_frac_si = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, [nan, p_adj]', adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+%% Figure 2d - fraction tuned by TS
+
+frac_ts_tuned = source_data_task_sel_remap.frac_tuned.ts;
+
+%si tuned fractions - group comparison
+[friedman_stats] = friedman_test(frac_ts_tuned);
+
+%AvsB
+stats.frac_tuned.AvB = paired_wilcoxon_signrank(frac_ts_tuned(:,1),frac_ts_tuned(:,2));
+
+%AvsA&B selective
+stats.frac_tuned.AvAB = paired_wilcoxon_signrank(frac_ts_tuned(:,1),frac_ts_tuned(:,3));
+
+%BvsAB
+stats.frac_tuned.BvAB = paired_wilcoxon_signrank(frac_ts_tuned(:,2),frac_ts_tuned(:,3));
+
+%3-way Holm-Sidak correction for AUC RUN comparison (inputs)
+%significance level
+alpha = 0.05;
+%# of comparisons
+c = 3; 
+%input p-value vector
+p = [stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)];
+
+%create AUC/min table
+%Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+fig_num = repmat(2,4,1);
+fig_sub = repmat('d',4,1);
+data_agg = repmat('by animal',4,1);
+comp_descrip = {'Fraction of A,B, A&B tuned, neither - Tuning spec.';...
+                'Fraction of neurons tuned - A vs. B - Tuning spec.';...
+                'Fraction of neurons tuned - A vs. A&B - Tuning spec.';...
+                'Fraction of neurons tuned - B vs. A&B - Tuning spec.'};
+n_sample = [friedman_stats(3), stats.frac_tuned.AvB(3) stats.frac_tuned.AvAB(3) stats.frac_tuned.BvAB(3)]';
+test_name = [{'Friedman test'}; repmat({'Paired Wilcoxon Sign Rank'},3,1)];
+n_dof = [friedman_stats(4), stats.frac_tuned.AvB(4) stats.frac_tuned.AvAB(4) stats.frac_tuned.BvAB(4)]';
+test_statistic = [friedman_stats(2), stats.frac_tuned.AvB(2) stats.frac_tuned.AvAB(2) stats.frac_tuned.BvAB(2)]';
+adj_method = ['N/A'; repmat({'Holm-Sidak (3-way)'}, 3,1)];
+p_all = [friedman_stats(1) stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig([p_all(1), p_adj]);
+
+%create noRUN AUC/min table
+t_frac_ts = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, [nan, p_adj]', adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+        
 %% Combine Figure 2 stat tables
 t1 = repmat({' '},1,12);
 
@@ -129,24 +230,19 @@ t_fig2_all = [t_auc_run; t_auc_norun;];
 %exported Excel spreadsheet
 %write to Excel spreadsheet
 writetable(t_auc_run,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
 writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
 writetable(t_auc_norun,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
 
-%% Figure 2d - fraction tuned by SI and TS
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_frac_si,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
 
-frac_si_tuned = 
-
-
-[p,tbl,stats] = friedman(friedman_test_mat);
-
-
-%% Paired Wilcoxon Sign Rank
-% returns positive sum of ranks W+ (Prsm returns sum of positive and
-% negative ranks)
-
-[p,h,stats] = signrank(mileage(:,2),33)
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_frac_ts,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
 
 %% Rayleigh test of circular uniformity
+
+
 
 %% 2-sample Kolmogorov-Smirnov Test
 
