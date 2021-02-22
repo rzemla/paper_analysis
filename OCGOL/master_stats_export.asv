@@ -118,23 +118,10 @@ t_auc_norun = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
         
-%% Combine Figure 2 stat tables
-t1 = repmat({' '},1,12);
-
-%combined table
-t_fig2_all = [t_auc_run; t_auc_norun;];
-
-%exported Excel spreadsheet
-%write to Excel spreadsheet
-writetable(t_auc_run,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
-writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
-writetable(t_auc_norun,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
 
 %% Figure 2d - fraction tuned by SI
 
 frac_si_tuned = source_data_task_sel_remap.frac_tuned.si;
-
-frac_ts_tuned = source_data_task_sel_remap.frac_tuned.ts;
 
 %si tuned fractions - group comparison
 [friedman_stats] = friedman_test(frac_si_tuned);
@@ -161,7 +148,7 @@ p = [stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)];
 %Test statistic, p-value, p-value adjusted, ad. method, Significance
 
 fig_num = repmat(2,4,1);
-fig_sub = repmat('c',4,1);
+fig_sub = repmat('d',4,1);
 data_agg = repmat('by animal',4,1);
 comp_descrip = {'Fraction of A,B, A&B tuned, neither - Spatial info.';...
                 'Fraction of neurons tuned - A vs. B - Spatial info.';...
@@ -170,28 +157,135 @@ comp_descrip = {'Fraction of A,B, A&B tuned, neither - Spatial info.';...
 n_sample = [friedman_stats(3), stats.frac_tuned.AvB(3) stats.frac_tuned.AvAB(3) stats.frac_tuned.BvAB(3)]';
 test_name = [{'Friedman test'}; repmat({'Paired Wilcoxon Sign Rank'},3,1)];
 n_dof = [friedman_stats(4), stats.frac_tuned.AvB(4) stats.frac_tuned.AvAB(4) stats.frac_tuned.BvAB(4)]';
-test_statistic = [stats.norun.A(2) stats.norun.B(2) stats.norun.AB(2)]';
-adj_method = repmat('Holm-Sidak (3-way)', 3,1);
-p_all = ';
-p_adj = [nan, holm_sidak_p_adj(p,c,alpha)];
-sig_level = check_p_value_sig(p_adj);
+test_statistic = [friedman_stats(2), stats.frac_tuned.AvB(2) stats.frac_tuned.AvAB(2) stats.frac_tuned.BvAB(2)]';
+adj_method = ['N/A'; repmat({'Holm-Sidak (3-way)'}, 3,1)];
+p_all = [friedman_stats(1) stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig([p_all(1), p_adj]);
 
 %create noRUN AUC/min table
-t_auc_norun = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
-            test_name, n_dof, test_statistic,p_all,p_adj, adj_method, sig_level,...
+t_frac_si = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, [nan, p_adj]', adj_method, sig_level,...
             'VariableNames',{'Figure','Subfigure','Data aggregation',...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
 
+%% Figure 2d - fraction tuned by TS
 
-%% Paired Wilcoxon Sign Rank
-% returns positive sum of ranks W+ (Prsm returns sum of positive and
-% negative ranks)
+frac_ts_tuned = source_data_task_sel_remap.frac_tuned.ts;
 
-[p,h,stats] = signrank(mileage(:,2),33)
+%si tuned fractions - group comparison
+[friedman_stats] = friedman_test(frac_ts_tuned);
 
+%AvsB
+stats.frac_tuned.AvB = paired_wilcoxon_signrank(frac_ts_tuned(:,1),frac_ts_tuned(:,2));
+
+%AvsA&B selective
+stats.frac_tuned.AvAB = paired_wilcoxon_signrank(frac_ts_tuned(:,1),frac_ts_tuned(:,3));
+
+%BvsAB
+stats.frac_tuned.BvAB = paired_wilcoxon_signrank(frac_ts_tuned(:,2),frac_ts_tuned(:,3));
+
+%3-way Holm-Sidak correction for AUC RUN comparison (inputs)
+%significance level
+alpha = 0.05;
+%# of comparisons
+c = 3; 
+%input p-value vector
+p = [stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)];
+
+%create AUC/min table
+%Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+fig_num = repmat(2,4,1);
+fig_sub = repmat('d',4,1);
+data_agg = repmat('by animal',4,1);
+comp_descrip = {'Fraction of A,B, A&B tuned, neither - Tuning spec.';...
+                'Fraction of neurons tuned - A vs. B - Tuning spec.';...
+                'Fraction of neurons tuned - A vs. A&B - Tuning spec.';...
+                'Fraction of neurons tuned - B vs. A&B - Tuning spec.'};
+n_sample = [friedman_stats(3), stats.frac_tuned.AvB(3) stats.frac_tuned.AvAB(3) stats.frac_tuned.BvAB(3)]';
+test_name = [{'Friedman test'}; repmat({'Paired Wilcoxon Sign Rank'},3,1)];
+n_dof = [friedman_stats(4), stats.frac_tuned.AvB(4) stats.frac_tuned.AvAB(4) stats.frac_tuned.BvAB(4)]';
+test_statistic = [friedman_stats(2), stats.frac_tuned.AvB(2) stats.frac_tuned.AvAB(2) stats.frac_tuned.BvAB(2)]';
+adj_method = ['N/A'; repmat({'Holm-Sidak (3-way)'}, 3,1)];
+p_all = [friedman_stats(1) stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig([p_all(1), p_adj]);
+
+%create noRUN AUC/min table
+t_frac_ts = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, [nan, p_adj]', adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+        
 %% Rayleigh test of circular uniformity
 
+%unload data
+center_bin_radians = source_data_task_sel_remap.pf_dist.center_bin_radians;
+pooled_A_counts = source_data_task_sel_remap.pf_dist.pooled_A_counts;
+pooled_B_counts = source_data_task_sel_remap.pf_dist.pooled_B_counts;
+bin_spacing = source_data_task_sel_remap.pf_dist.bin_spacing;
+
+%get number of neurons here
+
+%use this result since you downbin to 25 bins
+%test for A 
+%run rayleigh test - similar result if even bin spacing is input or not
+[pval_A, z_A] = circ_rtest(center_bin_radians,pooled_A_counts ,bin_spacing);
+%test for B
+[pval_B, z_B] = circ_rtest(center_bin_radians,pooled_B_counts ,bin_spacing);
+
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+nb_entries = 2;
+
+fig_num = repmat(2,nb_entries,1);
+fig_sub = repmat('d',nb_entries,1);
+data_agg = repmat('by animal',nb_entries,1);
+comp_descrip = {'Distribution of PF centroid locations - A selective (25 bins)';...
+                'Distribution of PF centroid locations - B selective (25 bins)';};
+n_sample = [sum(pooled_A_counts),sum(pooled_B_counts)]';
+test_name = repmat({'Rayleigh test of circular uniformity'},nb_entries,1);
+n_dof = repmat('N/A', nb_entries,1);
+test_statistic = [z_A,z_B]';
+adj_method = repmat('N/A', nb_entries,1);
+p_all = [pval_A, pval_B]';
+p_adj = repmat('N/A', nb_entries,1);
+sig_level = check_p_value_sig(p_all);
+
+%create noRUN AUC/min table
+t_frac_ts = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+%% Combine Figure 2 stat tables
+t1 = repmat({' '},1,12);
+
+%combined table
+t_fig2_all = [t_auc_run; t_auc_norun;];
+
+%exported Excel spreadsheet
+%write to Excel spreadsheet
+writetable(t_auc_run,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_auc_norun,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_frac_si,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_frac_ts,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+        
+        
+        
+        
+        
 %% 2-sample Kolmogorov-Smirnov Test
 
 

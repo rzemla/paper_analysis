@@ -159,9 +159,10 @@ test_name = [{'Friedman test'}; repmat({'Paired Wilcoxon Sign Rank'},3,1)];
 n_dof = [friedman_stats(4), stats.frac_tuned.AvB(4) stats.frac_tuned.AvAB(4) stats.frac_tuned.BvAB(4)]';
 test_statistic = [friedman_stats(2), stats.frac_tuned.AvB(2) stats.frac_tuned.AvAB(2) stats.frac_tuned.BvAB(2)]';
 adj_method = ['N/A'; repmat({'Holm-Sidak (3-way)'}, 3,1)];
-p_all = [friedman_stats(1) stats.frac_tuned.AvB(1) stats.frac_tuned.AvAB(1) stats.frac_tuned.BvAB(1)]';
+p_all = [friedman_stats(1) stats.frac_tuned.AvB(1), stats.frac_tuned.AvAB(1), stats.frac_tuned.BvAB(1)]';
 p_adj = holm_sidak_p_adj(p,c,alpha);
 sig_level = check_p_value_sig([p_all(1), p_adj]);
+
 
 %create noRUN AUC/min table
 t_frac_si = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
@@ -221,6 +222,48 @@ t_frac_ts = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
         
+%% Rayleigh test of circular uniformity
+
+%unload data
+center_bin_radians = source_data_task_sel_remap.pf_dist.center_bin_radians;
+pooled_A_counts = source_data_task_sel_remap.pf_dist.pooled_A_counts;
+pooled_B_counts = source_data_task_sel_remap.pf_dist.pooled_B_counts;
+bin_spacing = source_data_task_sel_remap.pf_dist.bin_spacing;
+
+%get number of neurons here
+
+%use this result since you downbin to 25 bins
+%test for A 
+%run rayleigh test - similar result if even bin spacing is input or not
+[pval_A, z_A] = circ_rtest(center_bin_radians,pooled_A_counts ,bin_spacing);
+%test for B
+[pval_B, z_B] = circ_rtest(center_bin_radians,pooled_B_counts ,bin_spacing);
+
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+nb_entries = 2;
+
+fig_num = repmat(2,nb_entries,1);
+fig_sub = repmat('d',nb_entries,1);
+data_agg = repmat('by animal',nb_entries,1);
+comp_descrip = {'Distribution of PF centroid locations - A selective (25 bins)';...
+                'Distribution of PF centroid locations - B selective (25 bins)';};
+n_sample = [sum(pooled_A_counts),sum(pooled_B_counts)]';
+test_name = repmat({'Rayleigh test of circular uniformity'},nb_entries,1);
+n_dof = repmat('N/A', nb_entries,1);
+test_statistic = [z_A,z_B]';
+adj_method = repmat('N/A', nb_entries,1);
+p_all = [pval_A, pval_B]';
+p_adj = repmat('N/A', nb_entries,1);
+sig_level = check_p_value_sig(p_all);
+
+%create noRUN AUC/min table
+t_pf_dist = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
 %% Combine Figure 2 stat tables
 t1 = repmat({' '},1,12);
 
@@ -239,11 +282,12 @@ writetable(t_frac_si,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'Wr
 
 writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
 writetable(t_frac_ts,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
-
-%% Rayleigh test of circular uniformity
-
-
-
+        
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_pf_dist,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')        
+        
+        
+        
 %% 2-sample Kolmogorov-Smirnov Test
 
 
