@@ -5,8 +5,105 @@
 %import data for each figure
 
 %figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig3.mat')
 
+
+%% Figure 3d Fraction of each class of remapping neurons
+%Friedman, paired Wilcoxon
+
+
+%% Figure 3e Distribution of common neurons on track
+%Rayleigh test of circular uniformity
+%unload data
+common_pf_dist = source_data_AB_remap.common_pf_dist;
+bin_spacing = source_data_AB_remap.bin_spacing;
+center_bin_radians = source_data_AB_remap.center_bin_radians;
+centroid_count_com = source_data_AB_remap.centroid_count_com;
+
+%use this result since you downbin to 25 bins
+%test for A 
+%run rayleigh test - similar result if even bin spacing is input or not
+[pval_cpf, z_cpf] = circ_rtest(center_bin_radians,centroid_count_com ,bin_spacing);
+
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+nb_entries = 1;
+
+fig_num = repmat(3,nb_entries,1);
+fig_sub = string(repmat('e',nb_entries,1));
+data_agg = string(repmat('pooled',nb_entries,1));
+comp_descrip = {'Distribution of PF centroid locations in common neurons (25 bins)';};
+n_sample = [numel(common_pf_dist)]';
+test_name = repmat({'Rayleigh test of circular uniformity'},nb_entries,1);
+n_dof = string(repmat('N/A', nb_entries,1));
+test_statistic = [z_cpf]';
+adj_method = string(repmat('N/A', nb_entries,1));
+p_all = [pval_cpf]';
+p_adj = string(repmat('N/A', nb_entries,1));
+sig_level = check_p_value_sig(p_all);
+
+%create table
+t_pf_dist_com = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+
+%% Figure 3f Place field shifts for global remappers on A vs B trials
+%1-sample Wilxocon Signed Rank test against 0
+
+zoneI_shift = source_data_AB_remap.global_shift.zoneI_diff;
+zoneII_shift = source_data_AB_remap.global_shift.zoneII_diff;
+zoneIII_shift = source_data_AB_remap.global_shift.zoneIII_diff;
+
+%paired wilcoxon A, B, AB sel on A vs B laps during RUN epochs
+%I
+stats.global_shiftI = paired_wilcoxon_signrank(zoneI_shift,0);
+
+%II
+stats.global_shiftII = paired_wilcoxon_signrank(zoneII_shift,0);
+
+%III
+stats.global_shiftIII = paired_wilcoxon_signrank(zoneIII_shift,0);
+
+nb_entries = 3;
+
+fig_num = repmat(3,nb_entries,1);
+fig_sub = repmat('f',nb_entries,1);
+data_agg = repmat('by animal',nb_entries,1);
+
+%description of comparison
+comp_descrip = {'Zone I (B before A) vs. 0';...
+                'Zone II (B before A) vs. 0';...
+                'Zone III (B before A) vs. 0'};
+%number of samples for each test            
+n_sample = [stats.global_shiftI(3) stats.global_shiftII(3) stats.global_shiftIII(3)]';
+%test ran
+test_name = repmat('1-sample Wilcoxon Sign Rank',nb_entries,1);
+%degrees of freedom
+n_dof = [stats.global_shiftI(4) stats.global_shiftII(4) stats.global_shiftIII(4)]';
+%test statistic
+test_statistic = [stats.global_shiftI(2) stats.global_shiftII(2) stats.global_shiftIII(2)]';
+adj_method = repmat('N/A', nb_entries,1);
+p = [stats.global_shiftI(1) stats.global_shiftII(1) stats.global_shiftIII(1)];
+p_adj = repmat('N/A', nb_entries,1);
+sig_level = check_p_value_sig(p);
+
+%create noRUN AUC/min table
+t_zone_shift = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p',p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+        
+%% Figure 3g Remapping of global remappers between reward zones on A vs B trials
+%Friedman, paired Wilcoxon
+
+%% Figure 3h Distribution of partial remapping place fields between partial  A vs. partial B place fields
+%2-sample KS test
+
+%%
 
 %% Fig 2c AUC analysis RUN
 %AUC run data for A and B selective place cells
@@ -329,23 +426,26 @@ nb_entries = 3;
 fig_num = repmat(2,nb_entries,1);
 fig_sub = repmat('h',nb_entries,1);
 data_agg = repmat('by animal',nb_entries,1);
+
+%description of comparison
 comp_descrip = {'Tuning curve correlation of A vs. B laps - A sel. Vs. Bsel neurons';...
                 'Tuning curve correlation of A vs. B laps - A sel. Vs. AB neurons';...
                 'Tuning curve correlation of A vs. B laps - B sel. Vs. AB neurons'};
+%number of samples for each test            
 n_sample = [stats.tc.AvB(3) stats.tc.AvAB(3) stats.tc.BvAB(3)]';
 %test ran
 test_name = repmat('Paired Wilcoxon Sign Rank',nb_entries,1);
 %degrees of freedom
 n_dof = [stats.tc.AvB(4) stats.tc.AvAB(4) stats.tc.BvAB(4)]';
-test_statistic = [stats.norun.A(2) stats.norun.B(2) stats.norun.AB(2)]';
-adj_method = repmat('Holm-Sidak (3-way)', 3,1);
-p = [stats.norun.A(1) stats.norun.B(1) stats.norun.AB(1)]';
+%test statistic
+test_statistic = [stats.tc.AvB(2) stats.tc.AvAB(2) stats.tc.BvAB(2)]';
+adj_method = repmat('Holm-Sidak (3-way)', nb_entries,1);
 p_adj = holm_sidak_p_adj(p,c,alpha);
 sig_level = check_p_value_sig(p_adj);
 
 %create noRUN AUC/min table
-t_auc_norun = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
-            test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
+t_tc_corr = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p',p_adj', adj_method, sig_level,...
             'VariableNames',{'Figure','Subfigure','Data aggregation',...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
@@ -376,9 +476,11 @@ writetable(t_pf_dist,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'Wr
 writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
 writetable(t_2ks_pf_dist,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')  
 
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_tc_corr,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')  
 
 
-%% Linear mixed effects model test in matlab - 2way repeated measures mixed effects ANOVA (equivalent to PRISM output)
+%% 2-way repeated measures mixed effects ANOVA (equivalent to PRISM output)
 %test_data  = [];
 
 %corr score vector
@@ -468,9 +570,6 @@ lme1_stats = anova(lme1,'DFMethod','satterthwaite');
 
 
 
-
-%% Excel spreadsheet output ...
-
 %% 1-sample Wilcoxon sign rank test  here
 
 
@@ -478,27 +577,8 @@ lme1_stats = anova(lme1,'DFMethod','satterthwaite');
 
 
 
-%% Holm-Sidak p-value correction
+%% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
 
-%significance level
-alpha = 0.05;
-%# of comparisons
-c = 4; 
-%input p-value vector
-p = [0.0271 0.0368 0.0008 0.0015];
-
-p_adj = holm_sidak_p_adj(p,c,alpha);
-
-
-%% Place code for each test here ...
-
-
-%% Focus on all the stats functions for generating Figure 2 data
-
-%% 
-
-
-%% 1-way Repeated Measures ANOVA - deal with this later
 
 %rm_sample_data = [];
 

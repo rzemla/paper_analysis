@@ -121,7 +121,7 @@ fig_sup_activity_remap_master(remap_sup_plot_data)
 
 %% Fractional remapping using updated criteria - fraction of each class
 
-[frac_remapping,source_data_AB_remap] =frac_remapping_neurons_corr_criteria(path_dir,source_data_AB_remap);
+frac_remapping =frac_remapping_neurons_corr_criteria(path_dir);
 
 %% Generate scatterplot with correlation against p-value for supplement (supplement data)
 %return global correlation scores for each animal/FOV
@@ -135,21 +135,13 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','r_global.m
 %extract scatterplot points for for global remappers from here
 
 %return bin position of the respective reward zones
-[reward_zones_all_animal,partial_idx_by_animal_zone,remap_prop_figs,global_dist_scatter,source_data_AB_remap] = ...
-remapping_centroids_updated(path_dir,source_data_AB_remap);
+[reward_zones_all_animal,partial_idx_by_animal_zone,remap_prop_figs,global_dist_scatter] = remapping_centroids_updated(path_dir);
 
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','partial_idx_by_animal.mat'),'partial_idx_by_animal_zone');
 
 %save the reward zone endpoints (100 bins) into a common file for use by functions
 %above
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zones_all_animals.mat'),'reward_zones_all_animal');
-
-%% Export source data Figure 3
-
-%navigate to matlab summary stats directory
-cd('G:\Google_drive\task_selective_place_paper\matlab_data')
-
-save('source_data_fig3.mat', 'source_data_AB_remap','-v7.3');
 
 
 

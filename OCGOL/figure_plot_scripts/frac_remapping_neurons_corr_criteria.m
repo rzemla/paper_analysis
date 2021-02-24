@@ -1,4 +1,4 @@
-function [frac_remapping] = frac_remapping_neurons_corr_criteria(path_dir)
+function [frac_remapping, source_data_AB_remap] = frac_remapping_neurons_corr_criteria(path_dir, source_data_AB_remap)
 
 
 
@@ -49,6 +49,10 @@ class_sem = class_std./sqrt(size(total_remap,1));
 frac_remapping.class_names = {'Common','Activity','Global','Partial', 'Unclassified'};
 frac_remapping.class_mean = class_mean;
 frac_remapping.class_sem = class_sem;
+
+%export data for statistical analysis
+source_data_AB_remap.frac_class_mean = fraction_remap;
+source_data_AB_remap.class_names = {'Common','Activity','Global','Partial', 'Unclassified'};
 
 %% Plot bars
 

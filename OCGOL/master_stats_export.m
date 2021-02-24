@@ -163,7 +163,6 @@ p_all = [friedman_stats(1) stats.frac_tuned.AvB(1), stats.frac_tuned.AvAB(1), st
 p_adj = holm_sidak_p_adj(p,c,alpha);
 sig_level = check_p_value_sig([p_all(1), p_adj]);
 
-
 %create noRUN AUC/min table
 t_frac_si = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             test_name, n_dof, test_statistic, p_all, [nan, p_adj]', adj_method, sig_level,...
@@ -222,7 +221,8 @@ t_frac_ts = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
         
-%% Rayleigh test of circular uniformity
+%% Figure 2 - uniformity of place field distribution across track
+%Rayleigh test of circular uniformity
 
 %unload data
 center_bin_radians = source_data_task_sel_remap.pf_dist.center_bin_radians;
@@ -244,8 +244,8 @@ bin_spacing = source_data_task_sel_remap.pf_dist.bin_spacing;
 nb_entries = 2;
 
 fig_num = repmat(2,nb_entries,1);
-fig_sub = repmat('d',nb_entries,1);
-data_agg = repmat('by animal',nb_entries,1);
+fig_sub = repmat('f',nb_entries,1);
+data_agg = repmat('pooled',nb_entries,1);
 comp_descrip = {'Distribution of PF centroid locations - A selective (25 bins)';...
                 'Distribution of PF centroid locations - B selective (25 bins)';};
 n_sample = [sum(pooled_A_counts),sum(pooled_B_counts)]';
@@ -257,12 +257,102 @@ p_all = [pval_A, pval_B]';
 p_adj = repmat('N/A', nb_entries,1);
 sig_level = check_p_value_sig(p_all);
 
-%create noRUN AUC/min table
+%create table
 t_pf_dist = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
             'VariableNames',{'Figure','Subfigure','Data aggregation',...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+        
+        
+%% Fig. 2G - place field distributions between A and B 
+
+%unload data
+bin_assign = source_data_task_sel_remap.pf_dist_all.bin_assign;
+%CONTINUE HERE
+
+%all neurons
+[~,p_ks2,ks2stat] = kstest2(cell2mat(bin_assign.A),cell2mat(bin_assign.B));
+
+nb_entries = 1;
+
+fig_num = repmat(2,nb_entries,1);
+fig_sub = string(repmat('g',nb_entries,1));
+data_agg = string(repmat('pooled',nb_entries,1));
+comp_descrip = {'Place field centroid distribution of A selective vs. B selective neurons'};
+n_sample = string([num2str(numel(cell2mat(bin_assign.A))),' vs ', num2str(numel(cell2mat(bin_assign.B)))]);
+test_name = repmat({'2-sample Kolmogorov–Smirnov test'},nb_entries,1);
+
+n_dof = string(repmat('N/A', nb_entries,1));
+test_statistic = [ks2stat]';
+adj_method = string(repmat('N/A', nb_entries,1));
+p_all = [p_ks2]';
+p_adj = string(repmat('N/A', nb_entries,1));
+sig_level = check_p_value_sig(p_all);
+
+%create table
+t_2ks_pf_dist = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+%% Fig 2h Tuning curve correlation comparison
+
+%unload data
+TC_Asel = source_data_task_sel_remap.mean_TC.Asel;
+TC_Bsel = source_data_task_sel_remap.mean_TC.Bsel;
+TC_AB = source_data_task_sel_remap.mean_TC.AB;
+
+%paired wilcoxon A, B, AB sel on A vs B laps during RUN epochs
+
+stats.tc.AvB = paired_wilcoxon_signrank(TC_Asel,TC_Bsel);
+
+stats.tc.AvAB = paired_wilcoxon_signrank(TC_Asel,TC_AB);
+
+stats.tc.BvAB = paired_wilcoxon_signrank(TC_Bsel,TC_AB);
+
+%3-way Holm-Sidak correction for AUC RUN comparison
+%significance level
+alpha = 0.05;
+%# of comparisons
+c = 3; 
+%input p-value vector
+p = [stats.tc.AvB(1) stats.tc.AvAB(1) stats.tc.BvAB(1)];
+
+%create AUC/min table
+%Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+nb_entries = 3;
+
+fig_num = repmat(2,nb_entries,1);
+fig_sub = repmat('h',nb_entries,1);
+data_agg = repmat('by animal',nb_entries,1);
+
+%description of comparison
+comp_descrip = {'Tuning curve correlation of A vs. B laps - A sel. Vs. Bsel neurons';...
+                'Tuning curve correlation of A vs. B laps - A sel. Vs. AB neurons';...
+                'Tuning curve correlation of A vs. B laps - B sel. Vs. AB neurons'};
+%number of samples for each test            
+n_sample = [stats.tc.AvB(3) stats.tc.AvAB(3) stats.tc.BvAB(3)]';
+%test ran
+test_name = repmat('Paired Wilcoxon Sign Rank',nb_entries,1);
+%degrees of freedom
+n_dof = [stats.tc.AvB(4) stats.tc.AvAB(4) stats.tc.BvAB(4)]';
+%test statistic
+test_statistic = [stats.tc.AvB(2) stats.tc.AvAB(2) stats.tc.BvAB(2)]';
+adj_method = repmat('Holm-Sidak (3-way)', nb_entries,1);
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig(p_adj);
+
+%create noRUN AUC/min table
+t_tc_corr = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p',p_adj', adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
 
 %% Combine Figure 2 stat tables
 t1 = repmat({' '},1,12);
@@ -285,10 +375,12 @@ writetable(t_frac_ts,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'Wr
         
 writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
 writetable(t_pf_dist,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')        
-        
-        
-        
-%% 2-sample Kolmogorov-Smirnov Test
+
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_2ks_pf_dist,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')  
+
+writetable(cell2table(t1),'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_tc_corr,'myData.xlsx','Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')  
 
 
 %% Linear mixed effects model test in matlab - 2way repeated measures mixed effects ANOVA (equivalent to PRISM output)

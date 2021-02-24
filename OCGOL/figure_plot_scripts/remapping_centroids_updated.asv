@@ -473,17 +473,18 @@ end
 
 bin_skip = [5, 4 ,2];
 %generate count for fewer bin sizes (downbin to 25 from 100 bins bins)
-for bb=2
+for bb=1
     %A
     centroid_count_com = histcounts(common_bins_combined(1,:), 0.5:bin_skip(bb):100.5);
 end
+
 
 bin_nb = 25;
 bin_center_25_bin = 2:4:98;
 bin2bin_dist = 4;
 bin_spacing = circ_ang2rad(bin2bin_dist./100.*360);
 
-%convert bins to radians (use this - for 25 bins)
+%convert bins to radians
 center_bin_radians = circ_ang2rad(bin_center_25_bin./100.*360);
 [pval_A, z_A] = circ_rtest(center_bin_radians,centroid_count_com ,bin_spacing);
 
@@ -494,9 +495,6 @@ common_rad_angles = circ_ang2rad(common_bins_combined(1,:)./100.*360);
 
 %export data for statistical analysis
 source_data_AB_remap.common_pf_dist = common_rad_angles;
-source_data_AB_remap.bin_spacing = bin_spacing;
-source_data_AB_remap.center_bin_radians = center_bin_radians;
-source_data_AB_remap.centroid_count_com = centroid_count_com;
 
 %% Binomial test for shift (edges included) - B-A - relative to A
 

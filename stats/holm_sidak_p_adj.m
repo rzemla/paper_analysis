@@ -8,6 +8,9 @@ function [p_corr_orig_order] = holm_sidak_p_adj(p,c,alpha)
 [~,I]=sort(p); %sorted p-value vector
 p_sort=p(I);
 
+%reverse sort indices
+[~,rI] = sort(I);
+
 %list of correction p-values
 J=1:c; %How many corrected alpha value?
 
@@ -37,21 +40,24 @@ end
 [unique_p_val,ia,~] = unique(p_sort);
 %get indices of duplicates from original p-value vector
 dup_p_idx = setdiff(1:numel(p_sort),ia);
-%set duplicate p value indices to nan
-p_corrected(dup_p_idx) = nan;
 
-%for each nan, set p-value to previous one (ensures propagation of high
-%p-value for those set of p value duplicates, until the next unique
-%corrected p value is found
-
-for ii=1:numel(p_corrected)
-    if isnan(p_corrected(ii))
-        p_corrected(ii) = p_corrected(ii-1);
+%if duplicate values are found, make p-val adjustment
+if ~isempty(dup_p_idx)
+    %set duplicate p value indices to nan
+    p_corrected(dup_p_idx) = nan;
+    
+    %for each nan, set p-value to previous one (ensures propagation of high
+    %p-value for those set of p value duplicates, until the next unique
+    %corrected p value is found
+    for ii=1:numel(p_corrected)
+        if isnan(p_corrected(ii))
+            p_corrected(ii) = p_corrected(ii-1);
+        end
     end
 end
 
 %rearrange corrected p-values in order of input
-p_corr_orig_order = p_corrected(I);
+p_corr_orig_order = p_corrected(rI);
 
 
 end
