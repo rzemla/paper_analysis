@@ -32,9 +32,9 @@ p_corrected = 1-(1-p_sort).^(c-J+1);
 %crop at test which failed - i.e. don't keep adjusting p-values but copy
 %the previous adjusted p-value at the test which failed
 %check if test found an early faiure to reject
-if ~isempty(idx_test_fail)
-    p_corrected(idx_test_fail:end) = p_corrected(idx_test_fail);    
-end
+% if ~isempty(idx_test_fail)
+%     p_corrected(idx_test_fail:end) = p_corrected(idx_test_fail);    
+% end
 
 %get the unique p values in the sorted list
 [unique_p_val,ia,~] = unique(p_sort);
