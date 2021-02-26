@@ -1,4 +1,4 @@
-function [pf_prop_data] = place_field_analysis(path_dir)
+function [pf_prop_data, pf_width_pool, pf_count] = place_field_analysis(path_dir)
 
 %% Load relevant place field data
 

@@ -528,6 +528,7 @@ remap_sup_plot_data.remap_traces_idx = remap_traces_idx;
 remap_sup_plot_data.activity_remap_pk_idx_split = activity_remap_pk_idx_split;
 remap_sup_plot_data.activity_remap_mean_AUC_min = activity_remap_mean_AUC_min;
 remap_sup_plot_data.activity_remap_sem_AUC_min = activity_remap_sem_AUC_min;
+remap_sup_plot_data.auc_min_activity_remap_rate = auc_min_activity_remap_rate;
 
 
     %% Sign rank test to test where activity rate is different between A and B trials (no diff)

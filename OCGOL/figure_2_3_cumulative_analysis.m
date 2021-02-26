@@ -122,6 +122,11 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','common_cut
 %extract supplement data
 [activity_remap,remap_sup_plot_data] = rate_remap_traces(path_dir);
 
+%sup fig 7 - cdf plot for activity index of common vs activity remappers
+%and AUC/min comparison bars in fig 7c
+source_data_sup_2_3.remap_sup_plot_data = remap_sup_plot_data;
+
+
 %% Activity remap supplement figure
 
 fig_sup_activity_remap_master(remap_sup_plot_data)
@@ -163,8 +168,6 @@ cd('G:\Google_drive\task_selective_place_paper\matlab_data')
 
 save('source_data_fig3.mat', 'source_data_AB_remap','-v7.3');
 
-
-
 %% Master plotter for Figure 3
 %load frac remapping data
 fig3_master_plotter(remap_rate_maps,activity_remap,frac_remapping,remap_prop_figs)
@@ -173,10 +176,16 @@ fig3_master_plotter(remap_rate_maps,activity_remap,frac_remapping,remap_prop_fig
 
 event_speed_plot = event_speed_scatter(path_dir);
 
+%scatterplot data for event speed difference for sup fig 4
+source_data_sup_2_3.event_speed_plot = event_speed_plot;
+
 %% Place field analysis (width and number for selective neurons) - supplement place field data (Ex fig 4)
 
-pf_prop_data = place_field_analysis(path_dir);
+[pf_prop_data, pf_width_pool, pf_count] = place_field_analysis(path_dir);
 
+%scatterplot data for place field width and # fields stats ex fig. 4
+source_data_sup_2_3.pf_width_pool = pf_width_pool;
+source_data_sup_2_3.pf_count = pf_count;
 
 %% Supplement Figure 4 speed of animal in place cells and place field props
 
@@ -191,6 +200,13 @@ fig_sup_global_remap_master(global_pf_dist,global_dist_scatter,reward_zones_all_
 lap_speed_by_animal(path_dir)
 
 %save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
+
+%% Export data for supplementary/extended figure analysis
+
+%navigate to matlab summary stats directory
+cd('G:\Google_drive\task_selective_place_paper\matlab_data')
+
+save('source_data_sup_2_3.mat', 'source_data_sup_2_3','-v7.3');
 
 
 %% Centroid difference for A&B tuned neurons and centroid diff as fxn of max bin (OLD)

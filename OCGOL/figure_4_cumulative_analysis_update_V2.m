@@ -194,12 +194,23 @@ source_data_short_learn_recall.angle_diff = return_angle_diff;
 %(Fig 5)
 source_data_short_learn_recall.corr_analysis = corr_analysis;
 
-%% Export source data Figure 4 and 5
+%% Export source data Figure 4 and 5 and sup 9 Fig
 
 %navigate to matlab summary stats directory
 cd('G:\Google_drive\task_selective_place_paper\matlab_data')
 
-save('source_data_fig4_5.mat', 'source_data_short_learn_recall','-v7.3');
+save('source_data_fig4_5_and_sup.mat', 'source_data_short_learn_recall','-v7.3');
+
+
+%% Export long term recall data for Ex data fig 10
+%corr_analysis - contains all the relevant data
+
+cd('G:\Google_drive\task_selective_place_paper\matlab_data')
+
+save('source_data_ex10_sup.mat', 'corr_analysis','-v7.3');
+
+
+
 
 %% Centroid difference plotter
 
@@ -224,7 +235,7 @@ master_plotter_fig5(PV_TC_plot_data,performance_mean_sem)
 
 %% Create new function here for plotting matching STCs here for Fig. 4 using new inputs
 
-%do last
+%do last - cosmetic for figure 4
 
 %% Supplement figure 9 plotter
 
@@ -234,6 +245,8 @@ master_si_sup_fig_plotter(performance_mean_sem,frac_tuned_across_days,PV_TC_plot
 
 master_lt_figure_plotter(frac_tuned_across_days,perf_data_plotting,PV_TC_plot_data,performance_mean_sem)
 
+%% OLD CODE
+%{
 %% Turn in to new script with relevant functions and archive this one
 
 %% Combine STC matches across time relative to D1 and neighboring days (all animals into 1) - OLD
@@ -630,3 +643,4 @@ export_fig(f ,fullfile('G:\Figure_4_figures','PV_across_track_raster.png'),'-r30
 if 0
     SCE_rate_plots(session_vars_learn,session_vars_recall,SCE_learning,SCE_recall, perf_learning,perf_recall)
 end
+%}
