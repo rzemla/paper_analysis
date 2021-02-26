@@ -190,16 +190,12 @@ options.tuning_type = 'si';
 %export data for statistical analysis
 source_data_short_learn_recall.angle_diff = return_angle_diff;
 
-%corr analysis contains A&B tuned lap correlation across time substructs
-%(Fig 5)
-source_data_short_learn_recall.corr_analysis = corr_analysis;
-
 %% Export source data Figure 4 and 5
 
 %navigate to matlab summary stats directory
 cd('G:\Google_drive\task_selective_place_paper\matlab_data')
 
-save('source_data_fig4_5.mat', 'source_data_short_learn_recall','-v7.3');
+save('source_data_fig3.mat', 'source_data_AB_remap','-v7.3');
 
 %% Centroid difference plotter
 

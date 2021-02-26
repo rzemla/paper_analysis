@@ -1,4 +1,5 @@
-function [frac_tuned_across_days] = plot_fraction_tuned_update(tuned_frac_learning,tuned_frac_recall,tuned_frac_long_recall)
+function [frac_tuned_across_days,si_frac_export,ts_frac_export] = plot_fraction_tuned_update(tuned_frac_learning,...
+    tuned_frac_recall,tuned_frac_long_recall)
 
 %% Get number of session in learning and recall
 

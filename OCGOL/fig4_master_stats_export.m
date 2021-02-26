@@ -5,7 +5,7 @@
 %import data for each figure
 
 %figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig3.mat')
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4.mat')
 
 
 %% Figure 3d Fraction of each class of remapping neurons
