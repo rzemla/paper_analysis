@@ -152,8 +152,8 @@ save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','partial_id
 save(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zones_all_animals.mat'),'reward_zones_all_animal');
 
 
-%scatterplot data for global remappers (bin position (100)
-source_data_sup_2_3.global_dist_scatter = global_dist_scatter;
+%distances between global remapping neurons for sup figure data
+source_data_sup_2_3.global_pf_dist= global_pf_dist;
 
 
 %% Export source data Figure 3
