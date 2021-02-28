@@ -23,15 +23,40 @@ recall.A = source_data_short_learn_recall.ts_frac_export.recall.A;
 recall.B = source_data_short_learn_recall.ts_frac_export.recall.B;
 recall.AB = source_data_short_learn_recall.ts_frac_export.recall.AB;
 
-%input data arranged as animal x day
-%number of time points
+%insert as animal x day
+(data, nb_animals, time_points, 
+
+%1-way repeated measures mixed effects analysis TS tuned
+%PACKAGE THIS FUNCTION (default input animal x day/time
+%fraction across time
+frac_score = learn.A ;
+frac_score = frac_score(:);
+
+%set up subject data/vector
 time_points = 7;
-%number of animals
 nb_animals = 6;
-[lme1_stats] = one_way_RM_lme(data_mat,nb_animals, nb_time_points);
 
+temp = categorical(repmat(1:nb_animals,time_points,1))';
+subject = temp;
+subject = subject(:);
 
+%time vector (define time points)
+%define ordinal time ranking
+time_value = {'1','2','3','4','5','6','7'};
+%define vector
+time_vec = repmat([1:7]',1,6)';
+time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
 
+%create entry table for 
+lme1_tbl = table(frac_score, subject, time_vec, 'VariableNames',{'corr', 'subject','time'});
+
+%fit LME with subjects being random factor
+lme1 = fitlme(lme1_tbl,'corr ~ 1+ time + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
+
+%anova on lme
+lme1_stats = anova(lme1,'DFMethod','satterthwaite');
+
+%check results with prism - good checks out
 %INSERT DAY LABELS HERE
 %2 paired t-tests with Holm-Sidak correction 
 %d1 vs d6 - works
