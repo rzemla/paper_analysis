@@ -376,47 +376,47 @@ writetable(t_2ks_partial_pf_dist,spreadsheet_name,'Sheet',sheet_name,"AutoFitWid
 %test_data  = [];
 
 %corr score vector
-temp = test_data';
-temp = temp(:);
-corr_score = temp;
-
-%subject data
-temp = categorical(repmat(1:11,6,1))';
-subject = temp(:);
-
-%trial_type vector
-trial_type = 3*ones(6,11);
-trial_type(:,1:6) = 2;
-trial_type = trial_type';
-trial_type = categorical(trial_type(:)); 
-
-%time vector
-%define ordinal time rankining
-time_value = {'1','2','3','4','5','6'};
-
-
-time_vec = repmat([1:6]',1,11)';
-time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
-
-% %organize into columns for input to lme
-% Corr_score
-% Subject 
-% Time
-% Trial_type
-
-%organize test data into table
-lme_tbl = table(corr_score, subject, time_vec, trial_type, 'VariableNames',{'corr', 'subject','time','trial'});
-
-%fit LME with subjects being random factor
-lme = fitlme(lme_tbl,'corr ~ 1+ time*trial + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
-
-%fit LME with symmetrical covariance matrix (sphericity adjustment) - no
-%sig difference
-%compound symmetry structure/isotropic symmetry structure 'CompSymm'
-%lme = fitlme(lme_tbl,'corr ~ 1+ time*trial + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
-
-%anova on lme
-lme_stats = anova(lme,'DFMethod','satterthwaite')
+% temp = test_data';
+% temp = temp(:);
+% corr_score = temp;
+% 
+% %subject data
+% temp = categorical(repmat(1:11,6,1))';
+% subject = temp(:);
+% 
+% %trial_type vector
+% trial_type = 3*ones(6,11);
+% trial_type(:,1:6) = 2;
+% trial_type = trial_type';
+% trial_type = categorical(trial_type(:)); 
+% 
+% %time vector
+% %define ordinal time rankining
+% time_value = {'1','2','3','4','5','6'};
+% 
+% 
+% time_vec = repmat([1:6]',1,11)';
+% time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
+% 
+% % %organize into columns for input to lme
+% % Corr_score
+% % Subject 
+% % Time
+% % Trial_type
+% 
+% %organize test data into table
+% lme_tbl = table(corr_score, subject, time_vec, trial_type, 'VariableNames',{'corr', 'subject','time','trial'});
+% 
+% %fit LME with subjects being random factor
+% lme = fitlme(lme_tbl,'corr ~ 1+ time*trial + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
+% 
+% %fit LME with symmetrical covariance matrix (sphericity adjustment) - no
+% %sig difference
+% %compound symmetry structure/isotropic symmetry structure 'CompSymm'
+% %lme = fitlme(lme_tbl,'corr ~ 1+ time*trial + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
+% 
+% %anova on lme
+% lme_stats = anova(lme,'DFMethod','satterthwaite')
 
 
 %% 1-way RM linear mixed model ANOVA (mixed effects analysis)
@@ -425,29 +425,29 @@ lme_stats = anova(lme,'DFMethod','satterthwaite')
 %si_short_term_recall_test = [];
 
 %fraction across time
-frac_score = si_short_term_recall_test';
-frac_score = frac_score(:);
-
-%subject data
-temp = categorical(repmat(1:6,7,1))';
-subject = temp';
-subject = subject(:);
-
-%time vector
-%define ordinal time ranking
-time_value = {'1','2','3','4','5','6','7'};
-
-time_vec = repmat([1:7]',1,6);
-time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
-
-%create entry table for 
-lme1_tbl = table(frac_score, subject, time_vec, 'VariableNames',{'corr', 'subject','time'});
-
-%fit LME with subjects being random factor
-lme1 = fitlme(lme1_tbl,'corr ~ 1+ time + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
-
-%anova on lme
-lme1_stats = anova(lme1,'DFMethod','satterthwaite');
+% frac_score = si_short_term_recall_test';
+% frac_score = frac_score(:);
+% 
+% %subject data
+% temp = categorical(repmat(1:6,7,1))';
+% subject = temp';
+% subject = subject(:);
+% 
+% %time vector
+% %define ordinal time ranking
+% time_value = {'1','2','3','4','5','6','7'};
+% 
+% time_vec = repmat([1:7]',1,6);
+% time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
+% 
+% %create entry table for 
+% lme1_tbl = table(frac_score, subject, time_vec, 'VariableNames',{'corr', 'subject','time'});
+% 
+% %fit LME with subjects being random factor
+% lme1 = fitlme(lme1_tbl,'corr ~ 1+ time + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
+% 
+% %anova on lme
+% lme1_stats = anova(lme1,'DFMethod','satterthwaite');
 
 %fit LME with subjects being random factor
 %run with symmetrical covariance matrix - i.e. adjust to make variances

@@ -16,32 +16,57 @@ load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_
 %unload data (animal x day)
 learn.A = source_data_short_learn_recall.ts_frac_export.learning.A;
 learn.B = source_data_short_learn_recall.ts_frac_export.learning.B;
-learn.B = source_data_short_learn_recall.ts_frac_export.learning.AB;
+learn.AB = source_data_short_learn_recall.ts_frac_export.learning.AB;
 
 %short recall data (animal x day)
 recall.A = source_data_short_learn_recall.ts_frac_export.recall.A;
 recall.B = source_data_short_learn_recall.ts_frac_export.recall.B;
 recall.AB = source_data_short_learn_recall.ts_frac_export.recall.AB;
 
+%learn data
 %input data arranged as animal x day
 %number of time points
-time_points = 7;
+nb_time_points = 7;
 %number of animals
 nb_animals = 6;
-[lme1_stats] = one_way_RM_lme(data_mat,nb_animals, nb_time_points);
+[lme1_stats] = one_way_RM_lme(learn.A,nb_animals, nb_time_points);
+%output statistics
+lme_stats_out = dataset2table(lme1_stats(2,:));
 
+%d1 vs d6 test
+t_stats.learnA6 = paired_ttest(learn.A(:,1), learn.A(:,6));
 
+%d1 vs d7 test
+t_stats.learnA7 = paired_ttest(learn.A(:,1), learn.A(:,7));
 
-%INSERT DAY LABELS HERE
-%2 paired t-tests with Holm-Sidak correction 
-%d1 vs d6 - works
-[h,p,ci,stats] = ttest(learn.A(:,1), learn.A(:,6))
-%d1 vs d7
-[h,p,ci,stats] = ttest(learn.A(:,1), learn.A(:,7))
-
-%generate function for stats output function with this 
-%p val, test val, n, dof
 %Holm-Sidak correction for mult comp paired t-test 
+p = [t_stats.learnA6(1) t_stats.learnA7(1)];
+p_adj = holm_sidak_p_adj(p,numel(p),0.05);
+
+%1 way RM linear mixed effects model stats
+nb_entries = 1;
+
+fig_num = repmat(4,nb_entries,1);
+fig_sub = string(repmat('e',nb_entries,1));
+data_agg = string(repmat('by animal',nb_entries,1));
+comp_descrip = {'Fraction of remapping neuron subtypes (common, activity, global, partial, unclassified)';};
+n_sample = [friedman_stats(3)]';
+test_name = repmat({'Friedman test'},nb_entries,1);
+n_dof = friedman_stats(4);
+test_statistic = [friedman_stats(2)]';
+adj_method = string(repmat('N/A', nb_entries,1));
+p_all = [friedman_stats(1)]';
+p_adj = string(repmat('N/A', nb_entries,1));
+sig_level = check_p_value_sig(p_all);
+
+%create table
+t_frac_friedman = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+
 %% Figure 3d Fraction of each class of remapping neurons
 
 %unload fractional data

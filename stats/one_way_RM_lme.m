@@ -19,7 +19,7 @@ time_vec = repmat([1:7]',1,6)';
 time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
 
 %create entry table for 
-lme1_tbl = table(frac_score, subject, time_vec, 'VariableNames',{'corr', 'subject','time'});
+lme1_tbl = table(data_mat, subject, time_vec, 'VariableNames',{'corr', 'subject','time'});
 
 %fit LME with subjects being random factor
 lme1 = fitlme(lme1_tbl,'corr ~ 1+ time + (1|subject)','FitMethod','REML','DummyVarCoding','effects');

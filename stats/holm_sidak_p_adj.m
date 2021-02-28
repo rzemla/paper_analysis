@@ -1,5 +1,5 @@
 function [p_corr_orig_order] = holm_sidak_p_adj(p,c,alpha)
-%return Holm-Sidak adjusted p values
+%return Holm-Sidak adjusted p values (row  vector)
 
 %for duplicates, run native with 4 comparisons, and choose the higher
 %corrected p value for that duplicate value
