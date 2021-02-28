@@ -5,9 +5,65 @@
 %import data for each figure
 
 %figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4.mat')
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4.mat')
+
+%laptop directory
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 
+%% Figure 4e - fraction of task selective place cells over days in ST learn and recall
+
+%unload data (animal x day)
+learn.A = source_data_short_learn_recall.ts_frac_export.learning.A;
+learn.B = source_data_short_learn_recall.ts_frac_export.learning.B;
+learn.B = source_data_short_learn_recall.ts_frac_export.learning.AB;
+
+%short recall data (animal x day)
+recall.A = source_data_short_learn_recall.ts_frac_export.recall.A;
+recall.B = source_data_short_learn_recall.ts_frac_export.recall.B;
+recall.AB = source_data_short_learn_recall.ts_frac_export.recall.AB;
+
+%1-way repeated measures mixed effects analysis TS tuned
+%PACKAGE THIS FUNCTION (default input animal x day/time
+%fraction across time
+frac_score = learn.A ;
+frac_score = frac_score(:);
+
+%set up subject data/vector
+time_points = 7;
+nb_animals = 6;
+
+temp = categorical(repmat(1:nb_animals,time_points,1))';
+subject = temp;
+subject = subject(:);
+
+%time vector (define time points)
+%define ordinal time ranking
+time_value = {'1','2','3','4','5','6','7'};
+%define vector
+time_vec = repmat([1:7]',1,6)';
+time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
+
+%create entry table for 
+lme1_tbl = table(frac_score, subject, time_vec, 'VariableNames',{'corr', 'subject','time'});
+
+%fit LME with subjects being random factor
+lme1 = fitlme(lme1_tbl,'corr ~ 1+ time + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
+
+%anova on lme
+lme1_stats = anova(lme1,'DFMethod','satterthwaite');
+
+%check results with prism - good checks out
+%INSERT DAY LABELS HERE
+%2 paired t-tests with Holm-Sidak correction 
+%d1 vs d6 - works
+[h,p,ci,stats] = ttest(learn.A(:,1), learn.A(:,6))
+%d1 vs d7
+[h,p,ci,stats] = ttest(learn.A(:,1), learn.A(:,7))
+
+%generate function for stats output function with this 
+%p val, test val, n, dof
+%Holm-Sidak correction for mult comp paired t-test 
 %% Figure 3d Fraction of each class of remapping neurons
 
 %unload fractional data
