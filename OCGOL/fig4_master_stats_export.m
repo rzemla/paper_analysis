@@ -23,15 +23,22 @@ recall.A = source_data_short_learn_recall.ts_frac_export.recall.A;
 recall.B = source_data_short_learn_recall.ts_frac_export.recall.B;
 recall.AB = source_data_short_learn_recall.ts_frac_export.recall.AB;
 
-%learn data
+%1-way RM LME analysis for learn
 %input data arranged as animal x day
 %number of time points
 nb_time_points = 7;
 %number of animals
 nb_animals = 6;
-[lme1_stats] = one_way_RM_lme(learn.A,nb_animals, nb_time_points);
-%output statistics
-lme_stats_out = dataset2table(lme1_stats(2,:));
+[lme_stats.learnA] = one_way_RM_lme(learn.A,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme] = one_way_lme_table_entry(4,'e','by animal',...
+                'A tuned fraction across time - Learning D1-D7 - TS)',...
+                size(learn.A,1),lme_stats.learnA);
+
+
+
+%run paired t-tests here for each class of neurons
 
 %d1 vs d6 test
 t_stats.learnA6 = paired_ttest(learn.A(:,1), learn.A(:,6));
@@ -42,29 +49,6 @@ t_stats.learnA7 = paired_ttest(learn.A(:,1), learn.A(:,7));
 %Holm-Sidak correction for mult comp paired t-test 
 p = [t_stats.learnA6(1) t_stats.learnA7(1)];
 p_adj = holm_sidak_p_adj(p,numel(p),0.05);
-
-%1 way RM linear mixed effects model stats
-nb_entries = 1;
-
-fig_num = repmat(4,nb_entries,1);
-fig_sub = string(repmat('e',nb_entries,1));
-data_agg = string(repmat('by animal',nb_entries,1));
-comp_descrip = {'Fraction of remapping neuron subtypes (common, activity, global, partial, unclassified)';};
-n_sample = [friedman_stats(3)]';
-test_name = repmat({'Friedman test'},nb_entries,1);
-n_dof = friedman_stats(4);
-test_statistic = [friedman_stats(2)]';
-adj_method = string(repmat('N/A', nb_entries,1));
-p_all = [friedman_stats(1)]';
-p_adj = string(repmat('N/A', nb_entries,1));
-sig_level = check_p_value_sig(p_all);
-
-%create table
-t_frac_friedman = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
-            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
-            'VariableNames',{'Figure','Subfigure','Data aggregation',...
-            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
-            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
 
 
 %% Figure 3d Fraction of each class of remapping neurons

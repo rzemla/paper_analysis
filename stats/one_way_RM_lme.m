@@ -1,4 +1,4 @@
-function [lme1_stats] = one_way_RM_lme(data_mat,nb_animals, nb_time_points)
+function [lme_stats_out] = one_way_RM_lme(data_mat,nb_animals, nb_time_points)
 
 %vectorize input data values
 data_mat = data_mat(:);
@@ -26,6 +26,9 @@ lme1 = fitlme(lme1_tbl,'corr ~ 1+ time + (1|subject)','FitMethod','REML','DummyV
 
 %anova on lme
 lme1_stats = anova(lme1,'DFMethod','satterthwaite');
+
+%out data converted to table format
+lme_stats_out = dataset2table(lme1_stats(2,:));
 
 end
 

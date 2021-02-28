@@ -29,9 +29,8 @@ recall.AB = source_data_short_learn_recall.ts_frac_export.recall.AB;
 nb_time_points = 7;
 %number of animals
 nb_animals = 6;
-[lme1_stats] = one_way_RM_lme(learn.A,nb_animals, nb_time_points);
-%output statistics
-lme_stats_out = dataset2table(lme1_stats(2,:));
+[lme_stats.learnA] = one_way_RM_lme(learn.A,nb_animals, nb_time_points);
+
 
 %d1 vs d6 test
 t_stats.learnA6 = paired_ttest(learn.A(:,1), learn.A(:,6));
@@ -39,10 +38,38 @@ t_stats.learnA6 = paired_ttest(learn.A(:,1), learn.A(:,6));
 %d1 vs d7 test
 t_stats.learnA7 = paired_ttest(learn.A(:,1), learn.A(:,7));
 
-
 %Holm-Sidak correction for mult comp paired t-test 
-p = [t_stats.learnA6(1) t_stats.learnA7(1)]
+p = [t_stats.learnA6(1) t_stats.learnA7(1)];
 p_adj = holm_sidak_p_adj(p,numel(p),0.05);
+
+%1 way RM linear mixed effects model stats
+nb_entries = 1;
+
+%create function
+one_way_lme_table_entry
+
+fig_num = repmat(4,nb_entries,1);
+fig_sub = string(repmat('e',nb_entries,1));
+data_agg = string(repmat('by animal',nb_entries,1));
+comp_descrip = {'A tuned fraction across time - Learning D1-D7 - TS)';};
+n_sample = [size(learn.A,1)]';
+test_name = repmat({'1-way RM linear mixed effects analysis'},nb_entries,1);
+n_dof = string(repmat('N/A', nb_entries,1));
+test_statistic = string(['F{',num2str(table2array(lme_stats_out(1,3))),', ',...
+                    num2str(table2array(lme_stats_out(1,4))),...
+                     ') = ', num2str(table2array(lme_stats_out(1,2)))]);
+
+adj_method = string(repmat('N/A', nb_entries,1));
+p_all = [table2array(lme_stats_out(1,5))]';
+p_adj = string(repmat('N/A', nb_entries,1));
+sig_level = check_p_value_sig(p_all);
+
+%create table
+t_frac_learnA_1_rm_lme = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
 
 
 %% Figure 3d Fraction of each class of remapping neurons
