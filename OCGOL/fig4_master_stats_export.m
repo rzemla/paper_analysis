@@ -25,6 +25,8 @@ recall.AB = source_data_short_learn_recall.ts_frac_export.recall.AB;
 
 %1-way RM LME analysis for learn
 %input data arranged as animal x day
+
+%A
 %number of time points
 nb_time_points = 7;
 %number of animals
@@ -32,24 +34,55 @@ nb_animals = 6;
 [lme_stats.learnA] = one_way_RM_lme(learn.A,nb_animals, nb_time_points);
 
 %generate 1-row table entry with 1 RM LME analysis
-[t_1_rm_lme] = one_way_lme_table_entry(4,'e','by animal',...
+[t_1_rm_lme.learnA] = one_way_lme_table_entry(4,'e','by animal',...
                 'A tuned fraction across time - Learning D1-D7 - TS)',...
                 size(learn.A,1),lme_stats.learnA);
+%B
+[lme_stats.learnB] = one_way_RM_lme(learn.B,nb_animals, nb_time_points);
 
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.learnB] = one_way_lme_table_entry(4,'e','by animal',...
+                'B tuned fraction across time - Learning D1-D7 - TS)',...
+                size(learn.B,1),lme_stats.learnB);
 
+%AB
+[lme_stats.learnAB] = one_way_RM_lme(learn.AB,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.learnAB] = one_way_lme_table_entry(4,'e','by animal',...
+                'A&B tuned fraction across time - Learning D1-D7 - TS)',...
+                size(learn.AB,1),lme_stats.learnAB);
 
 %run paired t-tests here for each class of neurons
-
+%Learn TS A
 %d1 vs d6 test
 t_stats.learnA6 = paired_ttest(learn.A(:,1), learn.A(:,6));
-
 %d1 vs d7 test
 t_stats.learnA7 = paired_ttest(learn.A(:,1), learn.A(:,7));
 
-%Holm-Sidak correction for mult comp paired t-test 
-p = [t_stats.learnA6(1) t_stats.learnA7(1)];
-p_adj = holm_sidak_p_adj(p,numel(p),0.05);
+%Learn TS B
+%d1 vs d6 test
+t_stats.learnB6 = paired_ttest(learn.B(:,1), learn.B(:,6));
+%d1 vs d7 test
+t_stats.learnB7 = paired_ttest(learn.B(:,1), learn.B(:,7));
 
+%Learn TS AB
+%d1 vs d6 test
+t_stats.learnAB6 = paired_ttest(learn.AB(:,1), learn.AB(:,6));
+%d1 vs d7 test
+t_stats.learnAB7 = paired_ttest(learn.AB(:,1), learn.AB(:,7));
+
+%assemble combined stats input table
+%learn A D6/D7
+data_input = [t_stats.learnA6; t_stats.learnA7];
+paired_ttest_table_entry(data_input)
+
+%what comparisons are being made
+comp_descrip_in = {'A tuned fraction across time - TS - Learning D1 vs. D6';...
+                'A tuned fraction across time - TS - Learning D1 vs. D7'};
+
+[t_out_learnA_6_7] = paired_ttest_table_entry(data_input,...
+        4, 'e', 'by animal', comp_descrip_in);
 
 %% Figure 3d Fraction of each class of remapping neurons
 
