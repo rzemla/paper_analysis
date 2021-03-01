@@ -183,7 +183,8 @@ comp_descrip_in = {'A&B tuned fraction across time - TS - Recall D1 vs. D6';...
 
 
 %% 2-way repeated measures mixed effects ANOVA (equivalent to PRISM output)
-%test_data  = [];
+
+%PV A
 
 PV_learn.A = source_data_short_learn_recall.PV.st_learn.A';
 PV_recall.A = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.A';
@@ -197,44 +198,24 @@ PV_recall.A(:,[4,5]) = nan;
 data_in_1 = PV_learn.A(:,[2,3,6,7]);
 data_in_2 = PV_recall.A(:,[2,3,6,7]);
 
+lme_stats = two_way_rm_lme(data_in_1,data_in_2);
 
+%unpaired t-tests
+%output: p-val, t-statistic, n1, n2, dof
+%PV day 6 learn vs recall
+[ttest_stats.PV_learn_recall_6A] = unpaired_ttest(PV_learn.A(:,6), PV_recall.A(:,6));
 
-%number of time points
-nb_timepoints = size(data_in_1,2);
+%PV day 7 learn vs recall
+[ttest_stats.PV_learn_recall_7A] = unpaired_ttest(PV_learn.A(:,7), PV_recall.A(:,7));
 
-%number of total animals
-nb_animals = size(data_in_1,1) + size(data_in_2,1);
+%paired t-test comparisons
+%Recall TS A
+%d2 vs. d6 time learn A 
+ttest_stats.PV_learnA2v6 = paired_ttest(PV_learn.A(:,2), PV_learn.A(:,6));
 
-%correlation score vector
-corr_score = [data_in_1; data_in_2];
-corr_score = corr_score(:);
+%d1 vs d7 test
+t_stats.recallAB7 = paired_ttest(PV_learn.A(:,2), PV_learn.A(:,7));
 
-%subject data
-subject = categorical(repmat(1:nb_animals,nb_timepoints,1))';
-subject = subject(:);
-
-%behavior_type vector(1 = learn; 2 = recall)
-behavior_type = [ones(size(data_in_1,1),nb_timepoints); 2*ones(size(data_in_2,1),nb_timepoints)];
-behavior_type = categorical(behavior_type(:)); 
-
-%time vector
-%define ordinal time rankining
-for ii=1:nb_timepoints
-    %each time point is a cell
-   time_value(ii) = {num2str(ii)};
-end
-
-time_vec = repmat([1:nb_timepoints]',1,nb_animals)';
-time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
-
-%organize test data into table
-lme_tbl = table(corr_score, subject, time_vec, behavior_type, 'VariableNames',{'corr', 'subject','time','behavior'});
-
-%fit LME with subjects being random factor
-lme = fitlme(lme_tbl,'corr ~ 1+ time*behavior + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
-
-%anova on lme
-lme_stats = anova(lme,'DFMethod','satterthwaite');
 
 
 %% Assemble Figure 4 stats export table

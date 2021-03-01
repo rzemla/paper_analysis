@@ -200,9 +200,36 @@ data_in_2 = PV_recall.A(:,[2,3,6,7]);
 
 lme_stats = two_way_rm_lme(data_in_1,data_in_2);
 
-%unpaired and paired t-tests
+%unpaired t-tests
+%output: p-val, t-statistic, n1, n2, dof
+%PV day 6 learn vs recall
+[ttest_stats.PV_learn_recall_6A] = unpaired_ttest(PV_learn.A(:,6), PV_recall.A(:,6));
+
+%PV day 7 learn vs recall
+[ttest_stats.PV_learn_recall_7A] = unpaired_ttest(PV_learn.A(:,7), PV_recall.A(:,7));
+
+%paired t-test comparisons
+
+%PV d2 vs. d6 time learn A 
+ttest_stats.PV_learnA2v6 = paired_ttest(PV_learn.A(:,2), PV_learn.A(:,6));
+
+%PV d2 vs d7 time learn A
+ttest_stats.PV_learnA2v7 = paired_ttest(PV_learn.A(:,2), PV_learn.A(:,7));
+
+%PV d2 vs. d6 time recall A 
+ttest_stats.PV_recallA2v6 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,6));
+
+%PV d2 vs d7 time recall A
+ttest_stats.PV_recallA2v7 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,7));
+
+%create formatting table for 2-way analysis
 
 
+%create formatting table for unpaired t-test comparison
+data_input = [];
+
+[t_ttest.recallAB_6_7] = unpaired_ttest_table_entry(data_input,...
+        4, 'e', 'by animal', comp_descrip_in);
 
 
 %% Assemble Figure 4 stats export table
