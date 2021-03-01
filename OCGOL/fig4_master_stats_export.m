@@ -11,17 +11,13 @@ load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_
 %load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 
-%% Figure 4e - fraction of task selective place cells over days in ST learn and recall
+%% Figure 4e Learning Analysis 
+%fraction of task selective place cells over days in ST learn and recall
 
 %unload data (animal x day)
 learn.A = source_data_short_learn_recall.ts_frac_export.learning.A;
 learn.B = source_data_short_learn_recall.ts_frac_export.learning.B;
 learn.AB = source_data_short_learn_recall.ts_frac_export.learning.AB;
-
-%short recall data (animal x day)
-recall.A = source_data_short_learn_recall.ts_frac_export.recall.A;
-recall.B = source_data_short_learn_recall.ts_frac_export.recall.B;
-recall.AB = source_data_short_learn_recall.ts_frac_export.recall.AB;
 
 %1-way RM LME analysis for learn
 %input data arranged as animal x day
@@ -35,14 +31,14 @@ nb_animals = 6;
 
 %generate 1-row table entry with 1 RM LME analysis
 [t_1_rm_lme.learnA] = one_way_lme_table_entry(4,'e','by animal',...
-                'A tuned fraction across time - Learning D1-D7 - TS)',...
+                'A tuned fraction across time - Learning D1-D7 - TS',...
                 size(learn.A,1),lme_stats.learnA);
 %B
 [lme_stats.learnB] = one_way_RM_lme(learn.B,nb_animals, nb_time_points);
 
 %generate 1-row table entry with 1 RM LME analysis
 [t_1_rm_lme.learnB] = one_way_lme_table_entry(4,'e','by animal',...
-                'B tuned fraction across time - Learning D1-D7 - TS)',...
+                'B tuned fraction across time - Learning D1-D7 - TS',...
                 size(learn.B,1),lme_stats.learnB);
 
 %AB
@@ -50,7 +46,7 @@ nb_animals = 6;
 
 %generate 1-row table entry with 1 RM LME analysis
 [t_1_rm_lme.learnAB] = one_way_lme_table_entry(4,'e','by animal',...
-                'A&B tuned fraction across time - Learning D1-D7 - TS)',...
+                'A&B tuned fraction across time - Learning D1-D7 - TS',...
                 size(learn.AB,1),lme_stats.learnAB);
 
 %run paired t-tests here for each class of neurons
@@ -72,17 +68,162 @@ t_stats.learnAB6 = paired_ttest(learn.AB(:,1), learn.AB(:,6));
 %d1 vs d7 test
 t_stats.learnAB7 = paired_ttest(learn.AB(:,1), learn.AB(:,7));
 
-%assemble combined stats input table
 %learn A D6/D7
 data_input = [t_stats.learnA6; t_stats.learnA7];
-paired_ttest_table_entry(data_input)
 
 %what comparisons are being made
 comp_descrip_in = {'A tuned fraction across time - TS - Learning D1 vs. D6';...
                 'A tuned fraction across time - TS - Learning D1 vs. D7'};
 
-[t_out_learnA_6_7] = paired_ttest_table_entry(data_input,...
+[t_ttest.learnA_6_7] = paired_ttest_table_entry(data_input,...
         4, 'e', 'by animal', comp_descrip_in);
+
+%learn B D6/D7
+data_input = [t_stats.learnB6; t_stats.learnB7];
+
+%what comparisons are being made
+comp_descrip_in = {'B tuned fraction across time - TS - Learning D1 vs. D6';...
+                'B tuned fraction across time - TS - Learning D1 vs. D7'};
+
+[t_ttest.learnB_6_7] = paired_ttest_table_entry(data_input,...
+        4, 'e', 'by animal', comp_descrip_in);
+
+%learn AB D6/D7
+data_input = [t_stats.learnAB6; t_stats.learnAB7];
+
+%what comparisons are being made
+comp_descrip_in = {'A&B tuned fraction across time - TS - Learning D1 vs. D6';...
+                'A&B tuned fraction across time - TS - Learning D1 vs. D7'};
+
+[t_ttest.learnAB_6_7] = paired_ttest_table_entry(data_input,...
+        4, 'e', 'by animal', comp_descrip_in);
+
+%% Figure 4e Recall analysis
+
+%short recall data (animal x day)
+recall.A = source_data_short_learn_recall.ts_frac_export.recall.A;
+recall.B = source_data_short_learn_recall.ts_frac_export.recall.B;
+recall.AB = source_data_short_learn_recall.ts_frac_export.recall.AB;
+
+%A
+%number of time points
+nb_time_points = 7;
+%number of animals
+nb_animals = 5;
+[lme_stats.recallA] = one_way_RM_lme(recall.A,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.recallA] = one_way_lme_table_entry(4,'e','by animal',...
+                'A tuned fraction across time - Recall D1-D9 - TS',...
+                size(recall.A,1),lme_stats.recallA);
+%B
+[lme_stats.recallB] = one_way_RM_lme(recall.B,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.recallB] = one_way_lme_table_entry(4,'e','by animal',...
+                'B tuned fraction across time - Recall D1-D9 - TS',...
+                size(recall.B,1),lme_stats.recallB);
+
+%AB
+[lme_stats.recallAB] = one_way_RM_lme(recall.AB,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.recallAB] = one_way_lme_table_entry(4,'e','by animal',...
+                'A&B tuned fraction across time - Recall D1-D9 - TS',...
+                size(recall.AB,1),lme_stats.recallAB);
+
+%run paired t-tests here for each class of neurons
+%Recall TS A 
+%d1 vs d6 test
+t_stats.recallA6 = paired_ttest(recall.A(:,1), recall.A(:,4));
+%d1 vs d7 test
+t_stats.recallA7 = paired_ttest(recall.A(:,1), recall.A(:,5));
+
+%Recall TS B
+%d1 vs d6 test
+t_stats.recallB6 = paired_ttest(recall.B(:,1), recall.B(:,4));
+%d1 vs d7 test
+t_stats.recallB7 = paired_ttest(recall.B(:,1), recall.B(:,5));
+
+%Recall TS AB
+%d1 vs d6 test
+t_stats.recallAB6 = paired_ttest(recall.AB(:,1), recall.AB(:,4));
+%d1 vs d7 test
+t_stats.recallAB7 = paired_ttest(recall.AB(:,1), recall.AB(:,5));
+
+%recall A D6/D7
+data_input = [t_stats.recallA6; t_stats.recallA7];
+
+%what comparisons are being made
+comp_descrip_in = {'A tuned fraction across time - TS - Recall D1 vs. D6';...
+                'A tuned fraction across time - TS - Recall D1 vs. D7'};
+
+[t_ttest.recallA_6_7] = paired_ttest_table_entry(data_input,...
+        4, 'e', 'by animal', comp_descrip_in);
+
+%learn B D6/D7
+data_input = [t_stats.recallB6; t_stats.recallB7];
+
+%what comparisons are being made
+comp_descrip_in = {'B tuned fraction across time - TS - Recall D1 vs. D6';...
+                'B tuned fraction across time - TS - Recall D1 vs. D7'};
+
+[t_ttest.recallB_6_7] = paired_ttest_table_entry(data_input,...
+        4, 'e', 'by animal', comp_descrip_in);
+
+%recall AB D6/D7
+data_input = [t_stats.recallAB6; t_stats.recallAB7];
+
+%what comparisons are being made
+comp_descrip_in = {'A&B tuned fraction across time - TS - Recall D1 vs. D6';...
+                'A&B tuned fraction across time - TS - Recall D1 vs. D7'};
+
+[t_ttest.recallAB_6_7] = paired_ttest_table_entry(data_input,...
+        4, 'e', 'by animal', comp_descrip_in);
+
+
+%% Figure 4f PV correlation
+
+
+
+%% Assemble Figure 4 stats export table
+t1 = repmat({' '},1,12);
+
+%spreadsheet name
+spreadsheet_name = 'statistics_summary.xlsx';
+
+%sheet name
+sheet_name = 'Figure 4';
+
+%exported Excel spreadsheet
+%write to Excel spreadsheet
+%learn 4e
+writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','overwrite')
+writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_1_rm_lme.learnB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_ttest.learnB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_1_rm_lme.learnAB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_ttest.learnAB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+
+%recall 4e
+writetable(t_1_rm_lme.recallA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_ttest.recallA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_1_rm_lme.recallB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_ttest.recallB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+
+
 
 %% Figure 3d Fraction of each class of remapping neurons
 

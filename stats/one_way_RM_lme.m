@@ -15,7 +15,7 @@ for ii=1:nb_time_points
 end
 
 %define vector
-time_vec = repmat([1:7]',1,6)';
+time_vec = repmat([1:nb_time_points]',1,nb_animals)';
 time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
 
 %create entry table for 
