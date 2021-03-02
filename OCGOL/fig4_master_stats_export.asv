@@ -260,33 +260,33 @@ sheet_name = 'Figure 4';
 %exported Excel spreadsheet
 %write to Excel spreadsheet
 %learn 4e
-writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','overwrite')
-writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','overwrite')
+writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
-writetable(t_1_rm_lme.learnB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.learnB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.learnB,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.learnB_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
-writetable(t_1_rm_lme.learnAB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.learnAB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.learnAB,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.learnAB_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
 
 %recall 4e
-writetable(t_1_rm_lme.recallA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.recallA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.recallA,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallA_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
-writetable(t_1_rm_lme.recallB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.recallB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.recallB,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_2way_rm_lme.PV_learn_recallA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.PV_learn_recallA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
 
 
 
