@@ -199,10 +199,14 @@ data_in_1 = PV_learn.A(:,[2,3,6,7]);
 data_in_2 = PV_recall.A(:,[2,3,6,7]);
 
 %output stats for 2way RM LME analysis
-lme_stats = two_way_rm_lme(data_in_1,data_in_2);
+lme_stats.PV_learn_recall.A = two_way_rm_lme(data_in_1,data_in_2);
 
 %create formatting table for 2-way analysis
-
+[t_2way_rm_lme.PV_learn_recallA] = two_way_lme_table_entry(4,'f','by animal',...
+                'Population vector correlation relative to D1  - A laps',...
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.PV_learn_recall.A);
+            
+            
 %unpaired t-tests
 %output: p-val, t-statistic, n1, n2, dof
 %PV day 6 learn vs recall
@@ -256,31 +260,33 @@ sheet_name = 'Figure 4';
 %exported Excel spreadsheet
 %write to Excel spreadsheet
 %learn 4e
-writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','overwrite')
-writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','overwrite')
+writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_1_rm_lme.learnB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_ttest.learnB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.learnB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.learnB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_1_rm_lme.learnAB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_ttest.learnAB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.learnAB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.learnAB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
 
 %recall 4e
-writetable(t_1_rm_lme.recallA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_ttest.recallA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(t_1_rm_lme.recallA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_1_rm_lme.recallB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_ttest.recallB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.recallB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
 
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.PV_learn_recallA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
 
 
 

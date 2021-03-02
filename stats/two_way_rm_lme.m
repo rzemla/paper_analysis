@@ -1,4 +1,4 @@
-function [lme_stats] = two_way_rm_lme(data_in_1,data_in_2)
+function [lme_stats_out] = two_way_rm_lme(data_in_1,data_in_2)
 
 %number of time points
 nb_timepoints = size(data_in_1,2);
@@ -35,8 +35,10 @@ lme_tbl = table(corr_score, subject, time_vec, behavior_type, 'VariableNames',{'
 lme = fitlme(lme_tbl,'corr ~ 1+ time*behavior + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
 
 %anova on lme
-lme_stats = anova(lme,'DFMethod','satterthwaite');
+lme1_stats = anova(lme,'DFMethod','satterthwaite');
 
+%out data converted to table format
+lme_stats_out = dataset2table(lme1_stats([2:end],:));
 
 end
 
