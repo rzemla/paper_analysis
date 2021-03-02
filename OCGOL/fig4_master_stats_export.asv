@@ -5,10 +5,10 @@
 %import data for each figure
 
 %figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 %laptop directory
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 
 %% Figure 4e Learning Analysis 
@@ -204,8 +204,7 @@ lme_stats.PV_learn_recall.A = two_way_rm_lme(data_in_1,data_in_2);
 %create formatting table for 2-way analysis
 [t_2way_rm_lme.PV_learn_recallA] = two_way_lme_table_entry(4,'f','by animal',...
                 'Population vector correlation relative to D1  - A laps',...
-                [size(data_in_1,1), size(data_in_2,1)],lme_stats.PV_learn_recall.A);
-            
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.PV_learn_recall.A);       
             
 %unpaired t-tests
 %output: p-val, t-statistic, n1, n2, dof
@@ -238,16 +237,22 @@ ttest_stats.PV_recallA2v6 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,6));
 %PV d2 vs d7 time recall A
 ttest_stats.PV_recallA2v7 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,7));
 
-%create formatting table for unpaired t-test comparison
-data_input = [ttest_stats.PV_learn_recall_6A; ttest_stats.PV_learn_recall_7A];
+%generate paired t-test table entries
+data_input = [ttest_stats.PV_learnA2v6; ttest_stats.PV_learnA2v7];
 
-comp_descrip_in = {'Learning vs recall PV correlation D6 - A laps';...
-                'Learning vs recall PV correlation D7 - A laps'};
+%what comparisons are being made
+comp_descrip_in = {'Learning PV correlation - time -D2 vs. D6 - A laps';...
+                'Learning PV correlation - time -D2 vs. D7 - A laps'};
 
-[t_ttest.learn_recallA_6_7] = unpaired_ttest_table_entry(data_input,...
+[t_ttestPV_learnA2v6_7] = paired_ttest_table_entry(data_input,...
         4, 'f', 'by animal', comp_descrip_in);
+    
 
 
+
+%% Kruskall Wallis test is the last to implement    
+    
+    
 %% Assemble Figure 4 stats export table
 t1 = repmat({' '},1,12);
 
@@ -260,34 +265,38 @@ sheet_name = 'Figure 4';
 %exported Excel spreadsheet
 %write to Excel spreadsheet
 %learn 4e
-writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','overwrite')
-writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",false,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','overwrite')
+writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
-writetable(t_1_rm_lme.learnB,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
-writetable(t_ttest.learnB_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.learnB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.learnB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
-writetable(t_1_rm_lme.learnAB,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
-writetable(t_ttest.learnAB_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.learnAB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.learnAB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',false,'UseExcel', true,'WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
 %recall 4e
-writetable(t_1_rm_lme.recallA,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.recallA_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.recallA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallA_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
-writetable(t_1_rm_lme.recallB,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.recallB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
-writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'autofitwidth',true,'UseExcel', true','WriteMode','append')
-writetable(t_2way_rm_lme.PV_learn_recallA,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'UseExcel', true','WriteMode','append')
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.PV_learn_recallA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
+%4f PV correlation across days -A trials
+%tables: 
+t_2way_rm_lme.PV_learn_recallA 
+t_ttest.learn_recallA_6_7
 
 
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function

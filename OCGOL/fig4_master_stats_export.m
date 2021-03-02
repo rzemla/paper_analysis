@@ -237,13 +237,25 @@ ttest_stats.PV_recallA2v6 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,6));
 %PV d2 vs d7 time recall A
 ttest_stats.PV_recallA2v7 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,7));
 
-%create formatting table for unpaired t-test comparison
-data_input = [ttest_stats.PV_learn_recall_6A; ttest_stats.PV_learn_recall_7A];
+%generate paired t-test table entries
+%learn A time D2 vs. D7
+data_input = [ttest_stats.PV_learnA2v6; ttest_stats.PV_learnA2v7];
 
-comp_descrip_in = {'Learning vs recall PV correlation D6 - A laps';...
-                'Learning vs recall PV correlation D7 - A laps'};
+%what comparisons are being made
+comp_descrip_in = {'Learning PV correlation - time -D2 vs. D6 - A laps';...
+                'Learning PV correlation - time -D2 vs. D7 - A laps'};
 
-[t_ttest.learn_recallA_6_7] = unpaired_ttest_table_entry(data_input,...
+[t_ttest.PV_learnA2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+    
+%recall A time D2 vs. D7
+data_input = [ttest_stats.PV_recallA2v6; ttest_stats.PV_recallA2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall PV correlation - time -D2 vs. D6 - A laps';...
+                'Recall PV correlation - time -D2 vs. D7 - A laps'};
+
+[t_ttest.PV_recallA2v6_7] = paired_ttest_table_entry(data_input,...
         4, 'f', 'by animal', comp_descrip_in);
 
 
@@ -287,10 +299,13 @@ writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true',
 writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
+%4f PV correlation across days -A trials
+%tables: 
 writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_2way_rm_lme.PV_learn_recallA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
-
-
+writetable(t_ttest.learn_recallA_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.PV_learnA2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.PV_recallA2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
 

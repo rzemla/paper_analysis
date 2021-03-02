@@ -9,7 +9,12 @@ fig_num = repmat(num_in,nb_entries,1);
 fig_sub = string(repmat(sub_in,nb_entries,1));
 data_agg = string(repmat(data_agg,nb_entries,1));
 comp_descrip = comp_descrip_in;
-n_sample = string(data_input(:,[3,4]));
+
+n_sample = [];
+for ii=1:nb_entries
+    n_sample = [n_sample; string([num2str(data_input(ii,3)),', ',num2str(data_input(ii,4))])],
+end
+
 test_name = repmat({'Unpaired t-test'},nb_entries,1);
 n_dof = data_input(:,5);
 test_statistic = data_input(:,2);
