@@ -204,8 +204,7 @@ lme_stats.PV_learn_recall.A = two_way_rm_lme(data_in_1,data_in_2);
 %create formatting table for 2-way analysis
 [t_2way_rm_lme.PV_learn_recallA] = two_way_lme_table_entry(4,'f','by animal',...
                 'Population vector correlation relative to D1  - A laps',...
-                [size(data_in_1,1), size(data_in_2,1)],lme_stats.PV_learn_recall.A);
-%CONTINUE MODIFYING THIS            
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.PV_learn_recall.A);       
             
 %unpaired t-tests
 %output: p-val, t-statistic, n1, n2, dof
@@ -248,6 +247,9 @@ comp_descrip_in = {'Learning vs recall PV correlation D6 - A laps';...
         4, 'f', 'by animal', comp_descrip_in);
 
 
+%% Kruskall Wallis test is the last to implement    
+    
+    
 %% Assemble Figure 4 stats export table
 t1 = repmat({' '},1,12);
 
