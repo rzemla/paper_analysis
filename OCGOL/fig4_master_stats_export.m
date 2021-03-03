@@ -515,13 +515,13 @@ ttest_stats.PVn_recallA12v67 = paired_ttest(PVn_recall.A(:,1), PVn_recall.A(:,6)
 data_input = [ttest_stats.PVn_learnA12v67];
 comp_descrip_in = {'PV correlation learning A - time - 1 vs. 2 vs. 6 vs. 7'};
 [t_ttest.PVn_learnA12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
 
 %paired t-test single-entry table - PV neighbor recall 1vs2 vs 6 vs 7
 data_input = [ttest_stats.PVn_recallA12v67];
 comp_descrip_in = {'PV correlation recall A - time - 1 vs. 2 vs. 6 vs. 7'};
 [t_ttest.PVn_recallA12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
     
 %unpaired t-tests
 %output: p-val, t-statistic, n1, n2, dof
@@ -538,7 +538,7 @@ comp_descrip_in = {'PV correlation learning vs. recall A - behavior - 1 vs. 2';.
                 'PV correlation learning vs. recall A - behavior -6 vs. 7'};
 
 [t_ttest.PVn_learn_recallA_12_67] = unpaired_ttest_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
 
 %% PV neighboring days B
 %PV neighbor B
@@ -574,13 +574,13 @@ ttest_stats.PVn_recallB12v67 = paired_ttest(PVn_recall.B(:,1), PVn_recall.B(:,6)
 data_input = [ttest_stats.PVn_learnB12v67];
 comp_descrip_in = {'PV correlation learning B - time - 1 vs. 2 vs. 6 vs. 7'};
 [t_ttest.PVn_learnB12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
 
 %paired t-test single-entry table - PV neighbor recall 1vs2 vs 6 vs 7
 data_input = [ttest_stats.PVn_recallB12v67];
 comp_descrip_in = {'PV correlation recall B - time - 1 vs. 2 vs. 6 vs. 7'};
 [t_ttest.PVn_recallB12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
     
 %unpaired t-tests
 %output: p-val, t-statistic, n1, n2, dof
@@ -597,7 +597,7 @@ comp_descrip_in = {'PV correlation learning vs. recall B - behavior - 1 vs. 2';.
                 'PV correlation learning vs. recall B - behavior -6 vs. 7'};
 
 [t_ttest.PVn_learn_recallB_12_67] = unpaired_ttest_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
 %% TC TS neighboring days A
 
 %TC TS neighbor A
@@ -635,13 +635,13 @@ ttest_stats.TC_ts_n_recallA12v67 = paired_ttest(TC_ts_n_recall.A(:,1), TC_ts_n_r
 data_input = [ttest_stats.TC_ts_n_learnA12v67];
 comp_descrip_in = {'TC correlation learning A - time - 1 vs. 2 vs. 6 vs. 7'};
 [t_ttest.TC_ts_n_learnA12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
 
 %paired t-test single-entry table - PV neighbor recall 1vs2 vs 6 vs 7
 data_input = [ttest_stats.TC_ts_n_recallA12v67];
 comp_descrip_in = {'TC correlation recall A - time - 1 vs. 2 vs. 6 vs. 7'};
 [t_ttest.TC_ts_n_recallA12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
     
 %unpaired t-tests
 %output: p-val, t-statistic, n1, n2, dof
@@ -658,7 +658,7 @@ comp_descrip_in = {'TC correlation learning vs. recall A - behavior - 1 vs. 2 ';
                 'TC correlation learning vs. recall A - behavior -6 vs. 7 '};
 
 [t_ttest.TC_ts_n_learn_recallA_12_67] = unpaired_ttest_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
 
 
 %% TC TS neighboring days B
@@ -698,13 +698,13 @@ ttest_stats.TC_ts_n_recallB12v67 = paired_ttest(TC_ts_n_recall.B(:,1), TC_ts_n_r
 data_input = [ttest_stats.TC_ts_n_learnB12v67];
 comp_descrip_in = {'TC correlation learning B - time - 1 vs. 2 vs. 6 vs. 7'};
 [t_ttest.TC_ts_n_learnB12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
 
 %paired t-test single-entry table - PV neighbor recall 1vs2 vs 6 vs 7
 data_input = [ttest_stats.TC_ts_n_recallB12v67];
 comp_descrip_in = {'TC correlation recall B - time - 1 vs. 2 vs. 6 vs. 7'};
 [t_ttest.TC_ts_n_recallB12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
     
 %unpaired t-tests
 %output: p-val, t-statistic, n1, n2, dof
@@ -721,72 +721,75 @@ comp_descrip_in = {'TC correlation learning vs. recall B - behavior - 1 vs. 2 ';
                 'TC correlation learning vs. recall B - behavior -6 vs. 7 '};
 
 [t_ttest.TC_ts_n_learn_recallB_12_67] = unpaired_ttest_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+        4, 'g', 'by animal', comp_descrip_in);
     
 %% Centroid TS distance difference A
 %Centroid TS neighbor A
 
-source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean.A
-%same data
-%source_data_short_learn_recall.angle_diff.ts.st_recall.animal.raw.A;
+cent_ts_learn.A = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean.A;
+%same data as in raw sub-struct
+cent_ts_recall.A = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean.A;
 
-TC_ts_n_learn.A = source_data_short_learn_recall.TC.neighbor.ts.st_learn.A;
-TC_ts_n_recall.A = source_data_short_learn_recall.TC.neighbor.ts.st_recall.A;
-
-%format data for 2-way analysis
-%PVn_recall.A(:,[4,5]) = nan;
 
 %data input (D2, D3, D6, D7 matching for learning and recall)
 %assemble learning and recall matrices seperate and then concatenate
 
-data_in_1 = TC_ts_n_learn.A(:,[1,2,6]);
-data_in_2 = TC_ts_n_recall.A(:,[1,2,6]);
+data_in_1 = cent_ts_learn.A(:,[2,3,6,7]);
+data_in_2 = cent_ts_recall.A(:,[2,3,6,7]);
 
 %output stats for 2way RM LME analysis
-lme_stats.TC_ts_n_learn_recall.A = two_way_rm_lme(data_in_1,data_in_2);
-
-%%%
+lme_stats.cent_ts_learn_recall.A = two_way_rm_lme(data_in_1,data_in_2);
 
 %create formatting table for 2-way analysis
-[t_2way_rm_lme.TC_ts_n_learn_recallA] = two_way_lme_table_entry(4,'g','by animal',...
-                'Tuning curve (TS) correlation neighboring days - learning vs. recall - A, 1 vs. 2, 2 vs. 3, 6 vs. 7',...
-                [size(data_in_1,1), size(data_in_2,1)],lme_stats.TC_ts_n_learn_recall.A);       
+[t_2way_rm_lme.cent_ts_learn_recallA] = two_way_lme_table_entry(4,'h','by animal',...
+                'Centroid difference relative to d1 - learning vs. recall - A - rel d1, rel d2, rel d5, rel d6',...
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.cent_ts_learn_recall.A);       
 
-%paired t-test comparisons
-%PV neighbor corr 1 vs 2 vs. 6 vs 7 time learn A 
-ttest_stats.TC_ts_n_learnA12v67 = paired_ttest(TC_ts_n_learn.A(:,1), TC_ts_n_learn.A(:,6));
+%paired t-test comparisons (learn)
+%rel d1 vs d5 learning
+ttest_stats.cent_ts_learnA1v5 = paired_ttest(cent_ts_learn.A(:,2), cent_ts_learn.A(:,6));
 
-%PV neighbor corr 1vs 2 vs. 6 vs 7 time recall A 
-ttest_stats.TC_ts_n_recallA12v67 = paired_ttest(TC_ts_n_recall.A(:,1), TC_ts_n_recall.A(:,6));
+%rel d1 vs d6 learning
+ttest_stats.cent_ts_learnA1v6 = paired_ttest(cent_ts_learn.A(:,2), cent_ts_learn.A(:,7));
 
-%paired t-test single-entry table - PV neighbor Learn 1vs2 vs 6 vs 7
-data_input = [ttest_stats.TC_ts_n_learnA12v67];
-comp_descrip_in = {'TC correlation learning A - time - 1 vs. 2 vs. 6 vs. 7'};
-[t_ttest.TC_ts_n_learnA12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+%paired t-test single-entry table -  Learn rel d1,d5 and rel d1,d6
+data_input = [ttest_stats.cent_ts_learnA1v5; ttest_stats.cent_ts_learnA1v6];
+comp_descrip_in = {'Centroid difference relative to d1 - learning  - A - rel d1 vs. rel d5';...
+                    'Centroid difference relative to d1 - learning  - A - rel d1 vs. rel d6'};
+[t_ttest.cent_ts_learnA15v16] = paired_ttest_table_entry(data_input,...
+        4, 'h', 'by animal', comp_descrip_in);
 
-%paired t-test single-entry table - PV neighbor recall 1vs2 vs 6 vs 7
-data_input = [ttest_stats.TC_ts_n_recallA12v67];
-comp_descrip_in = {'TC correlation recall A - time - 1 vs. 2 vs. 6 vs. 7'};
-[t_ttest.TC_ts_n_recallA12v67] = paired_ttest_single_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+%paired t-test comparisons (recall)
+%rel d1 vs d5 recall
+ttest_stats.cent_ts_recallA1v5 = paired_ttest(cent_ts_recall.A(:,2), cent_ts_recall.A(:,6));
+
+%rel d1 vs d6 recall
+ttest_stats.cent_ts_recallA1v6 = paired_ttest(cent_ts_recall.A(:,2), cent_ts_recall.A(:,7));
+
+%paired t-test single-entry table -  Learn rel d1,d5 and rel d1,d6
+data_input = [ttest_stats.cent_ts_recallA1v5; ttest_stats.cent_ts_recallA1v6];
+comp_descrip_in = {'Centroid difference relative to d1 - recall  - A - rel d1 vs. rel d5';...
+                    'Centroid difference relative to d1 - recall  - A - rel d1 vs. rel d6'};
+[t_ttest.cent_ts_recallA15v16] = paired_ttest_table_entry(data_input,...
+        4, 'h', 'by animal', comp_descrip_in);
+    
     
 %unpaired t-tests
 %output: p-val, t-statistic, n1, n2, dof
-%PV neighbor correlation day 1 vs. 2 learn vs recall
-[ttest_stats.TC_ts_n_learn_recall_1v2A] = unpaired_ttest(TC_ts_n_learn.A(:,1), TC_ts_n_recall.A(:,1));
+%cent diff learning vs recall A - d5
+[ttest_stats.cent_ts_learn_recall_15A] = unpaired_ttest(cent_ts_learn.A(:,6), cent_ts_recall.A(:,6));
 
-%PV  neighbor day 6 vs. 7 learn vs recall
-[ttest_stats.TC_ts_n_learn_recall_6v7A] = unpaired_ttest(TC_ts_n_learn.A(:,6), TC_ts_n_recall.A(:,6));
+%cent diff learning vs recall A - d6
+[ttest_stats.cent_ts_learn_recall_16A] = unpaired_ttest(cent_ts_learn.A(:,7), cent_ts_recall.A(:,7));
 
 %create formatting table for unpaired t-test comparison
-data_input = [ttest_stats.TC_ts_n_learn_recall_1v2A; ttest_stats.TC_ts_n_learn_recall_6v7A];
+data_input = [ttest_stats.cent_ts_learn_recall_15A; ttest_stats.cent_ts_learn_recall_16A];
 
-comp_descrip_in = {'TC correlation learning vs. recall A - behavior - 1 vs. 2 ';...
-                'TC correlation learning vs. recall A - behavior -6 vs. 7 '};
+comp_descrip_in = {'Centroid difference relative to d1 - learning vs. recall  - A - rel d5';...
+                'Centroid difference relative to d1 - learning vs. recall  - A - rel d6'};
 
-[t_ttest.TC_ts_n_learn_recallA_12_67] = unpaired_ttest_table_entry(data_input,...
-        4, 'f', 'by animal', comp_descrip_in);
+[t_ttest.cent_ts_learn_recallA_15_16] = unpaired_ttest_table_entry(data_input,...
+        4, 'h', 'by animal', comp_descrip_in);
 
 
 %% Centroid TS distance difference B
@@ -896,6 +899,13 @@ writetable(t_ttest.TC_ts_n_learnB12v67,spreadsheet_name,'Sheet',sheet_name,'UseE
 writetable(t_ttest.TC_ts_n_recallB12v67,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.TC_ts_n_learn_recallB_12_67,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
+%4h Centroid difference TS neighbor correlation across days - A trials
+%tables: 
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.cent_ts_learn_recallA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.cent_ts_learnA15v16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.cent_ts_recallA15v16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.cent_ts_learn_recallA_15_16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
 
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
