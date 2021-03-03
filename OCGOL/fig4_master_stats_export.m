@@ -793,7 +793,72 @@ comp_descrip_in = {'Centroid difference relative to d1 - learning vs. recall  - 
 
 
 %% Centroid TS distance difference B
+%Centroid TS neighbor B
 
+cent_ts_learn.B = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean.B;
+%same data as in raw sub-struct
+cent_ts_recall.B = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean.B;
+
+
+%data input (D2, D3, D6, D7 matching for learning and recall)
+%assemble learning and recall matrices seperate and then concatenate
+
+data_in_1 = cent_ts_learn.B(:,[2,3,6,7]);
+data_in_2 = cent_ts_recall.B(:,[2,3,6,7]);
+
+%output stats for 2way RM LME analysis
+lme_stats.cent_ts_learn_recall.B = two_way_rm_lme(data_in_1,data_in_2);
+
+%create formatting table for 2-way analysis
+[t_2way_rm_lme.cent_ts_learn_recallB] = two_way_lme_table_entry(4,'h','by animal',...
+                'Centroid difference relative to d1 - learning vs. recall - B - rel d1, rel d2, rel d5, rel d6',...
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.cent_ts_learn_recall.B);       
+
+%paired t-test comparisons (learn)
+%rel d1 vs d5 learning
+ttest_stats.cent_ts_learnB1v5 = paired_ttest(cent_ts_learn.B(:,2), cent_ts_learn.B(:,6));
+
+%rel d1 vs d6 learning
+ttest_stats.cent_ts_learnB1v6 = paired_ttest(cent_ts_learn.B(:,2), cent_ts_learn.B(:,7));
+
+%paired t-test single-entry table -  Learn rel d1,d5 and rel d1,d6
+data_input = [ttest_stats.cent_ts_learnB1v5; ttest_stats.cent_ts_learnB1v6];
+comp_descrip_in = {'Centroid difference relative to d1 - learning  - B - rel d1 vs. rel d5';...
+                    'Centroid difference relative to d1 - learning  - B - rel d1 vs. rel d6'};
+[t_ttest.cent_ts_learnB15v16] = paired_ttest_table_entry(data_input,...
+        4, 'h', 'by animal', comp_descrip_in);
+
+%paired t-test comparisons (recall)
+%rel d1 vs d5 recall
+ttest_stats.cent_ts_recallB1v5 = paired_ttest(cent_ts_recall.B(:,2), cent_ts_recall.B(:,6));
+
+%rel d1 vs d6 recall
+ttest_stats.cent_ts_recallB1v6 = paired_ttest(cent_ts_recall.B(:,2), cent_ts_recall.B(:,7));
+
+%paired t-test single-entry table -  Learn rel d1,d5 and rel d1,d6
+data_input = [ttest_stats.cent_ts_recallB1v5; ttest_stats.cent_ts_recallB1v6];
+comp_descrip_in = {'Centroid difference relative to d1 - recall  - B - rel d1 vs. rel d5';...
+                    'Centroid difference relative to d1 - recall  - B - rel d1 vs. rel d6'};
+[t_ttest.cent_ts_recallB15v16] = paired_ttest_table_entry(data_input,...
+        4, 'h', 'by animal', comp_descrip_in);
+    
+    
+%unpaired t-tests
+%output: p-val, t-statistic, n1, n2, dof
+%cent diff learning vs recall A - d5
+[ttest_stats.cent_ts_learn_recall_15B] = unpaired_ttest(cent_ts_learn.B(:,6), cent_ts_recall.B(:,6));
+
+%cent diff learning vs recall A - d6
+[ttest_stats.cent_ts_learn_recall_16B] = unpaired_ttest(cent_ts_learn.B(:,7), cent_ts_recall.B(:,7));
+
+%create formatting table for unpaired t-test comparison
+data_input = [ttest_stats.cent_ts_learn_recall_15B; ttest_stats.cent_ts_learn_recall_16B];
+
+comp_descrip_in = {'Centroid difference relative to d1 - learning vs. recall  - B - rel d5';...
+                'Centroid difference relative to d1 - learning vs. recall  - B - rel d6'};
+
+[t_ttest.cent_ts_learn_recallB_15_16] = unpaired_ttest_table_entry(data_input,...
+        4, 'h', 'by animal', comp_descrip_in);
 
 %% Kruskall Wallis test is the last to implement    
     
@@ -906,6 +971,14 @@ writetable(t_2way_rm_lme.cent_ts_learn_recallA,spreadsheet_name,'Sheet',sheet_na
 writetable(t_ttest.cent_ts_learnA15v16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.cent_ts_recallA15v16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.cent_ts_learn_recallA_15_16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+
+%4h Centroid difference TS neighbor correlation across days - B trials
+%tables: 
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.cent_ts_learn_recallB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.cent_ts_learnB15v16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.cent_ts_recallB15v16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.cent_ts_learn_recallB_15_16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
 
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
