@@ -504,57 +504,40 @@ lme_stats.PVn_learn_recall.A = two_way_rm_lme(data_in_1,data_in_2);
                 'Population vector correlation neighboring days - learning vs. recall - A, 1 vs. 2, 2 vs. 3, 6 vs. 7',...
                 [size(data_in_1,1), size(data_in_2,1)],lme_stats.PVn_learn_recall.A);       
 
-%CONITNUE UPDATING HERE            
-%unpaired t-tests
-%output: p-val, t-statistic, n1, n2, dof
-%PV day 6 learn vs recall
-[ttest_stats.PV_learn_recall_6A] = unpaired_ttest(PV_learn.A(:,6), PV_recall.A(:,6));
+%paired t-test comparisons
+%PV neighbor corr 1 vs 2 vs. 6 vs 7 time learn A 
+ttest_stats.PVn_learnA12v67 = paired_ttest(PVn_learn.A(:,1), PVn_learn.A(:,6));
 
-%PV day 7 learn vs recall
-[ttest_stats.PV_learn_recall_7A] = unpaired_ttest(PV_learn.A(:,7), PV_recall.A(:,7));
+%PV neighbor corr 1vs 2 vs. 6 vs 7 time recall A 
+ttest_stats.PVn_recallA12v67 = paired_ttest(PVn_recall.A(:,1), PVn_recall.A(:,6));
 
-%create formatting table for unpaired t-test comparison
-data_input = [ttest_stats.PV_learn_recall_6A; ttest_stats.PV_learn_recall_7A];
-
-comp_descrip_in = {'Learning vs recall PV correlation D6 - A laps';...
-                'Learning vs recall PV correlation D7 - A laps'};
-
-[t_ttest.learn_recallA_6_7] = unpaired_ttest_table_entry(data_input,...
+%paired t-test single-entry table - PV neighbor Learn 1vs2 vs 6 vs 7
+data_input = [ttest_stats.PVn_learnA12v67];
+comp_descrip_in = {'PV correlation learning A - time - 1 vs. 2 vs. 6 vs. 7'};
+[t_ttest.PVn_learnA12v67] = paired_ttest_single_table_entry(data_input,...
         4, 'f', 'by animal', comp_descrip_in);
 
-%paired t-test comparisons
-
-%PV d2 vs. d6 time learn A 
-ttest_stats.PV_learnA2v6 = paired_ttest(PV_learn.A(:,2), PV_learn.A(:,6));
-
-%PV d2 vs d7 time learn A
-ttest_stats.PV_learnA2v7 = paired_ttest(PV_learn.A(:,2), PV_learn.A(:,7));
-
-%PV d2 vs. d6 time recall A 
-ttest_stats.PV_recallA2v6 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,6));
-
-%PV d2 vs d7 time recall A
-ttest_stats.PV_recallA2v7 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,7));
-
-%generate paired t-test table entries
-%learn A time D2 vs. D7
-data_input = [ttest_stats.PV_learnA2v6; ttest_stats.PV_learnA2v7];
-
-%what comparisons are being made
-comp_descrip_in = {'Learning PV correlation - time -D2 vs. D6 - A laps';...
-                'Learning PV correlation - time -D2 vs. D7 - A laps'};
-
-[t_ttest.PV_learnA2v6_7] = paired_ttest_table_entry(data_input,...
+%paired t-test single-entry table - PV neighbor recall 1vs2 vs 6 vs 7
+data_input = [ttest_stats.PVn_recallA12v67];
+comp_descrip_in = {'PV correlation recall A - time - 1 vs. 2 vs. 6 vs. 7'};
+[t_ttest.PVn_recallA12v67] = paired_ttest_single_table_entry(data_input,...
         4, 'f', 'by animal', comp_descrip_in);
     
-%recall A time D2 vs. D7
-data_input = [ttest_stats.PV_recallA2v6; ttest_stats.PV_recallA2v7];
+%unpaired t-tests
+%output: p-val, t-statistic, n1, n2, dof
+%PV neighbor correlation day 1 vs. 2 learn vs recall
+[ttest_stats.PVn_learn_recall_1v2A] = unpaired_ttest(PVn_learn.A(:,1), PVn_recall.A(:,1));
 
-%what comparisons are being made
-comp_descrip_in = {'Recall PV correlation - time -D2 vs. D6 - A laps';...
-                'Recall PV correlation - time -D2 vs. D7 - A laps'};
+%PV  neighbor day 6 vs. 7 learn vs recall
+[ttest_stats.PVn_learn_recall_6v7A] = unpaired_ttest(PVn_learn.A(:,6), PVn_recall.A(:,6));
 
-[t_ttest.PV_recallA2v6_7] = paired_ttest_table_entry(data_input,...
+%create formatting table for unpaired t-test comparison
+data_input = [ttest_stats.PVn_learn_recall_1v2A; ttest_stats.PVn_learn_recall_6v7A];
+
+comp_descrip_in = {'PV correlation learning vs. recall A - behavior - 1 vs. 2';...
+                'PV correlation learning vs. recall A - behavior -6 vs. 7'};
+
+[t_ttest.PVn_learn_recallA_12_67] = unpaired_ttest_table_entry(data_input,...
         4, 'f', 'by animal', comp_descrip_in);
 
 %% PV neighboring days B
@@ -639,6 +622,15 @@ writetable(t_2way_rm_lme.TC_ts_learn_recallB,spreadsheet_name,'Sheet',sheet_name
 writetable(t_ttest.TC_ts_learn_recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.TC_ts_learnB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.TC_ts_recallB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+
+%4g PV neighbor correlation across days - A trials
+%tables: 
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.TC_ts_learn_recallB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_learn_recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_learnB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_recallB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+
 
 
 
