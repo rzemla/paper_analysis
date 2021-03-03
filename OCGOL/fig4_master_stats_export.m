@@ -258,6 +258,81 @@ comp_descrip_in = {'Recall PV correlation - time -D2 vs. D6 - A laps';...
 [t_ttest.PV_recallA2v6_7] = paired_ttest_table_entry(data_input,...
         4, 'f', 'by animal', comp_descrip_in);
 
+    
+%% PV Correlation B
+
+PV_learn.B = source_data_short_learn_recall.PV.st_learn.B';
+PV_recall.B = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.B';
+
+%format data for 2-way analysis
+PV_recall.B(:,[4,5]) = nan;
+
+%data input (D2, D3, D6, D7 matching for learning and recall)
+%assemble learning and recall matrices seperate and then concatenate
+
+data_in_1 = PV_learn.B(:,[2,3,6,7]);
+data_in_2 = PV_recall.B(:,[2,3,6,7]);
+
+%output stats for 2way RM LME analysis
+lme_stats.PV_learn_recall.B = two_way_rm_lme(data_in_1,data_in_2);
+
+%create formatting table for 2-way analysis
+[t_2way_rm_lme.PV_learn_recallB] = two_way_lme_table_entry(4,'f','by animal',...
+                'Population vector correlation relative to D1  - B laps',...
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.PV_learn_recall.B);       
+            
+%unpaired t-tests
+%output: p-val, t-statistic, n1, n2, dof
+%PV day 6 learn vs recall
+[ttest_stats.PV_learn_recall_6B] = unpaired_ttest(PV_learn.B(:,6), PV_recall.B(:,6));
+
+%PV day 7 learn vs recall
+[ttest_stats.PV_learn_recall_7B] = unpaired_ttest(PV_learn.B(:,7), PV_recall.B(:,7));
+
+%create formatting table for unpaired t-test comparison
+data_input = [ttest_stats.PV_learn_recall_6B; ttest_stats.PV_learn_recall_7B];
+
+comp_descrip_in = {'Learning vs recall PV correlation D6 - B laps';...
+                'Learning vs recall PV correlation D7 - B laps'};
+
+[t_ttest.learn_recallB_6_7] = unpaired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+
+%paired t-test comparisons
+
+%PV d2 vs. d6 time learn A 
+ttest_stats.PV_learnB2v6 = paired_ttest(PV_learn.B(:,2), PV_learn.B(:,6));
+
+%PV d2 vs d7 time learn A
+ttest_stats.PV_learnB2v7 = paired_ttest(PV_learn.B(:,2), PV_learn.B(:,7));
+
+%PV d2 vs. d6 time recall A 
+ttest_stats.PV_recallB2v6 = paired_ttest(PV_recall.B(:,2), PV_recall.B(:,6));
+
+%PV d2 vs d7 time recall A
+ttest_stats.PV_recallB2v7 = paired_ttest(PV_recall.B(:,2), PV_recall.B(:,7));
+
+%generate paired t-test table entries
+%learn A time D2 vs. D7
+data_input = [ttest_stats.PV_learnB2v6; ttest_stats.PV_learnB2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Learning PV correlation - time -D2 vs. D6 - B laps';...
+                'Learning PV correlation - time -D2 vs. D7 - B laps'};
+
+[t_ttest.PV_learnB2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+    
+%recall A time D2 vs. D7
+data_input = [ttest_stats.PV_recallB2v6; ttest_stats.PV_recallB2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall PV correlation - time -D2 vs. D6 - B laps';...
+                'Recall PV correlation - time -D2 vs. D7 - B laps'};
+
+[t_ttest.PV_recallB2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+
 
 %% Kruskall Wallis test is the last to implement    
     
@@ -306,6 +381,16 @@ writetable(t_2way_rm_lme.PV_learn_recallA,spreadsheet_name,'Sheet',sheet_name,'U
 writetable(t_ttest.learn_recallA_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.PV_learnA2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.PV_recallA2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+
+%4f PV correlation across days -B trials
+%tables: 
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.PV_learn_recallB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.learn_recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.PV_learnB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.PV_recallB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+
+
 
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
 
