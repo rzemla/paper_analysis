@@ -5,10 +5,10 @@
 %import data for each figure
 
 %figure 2 source data
-%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 %laptop directory
-load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
+%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 
 %% Figure 4e Learning Analysis 
@@ -333,6 +333,240 @@ comp_descrip_in = {'Recall PV correlation - time -D2 vs. D6 - B laps';...
 [t_ttest.PV_recallB2v6_7] = paired_ttest_table_entry(data_input,...
         4, 'f', 'by animal', comp_descrip_in);
 
+%% TC T.S. Correlation A
+
+TC_ts_learn.A = source_data_short_learn_recall.TC.ts.st_learn.A';
+TC_ts_recall.A = source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.A';
+
+%format data for 2-way analysis
+TC_ts_recall.A(:,[4,5]) = nan;
+
+%data input (D2, D3, D6, D7 matching for learning and recall)
+%assemble learning and recall matrices seperate and then concatenate
+
+data_in_1 = TC_ts_learn.A(:,[2,3,6,7]);
+data_in_2 = TC_ts_recall.A(:,[2,3,6,7]);
+
+%output stats for 2way RM LME analysis
+lme_stats.TC_ts_learn_recall.A = two_way_rm_lme(data_in_1,data_in_2);
+
+%create formatting table for 2-way analysis
+[t_2way_rm_lme.TC_ts_learn_recallA] = two_way_lme_table_entry(4,'f','by animal',...
+                'Tuning curve TS correlation relative to D1  - A laps',...
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.TC_ts_learn_recall.A);       
+            
+%unpaired t-tests
+%output: p-val, t-statistic, n1, n2, dof
+%PV day 6 learn vs recall
+[ttest_stats.TC_ts_learn_recall_6A] = unpaired_ttest(TC_ts_learn.A(:,6), TC_ts_recall.A(:,6));
+
+%PV day 7 learn vs recall
+[ttest_stats.TC_ts_learn_recall_7A] = unpaired_ttest(TC_ts_learn.A(:,7), TC_ts_recall.A(:,7));
+
+%create formatting table for unpaired t-test comparison
+data_input = [ttest_stats.TC_ts_learn_recall_6A; ttest_stats.TC_ts_learn_recall_7A];
+
+comp_descrip_in = {'Learning vs recall Tuning curve TS correlation D6 - A laps';...
+                'Learning vs recall Tuning curve TS correlation D7 - A laps'};
+
+[t_ttest.TC_ts_learn_recallA_6_7] = unpaired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+
+%paired t-test comparisons
+
+%PV d2 vs. d6 time learn A 
+ttest_stats.TC_ts_learnA2v6 = paired_ttest(TC_ts_learn.A(:,2), TC_ts_learn.A(:,6));
+
+%PV d2 vs d7 time learn A
+ttest_stats.TC_ts_learnA2v7 = paired_ttest(TC_ts_learn.A(:,2), TC_ts_learn.A(:,7));
+
+%PV d2 vs. d6 time recall A 
+ttest_stats.TC_ts_recallA2v6 = paired_ttest(TC_ts_recall.A(:,2), TC_ts_recall.A(:,6));
+
+%PV d2 vs d7 time recall A
+ttest_stats.TC_ts_recallA2v7 = paired_ttest(TC_ts_recall.A(:,2), TC_ts_recall.A(:,7));
+
+%generate paired t-test table entries
+%learn A time D2 vs. D7
+data_input = [ttest_stats.TC_ts_learnA2v6; ttest_stats.TC_ts_learnA2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Learning Tuning curve TS correlation - time -D2 vs. D6 - A laps';...
+                'Learning Tuning curve TS correlation - time -D2 vs. D7 - A laps'};
+
+[t_ttest.TC_ts_learnA2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+    
+%recall A time D2 vs. D7
+data_input = [ttest_stats.TC_ts_recallA2v6; ttest_stats.TC_ts_recallA2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall Tuning curve TS correlation - time -D2 vs. D6 - A laps';...
+                'Recall Tuning curve TS correlation - time -D2 vs. D7 - A laps'};
+
+[t_ttest.TC_ts_recallA2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+    
+%% TC T.S. Correlation B
+
+TC_ts_learn.B = source_data_short_learn_recall.TC.ts.st_learn.B';
+TC_ts_recall.B = source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.B';
+
+%format data for 2-way analysis
+TC_ts_recall.B(:,[4,5]) = nan;
+
+%data input (D2, D3, D6, D7 matching for learning and recall)
+%assemble learning and recall matrices seperate and then concatenate
+
+data_in_1 = TC_ts_learn.B(:,[2,3,6,7]);
+data_in_2 = TC_ts_recall.B(:,[2,3,6,7]);
+
+%output stats for 2way RM LME analysis
+lme_stats.TC_ts_learn_recall.B = two_way_rm_lme(data_in_1,data_in_2);
+
+%create formatting table for 2-way analysis
+[t_2way_rm_lme.TC_ts_learn_recallB] = two_way_lme_table_entry(4,'f','by animal',...
+                'Tuning curve TS correlation relative to D1  - B laps',...
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.TC_ts_learn_recall.B);       
+            
+%unpaired t-tests
+%output: p-val, t-statistic, n1, n2, dof
+%PV day 6 learn vs recall
+[ttest_stats.TC_ts_learn_recall_6B] = unpaired_ttest(TC_ts_learn.B(:,6), TC_ts_recall.B(:,6));
+
+%PV day 7 learn vs recall
+[ttest_stats.TC_ts_learn_recall_7B] = unpaired_ttest(TC_ts_learn.B(:,7), TC_ts_recall.B(:,7));
+
+%create formatting table for unpaired t-test comparison
+data_input = [ttest_stats.TC_ts_learn_recall_6B; ttest_stats.TC_ts_learn_recall_7B];
+
+comp_descrip_in = {'Learning vs recall Tuning curve TS correlation D6 - B laps';...
+                'Learning vs recall Tuning curve TS correlation D7 - B laps'};
+
+[t_ttest.TC_ts_learn_recallB_6_7] = unpaired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+
+%paired t-test comparisons
+
+%PV d2 vs. d6 time learn A 
+ttest_stats.TC_ts_learnB2v6 = paired_ttest(TC_ts_learn.B(:,2), TC_ts_learn.B(:,6));
+
+%PV d2 vs d7 time learn A
+ttest_stats.TC_ts_learnB2v7 = paired_ttest(TC_ts_learn.B(:,2), TC_ts_learn.B(:,7));
+
+%PV d2 vs. d6 time recall A 
+ttest_stats.TC_ts_recallB2v6 = paired_ttest(TC_ts_recall.B(:,2), TC_ts_recall.B(:,6));
+
+%PV d2 vs d7 time recall A
+ttest_stats.TC_ts_recallB2v7 = paired_ttest(TC_ts_recall.B(:,2), TC_ts_recall.B(:,7));
+
+%generate paired t-test table entries
+%learn A time D2 vs. D7
+data_input = [ttest_stats.TC_ts_learnB2v6; ttest_stats.TC_ts_learnB2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Learning Tuning curve TS correlation - time -D2 vs. D6 - B laps';...
+                'Learning Tuning curve TS correlation - time -D2 vs. D7 - B laps'};
+
+[t_ttest.TC_ts_learnB2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+    
+%recall A time D2 vs. D7
+data_input = [ttest_stats.TC_ts_recallB2v6; ttest_stats.TC_ts_recallB2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall Tuning curve TS correlation - time -D2 vs. D6 - B laps';...
+                'Recall Tuning curve TS correlation - time -D2 vs. D7 - B laps'};
+
+[t_ttest.TC_ts_recallB2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+    
+%% PV neighboring days A
+%PV neighbor A
+
+PVn_learn.A = source_data_short_learn_recall.PV.neighbor.st_learn.A;
+PVn_recall.A = source_data_short_learn_recall.PV.neighbor.st_recall.A;
+
+%format data for 2-way analysis
+%PVn_recall.A(:,[4,5]) = nan;
+
+%data input (D2, D3, D6, D7 matching for learning and recall)
+%assemble learning and recall matrices seperate and then concatenate
+
+data_in_1 = PVn_learn.A(:,[1,2,6]);
+data_in_2 = PVn_recall.A(:,[1,2,6]);
+
+%output stats for 2way RM LME analysis
+lme_stats.PVn_learn_recall.A = two_way_rm_lme(data_in_1,data_in_2);
+
+%create formatting table for 2-way analysis
+[t_2way_rm_lme.PVn_learn_recallA] = two_way_lme_table_entry(4,'g','by animal',...
+                'Population vector correlation neighboring days - learning vs. recall - A, 1 vs. 2, 2 vs. 3, 6 vs. 7',...
+                [size(data_in_1,1), size(data_in_2,1)],lme_stats.PVn_learn_recall.A);       
+
+%CONITNUE UPDATING HERE            
+%unpaired t-tests
+%output: p-val, t-statistic, n1, n2, dof
+%PV day 6 learn vs recall
+[ttest_stats.PV_learn_recall_6A] = unpaired_ttest(PV_learn.A(:,6), PV_recall.A(:,6));
+
+%PV day 7 learn vs recall
+[ttest_stats.PV_learn_recall_7A] = unpaired_ttest(PV_learn.A(:,7), PV_recall.A(:,7));
+
+%create formatting table for unpaired t-test comparison
+data_input = [ttest_stats.PV_learn_recall_6A; ttest_stats.PV_learn_recall_7A];
+
+comp_descrip_in = {'Learning vs recall PV correlation D6 - A laps';...
+                'Learning vs recall PV correlation D7 - A laps'};
+
+[t_ttest.learn_recallA_6_7] = unpaired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+
+%paired t-test comparisons
+
+%PV d2 vs. d6 time learn A 
+ttest_stats.PV_learnA2v6 = paired_ttest(PV_learn.A(:,2), PV_learn.A(:,6));
+
+%PV d2 vs d7 time learn A
+ttest_stats.PV_learnA2v7 = paired_ttest(PV_learn.A(:,2), PV_learn.A(:,7));
+
+%PV d2 vs. d6 time recall A 
+ttest_stats.PV_recallA2v6 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,6));
+
+%PV d2 vs d7 time recall A
+ttest_stats.PV_recallA2v7 = paired_ttest(PV_recall.A(:,2), PV_recall.A(:,7));
+
+%generate paired t-test table entries
+%learn A time D2 vs. D7
+data_input = [ttest_stats.PV_learnA2v6; ttest_stats.PV_learnA2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Learning PV correlation - time -D2 vs. D6 - A laps';...
+                'Learning PV correlation - time -D2 vs. D7 - A laps'};
+
+[t_ttest.PV_learnA2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+    
+%recall A time D2 vs. D7
+data_input = [ttest_stats.PV_recallA2v6; ttest_stats.PV_recallA2v7];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall PV correlation - time -D2 vs. D6 - A laps';...
+                'Recall PV correlation - time -D2 vs. D7 - A laps'};
+
+[t_ttest.PV_recallA2v6_7] = paired_ttest_table_entry(data_input,...
+        4, 'f', 'by animal', comp_descrip_in);
+
+%% PV neighboring days B
+
+%% TC TS neighboring days A
+
+%% TC TS neighboring days B
+
+%% Centroid TS distance difference A
+
+%% Centroid TS distance difference B
+
 
 %% Kruskall Wallis test is the last to implement    
     
@@ -349,7 +583,7 @@ sheet_name = 'Figure 4';
 %exported Excel spreadsheet
 %write to Excel spreadsheet
 %learn 4e
-writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','overwrite')
+writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','overwritesheet')
 writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
 writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
@@ -389,6 +623,22 @@ writetable(t_2way_rm_lme.PV_learn_recallB,spreadsheet_name,'Sheet',sheet_name,'U
 writetable(t_ttest.learn_recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.PV_learnB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.PV_recallB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+
+%4f TC TS correlation across days - A trials
+%tables: 
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.TC_ts_learn_recallA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_learn_recallA_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_learnA2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_recallA2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+
+%4f TC TS correlation across days -B trials
+%tables: 
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_2way_rm_lme.TC_ts_learn_recallB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_learn_recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_learnB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+writetable(t_ttest.TC_ts_recallB2v6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 
 
 
