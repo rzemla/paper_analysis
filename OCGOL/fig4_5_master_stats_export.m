@@ -1046,7 +1046,7 @@ data_input = AB_ts_corr_recall([2,3,6,7,8,9])';
 
 %generate single row entry for KW test
 comp_descrip_in = {'TS - pooled neuron - group difference - Recall - D2,D3,D6,D7,D8,D9'};
-[t_krusall_recall] = kruskal_wallis_single_table_entry(5,'c','pooled',...
+[t_krusall_recall] = kruskal_wallis_single_table_entry(5,'d','pooled',...
                 comp_descrip_in,kruskal_stats_recall);
 
 %for 1 sample Wilcoxon tests
@@ -1055,19 +1055,38 @@ for ii=[2,3,6,7,8,9]
 end
 
 %test comparison description for each table entry \
-comp_descrip_in = {'AB Corr vs. 1, Day 2 - Learn';...
-                    'AB Corr vs. 1, Day 3 - Learn';...
-                    'AB Corr vs. 1, Day 4 - Learn';...
-                    'AB Corr vs. 1, Day 5 - Learn';...
-                    'AB Corr vs. 1, Day 6 - Learn';...
-                    'AB Corr vs. 1, Day 7 - Learn'};
+comp_descrip_in = {'AB Corr vs. 1, Day 2 - Recall';...
+                    'AB Corr vs. 1, Day 3 - Recall';...
+                    'AB Corr vs. 1, Day 6 - Recall';...
+                    'AB Corr vs. 1, Day 7 - Recall';...
+                    'AB Corr vs. 1, Day 8 - Recall';...
+                    'AB Corr vs. 1, Day 9 - Recall'};
 
 %table entries for paired wilcoxon test learning
 %table entries for paired wilcoxon test learning
-paired_wilcox_AB_recall = paired_wilcoxon_table_entry_no_adj(5,'c','pooled',...
+paired_wilcox_AB_recall = paired_wilcoxon_table_entry_no_adj(5,'d','pooled',...
                 comp_descrip_in,paired_wilcoxon_stats_recall([2,3,6,7,8,9]));
 
+%% Create figure 5 stats export spreadsheet
+%spreadsheet name
+spreadsheet_name = 'statistics_summary.xlsx';
 
+%sheet name
+sheet_name = 'Figure 5';
+
+%empty row
+t1 = repmat({' '},1,12);
+
+%exported Excel spreadsheet
+%write to Excel spreadsheet
+%learn 5c
+writetable(t_krusall_learn,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','overwritesheet')
+writetable(paired_wilcox_AB_learn,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+%recall 5c
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_krusall_recall,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(paired_wilcox_AB_recall,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+            
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
 
 

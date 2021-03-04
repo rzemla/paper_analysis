@@ -1063,10 +1063,8 @@ comp_descrip_in = {'AB Corr vs. 1, Day 2 - Learn';...
                     'AB Corr vs. 1, Day 7 - Learn'};
 
 %table entries for paired wilcoxon test learning
-%table entries for paired wilcoxon test learning
-paired_wilcox_AB_recall = paired_wilcoxon_table_entry_no_adj(5,'c','pooled',...
-                comp_descrip_in,paired_wilcoxon_stats_recall([2,3,6,7,8,9]));
-
+paired_wilcoxon_table_entry_no_adj(5,'c','pooled',...
+                comp_descrip_in,paired_wilcoxon_stats_recall(2:7))
 
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
 

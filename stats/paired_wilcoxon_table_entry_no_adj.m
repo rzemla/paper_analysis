@@ -1,0 +1,34 @@
+function [t_out ] = paired_wilcoxon_table_entry_no_adj(num_in,sub_in,data_agg_in,...
+                comp_descrip, stats_in)
+%convert cell input to matrix
+stats_in_mat = cell2mat(stats_in');
+            
+%how many entries are generated for the table
+nb_entries = sum(~cellfun(@isempty, stats_in)); 
+           
+fig_num = repmat(num_in,nb_entries,1);
+fig_sub = repmat(sub_in,nb_entries,1);
+data_agg = repmat(data_agg_in,nb_entries,1);
+
+%number of samples for each test            
+n_sample = stats_in_mat(:,3);
+%test ran
+test_name = repmat('1-sample Wilcoxon Sign Rank',nb_entries,1);
+%degrees of freedom
+n_dof = stats_in_mat(:,4);
+%test statistic
+test_statistic = stats_in_mat(:,2);
+adj_method = repmat('N/A', nb_entries,1);
+p = stats_in_mat(:,1);
+p_adj = repmat('N/A', nb_entries,1);
+sig_level = check_p_value_sig(p');
+
+%create noRUN AUC/min table
+t_out = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+end
+
