@@ -116,7 +116,46 @@ comp_descrip = {'A vs B (1 vs 2) triple field';'A vs A&B A (1 vs 3) triple field
 [t_out.wilcox_triplePF ] = paired_wilcoxon_table_entry(4,'c','by animal',...
                 comp_descrip, stats_in_triple);
 %% Figure 4 Place field width differences between task selective place cells
+%2-sample KS test
 
+%unload the data
+width_Asel = source_data_sup_2_3.pf_width_pool.Asel;
+width_Bsel = source_data_sup_2_3.pf_width_pool.Bsel;
+width_ABA = source_data_sup_2_3.pf_width_pool.AB.A;
+width_ABB = source_data_sup_2_3.pf_width_pool.AB.B;
+
+
+%Asel vs Bsel
+kstest2_AB = kstest2_stats(width_Asel,width_Bsel);
+%CONTINUE HERE
+
+%KS test mult compare correction and table entry generation
+
+kstest2_mult_compare(inputArg1,inputArg2)
+
+nb_entries = 1;
+
+fig_num = repmat(3,nb_entries,1);
+fig_sub = string(repmat('h',nb_entries,1));
+data_agg = string(repmat('pooled',nb_entries,1));
+comp_descrip = {'Distribution of partially remapping fields between A and B trials'};
+n_sample = string([num2str(numel(partial_A(:,2))),' vs ', num2str(numel(partial_B(:,2)))]);
+test_name = repmat({'2-sample Kolmogorov–Smirnov test'},nb_entries,1);
+
+n_dof = string(repmat('N/A', nb_entries,1));
+test_statistic = [ks2stat]';
+adj_method = string(repmat('N/A', nb_entries,1));
+p_all = [p_ks2]';
+p_adj = string(repmat('N/A', nb_entries,1));
+sig_level = check_p_value_sig(p_all);
+
+%create table
+t_2ks_partial_pf_dist = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+        
 %6-way Holm-Sidak (Holm-Bonferroni used previously)
 
 %% Figure 7 Activity index score difference and activity rate diff. for activity remapping neurons
@@ -144,8 +183,9 @@ writetable(t_paired_wilcox_Bsel,spreadsheet_name,'Sheet',sheet_name,'UseExcel', 
 
 %Ex Fig 4c - place field count between selective neurons
 writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
-% writetable(t_krusall_recall,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
-% writetable(paired_wilcox_AB_recall,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_out.wilcox_singlePF,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_out.wilcox_doublePF,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_out.wilcox_triplePF,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
 %Ex Fig 4c - place field width between task selective neurons
 
