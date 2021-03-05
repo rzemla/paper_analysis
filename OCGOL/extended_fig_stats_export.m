@@ -3,13 +3,18 @@
 %import supplementary data
 
 %figure 2/3 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
 
 %figure 4/5 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
 
 %ex figure 10 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
+
+%laptop file directory
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
 
 %% Figure 4 A-B speed difference for A- and B- selective neurons
 
@@ -124,37 +129,34 @@ width_Bsel = source_data_sup_2_3.pf_width_pool.Bsel;
 width_ABA = source_data_sup_2_3.pf_width_pool.AB.A;
 width_ABB = source_data_sup_2_3.pf_width_pool.AB.B;
 
+%run all the KS tests
 
 %Asel vs Bsel
 kstest2_AB = kstest2_stats(width_Asel,width_Bsel);
-%CONTINUE HERE
+
+%Asel vs ABAsel
+kstest2_A_ABA = kstest2_stats(width_Asel,width_ABA);
+
+%Asel vs ABBsel
+kstest2_A_ABB = kstest2_stats(width_Asel,width_ABB);
+
+%Bsel vs ABAsel
+kstest2_B_ABA = kstest2_stats(width_Bsel,width_ABA);
+
+%Bsel vs ABBsel
+kstest2_B_ABB = kstest2_stats(width_Bsel,width_ABB);
+
+%ABAsel vs ABBsel
+kstest2_ABA_ABB = kstest2_stats(width_ABA,width_ABB);
 
 %KS test mult compare correction and table entry generation
+%setup data input for KS2 table function
+input_data = [kstest2_AB; kstest2_A_ABA; kstest2_A_ABB;...
+            kstest2_B_ABA; kstest2_B_ABB; kstest2_ABA_ABB];
 
-kstest2_mult_compare(inputArg1,inputArg2)
+kstest2_mult_compare(input_data)
 
-nb_entries = 1;
 
-fig_num = repmat(3,nb_entries,1);
-fig_sub = string(repmat('h',nb_entries,1));
-data_agg = string(repmat('pooled',nb_entries,1));
-comp_descrip = {'Distribution of partially remapping fields between A and B trials'};
-n_sample = string([num2str(numel(partial_A(:,2))),' vs ', num2str(numel(partial_B(:,2)))]);
-test_name = repmat({'2-sample Kolmogorov–Smirnov test'},nb_entries,1);
-
-n_dof = string(repmat('N/A', nb_entries,1));
-test_statistic = [ks2stat]';
-adj_method = string(repmat('N/A', nb_entries,1));
-p_all = [p_ks2]';
-p_adj = string(repmat('N/A', nb_entries,1));
-sig_level = check_p_value_sig(p_all);
-
-%create table
-t_2ks_partial_pf_dist = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
-            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
-            'VariableNames',{'Figure','Subfigure','Data aggregation',...
-            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
-            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
         
 %6-way Holm-Sidak (Holm-Bonferroni used previously)
 
