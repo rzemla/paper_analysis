@@ -1,24 +1,30 @@
-function [outputArg1,outputArg2] = kstest2_mult_compare(input_data)
+function [t_out] = kstest2_mult_compare(num_in,sub_in,data_agg_in,...
+                comp_descrip, stats_in_mat)
 
-nb_entries = 1;
+%number of tests / comparisons
+nb_entries = size(stats_in_mat,1);
+            
+fig_num = repmat(num_in,nb_entries,1);
+fig_sub = string(repmat(sub_in,nb_entries,1));
+data_agg = string(repmat(data_agg_in,nb_entries,1));
 
-fig_num = repmat(3,nb_entries,1);
-fig_sub = string(repmat('h',nb_entries,1));
-data_agg = string(repmat('pooled',nb_entries,1));
-comp_descrip = {'Distribution of partially remapping fields between A and B trials'};
-n_sample = string([num2str(numel(partial_A(:,2))),' vs ', num2str(numel(partial_B(:,2)))]);
-test_name = repmat({'2-sample Kolmogorov–Smirnov test'},nb_entries,1);
-
-n_dof = string(repmat('N/A', nb_entries,1));
-test_statistic = [ks2stat]';
-adj_method = string(repmat('N/A', nb_entries,1));
-p_all = [p_ks2]';
-p_adj = string(repmat('N/A', nb_entries,1));
-sig_level = check_p_value_sig(p_all);
+%number of samples for each test            
+%convert paired number of samples to string
+n_sample = string(num2str(stats_in_mat(:,[3,4])));
+%test ran
+test_name = string(repmat('2-sample Kolmogorov–Smirnov',nb_entries,1));
+%degrees of freedom
+n_dof = string(repmat('N/A',nb_entries,1));
+%test statistic
+test_statistic = stats_in_mat(:,2);
+adj_method =  string(repmat(['Holm-Sidak (',num2str(nb_entries),'-way)'], nb_entries,1));
+p = stats_in_mat(:,1);
+p_adj =holm_sidak_p_adj(p',numel(p),0.05);
+sig_level = check_p_value_sig(p_adj');
 
 %create table
-t_2ks_partial_pf_dist = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
-            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+t_out = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p, p_adj', adj_method, sig_level,...
             'VariableNames',{'Figure','Subfigure','Data aggregation',...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});

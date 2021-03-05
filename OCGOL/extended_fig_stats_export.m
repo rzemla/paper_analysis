@@ -154,16 +154,59 @@ kstest2_ABA_ABB = kstest2_stats(width_ABA,width_ABB);
 input_data = [kstest2_AB; kstest2_A_ABA; kstest2_A_ABB;...
             kstest2_B_ABA; kstest2_B_ABB; kstest2_ABA_ABB];
 
-kstest2_mult_compare(input_data)
+%description of each KS test comparison
+comp_descrip = {'A sel PF width vs. Bsel PF width (A vs. B)';...
+    'A sel PF width vs AB.A sel PF width (A vs. C)';...
+    'A sel PF width vs. AB.B sel PF width (A vs. D)';...
+    'Bsel PF width vs. AB.A sel PF width (B vs. C)';...
+    'Bsel PF width vs. AB.B sel PF width (B vs. D)';...
+    'AB.A sel PF width vs. AB.B sel PF width (C vs. D)'};        
 
-
-        
-%6-way Holm-Sidak (Holm-Bonferroni used previously)
+%generate table output for 2KS test with HS correction 
+t_ks2_pf_width = kstest2_mult_compare(4,'d', 'pooled', comp_descrip, input_data);
 
 %% Figure 7 Activity index score difference and activity rate diff. for activity remapping neurons
 
+%input data 
+com_idx_score = source_data_sup_2_3.remap_sup_plot_data.common_idx_values;
+activity_idx_score = source_data_sup_2_3.remap_sup_plot_data.remap_idx_values;
+
+%run KS test
+kstest_com_vs_activity = kstest2_stats(com_idx_score,activity_idx_score);
+
+comp_descrip = {'Common vs. global remapping activity index score'};
+%single KS entry into stats table (not single entry, but no p val adj for
+%mult comp. 
+t_kstest_com_vs_act = kstest2_single_entry(7,'a','pooled',...
+                comp_descrip, kstest_com_vs_activity);
+            
+%activity rate between activity remappers on A vs. B laps
+AUC_min_act_remap = source_data_sup_2_3.remap_sup_plot_data.auc_min_activity_remap_rate;
+%run the test
+paired_wilcoxon_stats_act_remap_AUC = paired_wilcoxon_signrank(AUC_min_act_remap(1,:),AUC_min_act_remap(2,:));
+
+%test comparison description for each table entry \
+comp_descrip_in = {'Activity rate in run epochs for A vs B laps in all actvity remapping neurons'};
+
+%table entries for paired wilcoxon test learning
+t_paired_wilcox_activity_rate_com_activity = paired_wilcoxon_table_entry_no_adj(7,'c','pooled',...
+                comp_descrip_in,paired_wilcoxon_stats_act_remap_AUC);
+
 
 %% Figure 9 Eqivalent long term correlation data (Fig 4) using SI criterion
+
+%9a fraction remappers SI over time (st learn vs st recall)
+
+%9b TC correlation relative to day1 SI
+
+%9c neighboring TC correlation relative - SI
+
+%9d - centroid difference relative to D1 - SI
+
+%9e - A&B tuned matching A lap vs B lap STC correlation - SI (learn and
+%recall)
+
+
 
 %% Figure 10 Long term recall data SI and TS criteria
 
@@ -190,5 +233,10 @@ writetable(t_out.wilcox_doublePF,spreadsheet_name,'Sheet',sheet_name,'UseExcel',
 writetable(t_out.wilcox_triplePF,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
 %Ex Fig 4c - place field width between task selective neurons
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ks2_pf_width,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
-
+%Ex Fig 7a and c
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_kstest_com_vs_act,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_paired_wilcox_activity_rate_com_activity,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
