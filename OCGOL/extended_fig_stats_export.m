@@ -1009,7 +1009,7 @@ comp_descrip_in = {'B tuned fraction across time - TS - Recall D1 vs. D25 (long)
 
 %generate 1-row table entry with 1 RM LME analysis
 [t_1_rm_lme.long_ts_AB] = one_way_lme_table_entry(10,'a','by animal',...
-                'AB tuned fraction across time - TS - Recall (long)',...
+                'A&B tuned fraction across time - TS - Recall (long)',...
                 nb_animals,lme_stats.long_ts_AB);
           
 %paired t-test D1 vs. D25
@@ -1023,8 +1023,8 @@ t_stats.long_ts_AB_1v30 = paired_ttest(long_recall_ts.AB(:,1), long_recall_ts.AB
 data_input = [t_stats.long_ts_AB_1v25; t_stats.long_ts_AB_1v30];
 
 %what comparisons are being made
-comp_descrip_in = {'AB tuned fraction across time - TS - Recall D1 vs. D25 (long)';...
-                'AB tuned fraction across time - TS - Recall D1 vs. D30 (long)'};
+comp_descrip_in = {'A&B tuned fraction across time - TS - Recall D1 vs. D25 (long)';...
+                'A&B tuned fraction across time - TS - Recall D1 vs. D30 (long)'};
 
 [t_ttest.long_ts_AB_25_30] = paired_ttest_table_entry(data_input,...
         10, 'a', 'by animal', comp_descrip_in); 
@@ -1032,7 +1032,43 @@ comp_descrip_in = {'AB tuned fraction across time - TS - Recall D1 vs. D25 (long
     
 %% 10c - PV A and B rel d1
 
-%10c - TC SI - A and B rel d1
+%excluded 1 vs 1 correlation (d6, d16,d20,d25,d30)
+long_recall_PV.A = source_data_short_learn_recall.corr_analysis.lt_recall.raw.day_PV_diag_mean.A(:,[6,16,20,25,30]);
+long_recall_PV.B = source_data_short_learn_recall.corr_analysis.lt_recall.raw.day_PV_diag_mean.B(:,[6,16,20,25,30]);
+
+%A
+%number of time points (excluded self-day correction which = 1)
+nb_time_points = 5;
+%number of animals
+nb_animals = 3;
+[lme_stats.long_PV_A] = one_way_RM_lme(long_recall_PV.A,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_PV_A] = one_way_lme_table_entry(10,'c','by animal',...
+                'Population vector correlation relative to D1  - A laps - d6, d16,d20,d26,d30',...
+                nb_animals,lme_stats.long_PV_A);
+          
+%paired t-test D6 vs. D25
+t_stats.long_PV_A_6v25 = paired_ttest(long_recall_PV.A(:,1), long_recall_PV.A(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_PV_A_6v30 = paired_ttest(long_recall_PV.A(:,1), long_recall_PV.A(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_PV_A_6v25; t_stats.long_PV_A_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall PV correlation - time -D6 vs. D25 - A laps';...
+                'Recall PV correlation - time -D6 vs. D30 - A laps)'};
+
+%generate table entry
+[t_ttest.long_PV_A_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'c', 'by animal', comp_descrip_in); 
+
+%B - CONITNUE HERE
+    
+%% 10c - TC SI - A and B rel d1
 
 %10c - TC TS - A nad B rel d1
 
@@ -1169,6 +1205,7 @@ writetable(paired_wilcox_AB_recall,spreadsheet_name,'Sheet',sheet_name,'UseExcel
 %sheet name
 sheet_name = 'Extended Figure 10';
 %Ex Fig 10a - SI
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_1_rm_lme.long_si_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','overwritesheet')
 writetable(t_ttest.long_si_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
@@ -1181,6 +1218,7 @@ writetable(t_1_rm_lme.long_si_AB,spreadsheet_name,'Sheet',sheet_name,'UseExcel',
 writetable(t_ttest.long_si_AB_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
 %Ex Fig 10a - TS
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_1_rm_lme.long_ts_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_ttest.long_ts_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
@@ -1192,6 +1230,10 @@ writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'
 writetable(t_1_rm_lme.long_ts_AB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_ttest.long_ts_AB_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
+%Ex Fig 10c PV
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_PV_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_PV_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
 
 
