@@ -5,10 +5,10 @@
 %import data for each figure
 
 %figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 %laptop directory
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 
 %% Figure 4e Learning Analysis 
@@ -858,13 +858,11 @@ comp_descrip_in = {'Centroid difference relative to d1 - learning vs. recall  - 
                 'Centroid difference relative to d1 - learning vs. recall  - B - rel d6'};
 
 [t_ttest.cent_ts_learn_recallB_15_16] = unpaired_ttest_table_entry(data_input,...
-        4, 'h', 'by animal', comp_descrip_in);
-
-%% Kruskall Wallis test is the last to implement    
-    
+        4, 'h', 'by animal', comp_descrip_in); 
     
 %% Assemble Figure 4 stats export table
 t1 = repmat({' '},1,12);
+blank_row = cell2table(t1);
 
 %spreadsheet name
 spreadsheet_name = 'statistics_summary.xlsx';
@@ -875,30 +873,30 @@ sheet_name = 'Figure 4';
 %exported Excel spreadsheet
 %write to Excel spreadsheet
 %learn 4e
-writetable(t_1_rm_lme.learnA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','overwritesheet')
-writetable(t_ttest.learnA_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+insert_table_rows(t_1_rm_lme.learnA,spreadsheet_name,sheet_name,'overwritesheet')
+insert_table_rows(t_ttest.learnA_6_7,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
-writetable(t_1_rm_lme.learnB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
-writetable(t_ttest.learnB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_1_rm_lme.learnB,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_ttest.learnB_6_7,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
-writetable(t_1_rm_lme.learnAB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
-writetable(t_ttest.learnAB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_1_rm_lme.learnAB,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_ttest.learnAB_6_7,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 
 %recall 4e
-writetable(t_1_rm_lme.recallA,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.recallA_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+insert_table_rows(t_1_rm_lme.recallA,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_ttest.recallA_6_7,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
-writetable(t_1_rm_lme.recallB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.recallB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_1_rm_lme.recallB,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_ttest.recallB_6_7,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
-writetable(t_1_rm_lme.recallAB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
-writetable(t_ttest.recallAB_6_7,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_1_rm_lme.recallAB,spreadsheet_name,sheet_name,'append');
+insert_table_rows(t_ttest.recallAB_6_7,spreadsheet_name,sheet_name,'append');
 
 %4f PV correlation across days -A trials
 %tables: 
@@ -979,6 +977,7 @@ writetable(t_2way_rm_lme.cent_ts_learn_recallB,spreadsheet_name,'Sheet',sheet_na
 writetable(t_ttest.cent_ts_learnB15v16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.cent_ts_recallB15v16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
 writetable(t_ttest.cent_ts_learn_recallB_15_16,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true','WriteMode','append')
+
 
 %% Figure 5 Export statistics - short term learn TS 
 

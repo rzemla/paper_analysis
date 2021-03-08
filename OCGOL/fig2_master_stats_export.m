@@ -5,7 +5,11 @@
 %import data for each figure
 
 %figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
+
+%laptop directory
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
+
 
 
 %% Fig 2c AUC analysis RUN
@@ -358,6 +362,7 @@ t_tc_corr = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
 %% Combine Figure 2 stat tables
 %use this table for inserting blank rows
 t1 = repmat({' '},1,12);
+blank_row = cell2table(t1);
 
 %spreadsheet name
 spreadsheet_name = 'statistics_summary.xlsx';
@@ -365,30 +370,28 @@ spreadsheet_name = 'statistics_summary.xlsx';
 %sheet name
 sheet_name = 'Figure 2';
 
-%exported Excel spreadsheet
 %write to Excel spreadsheet
-writetable(t_auc_run,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','overwrite')
+insert_table_rows(t_auc_run,spreadsheet_name,sheet_name,'overwritesheet')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_auc_norun,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+insert_table_rows(t_auc_norun,spreadsheet_name,sheet_name,'append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_frac_si,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+insert_table_rows(t_frac_si,spreadsheet_name,sheet_name,'append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_frac_ts,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-        
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_pf_dist,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')        
+insert_table_rows(t_frac_ts,spreadsheet_name,sheet_name,'append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_2ks_pf_dist,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')  
+insert_table_rows(t_pf_dist,spreadsheet_name,sheet_name,'append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_tc_corr,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+insert_table_rows(t_2ks_pf_dist,spreadsheet_name,sheet_name,'append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 
+insert_table_rows(t_tc_corr,spreadsheet_name,sheet_name,'append')
 
 %% Word stats output 
 
 %modify this for extraction of formatted data to Word
-WriteToWordFromMatlab_testing
+%WriteToWordFromMatlab_testing

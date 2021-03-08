@@ -70,8 +70,9 @@ end
 
 %if test failure occurs for any p-value
 if ~isempty(p_fail)
-    %find those p value indices (and values less than alpha
-    idx_p_greater = find(p_sort >= p_fail & p_sort < alpha);
+    %find those p value indices (and values less than alpha and corrected p
+    %values meeting statistical significance
+    idx_p_greater = find(p_sort >= p_fail & p_sort < alpha & p_corrected < alpha);
     %replacement for adjusted p values
     p_val_replace = p_corrected(idx_test_fail);
     %replace corrected values

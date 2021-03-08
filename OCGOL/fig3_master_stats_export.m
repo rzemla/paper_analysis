@@ -5,7 +5,10 @@
 %import data for each figure
 
 %figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig3.mat')
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig3.mat')
+
+%laptop directory
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig3.mat')
 
 
 %% Figure 3d Fraction of each class of remapping neurons
@@ -88,13 +91,13 @@ adj_method = repmat('Holm-Sidak (3-way)', nb_entities,1);
 stat_idx = 1;
 p = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
 %mutiple comparisons adjusted p values
-p_adj = holm_sidak_p_adj(p,numel(p),0.05);
+p_adj = holm_sidak_p_adj(p',numel(p),0.05);
 %star statistical significance level
 sig_level = check_p_value_sig(p_adj);
 
 %create RUN AUC/min table
 t_frac_remap = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
-            test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
+            test_name, n_dof, test_statistic,p,p_adj', adj_method, sig_level,...
             'VariableNames',{'Figure','Subfigure','Data aggregation',...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
@@ -342,6 +345,7 @@ t_2ks_partial_pf_dist = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample
 
 %% Combine Figure 3 stat tables
 t1 = repmat({' '},1,12);
+blank_row = cell2table(t1);
 
 %spreadsheet name
 spreadsheet_name = 'statistics_summary.xlsx';
@@ -349,125 +353,22 @@ spreadsheet_name = 'statistics_summary.xlsx';
 %sheet name
 sheet_name = 'Figure 3';
 
-%exported Excel spreadsheet
 %write to Excel spreadsheet
-writetable(t_frac_friedman,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','overwrite')
+insert_table_rows(t_frac_friedman,spreadsheet_name,sheet_name,'overwritesheet')
+insert_table_rows(t_frac_remap,spreadsheet_name,sheet_name,'append')
 
-%writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_frac_remap,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_pf_dist_com,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_pf_dist_com,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_zone_shift,spreadsheet_name,sheet_name,'append')
 
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_zone_shift,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-        
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_frac_zones_friedman,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')        
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_frac_zones_friedman,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_frac_zone_remap,spreadsheet_name,sheet_name,'append')
 
-%writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_frac_zone_remap,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')  
-
-writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-writetable(t_2ks_partial_pf_dist,spreadsheet_name,'Sheet',sheet_name,"AutoFitWidth",true,'WriteMode','append')
-
-
-%% 2-way repeated measures mixed effects ANOVA (equivalent to PRISM output)
-%test_data  = [];
-
-%corr score vector
-% temp = test_data';
-% temp = temp(:);
-% corr_score = temp;
-% 
-% %subject data
-% temp = categorical(repmat(1:11,6,1))';
-% subject = temp(:);
-% 
-% %trial_type vector
-% trial_type = 3*ones(6,11);
-% trial_type(:,1:6) = 2;
-% trial_type = trial_type';
-% trial_type = categorical(trial_type(:)); 
-% 
-% %time vector
-% %define ordinal time rankining
-% time_value = {'1','2','3','4','5','6'};
-% 
-% 
-% time_vec = repmat([1:6]',1,11)';
-% time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
-% 
-% % %organize into columns for input to lme
-% % Corr_score
-% % Subject 
-% % Time
-% % Trial_type
-% 
-% %organize test data into table
-% lme_tbl = table(corr_score, subject, time_vec, trial_type, 'VariableNames',{'corr', 'subject','time','trial'});
-% 
-% %fit LME with subjects being random factor
-% lme = fitlme(lme_tbl,'corr ~ 1+ time*trial + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
-% 
-% %fit LME with symmetrical covariance matrix (sphericity adjustment) - no
-% %sig difference
-% %compound symmetry structure/isotropic symmetry structure 'CompSymm'
-% %lme = fitlme(lme_tbl,'corr ~ 1+ time*trial + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
-% 
-% %anova on lme
-% lme_stats = anova(lme,'DFMethod','satterthwaite')
-
-
-%% 1-way RM linear mixed model ANOVA (mixed effects analysis)
-% matches Prism without sphericity assumption
-
-%si_short_term_recall_test = [];
-
-%fraction across time
-% frac_score = si_short_term_recall_test';
-% frac_score = frac_score(:);
-% 
-% %subject data
-% temp = categorical(repmat(1:6,7,1))';
-% subject = temp';
-% subject = subject(:);
-% 
-% %time vector
-% %define ordinal time ranking
-% time_value = {'1','2','3','4','5','6','7'};
-% 
-% time_vec = repmat([1:7]',1,6);
-% time_vec = categorical(categorical(time_vec(:)),time_value,'Ordinal',true);
-% 
-% %create entry table for 
-% lme1_tbl = table(frac_score, subject, time_vec, 'VariableNames',{'corr', 'subject','time'});
-% 
-% %fit LME with subjects being random factor
-% lme1 = fitlme(lme1_tbl,'corr ~ 1+ time + (1|subject)','FitMethod','REML','DummyVarCoding','effects');
-% 
-% %anova on lme
-% lme1_stats = anova(lme1,'DFMethod','satterthwaite');
-
-%fit LME with subjects being random factor
-%run with symmetrical covariance matrix - i.e. adjust to make variances
-%spherical - no GG correction for lme model in matlab
-%does not yield same result of GG correction (GG correction is very subtle
-% %however, so assuming data sphericity is reasonable
-% lme1_spher = fitlme(lme1_tbl,'corr ~ 1+ time + (1|subject)','FitMethod','REML','DummyVarCoding','effects',...
-%                 'CovariancePattern','CompSymm');
-
-% %anova on shericity adjusted covariance data
-% lme1_stats_spher = anova(lme1_spher,'DFMethod','satterthwaite');
-
-
-
-%% 1-sample Wilcoxon sign rank test  here
-
-
-%% Holm-Bonferroni adjustment here
-
-
+insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
+insert_table_rows(t_2ks_partial_pf_dist,spreadsheet_name,sheet_name,'append')
 
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
 
