@@ -3,18 +3,18 @@
 %import supplementary data
 
 %figure 2/3 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
 
 %figure 4/5 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
 
 %ex figure 10 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
+%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
 
 %laptop file directory
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
+load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
 
 %% Figure 4 A-B speed difference for A- and B- selective neurons
 

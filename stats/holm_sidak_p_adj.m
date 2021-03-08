@@ -80,6 +80,16 @@ end
 
 %another check here adjusted p-val for the lower cannot be greater than the
 %adjustment for a higher p-values - CONTINUE HERE
+%approach (after fail check and replacement above)
+%1 go through corrected list of p_vals
+%2 if the correct p_val is less than that before it, replace it with one
+%before it
+
+for ii=2:numel(p_corrected)
+    if p_corrected(ii) < p_corrected(ii-1)
+        p_corrected(ii) = p_corrected(ii-1);
+    end   
+end
 
 %rearrange corrected p-values in order of input
 p_corr_orig_order = p_corrected(rI);

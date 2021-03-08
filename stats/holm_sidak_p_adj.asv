@@ -61,13 +61,39 @@ end
 
 %replace corrected p values greater than that at which test first original
 %p value failed with the adjusted p-value for that failed test
-idx_p_greater =find(p_sort >= p_fail)
 
-p_corrected(idx_test_fail)
+%Fix Holm-Sidak correction - approach: get lowest p-value at which the test fails, 
+%get that p-value adjustment value, and then propagate that adjusted value 
+%for all the test p-values greater than that - 
+%do this after check for duplicate p-values has been done 
+%(at least 2 input p values are numerically identical)
+
+%if test failure occurs for any p-value
+if ~isempty(p_fail)
+    %find those p value indices (and values less than alpha
+    idx_p_greater = find(p_sort >= p_fail & p_sort < alpha);
+    %replacement for adjusted p values
+    p_val_replace = p_corrected(idx_test_fail);
+    %replace corrected values
+    p_corrected(idx_p_greater) = p_val_replace;
+end
+
+%another check here adjusted p-val for the lower cannot be greater than the
+%adjustment for a higher p-values - CONTINUE HERE
+%approach (after fail check and replacement above)
+%1 go through corrected list of p_vals
+%2 if the correct p_val is less than that before it, replace it with one
+%before it
+
+for ii=2:numel(p_corrected)
+    
+    if p_corrected(ii) < p_corrected(ii-1)
+        p_corrected
+    
+end
 
 %rearrange corrected p-values in order of input
 p_corr_orig_order = p_corrected(rI);
-
 
 
 end
