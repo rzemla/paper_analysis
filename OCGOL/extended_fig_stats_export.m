@@ -3,18 +3,18 @@
 %import supplementary data
 
 %figure 2/3 sup data
-%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
 
 %figure 4/5 sup data
-%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
 
 %ex figure 10 sup data
-%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
 
 %laptop file directory
-load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
-load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
-load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
+%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
+%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
+%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
 
 %% Figure 4 A-B speed difference for A- and B- selective neurons
 
@@ -1041,6 +1041,7 @@ long_recall_PV.B = source_data_short_learn_recall.corr_analysis.lt_recall.raw.da
 nb_time_points = 5;
 %number of animals
 nb_animals = 3;
+%run 1-way LME
 [lme_stats.long_PV_A] = one_way_RM_lme(long_recall_PV.A,nb_animals, nb_time_points);
 
 %generate 1-row table entry with 1 RM LME analysis
@@ -1066,22 +1067,431 @@ comp_descrip_in = {'Recall PV correlation - time -D6 vs. D25 - A laps';...
 [t_ttest.long_PV_A_25_30] = paired_ttest_table_entry(data_input,...
         10, 'c', 'by animal', comp_descrip_in); 
 
-%B - CONITNUE HERE
+%PV B
+    %run 1-way LME
+[lme_stats.long_PV_B] = one_way_RM_lme(long_recall_PV.B,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_PV_B] = one_way_lme_table_entry(10,'c','by animal',...
+                'Population vector correlation relative to D1  - B laps - d6, d16,d20,d26,d30',...
+                nb_animals,lme_stats.long_PV_B);
+          
+%paired t-test D6 vs. D25
+t_stats.long_PV_B_6v25 = paired_ttest(long_recall_PV.B(:,1), long_recall_PV.B(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_PV_B_6v30 = paired_ttest(long_recall_PV.B(:,1), long_recall_PV.B(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_PV_B_6v25; t_stats.long_PV_B_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall PV correlation - time -D6 vs. D25 - B laps';...
+                'Recall PV correlation - time -D6 vs. D30 - B laps)'};
+
+%generate table entry
+[t_ttest.long_PV_B_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'c', 'by animal', comp_descrip_in); 
+    
     
 %% 10c - TC SI - A and B rel d1
 
-%10c - TC TS - A nad B rel d1
+%excluded 1 vs 1 correlation (d6, d16,d20,d25,d30)
+long_recall_TC_si.A = source_data_short_learn_recall.corr_analysis.lt_recall.si.raw.animal.day_TC_diag_mean.exp.A(:,[6,16,20,25,30]);
+long_recall_TC_si.B = source_data_short_learn_recall.corr_analysis.lt_recall.si.raw.animal.day_TC_diag_mean.exp.B(:,[6,16,20,25,30]);
 
-%10d - PV neighbor
+%A
+%number of time points (excluded self-day correction which = 1)
+nb_time_points = 5;
+%number of animals
+nb_animals = 3;
+%run 1-way LME
+[lme_stats.long_TC_si_A] = one_way_RM_lme(long_recall_TC_si.A,nb_animals, nb_time_points);
 
-%10d - TC SI neighbor
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_TC_si_A] = one_way_lme_table_entry(10,'c','by animal',...
+                'Tuning curve SI correlation relative to D1  - A laps',...
+                nb_animals,lme_stats.long_TC_si_A);
+          
+%paired t-test D6 vs. D25
+t_stats.long_TC_si_A_6v25 = paired_ttest(long_recall_TC_si.A(:,1), long_recall_TC_si.A(:,4));
 
-%10d - TC TS neighbor
+%paired t-test D6 vs. D30
+t_stats.long_TC_si_A_6v30 = paired_ttest(long_recall_TC_si.A(:,1), long_recall_TC_si.A(:,5));
 
-%10e A&B tuned A vs B lap corr learn
 
-%10e A&B tuned A vs B lap corr recall
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_TC_si_A_6v25; t_stats.long_TC_si_A_6v30];
 
+%what comparisons are being made
+comp_descrip_in = {'Recall Tuning curve SI correlation - time -D6 vs. D25 - A laps';...
+                'Recall Tuning curve SI correlation - time -D6 vs. D30 - A laps'};
+
+%generate table entry
+[t_ttest.long_TC_si_A_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'c', 'by animal', comp_descrip_in); 
+
+%TC_si B
+    %run 1-way LME
+[lme_stats.long_TC_si_B] = one_way_RM_lme(long_recall_TC_si.B,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_TC_si_B] = one_way_lme_table_entry(10,'c','by animal',...
+                'Tuning curve SI correlation relative to D1  - B laps',...
+                nb_animals,lme_stats.long_TC_si_B);
+          
+%paired t-test D6 vs. D25
+t_stats.long_TC_si_B_6v25 = paired_ttest(long_recall_TC_si.B(:,1), long_recall_TC_si.B(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_TC_si_B_6v30 = paired_ttest(long_recall_TC_si.B(:,1), long_recall_TC_si.B(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_TC_si_B_6v25; t_stats.long_TC_si_B_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall Tuning curve SI correlation - time -D6 vs. D25 - B laps';...
+                'Recall Tuning curve SI correlation - time -D6 vs. D30 - B laps'};
+
+%generate table entry
+[t_ttest.long_TC_si_B_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'c', 'by animal', comp_descrip_in); 
+    
+%% 10c - TC TS - A nad B rel d1
+%excluded 1 vs 1 correlation (d6, d16,d20,d25,d30)
+long_recall_TC_ts.A = source_data_short_learn_recall.corr_analysis.lt_recall.ts.raw.animal.day_TC_diag_mean.exp.A(:,[6,16,20,25,30]);
+long_recall_TC_ts.B = source_data_short_learn_recall.corr_analysis.lt_recall.ts.raw.animal.day_TC_diag_mean.exp.B(:,[6,16,20,25,30]);
+
+%A
+%number of time points (excluded self-day correction which = 1)
+nb_time_points = 5;
+%number of animals
+nb_animals = 3;
+%run 1-way LME
+[lme_stats.long_TC_ts_A] = one_way_RM_lme(long_recall_TC_ts.A,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_TC_ts_A] = one_way_lme_table_entry(10,'c','by animal',...
+                'Tuning curve TS correlation relative to D1  - A laps',...
+                nb_animals,lme_stats.long_TC_ts_A);
+          
+%paired t-test D6 vs. D25
+t_stats.long_TC_ts_A_6v25 = paired_ttest(long_recall_TC_ts.A(:,1), long_recall_TC_ts.A(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_TC_ts_A_6v30 = paired_ttest(long_recall_TC_ts.A(:,1), long_recall_TC_ts.A(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_TC_ts_A_6v25; t_stats.long_TC_ts_A_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall Tuning curve TS correlation - time -D6 vs. D25 - A laps';...
+                'Recall Tuning curve TS correlation - time -D6 vs. D30 - A laps'};
+
+%generate table entry
+[t_ttest.long_TC_ts_A_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'c', 'by animal', comp_descrip_in); 
+
+%TC_ts B
+    %run 1-way LME
+[lme_stats.long_TC_ts_B] = one_way_RM_lme(long_recall_TC_ts.B,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_TC_ts_B] = one_way_lme_table_entry(10,'c','by animal',...
+                'Tuning curve TS correlation relative to D1  - B laps',...
+                nb_animals,lme_stats.long_TC_ts_B);
+          
+%paired t-test D6 vs. D25
+t_stats.long_TC_ts_B_6v25 = paired_ttest(long_recall_TC_ts.B(:,1), long_recall_TC_ts.B(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_TC_ts_B_6v30 = paired_ttest(long_recall_TC_ts.B(:,1), long_recall_TC_ts.B(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_TC_ts_B_6v25; t_stats.long_TC_ts_B_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'Recall Tuning curve TS correlation - time -D6 vs. D25 - B laps';...
+                'Recall Tuning curve TS correlation - time -D6 vs. D30 - B laps'};
+
+%generate table entry
+[t_ttest.long_TC_ts_B_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'c', 'by animal', comp_descrip_in); 
+
+%% 10d - PV neighbor
+
+%excluded 1 vs 1 correlation (d6, d16,d20,d25,d30)
+long_recall_PVn.A = source_data_short_learn_recall.corr_analysis.lt_recall.neighbor.raw.day_PV_diag_mean.A;
+long_recall_PVn.B = source_data_short_learn_recall.corr_analysis.lt_recall.neighbor.raw.day_PV_diag_mean.B;
+
+%A
+%number of time points (excluded self-day correction which = 1)
+nb_time_points = 5;
+%number of animals
+nb_animals = 3;
+%run 1-way LME
+[lme_stats.long_PVn_A] = one_way_RM_lme(long_recall_PVn.A,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_PVn_A] = one_way_lme_table_entry(10,'d','by animal',...
+                'Population vector correlation neighboring days -  recall - A, 1 vs. 6, 6 vs 16, 16 vs 20, 20 vs 25, 25 vs 30',...
+                nb_animals,lme_stats.long_PVn_A);
+          
+%paired t-test D1-6 vs. D20-25
+t_stats.long_PVn_A_6v25 = paired_ttest(long_recall_PVn.A(:,1), long_recall_PVn.A(:,4));
+
+%paired t-test D1-6 vs. D25-30
+t_stats.long_PVn_A_6v30 = paired_ttest(long_recall_PVn.A(:,1), long_recall_PVn.A(:,5));
+
+
+%paired t-test D1 vs. D25/D30
+data_input = [t_stats.long_PVn_A_6v25; t_stats.long_PVn_A_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'PV correlation recall A - time - 1 vs. 6 vs. 20 vs. 25';...
+                'PV correlation recall A - time - 1 vs. 6 vs. 25 vs. 30'};
+
+%generate table entry
+[t_ttest.long_PVn_A_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'd', 'by animal', comp_descrip_in); 
+
+%PV B
+    %run 1-way LME
+[lme_stats.long_PVn_B] = one_way_RM_lme(long_recall_PVn.B,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_PVn_B] = one_way_lme_table_entry(10,'c','by animal',...
+                'Population vector correlation neighboring days -  recall - B, 1 vs. 6, 6 vs 16, 16 vs 20, 20 vs 25, 25 vs 30',...
+                nb_animals,lme_stats.long_PVn_B);
+          
+%paired t-test D6 vs. D25
+t_stats.long_PVn_B_6v25 = paired_ttest(long_recall_PVn.B(:,1), long_recall_PVn.B(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_PVn_B_6v30 = paired_ttest(long_recall_PVn.B(:,1), long_recall_PVn.B(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_PVn_B_6v25; t_stats.long_PVn_B_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'PV correlation recall B - time - 1 vs. 6 vs. 20 vs. 25';...
+                'PV correlation recall B - time - 1 vs. 6 vs. 25 vs. 30'};
+
+%generate table entry
+[t_ttest.long_PVn_B_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'd', 'by animal', comp_descrip_in); 
+    
+%% 10d - TC SI neighbor
+%excluded 1 vs 1 correlation (d6, d16,d20,d25,d30)
+long_recall_TCn_si.A = source_data_short_learn_recall.TC.neighbor.si.lt_recall.A;
+long_recall_TCn_si.B = source_data_short_learn_recall.TC.neighbor.si.lt_recall.B;
+
+%A
+%number of time points (excluded self-day correction which = 1)
+nb_time_points = 5;
+%number of animals
+nb_animals = 3;
+%run 1-way LME
+[lme_stats.long_TCn_si_A] = one_way_RM_lme(long_recall_TCn_si.A,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_TCn_si_A] = one_way_lme_table_entry(10,'d','by animal',...
+                'Tuning curve (SI) correlation neighboring days -  recall - A, 1 vs. 6, 6 vs 16, 16 vs 20, 20 vs 25, 25 vs 30',...
+                nb_animals,lme_stats.long_TCn_si_A);
+          
+%paired t-test D6 vs. D25
+t_stats.long_TCn_si_A_6v25 = paired_ttest(long_recall_TCn_si.A(:,1), long_recall_TCn_si.A(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_TCn_si_A_6v30 = paired_ttest(long_recall_TCn_si.A(:,1), long_recall_TCn_si.A(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_TCn_si_A_6v25; t_stats.long_TCn_si_A_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'TC correlation recall A - time - 1 vs. 6 vs. 20 vs. 25';...
+                'TC correlation recall A - time - 1 vs. 6 vs. 25 vs. 30'};
+
+%generate table entry
+[t_ttest.long_TCn_si_A_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'd', 'by animal', comp_descrip_in); 
+
+%TCn_si B
+    %run 1-way LME
+[lme_stats.long_TCn_si_B] = one_way_RM_lme(long_recall_TCn_si.B,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_TCn_si_B] = one_way_lme_table_entry(10,'d','by animal',...
+                'Tuning curve (SI) correlation neighboring days -  recall - B, 1 vs. 6, 6 vs 16, 16 vs 20, 20 vs 25, 25 vs 30',...
+                nb_animals,lme_stats.long_TCn_si_B);
+          
+%paired t-test D6 vs. D25
+t_stats.long_TCn_si_B_6v25 = paired_ttest(long_recall_TCn_si.B(:,1), long_recall_TCn_si.B(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_TCn_si_B_6v30 = paired_ttest(long_recall_TCn_si.B(:,1), long_recall_TCn_si.B(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_TCn_si_B_6v25; t_stats.long_TCn_si_B_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'TC correlation recall B - time - 1 vs. 6 vs. 20 vs. 25';...
+                'TC correlation recall B - time - 1 vs. 6 vs. 25 vs. 30'};
+
+%generate table entry
+[t_ttest.long_TCn_si_B_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'd', 'by animal', comp_descrip_in); 
+%% 10d - TC TS neighbor
+%excluded 1 vs 1 correlation (d6, d16,d20,d25,d30)
+long_recall_TCn_ts.A = source_data_short_learn_recall.TC.neighbor.ts.lt_recall.A;
+long_recall_TCn_ts.B = source_data_short_learn_recall.TC.neighbor.ts.lt_recall.B;
+
+%A
+%number of time points (excluded self-day correction which = 1)
+nb_time_points = 5;
+%number of animals
+nb_animals = 3;
+%run 1-way LME
+[lme_stats.long_TCn_ts_A] = one_way_RM_lme(long_recall_TCn_ts.A,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_TCn_ts_A] = one_way_lme_table_entry(10,'d','by animal',...
+                'Tuning curve (TS) correlation neighboring days -  recall - A, 1 vs. 6, 6 vs 16, 16 vs 20, 20 vs 25, 25 vs 30',...
+                nb_animals,lme_stats.long_TCn_ts_A);
+          
+%paired t-test D6 vs. D25
+t_stats.long_TCn_ts_A_6v25 = paired_ttest(long_recall_TCn_ts.A(:,1), long_recall_TCn_ts.A(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_TCn_ts_A_6v30 = paired_ttest(long_recall_TCn_ts.A(:,1), long_recall_TCn_ts.A(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_TCn_ts_A_6v25; t_stats.long_TCn_ts_A_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'TC correlation recall A - time - 1 vs. 6 vs. 20 vs. 25';...
+                'TC correlation recall A - time - 1 vs. 6 vs. 25 vs. 30'};
+
+%generate table entry
+[t_ttest.long_TCn_ts_A_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'd', 'by animal', comp_descrip_in); 
+
+%TCn_si B
+    %run 1-way LME
+[lme_stats.long_TCn_ts_B] = one_way_RM_lme(long_recall_TCn_ts.B,nb_animals, nb_time_points);
+
+%generate 1-row table entry with 1 RM LME analysis
+[t_1_rm_lme.long_TCn_ts_B] = one_way_lme_table_entry(10,'d','by animal',...
+                'Tuning curve (TS) correlation neighboring days -  recall - B, 1 vs. 6, 6 vs 16, 16 vs 20, 20 vs 25, 25 vs 30',...
+                nb_animals,lme_stats.long_TCn_ts_B);
+          
+%paired t-test D6 vs. D25
+t_stats.long_TCn_ts_B_6v25 = paired_ttest(long_recall_TCn_ts.B(:,1), long_recall_TCn_ts.B(:,4));
+
+%paired t-test D6 vs. D30
+t_stats.long_TCn_ts_B_6v30 = paired_ttest(long_recall_TCn_ts.B(:,1), long_recall_TCn_ts.B(:,5));
+
+
+%paired t-test D1 vs. D30
+data_input = [t_stats.long_TCn_ts_B_6v25; t_stats.long_TCn_ts_B_6v30];
+
+%what comparisons are being made
+comp_descrip_in = {'TC correlation recall B - time - 1 vs. 6 vs. 20 vs. 25';...
+                'TC correlation recall B - time - 1 vs. 6 vs. 25 vs. 30'};
+
+%generate table entry
+[t_ttest.long_TCn_ts_B_25_30] = paired_ttest_table_entry(data_input,...
+        10, 'd', 'by animal', comp_descrip_in);
+    
+%% 10e A&B tuned A vs B lap corr recall SI
+%recall
+AB_si_corr_recall = source_data_short_learn_recall.corr_analysis.lt_recall.AB_corr.si.raw.pooled.AB_corr_ratio;
+
+%remove nan values from each column of input data
+for ii=1:numel(AB_si_corr_recall)
+    temp_idx = find(isnan(AB_si_corr_recall{ii}) == 1);
+    if ~isempty(temp_idx)
+        AB_si_corr_recall{ii}(temp_idx) = [];
+    end
+end
+
+%input data for stats analysis - choose which days to use to KW test
+data_input = AB_si_corr_recall([2,3,4,5,6])';
+
+%run KW test
+[kruskal_stats_recall] = kruskalwallis_test(data_input);
+
+%generate single row entry for KW test
+comp_descrip_in = {'SI - pooled neuron - group difference - Recall - D6,D16,D20,D25,D30'};
+[t_krusall_recall_lt_si] = kruskal_wallis_single_table_entry(10,'e','pooled',...
+                comp_descrip_in,kruskal_stats_recall);
+
+clear paired_wilcoxon_stats_recall
+%for 1 sample Wilcoxon tests
+for ii=[2,3,4,5,6]
+    paired_wilcoxon_stats_recall{ii} = paired_wilcoxon_signrank(AB_si_corr_recall{ii},1);
+end
+
+%test comparison description for each table entry \
+comp_descrip_in = {'AB Corr vs. 1, Day 6 - Recall';...
+                    'AB Corr vs. 1, Day 16 - Recall';...
+                    'AB Corr vs. 1, Day 20 - Recall';...
+                    'AB Corr vs. 1, Day 25 - Recall';...
+                    'AB Corr vs. 1, Day 30 - Recall'};
+
+%table entries for paired wilcoxon test learning
+%table entries for paired wilcoxon test learning
+t_paired_wilcox_AB_recall_lt_si = paired_wilcoxon_table_entry_no_adj(10,'e','pooled',...
+                comp_descrip_in,paired_wilcoxon_stats_recall([2,3,4,5,6]));
+            
+%% 10e A&B tuned A vs B lap corr recall TS
+%recall
+AB_ts_corr_recall = source_data_short_learn_recall.corr_analysis.lt_recall.AB_corr.ts.raw.pooled.AB_corr_ratio;
+
+%remove nan values from each column of input data
+for ii=1:numel(AB_ts_corr_recall)
+    temp_idx = find(isnan(AB_ts_corr_recall{ii}) == 1);
+    if ~isempty(temp_idx)
+        AB_ts_corr_recall{ii}(temp_idx) = [];
+    end
+end
+
+%input data for stats analysis - choose which days to use to KW test
+data_input = AB_ts_corr_recall([2,3,4,5,6])';
+
+%run KW test
+[kruskal_stats_recall] = kruskalwallis_test(data_input);
+
+%generate single row entry for KW test
+comp_descrip_in = {'TS - pooled neuron - group difference - Recall - D6,D16,D20,D25,D30'};
+[t_krusall_recall_lt_ts] = kruskal_wallis_single_table_entry(10,'e','pooled',...
+                comp_descrip_in,kruskal_stats_recall);
+
+clear paired_wilcoxon_stats_recall
+%for 1 sample Wilcoxon tests
+for ii=[2,3,4,5,6]
+    paired_wilcoxon_stats_recall{ii} = paired_wilcoxon_signrank(AB_ts_corr_recall{ii},1);
+end
+
+%test comparison description for each table entry \
+comp_descrip_in = {'AB Corr vs. 1, Day 6 - Recall';...
+                    'AB Corr vs. 1, Day 16 - Recall';...
+                    'AB Corr vs. 1, Day 20 - Recall';...
+                    'AB Corr vs. 1, Day 25 - Recall';...
+                    'AB Corr vs. 1, Day 30 - Recall'};
+
+%table entries for paired wilcoxon test learning
+t_paired_wilcox_AB_recall_lt_ts = paired_wilcoxon_table_entry_no_adj(10,'e','pooled',...
+                comp_descrip_in,paired_wilcoxon_stats_recall([2,3,4,5,6]));
+            
 %% Create Ex. Figure 4 stats export spreadsheet
 %spreadsheet name
 spreadsheet_name = 'statistics_summary.xlsx';
@@ -1230,10 +1640,72 @@ writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'
 writetable(t_1_rm_lme.long_ts_AB,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_ttest.long_ts_AB_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
-%Ex Fig 10c PV
+%Ex Fig 10c PV - A
 writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_1_rm_lme.long_PV_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_ttest.long_PV_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
+%Ex Fig 10c PV - B
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_PV_B,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_PV_B_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
+%Ex Fig 10c TC SI - A
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_TC_si_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_TC_si_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 
+%Ex Fig 10c TC SI - B
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_TC_si_B,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_TC_si_B_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10c TC TS - A
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_TC_ts_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_TC_ts_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10c TC TS - B
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_TC_ts_B,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_TC_ts_B_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10d PV neighbor - A
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_PVn_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_PVn_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10d PV neighbor - B
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_PVn_B,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_PVn_B_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10d TC neighbor SI - A
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_TCn_si_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_TCn_si_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10d TC neighbor SI - B
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_TCn_si_B,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_TCn_si_B_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10d TC neighbor TS - A
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_TCn_ts_A,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_TCn_ts_A_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10d TC neighbor TS - B
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_1_rm_lme.long_TCn_ts_B,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_ttest.long_TCn_ts_B_25_30,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10e A&B corr -SI
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_krusall_recall_lt_si,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_paired_wilcox_AB_recall_lt_si,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%Ex Fig 10e A&B corr - TS
+writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_krusall_recall_lt_ts,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+writetable(t_paired_wilcox_AB_recall_lt_ts,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
