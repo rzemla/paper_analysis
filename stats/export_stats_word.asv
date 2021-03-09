@@ -31,6 +31,13 @@ FileSpec = fullfile(CurDir,WordFileName);
 fprintf('Document will be saved in %s\n',FileSpec);
 
 %% Figure 2 Stats Write
+%write each statisics as text to this Word document
+
+%input variables 
+dof1, dof2, f_score, p_val,
+writeWordFtest_1way
+writeWordFtest_2way
+writeWordText
 
 %get input data for Friedman test:
 
@@ -40,24 +47,8 @@ p_val = table2array(fig2_data.table_list.t_frac_si(1,9));
 sample_n = table2array(fig2_data.table_list.t_frac_si(1,5));
 
 %Fig. 2d output
-writeFriedmanTest(ActXWord,WordHandle,test_stat,p_val, dof, sample_n)
+writeFriedmanTest(ActXWord,test_stat,p_val, dof, sample_n)
 
-
-CloseWord(ActXWord,WordHandle,FileSpec);
-
-%%
-%write each statisics as text to this Word document
-
-%input variables 
-dof1, dof2, f_score, p_val,
-writeWordFtest_1way
-writeWordFtest_2way
-writeWordText
-
-
-
-
-%% 
 %chi character code: 1D712 - unicode hex value;
 %convert hex to dec: 120594
 
@@ -74,16 +65,22 @@ actx_word_p.Selection.TypeParagraph; %newline/enter command
 actx_word_p.Selection.Font.Italic = true;
 actx_word_p.Selection.Style
 actx_word_p.Selection.Font.Subscript
-
+actx_word_p.Selection.TypeText(text_p)
 actx_word_p.Selection.Font.ColorIndex='wdAuto'
-%insertSymbol (I think this is the ascii limited form (no special chars
-%beyond this)
+%insertSymbol
 actx_word_p.Selection.InsertSymbol(symbol_int_p);
-
 %insert chi symbol macro commands in Word
+Selection.InsertSymbol.Font='Cambria Math';
+Selection.InsertSymbol.CharacterNumber = -10187;
+Selection.InsertSymbol.Unicode = true;
+
+Selection.InsertSymbol.Font='Cambria Math';
+Selection.InsertSymbol.CharacterNumber = -10187;
+Selection.InsertSymbol.Unicode = true;
 
 
-
+Selection.InsertSymbol Font:="Cambria Math", CharacterNumber:=-8430, _
+Unicode:=True
 
 Style='Normal';
 TextString='This is a test ';
@@ -99,7 +96,7 @@ TextString=' = 12.44*';
 WordText(ActXWord,TextString,Style,[0,0],0,0);%enter after text
 
 %close the word document
-
+CloseWord(ActXWord,WordHandle,FileSpec);
 close all;
 
 

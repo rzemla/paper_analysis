@@ -70,6 +70,7 @@ return
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Turn this into functions for each type of stats input:
 function WordText(actx_word_p,text_p,style_p,enters_p,italic_p,sub_p)
 	%VB Macro
 	%Selection.TypeText Text:="Test!"
