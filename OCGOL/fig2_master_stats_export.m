@@ -5,10 +5,10 @@
 %import data for each figure
 
 %figure 2 source data
-%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
 
 %laptop directory
-load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
+%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
 
 
 
