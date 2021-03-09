@@ -396,7 +396,17 @@ insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 
 insert_table_rows(t_tc_corr,spreadsheet_name,sheet_name,'append')
 
-%% Word stats output 
+%% Save all the stats tables for import into Word stats export script
+%table list
+table_list.t_auc_run = t_auc_run;
+table_list.t_auc_norun = t_auc_norun;
+table_list.t_frac_si = t_frac_si;
+table_list.t_tact_ts = t_frac_ts;
+table_list.t_pf_dist = t_pf_dist;
+table_list.t_2ks_pf_dist = t_2ks_pf_dist;
+table_list.t_tc_corr = t_tc_corr;
 
-%modify this for extraction of formatted data to Word
-%WriteToWordFromMatlab_testing
+%save table data
+cd(laptop_path_dir)
+save('fig2_table_data.mat', 'table_list','-v7.3')
+
