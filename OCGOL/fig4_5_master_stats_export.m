@@ -5,10 +5,10 @@
 %import data for each figure
 
 %figure 2 source data
-%load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
+load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 %laptop directory
-load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
+%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat')
 
 
 %% Figure 4e Learning Analysis 
