@@ -4,11 +4,20 @@
 
 %import data for each figure
 
-%figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig3.mat')
+%import data for each figure
+laptop_access = 1;
 
-%laptop directory
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig3.mat')
+%laptop path directory
+laptop_path_dir = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
+%desktop path directory
+desktop_path_dir = 'G:\Google_drive\task_selective_place_paper\matlab_data';
+
+if laptop_access ==1
+    load(fullfile(laptop_path_dir,'source_data_fig3.mat'));
+else
+    load(fullfile(desktop_path_dir,'source_data_fig3.mat'));
+end
+
 
 
 %% Figure 3d Fraction of each class of remapping neurons

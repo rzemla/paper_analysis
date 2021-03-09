@@ -3,13 +3,18 @@
 %Word legend data
 
 %import data for each figure
+laptop_access = 1;
 
-%figure 2 source data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
+%laptop path directory
+laptop_path_dir = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
+%desktop path directory
+desktop_path_dir = 'G:\Google_drive\task_selective_place_paper\matlab_data';
 
-%laptop directory
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig2.mat')
-
+if laptop_access ==1
+    load(fullfile(laptop_path_dir,'source_data_fig2.mat'));
+else
+    load(fullfile(desktop_path_dir,'source_data_fig2.mat'));
+end
 
 
 %% Fig 2c AUC analysis RUN

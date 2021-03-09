@@ -1,20 +1,22 @@
 %% Export stats for all supplementary figures in paper
 
-%import supplementary data
+%import data for each figure
+laptop_access = 1;
 
-%figure 2/3 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
+%laptop path directory
+laptop_path_dir = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
+%desktop path directory
+desktop_path_dir = 'G:\Google_drive\task_selective_place_paper\matlab_data';
 
-%figure 4/5 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
-
-%ex figure 10 sup data
-load('G:\Google_drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
-
-%laptop file directory
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_sup_2_3.mat');
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_fig4_5_and_sup.mat');
-%load('C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\source_data_ex10_sup.mat');
+if laptop_access ==1
+    load(fullfile(laptop_path_dir,'source_data_sup_2_3.mat'));
+    load(fullfile(laptop_path_dir,'source_data_fig4_5_and_sup.mat'));
+    load(fullfile(laptop_path_dir,'source_data_ex10_sup.mat'));
+else
+    load(fullfile(desktop_path_dir,'source_data_sup_2_3.mat'));
+    load(fullfile(desktop_path_dir,'source_data_fig4_5_and_sup.mat'));
+    load(fullfile(desktop_path_dir,'source_data_ex10_sup.mat'));
+end
 
 %% Figure 4 A-B speed difference for A- and B- selective neurons
 
