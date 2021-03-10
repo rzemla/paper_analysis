@@ -30,33 +30,281 @@ FileSpec = fullfile(CurDir,WordFileName);
 
 fprintf('Document will be saved in %s\n',FileSpec);
 
-%% Figure 2 Stats Write
+%% Figure 2c AUC/min comparison for A and B selective place cells - RUN
 
+%description of statistics
+txt_input = 'Fig 2c - AUC/min RUN epochs';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A-selective place cells (1) - adjusted p values here
+dof = table2array(fig2_data.table_list.t_auc_run(1,7));
+test_stat = table2array(fig2_data.table_list.t_auc_run(1,8));
+p_val = table2array(fig2_data.table_list.t_auc_run(1,10));
+sample_n = table2array(fig2_data.table_list.t_auc_run(1,5));
+
+%description of comparison
+comp_descrip = 'A-selective A vs. B lap activity rate';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%B-selective place cells (1)
+dof = table2array(fig2_data.table_list.t_auc_run(2,7));
+test_stat = table2array(fig2_data.table_list.t_auc_run(2,8));
+p_val = table2array(fig2_data.table_list.t_auc_run(2,10));
+sample_n = table2array(fig2_data.table_list.t_auc_run(2,5));
+
+%description of comparison
+comp_descrip = 'B-selective A vs. B lap activity rate';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A&B-selective (non-selective) place cells (1)
+dof = table2array(fig2_data.table_list.t_auc_run(3,7));
+test_stat = table2array(fig2_data.table_list.t_auc_run(3,8));
+p_val = table2array(fig2_data.table_list.t_auc_run(3,10));
+sample_n = table2array(fig2_data.table_list.t_auc_run(3,5));
+
+%description of comparison
+comp_descrip = 'Non-selective A vs. B lap activity rate';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%close parenthesis and 2 newlines
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+%% Figure 2c AUC/min comparison - NO RUN epochs
+
+%description of statistics
+txt_input = 'Fig 2c - AUC/min NO RUN epochs';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A-selective place cells (1) - adjusted p values here
+dof = table2array(fig2_data.table_list.t_auc_norun(1,7));
+test_stat = table2array(fig2_data.table_list.t_auc_norun(1,8));
+p_val = table2array(fig2_data.table_list.t_auc_norun(1,10));
+sample_n = table2array(fig2_data.table_list.t_auc_norun(1,5));
+
+%description of comparison
+comp_descrip = 'A-selective A vs. B lap activity rate';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%B-selective place cells (1)
+dof = table2array(fig2_data.table_list.t_auc_norun(2,7));
+test_stat = table2array(fig2_data.table_list.t_auc_norun(2,8));
+p_val = table2array(fig2_data.table_list.t_auc_norun(2,10));
+sample_n = table2array(fig2_data.table_list.t_auc_norun(2,5));
+
+%description of comparison
+comp_descrip = 'B-selective A vs. B lap activity rate';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A&B-selective (non-selective) place cells (1)
+dof = table2array(fig2_data.table_list.t_auc_norun(3,7));
+test_stat = table2array(fig2_data.table_list.t_auc_norun(3,8));
+p_val = table2array(fig2_data.table_list.t_auc_norun(3,10));
+sample_n = table2array(fig2_data.table_list.t_auc_norun(3,5));
+
+%description of comparison
+comp_descrip = 'Non-selective A vs. B lap activity rate';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%close parenthesis and 2 newlines
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+
+%% Figure 2d - Fraction of task-selective neurons by each tuning criterion
+
+%description of statistics
+txt_input = 'Fig 2d - SI/TS fraction tuned Friedman test';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%Fig 2d - SI criterion Friedman (non-adjusted p vals (no comp)
 %get input data for Friedman test:
-
 dof = table2array(fig2_data.table_list.t_frac_si(1,7));
 test_stat = table2array(fig2_data.table_list.t_frac_si(1,8));
 p_val = table2array(fig2_data.table_list.t_frac_si(1,9));
 sample_n = table2array(fig2_data.table_list.t_frac_si(1,5));
 %description of comparison
 comp_descrip = 'S.I. criterion';
-
-%Fig. 2d output
+%Fig. 2d friedman test write
 writeFriedmanTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
 
+%split entry with semicolor
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-CloseWord(ActXWord,WordHandle,FileSpec);
+%Fig 2d - TS criterion Friedman
+%get input data for Friedman test:
+dof = table2array(fig2_data.table_list.t_frac_ts(1,7));
+test_stat = table2array(fig2_data.table_list.t_frac_ts(1,8));
+p_val = table2array(fig2_data.table_list.t_frac_ts(1,9));
+sample_n = table2array(fig2_data.table_list.t_frac_ts(1,5));
+%description of comparison
+comp_descrip = 'T.S. criterion';
+%Fig. 2d friedman test write
+writeFriedmanTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+%close parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
 
-%%
-%write each statisics as text to this Word document
+%% Fig 2d A vs B comparison by SI and TS criterion
 
-%input variables 
-dof1, dof2, f_score, p_val,
-writeWordFtest_1way
-writeWordFtest_2way
-writeWordText
+%description of statistics
+txt_input = 'Fig 2d - A vs B by SI and TS criterion';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A vs B by SI criterion
+dof = table2array(fig2_data.table_list.t_frac_si(2,7));
+test_stat = table2array(fig2_data.table_list.t_frac_si(2,8));
+p_val = table2array(fig2_data.table_list.t_frac_si(2,10));
+sample_n = table2array(fig2_data.table_list.t_frac_si(2,5));
+
+%description of comparison
+comp_descrip = 'A vs. B - S.I. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A vs B by TS criterion
+dof = table2array(fig2_data.table_list.t_frac_ts(2,7));
+test_stat = table2array(fig2_data.table_list.t_frac_ts(2,8));
+p_val = table2array(fig2_data.table_list.t_frac_ts(2,10));
+sample_n = table2array(fig2_data.table_list.t_frac_ts(2,5));
+
+%description of comparison
+comp_descrip = 'A vs. B - T.S. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%closed parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+%% Fig. 2d A vs A&B and B vs A&B for SI and TS criteria
+
+%description of statistics
+txt_input = 'Fig 2d - A vs A&B and B vs A&B by SI and TS criteria';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A vs A&BB by SI criterion
+dof = table2array(fig2_data.table_list.t_frac_si(3,7));
+test_stat = table2array(fig2_data.table_list.t_frac_si(3,8));
+p_val = table2array(fig2_data.table_list.t_frac_si(3,10));
+sample_n = table2array(fig2_data.table_list.t_frac_si(3,5));
+
+%description of comparison
+comp_descrip = 'A vs. A&B - S.I. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%B vs A&B by SI criterion
+dof = table2array(fig2_data.table_list.t_frac_si(4,7));
+test_stat = table2array(fig2_data.table_list.t_frac_si(4,8));
+p_val = table2array(fig2_data.table_list.t_frac_si(4,10));
+sample_n = table2array(fig2_data.table_list.t_frac_si(4,5));
+
+%description of comparison
+comp_descrip = 'B vs. A&B - S.I. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A vs A&B by TS criterion
+dof = table2array(fig2_data.table_list.t_frac_ts(3,7));
+test_stat = table2array(fig2_data.table_list.t_frac_ts(3,8));
+p_val = table2array(fig2_data.table_list.t_frac_ts(3,10));
+sample_n = table2array(fig2_data.table_list.t_frac_ts(3,5));
+
+%description of comparison
+comp_descrip = 'A vs. A&B - T.S. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%B vs A&B by TS criterion
+dof = table2array(fig2_data.table_list.t_frac_ts(4,7));
+test_stat = table2array(fig2_data.table_list.t_frac_ts(4,8));
+p_val = table2array(fig2_data.table_list.t_frac_ts(4,10));
+sample_n = table2array(fig2_data.table_list.t_frac_ts(4,5));
+
+%description of comparison
+comp_descrip = 'B vs. A&B - T.S. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%closed parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+%% Figure 2f
+
+%% Figure 2g
 
 
+%% Figure 2h
+
+
+
+%% Insert two enters(newlines)
+% writeWordEnter(ActXWord,WordHandle,2);
+% 
+% txt_input = 'Write text here';
+% writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%% Close Word document
+%CloseWord(ActXWord,WordHandle,FileSpec);
 
 
 %% 
@@ -69,41 +317,5 @@ writeWordText
 %p-value 3 decimal places and sub to <0.001 for low p values
 %nb of samples as a char entry
 
-%activeX.VBA control input into Word
-Selection.Font.Name = "Arial"
-Selection.Font.Size = 14
-actx_word_p.Selection.TypeParagraph; %newline/enter command
-actx_word_p.Selection.Font.Italic = true;
-actx_word_p.Selection.Style
-actx_word_p.Selection.Font.Subscript
-
-actx_word_p.Selection.Font.ColorIndex='wdAuto'
-%insertSymbol (I think this is the ascii limited form (no special chars
-%beyond this)
-actx_word_p.Selection.InsertSymbol(symbol_int_p);
-
-%insert chi symbol macro commands in Word
-
-
-
-
-Style='Normal';
-TextString='This is a test ';
-WordText(ActXWord,TextString,Style,[0,1],0,0);%enter after text
-
-TextString='F';
-WordText(ActXWord,TextString,Style,[0,0],1,0);%enter after text
-
-TextString='(.506, 4.51)';
-WordText(ActXWord,TextString,Style,[0,0],0,1);%enter after text
-
-TextString=' = 12.44*';
-WordText(ActXWord,TextString,Style,[0,0],0,0);%enter after text
-
-%close the word document
-
-close all;
-
-
 %% Original function customized
-WriteToWordFromMatlab_testing
+%WriteToWordFromMatlab_testing

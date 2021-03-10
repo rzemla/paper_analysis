@@ -401,7 +401,7 @@ insert_table_rows(t_tc_corr,spreadsheet_name,sheet_name,'append')
 table_list.t_auc_run = t_auc_run;
 table_list.t_auc_norun = t_auc_norun;
 table_list.t_frac_si = t_frac_si;
-table_list.t_tact_ts = t_frac_ts;
+table_list.t_frac_ts = t_frac_ts;
 table_list.t_pf_dist = t_pf_dist;
 table_list.t_2ks_pf_dist = t_2ks_pf_dist;
 table_list.t_tc_corr = t_tc_corr;
