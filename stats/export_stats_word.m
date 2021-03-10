@@ -38,9 +38,11 @@ dof = table2array(fig2_data.table_list.t_frac_si(1,7));
 test_stat = table2array(fig2_data.table_list.t_frac_si(1,8));
 p_val = table2array(fig2_data.table_list.t_frac_si(1,9));
 sample_n = table2array(fig2_data.table_list.t_frac_si(1,5));
+%description of comparison
+comp_descrip = 'S.I. criterion';
 
 %Fig. 2d output
-writeFriedmanTest(ActXWord,WordHandle,test_stat,p_val, dof, sample_n)
+writeFriedmanTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
 
 
 CloseWord(ActXWord,WordHandle,FileSpec);

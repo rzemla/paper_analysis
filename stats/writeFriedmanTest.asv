@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = writeFriedmanTest(actx_word_p,doc_handle,test_stat,p_val, dof, sample_n)
+function [outputArg1,outputArg2] = writeFriedmanTest(actx_word_p,doc_handle,comp_descrip,test_stat,p_val, dof, sample_n)
 
 %word style and font settings
 actx_word_p.Selection.Style = 'Normal';
@@ -42,10 +42,34 @@ actx_word_p.Selection.MoveUp(5, 2);
 actx_word_p.Selection.TypeText('2')
 %done editting equation
 eqn.BuildUp();
-%move to the right
-actx_word_p.Selection.MoveRight(1, 1);
+%move to the right (twice - get out of equation entry mode)
+actx_word_p.Selection.MoveRight(1, 2);
+actx_word_p.Selection.TypeText(' = ')
+%test statistic value (2 decimal round)
+actx_word_p.Selection.TypeText(num2str(round(test_stat,2)));
+%insert p value star significance
+actx_word_p.Selection.TypeText(', '); 
+actx_word_p.Selection.TypeText(char(check_p_value_sig(p_val)))
+%turn italic font on
+actx_word_p.Selection.Font.Italic = true;
+actx_word_p.Selection.TypeText('P')
+actx_word_p.Selection.Font.Italic = false;
+%insert p-value depending on value
+if p_val < 0.001
+actx_word_p.Selection.TypeText(' < 0.001')
+else
+    actx_word_p.Selection.TypeText(' = ');
+    actx_word_p.Selection.TypeText(num2str(round(p_val,3)));
+end
 
-actx_word_p.Selection.TypeText(num2str(dof))
+%number of animals
+actx_word_p.Selection.TypeText(',');
+actx_word_p.Selection.Font.Italic = true;
+actx_word_p.Selection.TypeText('n');
+actx_word_p.Selection.Font.Italic = false;
+actx_word_p.Selection.TypeText([' = ', num2str(sample_n),' FOV from ', num2str(sample_n-1),' mice']);
+
+
 %activeX unit conversion
 %https://www.mathworks.com/matlabcentral/answers/165541-how-can-i-set-the-movedown-method-to-move-down-paragraphs-headings
 
