@@ -238,21 +238,49 @@ p_val = table2array(fig2_data.table_list.t_frac_si(3,10));
 sample_n = table2array(fig2_data.table_list.t_frac_si(3,5));
 
 %description of comparison
-comp_descrip = 'A vs. B - S.I. criterion';
+comp_descrip = 'A vs. A&B - S.I. criterion';
 writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
 
 %inset semicolon break
 txt_input = '; ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-%A vs B by TS criterion
-dof = table2array(fig2_data.table_list.t_frac_ts(2,7));
-test_stat = table2array(fig2_data.table_list.t_frac_ts(2,8));
-p_val = table2array(fig2_data.table_list.t_frac_ts(2,10));
-sample_n = table2array(fig2_data.table_list.t_frac_ts(2,5));
+%B vs A&B by SI criterion
+dof = table2array(fig2_data.table_list.t_frac_si(4,7));
+test_stat = table2array(fig2_data.table_list.t_frac_si(4,8));
+p_val = table2array(fig2_data.table_list.t_frac_si(4,10));
+sample_n = table2array(fig2_data.table_list.t_frac_si(4,5));
 
 %description of comparison
-comp_descrip = 'A vs. B - T.S. criterion';
+comp_descrip = 'B vs. A&B - S.I. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A vs A&B by TS criterion
+dof = table2array(fig2_data.table_list.t_frac_ts(3,7));
+test_stat = table2array(fig2_data.table_list.t_frac_ts(3,8));
+p_val = table2array(fig2_data.table_list.t_frac_ts(3,10));
+sample_n = table2array(fig2_data.table_list.t_frac_ts(3,5));
+
+%description of comparison
+comp_descrip = 'A vs. A&B - T.S. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%B vs A&B by TS criterion
+dof = table2array(fig2_data.table_list.t_frac_ts(4,7));
+test_stat = table2array(fig2_data.table_list.t_frac_ts(4,8));
+p_val = table2array(fig2_data.table_list.t_frac_ts(4,10));
+sample_n = table2array(fig2_data.table_list.t_frac_ts(4,5));
+
+%description of comparison
+comp_descrip = 'B vs. A&B - T.S. criterion';
 writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
 
 %closed parenthesis
@@ -260,12 +288,49 @@ txt_input = ')';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,2);
 
+%% Figure 2f - A and B selective Rayleight tests of circular uniformity
+
+
+
+%% Figure 2g - A vs B place cell centroid difference - 2sample KS test
+
+
+%% Figure 2h - TC correlation between task selective/non selective place cells
+
+%description of statistics
+txt_input = 'Fig 2h - TC correlation between A vs B laps fo task selective/nonselective place cells';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A vs B sel
+dof = table2array(fig2_data.table_list.t_tc_corr(1,7));
+test_stat = table2array(fig2_data.table_list.t_tc_corr(3,8));
+p_val = table2array(fig2_data.table_list.t_tc_corr(3,10));
+sample_n = table2array(fig2_data.table_list.t_tc_corr(3,5));
+
+%description of comparison
+comp_descrip = 'A vs. A&B - S.I. criterion';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%A vs AB
+
+
+%B vs AB
+
+
+
+%% Import and embed the number of neurons in the above stats (last)
+
 
 %% Insert two enters(newlines)
-writeWordEnter(ActXWord,WordHandle,2);
-
-txt_input = 'Write text here';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
+% writeWordEnter(ActXWord,WordHandle,2);
+% 
+% txt_input = 'Write text here';
+% writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
 %% Close Word document
 %CloseWord(ActXWord,WordHandle,FileSpec);

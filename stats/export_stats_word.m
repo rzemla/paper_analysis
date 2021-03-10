@@ -288,13 +288,67 @@ txt_input = ')';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,2);
 
-%% Figure 2f
-
-%% Figure 2g
+%% Figure 2f - A and B selective Rayleight tests of circular uniformity
 
 
-%% Figure 2h
 
+%% Figure 2g - A vs B place cell centroid difference - 2sample KS test
+
+%check that TC corr stats below match with Excel spreadsheet - Finish 2g
+%and 2f code
+
+%% Figure 2h - TC correlation between task selective/non selective place cells
+
+%description of statistics
+txt_input = 'Fig 2h - TC correlation between A vs B laps fo task selective/nonselective place cells';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A vs B sel
+sample_n = table2array(fig2_data.table_list.t_tc_corr(1,5));
+dof = table2array(fig2_data.table_list.t_tc_corr(1,7));
+test_stat = table2array(fig2_data.table_list.t_tc_corr(1,8));
+p_val = table2array(fig2_data.table_list.t_tc_corr(1,10));
+
+%description of comparison
+comp_descrip = 'A- vs. B- selective';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%A vs AB
+sample_n = table2array(fig2_data.table_list.t_tc_corr(2,5));
+dof = table2array(fig2_data.table_list.t_tc_corr(2,7));
+test_stat = table2array(fig2_data.table_list.t_tc_corr(2,8));
+p_val = table2array(fig2_data.table_list.t_tc_corr(2,10));
+
+%description of comparison
+comp_descrip = 'A-selective vs. A&B';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+
+%B vs AB
+sample_n = table2array(fig2_data.table_list.t_tc_corr(3,5));
+dof = table2array(fig2_data.table_list.t_tc_corr(3,7));
+test_stat = table2array(fig2_data.table_list.t_tc_corr(3,8));
+p_val = table2array(fig2_data.table_list.t_tc_corr(3,10));
+
+%description of comparison
+comp_descrip = 'B-selective vs. A&B';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n);
+
+
+%% Import and embed the number of neurons in the above stats (last)
 
 
 %% Insert two enters(newlines)
