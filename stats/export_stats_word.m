@@ -288,14 +288,63 @@ txt_input = ')';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,2);
 
-%% Figure 2f - A and B selective Rayleight tests of circular uniformity
+%% Figure 2f - A and B selective Rayleigh tests of circular uniformity - finish modifying this
 
+%description of statistics
+txt_input = 'Fig 2f - A and B selective tests of uniformity';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
 
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+dof = table2array(fig2_data.table_list.t_pf_dist(1,7));
+test_stat = table2array(fig2_data.table_list.t_pf_dist(1,8));
+p_val = table2array(fig2_data.table_list.t_pf_dist(1,9));
+sample_n = table2array(fig2_data.table_list.t_pf_dist(1,5));
+%description of comparison
+comp_descrip = 'A-selective place field distribution';
+
+writeRayleighTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+dof = table2array(fig2_data.table_list.t_pf_dist(2,7));
+test_stat = table2array(fig2_data.table_list.t_pf_dist(2,8));
+p_val = table2array(fig2_data.table_list.t_pf_dist(2,9));
+sample_n = table2array(fig2_data.table_list.t_pf_dist(2,5));
+%description of comparison
+comp_descrip = 'B-selective place field distribution';
+
+writeRayleighTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%close parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
 
 %% Figure 2g - A vs B place cell centroid difference - 2sample KS test
 
-%check that TC corr stats below match with Excel spreadsheet - Finish 2g
-%and 2f code
+%description of statistics
+txt_input = 'Fig 2g - A and B selective tests of uniformity';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+dof = table2array(fig2_data.table_list.t_pf_dist(1,7));
+test_stat = table2array(fig2_data.table_list.t_pf_dist(1,8));
+p_val = table2array(fig2_data.table_list.t_pf_dist(1,9));
+sample_n = table2array(fig2_data.table_list.t_pf_dist(1,5));
+%description of comparison
+comp_descrip = 'A-selective place field distribution';
+
+write2ksTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
 
 %% Figure 2h - TC correlation between task selective/non selective place cells
 
