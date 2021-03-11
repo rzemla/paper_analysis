@@ -48,6 +48,8 @@ else
     actx_word_p.Selection.TypeText(num2str(round(p_val,3)));
 end
 
+%use sample for test statistic dof input
+sample_split = split(sample_n, ' ');
 
 %overwrite default n sample here (used before to display number of neurons
 sample_n_neurons = sample_n;
