@@ -18,12 +18,18 @@ actx_word_p.Selection.TypeText(comp_descrip)
 %turn bold off
 actx_word_p.Selection.Font.Bold = false;
 %write test name
-actx_word_p.Selection.TypeText(': Rayleigh test of uniformity, ');
+actx_word_p.Selection.TypeText(': 2-sample Kolmogorov-Smirnov test, ');
 
 %insert test statistic...
 actx_word_p.Selection.Font.Italic = true;
-actx_word_p.Selection.TypeText('Z')
+actx_word_p.Selection.TypeText('D')
 actx_word_p.Selection.Font.Italic = false;
+
+%insert subscript samples next to test statistic
+
+%use sample for test statistic dof input
+sample_split = split(sample_n, ' ');
+sample_formatted = strjoin(sample_split([1,3]),', ');
 
 actx_word_p.Selection.TypeText(' = ');
 
@@ -48,8 +54,7 @@ else
     actx_word_p.Selection.TypeText(num2str(round(p_val,3)));
 end
 
-%use sample for test statistic dof input
-sample_split = split(sample_n, ' ');
+
 
 %overwrite default n sample here (used before to display number of neurons
 sample_n_neurons = sample_n;
