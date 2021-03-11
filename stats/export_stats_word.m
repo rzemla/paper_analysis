@@ -1,7 +1,7 @@
 %% Import all table formatted entries here for data generated for each figure
 
 %import data for each figure
-laptop_access = 0;
+laptop_access = 1;
 
 %laptop path directory
 laptop_path_dir = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
@@ -288,7 +288,7 @@ txt_input = ')';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,2);
 
-%% Figure 2f - A and B selective Rayleigh tests of circular uniformity - finish modifying this
+%% Figure 2f - A and B selective Rayleigh tests of circular uniformity
 
 %description of statistics
 txt_input = 'Fig 2f - A and B selective tests of uniformity';
@@ -344,9 +344,14 @@ sample_n = table2array(fig2_data.table_list.t_2ks_pf_dist(1,5));
 
 
 %description of comparison
-comp_descrip = 'A vs. B centroid difference';
+comp_descrip = 'A vs. B place field centroid difference';
 %modify this to run 2KS test
 write2ksTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%open parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
 
 %% Figure 2h - TC correlation between task selective/non selective place cells
 

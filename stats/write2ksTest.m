@@ -30,6 +30,10 @@ actx_word_p.Selection.Font.Italic = false;
 %use sample for test statistic dof input
 sample_split = split(sample_n, ' ');
 sample_formatted = strjoin(sample_split([1,3]),', ');
+%turn subscript on
+actx_word_p.Selection.Font.Subscript = true;
+actx_word_p.Selection.TypeText(sample_formatted);
+actx_word_p.Selection.Font.Subscript = false;
 
 actx_word_p.Selection.TypeText(' = ');
 
@@ -55,9 +59,10 @@ else
 end
 
 
-
 %overwrite default n sample here (used before to display number of neurons
-sample_n_neurons = sample_n;
+%join with vs. 'delimiter'
+sample_n_neurons = strjoin(sample_split([1,3]),' vs. ');
+
 sample_n = 11; %set fixed value for now
 
 %number of animals
