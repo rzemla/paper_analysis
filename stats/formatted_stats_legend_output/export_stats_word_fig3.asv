@@ -179,7 +179,7 @@ txt_input = ')';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,2);
 
-%% 3g - Global remapping neuron shift between reward zones 
+%% 3g - Global remapping neuron shift between reward zones - significant trends between zones
 
 %description of statistics
 txt_input = 'Fig 3g - Global remapping neurons switching fields between A and B laps between zones';
@@ -214,11 +214,11 @@ writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %statistical significance - put non-correct p value in parentheses
 
 %AII to BIII vs. AIII to BII
-dof = table2array(fig3_data.table_list.t_frac_zone_remap  (5,7));
-test_stat = table2array(fig3_data.table_list.t_frac_zone_remap  (5,8));
-p_val = table2array(fig2_data.table_list.t_auc_run(5,10));
-p_val_non_cor = table2array(fig2_data.table_list.t_auc_run(5,9));
-sample_n = table2array(fig2_data.table_list.t_auc_run(5,5));
+dof = table2array(fig3_data.table_list.t_frac_zone_remap(5,7));
+test_stat = table2array(fig3_data.table_list.t_frac_zone_remap(5,8));
+p_val = table2array(fig3_data.table_list.t_frac_zone_remap(5,10));
+p_val_non_cor = table2array(fig3_data.table_list.t_frac_zone_remap(5,9));
+sample_n = table2array(fig3_data.table_list.t_frac_zone_remap(5,5));
 
 %variant function that places non-corrected p val in parenthesis (fig 3)
 comp_descrip = 'AII to BIII vs. AIII to BII shift';
@@ -228,6 +228,115 @@ writePairedWilcoxAnimal_non_cor_pval(ActXWord,WordHandle,comp_descrip,test_stat,
 txt_input = '; ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
+%AI to BII vs. AII to BI
+dof = table2array(fig3_data.table_list.t_frac_zone_remap(4,7));
+test_stat = table2array(fig3_data.table_list.t_frac_zone_remap(4,8));
+p_val = table2array(fig3_data.table_list.t_frac_zone_remap(4,10));
+p_val_non_cor = table2array(fig3_data.table_list.t_frac_zone_remap(4,9));
+sample_n = table2array(fig3_data.table_list.t_frac_zone_remap(4,5));
+
+%variant function that places non-corrected p val in parenthesis (fig 3)
+comp_descrip = 'AI to BII vs. AII to BI shift';
+writePairedWilcoxAnimal_non_cor_pval(ActXWord,WordHandle,comp_descrip,test_stat,p_val,p_val_non_cor, dof, sample_n)
+
+%close parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+%% Figure 3g - Non-significant cross zone shifts and intrazonal shifts stats
+
+%description of statistics
+txt_input = 'Fig 3g - Global remapping neurons intra-zone shifts and nonsig cross zonal';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%AI-BI vs. AII-BII
+dof = table2array(fig3_data.table_list.t_frac_zone_remap(1,7));
+test_stat = table2array(fig3_data.table_list.t_frac_zone_remap(1,8));
+p_val = table2array(fig3_data.table_list.t_frac_zone_remap(1,10));
+sample_n = table2array(fig3_data.table_list.t_frac_zone_remap(1,5));
+
+%description of comparison
+comp_descrip = 'AI-BI vs. AII-BII shift';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%AI-BI vs. AIII-BIII
+dof = table2array(fig3_data.table_list.t_frac_zone_remap(2,7));
+test_stat = table2array(fig3_data.table_list.t_frac_zone_remap(2,8));
+p_val = table2array(fig3_data.table_list.t_frac_zone_remap(2,10));
+sample_n = table2array(fig3_data.table_list.t_frac_zone_remap(2,5));
+
+%description of comparison
+comp_descrip = 'AI-BI vs. AIII-BIII shift';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%AII-BII vs. AIII-BIII
+dof = table2array(fig3_data.table_list.t_frac_zone_remap(3,7));
+test_stat = table2array(fig3_data.table_list.t_frac_zone_remap(3,8));
+p_val = table2array(fig3_data.table_list.t_frac_zone_remap(3,10));
+sample_n = table2array(fig3_data.table_list.t_frac_zone_remap(3,5));
+
+%description of comparison
+comp_descrip = 'AII-BII vs. AIII-BIII shift';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%inset semicolon break
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%AI-BIII vs. AIII-BI
+dof = table2array(fig3_data.table_list.t_frac_zone_remap(6,7));
+test_stat = table2array(fig3_data.table_list.t_frac_zone_remap(6,8));
+p_val = table2array(fig3_data.table_list.t_frac_zone_remap(6,10));
+sample_n = table2array(fig3_data.table_list.t_frac_zone_remap(6,5));
+
+%description of comparison
+comp_descrip = 'AI-BIII vs. AIII-BI shift';
+writePairedWilcoxAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%close parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+%% Fig 3h - Distribution of partially remapping place field on A vs B trials
+
+%description of statistics
+txt_input = 'Fig 2g - A vs B place field centroid distribution';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+dof = table2array(fig2_data.table_list.t_2ks_pf_dist(1,7));
+test_stat = table2array(fig2_data.table_list.t_2ks_pf_dist(1,8));
+p_val = table2array(fig2_data.table_list.t_2ks_pf_dist(1,9));
+sample_n = table2array(fig2_data.table_list.t_2ks_pf_dist(1,5));
+
+%description of comparison
+comp_descrip = 'A vs. B place field centroid difference';
+%modify this to run 2KS test
+write2ksTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%close parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
 
 
 

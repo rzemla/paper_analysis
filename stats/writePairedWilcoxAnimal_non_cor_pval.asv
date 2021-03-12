@@ -45,17 +45,12 @@ actx_word_p.Selection.TypeText('P')
 actx_word_p.Selection.Font.Italic = false;
 %insert p-value depending on value
 if p_val < 0.001
-    actx_word_p.Selection.TypeText(' < 0.001')
+actx_word_p.Selection.TypeText(' < 0.001')
 else
     actx_word_p.Selection.TypeText(' = ');
     actx_word_p.Selection.TypeText(num2str(round(p_val,3)));
     %insert non-corrected p value in parentheses
-    %check if non-corrected p value less thant 0.001
-    if p_val_non_cor < 0.001
-        actx_word_p.Selection.TypeText([' (',' < 0.001',')'])
-    else
-        actx_word_p.Selection.TypeText([' (',num2str(round(p_val_non_cor,3)),')'])
-    end
+    actx_word_p.Selection.TypeText(
 end
 
 %number of animals
