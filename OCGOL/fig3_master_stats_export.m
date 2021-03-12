@@ -379,6 +379,20 @@ insert_table_rows(t_frac_zone_remap,spreadsheet_name,sheet_name,'append')
 insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 insert_table_rows(t_2ks_partial_pf_dist,spreadsheet_name,sheet_name,'append')
 
+%% Export statistics data tabels for import into Word format out script
+
+table_list.t_frac_friedman = t_frac_friedman;
+table_list.t_frac_remap = t_frac_remap;
+table_list.t_pf_dist_com  = t_pf_dist_com ;
+table_list.t_zone_shift = t_zone_shift;
+table_list.t_frac_zones_friedman = t_frac_zones_friedman;
+table_list.t_frac_zone_remap = t_frac_zone_remap;
+table_list.t_2ks_partial_pf_dist = t_2ks_partial_pf_dist;
+
+%save table data
+cd(laptop_path_dir)
+save('fig3_table_data.mat', 'table_list','-v7.3')
+
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
 
 

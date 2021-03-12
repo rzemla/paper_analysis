@@ -214,11 +214,11 @@ writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %statistical significance - put non-correct p value in parentheses
 
 %AII to BIII vs. AIII to BII
-dof = table2array(fig3_data.table_list.t_frac_zone_remap(5,7));
-test_stat = table2array(fig3_data.table_list.t_frac_zone_remap(5,8));
-p_val = table2array(fig3_data.table_list.t_frac_zone_remap(5,10));
-p_val_non_cor = table2array(fig3_data.table_list.t_frac_zone_remap(5,9));
-sample_n = table2array(fig3_data.table_list.t_frac_zone_remap(5,5));
+dof = table2array(fig3_data.table_list.t_frac_zone_remap  (5,7));
+test_stat = table2array(fig3_data.table_list.t_frac_zone_remap  (5,8));
+p_val = table2array(fig2_data.table_list.t_auc_run(5,10));
+p_val_non_cor = table2array(fig2_data.table_list.t_auc_run(5,9));
+sample_n = table2array(fig2_data.table_list.t_auc_run(5,5));
 
 %variant function that places non-corrected p val in parenthesis (fig 3)
 comp_descrip = 'AII to BIII vs. AIII to BII shift';

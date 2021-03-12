@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = writePairedWilcoxAnimal(actx_word_p,doc_handle,comp_descrip,test_stat,p_val, dof, sample_n)
+function [outputArg1,outputArg2] = writeOneSampleWilcoxAnimal(actx_word_p,doc_handle,comp_descrip,test_stat,p_val, dof, sample_n)
 
 %word style and font settings
 %actx_word_p.Selection.Style = 'Normal';
@@ -16,7 +16,7 @@ actx_word_p.Selection.TypeText(comp_descrip)
 %turn bold off
 actx_word_p.Selection.Font.Bold = false;
 %write test name
-actx_word_p.Selection.TypeText(': two-tailed 1-sample Wilcoxon signed-rank test, ');
+actx_word_p.Selection.TypeText(': two-tailed 1-sample Wilcoxon signed-rank test against 0, ');
 
 %insert test statistic W
 actx_word_p.Selection.Font.Italic = true;

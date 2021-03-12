@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = writePairedWilcoxAnimal(actx_word_p,doc_handle,comp_descrip,test_stat,p_val, dof, sample_n)
+function [outputArg1,outputArg2] = writePairedWilcoxAnimal_non_cor_pval(actx_word_p,doc_handle,comp_descrip,test_stat,p_val,p_val_non_cor, dof, sample_n)
 
 %word style and font settings
 %actx_word_p.Selection.Style = 'Normal';
@@ -49,6 +49,8 @@ actx_word_p.Selection.TypeText(' < 0.001')
 else
     actx_word_p.Selection.TypeText(' = ');
     actx_word_p.Selection.TypeText(num2str(round(p_val,3)));
+    %insert non-corrected p value in parentheses
+    %actx_word_p.Selection
 end
 
 %number of animals
