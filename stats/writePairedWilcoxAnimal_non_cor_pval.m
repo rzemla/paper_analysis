@@ -16,7 +16,7 @@ actx_word_p.Selection.TypeText(comp_descrip)
 %turn bold off
 actx_word_p.Selection.Font.Bold = false;
 %write test name
-actx_word_p.Selection.TypeText(': two-tailed 1-sample Wilcoxon signed-rank test, ');
+actx_word_p.Selection.TypeText(': two-tailed paired Wilcoxon signed-rank test, ');
 
 %insert test statistic W
 actx_word_p.Selection.Font.Italic = true;

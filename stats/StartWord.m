@@ -3,6 +3,7 @@ function [actx_word,word_handle]=StartWord(word_file_p)
 actx_word = actxserver('Word.Application');
 actx_word.Visible = true;
 trace(actx_word.Visible);
+
 if ~exist(word_file_p,'file');
     % Create new document:
     word_handle = invoke(actx_word.Documents,'Add');

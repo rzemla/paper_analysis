@@ -1090,7 +1090,21 @@ writetable(paired_wilcox_AB_learn,spreadsheet_name,'Sheet',sheet_name,'UseExcel'
 writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_krusall_recall,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(paired_wilcox_AB_recall,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
-            
+
+%% Export statistics data tabels for import into Word format out script
+
+table_list.t_1_rm_lme = t_1_rm_lme;
+table_list.t_ttest = t_ttest;
+table_list.t_2way_rm_lme  = t_2way_rm_lme ;
+table_list.t_krusall_learn = t_krusall_learn;
+table_list.paired_wilcox_AB_learn = paired_wilcox_AB_learn;
+table_list.t_krusall_recall = t_krusall_recall;
+table_list.paired_wilcox_AB_recall = paired_wilcox_AB_recall;
+
+%save table data
+cd(laptop_path_dir)
+save('fig4_5_table_data.mat', 'table_list','-v7.3')
+
 %% 1-way Repeated Measures ANOVA - deal with this later (first figure - do with GG correction - works with MATLAB exchange function
 
 

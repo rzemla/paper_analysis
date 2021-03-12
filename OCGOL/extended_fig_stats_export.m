@@ -1711,3 +1711,34 @@ writetable(t_paired_wilcox_AB_recall_lt_si,spreadsheet_name,'Sheet',sheet_name,'
 writetable(cell2table(t1),spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_krusall_recall_lt_ts,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
 writetable(t_paired_wilcox_AB_recall_lt_ts,spreadsheet_name,'Sheet',sheet_name,'UseExcel', true,'WriteMode','append')
+
+%% Export statistics data tabels for import into Word format out script
+%ex Fig 4
+table_list.exFig4.t_paired_wilcox_Asel = t_paired_wilcox_Asel;
+table_list.exFig4.t_paired_wilcox_Bsel = t_paired_wilcox_Bsel;
+table_list.exFig4.t_out = t_out;
+table_list.exFig4.t_ks2_pf_width = t_ks2_pf_width;
+
+%ex Fig 7
+table_list.exFig7.t_kstest_com_vs_act = t_kstest_com_vs_act;
+table_list.exFig7.t_paired_wilcox_activity_rate_com_activity = t_paired_wilcox_activity_rate_com_activity;
+
+%ex Fig 9 and 10
+table_list.exFig9_10.t_1_rm_lme = t_1_rm_lme;
+table_list.exFig9_10.t_2way_rm_lme = t_2way_rm_lme;
+table_list.exFig9_10.t_ttest = t_ttest;
+
+table_list.exFig9_10.t_krusall_learn = t_krusall_learn;
+table_list.exFig9_10.paired_wilcox_AB_learn = paired_wilcox_AB_learn;
+table_list.exFig9_10.t_krusall_recall = t_krusall_recall;
+
+table_list.exFig9_10.paired_wilcox_AB_recall = paired_wilcox_AB_recall;
+table_list.exFig9_10.t_krusall_recall_lt_si = t_krusall_recall_lt_si;
+table_list.exFig9_10.t_paired_wilcox_AB_recall_lt_si = t_paired_wilcox_AB_recall_lt_si;
+
+table_list.exFig9_10.t_krusall_recall_lt_ts = t_krusall_recall_lt_ts;
+table_list.exFig9_10.t_paired_wilcox_AB_recall_lt_ts = t_paired_wilcox_AB_recall_lt_ts;
+
+%save table data
+cd(laptop_path_dir)
+save('ex_fig_table_data.mat', 'table_list','-v7.3')
