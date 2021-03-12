@@ -15,12 +15,12 @@ else
     cd(desktop_path_dir)
 end
 
-%load in figure 2 data
-fig3_data = load('fig3_table_data.mat');
+%load in figure 4 and 5 data
+fig4_5_data = load('fig4_5_table_data.mat');
 
 %% Start Word document that will contain the formatted stats data
 
-WordFileName='legend_stats_formatted_fig3.doc';
+WordFileName='legend_stats_formatted_fig4_5.doc';
 CurDir=pwd;
 FileSpec = fullfile(CurDir,WordFileName);
 %active X handle for manipulating document (ActXWord)
@@ -28,9 +28,10 @@ FileSpec = fullfile(CurDir,WordFileName);
 
 fprintf('Document will be saved in %s\n',FileSpec);
 
-%% Figure 3d - Fraction of each category of remapping neurons
+%% Figure 4e - Fraction of A,B, and AB neurons across sessions
+
 %description of statistics
-txt_input = 'Fig 3d - Fraction of each category of remapping neurons';
+txt_input = 'Fig 4e - Fraction of each category of remapping neurons';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,1);
 
