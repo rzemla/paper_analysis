@@ -28,9 +28,10 @@ FileSpec = fullfile(CurDir,WordFileName);
 
 fprintf('Document will be saved in %s\n',FileSpec);
 
-%% Figure 4e - Fraction of A and B-selective place cells during learning
+%% Figure 4e - Fraction of A,B, and AB neurons across sessions
+
 %description of statistics
-txt_input = 'Fig 4e - Fraction of A and B-selective place cells during learning';
+txt_input = 'Fig 4e - Fraction of each category of remapping neurons';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,1);
 
@@ -38,13 +39,13 @@ writeWordEnter(ActXWord,WordHandle,1);
 txt_input = '(';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-%1-way LME input data - extract DOFs from test stats field
-dof = table2array(fig4_5_data.table_list.t_1_rm_lme.learnA (1,7));
-test_stat = table2array(fig4_5_data.table_list.t_1_rm_lme.learnA (1,8));
-p_val = table2array(fig4_5_data.table_list.t_1_rm_lme.learnA (1,9));
-sample_n = table2array(fig4_5_data.table_list.t_1_rm_lme.learnA (1,5));
+%1-way LME input data
+dof = table2array(fig3_data.table_list.t_frac_friedman(1,7));
+test_stat = table2array(fig3_data.table_list.t_frac_friedman(1,8));
+p_val = table2array(fig3_data.table_list.t_frac_friedman(1,9));
+sample_n = table2array(fig3_data.table_list.t_frac_friedman(1,5));
 
-comp_descrip = 'Fraction of A-trial tuned place cells during learning - T.S.';
+t_1_rm_lme.learnA
 
 %1-way RM linear mixed effects analysis
 write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
@@ -52,7 +53,10 @@ write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
 
 
 
-%%
+%description of comparison
+comp_descrip = 'Difference among remapping neuron classes';
+%Fig. 3d friedman test write
+writeFriedmanTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
 
 %split entry with semicolor
 txt_input = '; ';
