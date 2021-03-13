@@ -18,7 +18,7 @@ actx_word_p.Selection.TypeText(comp_descrip)
 %turn bold off
 actx_word_p.Selection.Font.Bold = false;
 %write test name
-actx_word_p.Selection.TypeText(': one-way mixed effects analysis, ');
+actx_word_p.Selection.TypeText(': one-way RM mixed effects analysis, ');
 
 %F-stat test description
 actx_word_p.Selection.TypeText('effect of training day, ');
