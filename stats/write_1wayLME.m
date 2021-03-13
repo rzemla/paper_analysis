@@ -31,20 +31,28 @@ actx_word_p.Selection.Font.Italic = false;
 %extract dofs from test statistic input
 split_tstat = split(test_stat,{'{','(',')','}'});
 
-%
+%get dofs and round to 2 decimal places
+split_dofs = split(split_tstat(2),{', '});
+%1st DOF
+dof_1 = num2str(round(str2num(split_dofs(1)),2));
+%2nd DOF
+dof_2 = num2str(round(str2num(split_dofs(2)),2));
 
 %with DOF as subscript
 %set subscript state
 actx_word_p.Selection.Font.Subscript = true;
-actx_word_p.Selection.TypeText(num2str(dof))
+actx_word_p.Selection.TypeText([dof_1,', ',dof_2])
 actx_word_p.Selection.Font.Subscript = false;
 
 actx_word_p.Selection.TypeText(' = ')
 
-actx_word_p.Selection.TypeText(' = ')
+%isolate the test statistic
+split_tstat_temp = split(split_tstat(3),' = ');
+tstat_format = num2str(round(str2num(split_tstat_temp(2)),2));
 
 %test statistic value (2 decimal round)
-actx_word_p.Selection.TypeText(num2str(round(test_stat,2)));
+actx_word_p.Selection.TypeText(tstat_format);
+
 %insert p value star significance
 actx_word_p.Selection.TypeText(', '); 
 %check if significant to insert significance star
@@ -69,8 +77,7 @@ actx_word_p.Selection.TypeText(', ');
 actx_word_p.Selection.Font.Italic = true;
 actx_word_p.Selection.TypeText('n');
 actx_word_p.Selection.Font.Italic = false;
-actx_word_p.Selection.TypeText([' = ', num2str(sample_n),' FOV from ', num2str(sample_n-1),' mice']);
-
+actx_word_p.Selection.TypeText([' = ', num2str(sample_n),' ', 'mice']);
 
 
 

@@ -1,7 +1,7 @@
 %% Import all table formatted entries here for data generated for each figure
 
 %import data for each figure
-laptop_access = 0;
+laptop_access = 1;
 
 %laptop path directory
 laptop_path_dir = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
@@ -28,10 +28,9 @@ FileSpec = fullfile(CurDir,WordFileName);
 
 fprintf('Document will be saved in %s\n',FileSpec);
 
-%% Figure 4e - Fraction of A,B, and AB neurons across sessions
-
+%% Figure 4e - Fraction of A and B-selective place cells during learning
 %description of statistics
-txt_input = 'Fig 4e - Fraction of each category of remapping neurons';
+txt_input = 'Fig 4e - Fraction of A and B-selective place cells during learning';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,1);
 
@@ -39,28 +38,49 @@ writeWordEnter(ActXWord,WordHandle,1);
 txt_input = '(';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-%1-way LME input data
-dof = table2array(fig3_data.table_list.t_frac_friedman(1,7));
-test_stat = table2array(fig3_data.table_list.t_frac_friedman(1,8));
-p_val = table2array(fig3_data.table_list.t_frac_friedman(1,9));
-sample_n = table2array(fig3_data.table_list.t_frac_friedman(1,5));
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(fig4_5_data.table_list.t_1_rm_lme.learnA (1,7));
+test_stat = table2array(fig4_5_data.table_list.t_1_rm_lme.learnA (1,8));
+p_val = table2array(fig4_5_data.table_list.t_1_rm_lme.learnA (1,9));
+sample_n = table2array(fig4_5_data.table_list.t_1_rm_lme.learnA (1,5));
 
-t_1_rm_lme.learnA
+comp_descrip = 'Fraction of A-trial tuned place cells during learning - T.S.';
 
 %1-way RM linear mixed effects analysis
 write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
 
-
-
-
-%description of comparison
-comp_descrip = 'Difference among remapping neuron classes';
-%Fig. 3d friedman test write
-writeFriedmanTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
-
-%split entry with semicolor
+%split entry with semicolon
 txt_input = '; ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(fig4_5_data.table_list.t_ttest.learnA_6_7(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.learnA_6_7(1,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.learnA_6_7(1,10));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.learnA_6_7(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 6 A trial learning';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(fig4_5_data.table_list.t_ttest.learnA_6_7(2,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.learnA_6_7(2,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.learnA_6_7(2,10));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.learnA_6_7(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 7 A trial learning';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+
+%%
+
+
 
 
 %% 3d - paired Wilcoxon test comparisons of each class
