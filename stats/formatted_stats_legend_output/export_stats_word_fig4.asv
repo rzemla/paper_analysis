@@ -1,7 +1,7 @@
 %% Import all table formatted entries here for data generated for each figure
 
 %import data for each figure
-laptop_access = 1;
+laptop_access = 0;
 
 %laptop path directory
 laptop_path_dir = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
@@ -712,17 +712,190 @@ writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %input into paired t-test
 dof = table2array(fig4_5_data.table_list.t_ttest.PVn_learnA12v67(1,7));
 test_stat = table2array(fig4_5_data.table_list.t_ttest.PVn_learnA12v67(1,8));
-p_val = table2array(fig4_5_data.table_list.t_ttest.PVn_learnA12v67(1,10));
+p_val = table2array(fig4_5_data.table_list.t_ttest.PVn_learnA12v67(1,9));
 sample_n = table2array(fig4_5_data.table_list.t_ttest.PVn_learnA12v67(1,5));
 
 %description of comparison
 comp_descrip = 'Days 1 vs. 2 Vs. Day 6 vs. 7 A trials learn';
-writePairedTtestAnimal_no_cor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+writePairedTtestAnimal_no_pcor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(fig4_5_data.table_list.t_ttest.PVn_learnB12v67(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.PVn_learnB12v67(1,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.PVn_learnB12v67(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.PVn_learnB12v67(1,5));
+
+%description of comparison
+comp_descrip = 'Days 1 vs. 2 Vs. Day 6 vs. 7 B trials learn';
+writePairedTtestAnimal_no_pcor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
 
 txt_input = '; ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
 %Recall 2 paired t-tests
+
+%input into paired t-test
+dof = table2array(fig4_5_data.table_list.t_ttest.PVn_recallA12v67(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.PVn_recallA12v67(1,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.PVn_recallA12v67(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.PVn_recallA12v67(1,5));
+
+%description of comparison
+comp_descrip = 'Days 1 vs. 2 Vs. Day 6 vs. 7 A trials recall';
+writePairedTtestAnimal_no_pcor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+dof = table2array(fig4_5_data.table_list.t_ttest.PVn_recallB12v67(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.PVn_recallB12v67(1,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.PVn_recallB12v67(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.PVn_recallB12v67(1,5));
+
+%description of comparison
+comp_descrip = 'Days 1 vs. 2 Vs. Day 6 vs. 7 B trials recall';
+writePairedTtestAnimal_no_pcor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+
+%% Fig 4g - Neighboring TC (TS) correlation for A and B trials
+
+%description of statistics
+txt_input = 'Fig 4g - Neighboring TC (TS) correlation for A and B trials learning and recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%2-way LME input data - extract DOFs from test stats field
+dof = table2array(fig4_5_data.table_list.t_2way_rm_lme.TC_ts_n_learn_recallA(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_2way_rm_lme.TC_ts_n_learn_recallA(1,8));
+p_val = table2array(fig4_5_data.table_list.t_2way_rm_lme.TC_ts_n_learn_recallA(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_2way_rm_lme.TC_ts_n_learn_recallA(1,5));
+
+comp_descrip = 'Neighboring session TC correlation on A trials';
+
+%2-way RM linear mixed effects analysis
+write_2wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%separate with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%2-way LME input data - extract DOFs from test stats field
+dof = table2array(fig4_5_data.table_list.t_2way_rm_lme.TC_ts_n_learn_recallB(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_2way_rm_lme.TC_ts_n_learn_recallB(1,8));
+p_val = table2array(fig4_5_data.table_list.t_2way_rm_lme.TC_ts_n_learn_recallB(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_2way_rm_lme.TC_ts_n_learn_recallB(1,5));
+
+comp_descrip = 'Neighboring session TC correlation on B trials';
+
+%2-way RM linear mixed effects analysis
+write_2wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%separate with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%Learning 2 paired t-tests(no Holm-Sidak correction for these)
+%input into paired t-test
+dof = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_learnA12v67(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_learnA12v67(1,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_learnA12v67(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_learnA12v67(1,5));
+
+%description of comparison
+comp_descrip = 'Days 1 vs. 2 Vs. Day 6 vs. 7 A trials learn';
+writePairedTtestAnimal_no_pcor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_learnB12v67(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_learnB12v67(1,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_learnB12v67(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_learnB12v67(1,5));
+
+%description of comparison
+comp_descrip = 'Days 1 vs. 2 Vs. Day 6 vs. 7 B trials learn';
+writePairedTtestAnimal_no_pcor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%Recall 2 paired t-tests
+
+%input into paired t-test
+dof = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_recallA12v67(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_recallA12v67(1,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_recallA12v67(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_recallA12v67(1,5));
+
+%description of comparison
+comp_descrip = 'Days 1 vs. 2 Vs. Day 6 vs. 7 A trials recall';
+writePairedTtestAnimal_no_pcor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+dof = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_recallB12v67(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_recallB12v67(1,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_recallB12v67(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.TC_ts_n_recallB12v67(1,5));
+
+%description of comparison
+comp_descrip = 'Days 1 vs. 2 Vs. Day 6 vs. 7 B trials recall';
+writePairedTtestAnimal_no_pcor(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+%% Fig 4h  Mean centroid difference (TS) relative to d1 - A and B trials
+
+%description of statistics
+txt_input = 'Fig 4h - Mean centroid difference (TS) relative to day 1 on A and B trials during learning and recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%2-way LME input data - extract DOFs from test stats field
+dof = table2array(fig4_5_data.table_list.t_2way_rm_lme.cent_ts_learn_recallA(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_2way_rm_lme.cent_ts_learn_recallA(1,8));
+p_val = table2array(fig4_5_data.table_list.t_2way_rm_lme.cent_ts_learn_recallA(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_2way_rm_lme.cent_ts_learn_recallA(1,5));
+
+comp_descrip = 'Mean centroid difference relative to Day 1 A trials';
+
+%2-way RM linear mixed effects analysis
+write_2wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+
+
+%input into unpaired
+dof = table2array(fig4_5_data.table_list.t_ttest.learn_recallB_6_7(2,7));
+test_stat = table2array(fig4_5_data.table_list.t_ttest.learn_recallB_6_7(2,8));
+p_val = table2array(fig4_5_data.table_list.t_ttest.learn_recallB_6_7(2,10));
+sample_n = table2array(fig4_5_data.table_list.t_ttest.learn_recallB_6_7(2,5));
+
+%description of comparison
+comp_descrip = 'Day 7 B trials learning vs. recall';
+writeUnPairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+
+
 
 %% Close Word document
 CloseWord(ActXWord,WordHandle,FileSpec);
