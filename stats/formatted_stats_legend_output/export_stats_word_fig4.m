@@ -926,13 +926,115 @@ txt_input = ')';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,2);
 
-%% Fig. 5c - 
+%% Fig. 5c - A&B tuned A vs B lap spatial tuning correlation relative to D1 during learning
 
+txt_input = 'Fig 5c - Matching A&B tuned neurons A vs B lap correlation normalized to D1 during learning';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
 
-%kruskall wallis input test
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
+%Friedman test input data
+dof = table2array(fig4_5_data.table_list.t_krusall_learn(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_krusall_learn(1,8));
+p_val = table2array(fig4_5_data.table_list.t_krusall_learn(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_krusall_learn(1,5));
 
-%1-sample Wilcox test no multi comp p_val correction
+%description of comparison
+comp_descrip = 'Day one normalized A vs. B lap correlation scores for matching neurons during learning';
+%kruskal wallis test write
+writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-sample Wilcox test no multi comp p_val correction against 1
+%input to 1-sample paired Wilcoxon test
+dof = table2array(fig4_5_data.table_list.paired_wilcox_AB_learn(1,7));
+test_stat = table2array(fig4_5_data.table_list.paired_wilcox_AB_learn(1,8));
+p_val = table2array(fig4_5_data.table_list.paired_wilcox_AB_learn(1,9));
+sample_n = table2array(fig4_5_data.table_list.paired_wilcox_AB_learn(1,5));
+
+%description of comparison
+comp_descrip = 'Day 2 learn';
+writeOneSampleWilcoxAnimal_1(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-sample Wilcox test no multi comp p_val correction against 1
+%input to 1-sample paired Wilcoxon test
+dof = table2array(fig4_5_data.table_list.paired_wilcox_AB_learn(6,7));
+test_stat = table2array(fig4_5_data.table_list.paired_wilcox_AB_learn(6,8));
+p_val = table2array(fig4_5_data.table_list.paired_wilcox_AB_learn(6,9));
+sample_n = table2array(fig4_5_data.table_list.paired_wilcox_AB_learn(6,5));
+
+%description of comparison
+comp_descrip = 'Day 7 learn';
+writeOneSampleWilcoxAnimal_1(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+%% Fig. 5d - A&B tuned A vs B lap spatial tuning correlation relative to D1 - recall
+
+txt_input = 'Fig 5d - Matching A&B tuned neurons A vs B lap correlation normalized to D1 during recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%Kruskal-Wallis test input data
+dof = table2array(fig4_5_data.table_list.t_krusall_recall(1,7));
+test_stat = table2array(fig4_5_data.table_list.t_krusall_recall(1,8));
+p_val = table2array(fig4_5_data.table_list.t_krusall_recall(1,9));
+sample_n = table2array(fig4_5_data.table_list.t_krusall_recall(1,5));
+
+%description of comparison
+comp_descrip = 'Day one normalized A vs. B lap correlation scores for matching neurons during recall';
+%kruskal wallis test write
+writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-sample Wilcox test no multi comp p_val correction against 1
+%input to 1-sample paired Wilcoxon test
+dof = table2array(fig4_5_data.table_list.paired_wilcox_AB_recall(1,7));
+test_stat = table2array(fig4_5_data.table_list.paired_wilcox_AB_recall(1,8));
+p_val = table2array(fig4_5_data.table_list.paired_wilcox_AB_recall(1,9));
+sample_n = table2array(fig4_5_data.table_list.paired_wilcox_AB_recall(1,5));
+
+%description of comparison
+comp_descrip = 'Day 2 recall';
+writeOneSampleWilcoxAnimal_1(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-sample Wilcox test no multi comp p_val correction against 1
+%input to 1-sample paired Wilcoxon test
+dof = table2array(fig4_5_data.table_list.paired_wilcox_AB_recall(6,7));
+test_stat = table2array(fig4_5_data.table_list.paired_wilcox_AB_recall(6,8));
+p_val = table2array(fig4_5_data.table_list.paired_wilcox_AB_recall(6,9));
+sample_n = table2array(fig4_5_data.table_list.paired_wilcox_AB_recall(6,5));
+
+%description of comparison
+comp_descrip = 'Day 7 recall';
+writeOneSampleWilcoxAnimal_1(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
 
 %% Close Word document
 CloseWord(ActXWord,WordHandle,FileSpec);
