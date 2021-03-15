@@ -21,7 +21,7 @@ data_agg = string(repmat(data_agg_in,nb_entries,1));
 %number of samples for each test            
 n_sample = stats_in_mat(:,3);
 %test ran
-test_name = string(repmat('1-sample Wilcoxon Sign Rank',nb_entries,1));
+test_name = string(repmat('Paired Wilcoxon Sign Rank',nb_entries,1));
 %degrees of freedom
 n_dof = stats_in_mat(:,4);
 %test statistic

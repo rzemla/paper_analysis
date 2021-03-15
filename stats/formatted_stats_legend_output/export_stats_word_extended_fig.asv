@@ -342,28 +342,10 @@ writeWordEnter(ActXWord,WordHandle,2);
 %% Ex Fig 7c - Activity rate in run epochs for A vs B laps in activity remapping neurons
 
 %description of statistics
-txt_input = 'Ex. Fig. 7c - Activity rate in A vs. B laps during RUN for all activity remapping neurons';
+txt_input = 'Ex. Fig. 7a - Common vs global remapping activity index score';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,1);
 
-%open parenthesis
-txt_input = '(';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-%input for paired Wilcoxon test
-dof = table2array(ex_fig_data.table_list.exFig7.t_paired_wilcox_activity_rate_com_activity(1,7));
-test_stat = table2array(ex_fig_data.table_list.exFig7.t_paired_wilcox_activity_rate_com_activity(1,8));
-p_val = table2array(ex_fig_data.table_list.exFig7.t_paired_wilcox_activity_rate_com_activity(1,9));
-sample_n = table2array(ex_fig_data.table_list.exFig7.t_paired_wilcox_activity_rate_com_activity(1,5));
-
-%description of comparison
-comp_descrip = 'Activity rate in A vs. B laps during RUN for all activity remapping neurons';
-writePairedWilcoxPooled_non_cor_pval(ActXWord,WordHandle,comp_descrip,test_stat,p_val, p_val, dof, sample_n);
-
-%close parenthesis
-txt_input = ')';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-writeWordEnter(ActXWord,WordHandle,2);
 
 %% Close Word document
 CloseWord(ActXWord,WordHandle,FileSpec);

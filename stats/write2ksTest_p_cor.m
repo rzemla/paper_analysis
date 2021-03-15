@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = write2ksTest(actx_word_p,doc_handle,comp_descrip,test_stat,p_val, dof, sample_n)
+function [outputArg1,outputArg2] = write2ksTest_p_cor(actx_word_p,doc_handle,comp_descrip,test_stat,p_val, dof, sample_n)
 
 %word style and font settings
 %actx_word_p.Selection.Style = 'Normal';
@@ -28,7 +28,6 @@ actx_word_p.Selection.Font.Italic = false;
 %insert subscript samples next to test statistic
 
 %use sample for test statistic dof input
-%use sample for test statistic dof input
 sample_split = split(sample_n, ' ');
 %covert to double - remove nans
 sample_split = double(sample_split);
@@ -40,9 +39,6 @@ end
 
 %format for print output (convert to str each 
 sample_formatted = strjoin(sample_str,', ');
-
-% sample_split = split(sample_n, ' ');
-% sample_formatted = strjoin(sample_split([1,3]),', ');
 
 %turn subscript on
 actx_word_p.Selection.Font.Subscript = true;
@@ -76,7 +72,6 @@ end
 %overwrite default n sample here (used before to display number of neurons
 %join with vs. 'delimiter'
 sample_n_neurons = strjoin(sample_str,' vs. ');
-%sample_n_neurons = strjoin(sample_split([1,3]),' vs. ');
 
 sample_n = 11; %set fixed value for now
 
@@ -88,6 +83,8 @@ actx_word_p.Selection.Font.Italic = false;
 actx_word_p.Selection.TypeText([' = ', num2str(sample_n_neurons),...
         ' neurons, ', num2str(sample_n),' FOV from ', num2str(sample_n-1),' mice']);
 
+%p value correction
+actx_word_p.Selection.TypeText(', Holm-Sidak correction');
 
 %activeX unit conversion
 %https://www.mathworks.com/matlabcentral/answers/165541-how-can-i-set-the-movedown-method-to-move-down-paragraphs-headings
