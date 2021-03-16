@@ -1234,17 +1234,484 @@ writeWordEnter(ActXWord,WordHandle,2);
 
 %% Ex Fig 10c PV correlation long term
 
+%description of stats
+txt_input = 'Ex. Fig 10c - PV, TC (SI), TC (TS) during long-term recall relative to d1';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PV_A(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PV_A(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PV_A(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PV_A(1,5));
+
+comp_descrip = 'PV correlation during long-term recall relative to day 1 on A trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_A_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_A_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_A_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_A_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 25 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_A_25_30(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_A_25_30(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_A_25_30(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_A_25_30(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 30 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+
+%B trial group test
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PV_B(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PV_B(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PV_B(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PV_B(1,5));
+
+comp_descrip = 'PV correlation during long-term recall relative to day 1 on B trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_B_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_B_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_B_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_B_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 25 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_B_25_30(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_B_25_30(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_B_25_30(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PV_B_25_30(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 30 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+
 %% Ex Fig 10c TC correlation SI long term - continued
+
+%open parenthesis
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_si_A(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_si_A(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_si_A(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_si_A(1,5));
+
+comp_descrip = 'TC correlation (S.I.) during long-term recall relative to day 1 on A trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_A_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_A_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_A_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_A_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 25 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_A_25_30(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_A_25_30(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_A_25_30(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_A_25_30(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 30 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+
+%B trial group test
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_si_B(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_si_B(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_si_B(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_si_B(1,5));
+
+comp_descrip = 'TC (S.I.) correlation during long-term recall relative to day 1 on B trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_B_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_B_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_B_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_B_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 25 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_B_25_30(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_B_25_30(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_B_25_30(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_si_B_25_30(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 30 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+
 
 %% Ex Fig 10c TC correlation TS long term - continued
 
-%% Ex Fig 10d PV neighbor
+%open parenthesis
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-%% Ex Fig 10d TC SI neighbor long term - continued
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_ts_A(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_ts_A(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_ts_A(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_ts_A(1,5));
 
-%% Ex Fig 10d TC TS neighbor long term - continued
+comp_descrip = 'TC correlation (T.S.) during long-term recall relative to day 1 on A trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_A_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_A_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_A_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_A_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 25 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_A_25_30(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_A_25_30(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_A_25_30(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_A_25_30(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 30 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+
+%B trial group test
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_ts_B(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_ts_B(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_ts_B(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TC_ts_B(1,5));
+
+comp_descrip = 'TC (T.S.) correlation during long-term recall relative to day 1 on B trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_B_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_B_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_B_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_B_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 25 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_B_25_30(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_B_25_30(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_B_25_30(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TC_ts_B_25_30(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 30 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+%% Ex Fig 10d PV correlation neightbor sessions long term
+
+%description of stats
+txt_input = 'Ex. Fig 10d - PV, TC (SI), TC (TS) neighboring sessions during long-term recall relative to d1';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PVn_A(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PVn_A(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PVn_A(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PVn_A(1,5));
+
+comp_descrip = 'Neighboring session PV correlation during long-term recall A trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PVn_A_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PVn_A_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PVn_A_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PVn_A_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. 6 Vs. Day 20 vs. Day 25 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+
+%B trial group test
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PVn_B(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PVn_B(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PVn_B(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_PVn_B(1,5));
+
+comp_descrip = 'Neighboring session PV correlation during long-term recall B trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PVn_B_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PVn_B_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PVn_B_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_PVn_B_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. 6 Vs. Day 20 vs. Day 25 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%% Ex Fig 10d TC correlation neighboring sessions SI long term - continued
+
+%open parenthesis
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_si_A(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_si_A(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_si_A(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_si_A(1,5));
+
+comp_descrip = 'Neighboring session TC (S.I.) correlation during long-term recall A trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_si_A_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_si_A_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_si_A_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_si_A_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. 6 Vs. Day 20 vs. Day 25 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+
+%B trial group test
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_si_B(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_si_B(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_si_B(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_si_B(1,5));
+
+comp_descrip = 'Neighboring session TC (S.I.) correlation during long-term recall B trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_si_B_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_si_B_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_si_B_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_si_B_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. 6 Vs. Day 20 vs. Day 25 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%% Ex Fig 10d TC correlation neighboring sessions TS long term - continued
+
+%open parenthesis
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_ts_A(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_ts_A(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_ts_A(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_ts_A(1,5));
+
+comp_descrip = 'Neighboring session TC (T.S.) correlation during long-term recall A trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_ts_A_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_ts_A_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_ts_A_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_ts_A_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. 6 Vs. Day 20 vs. Day 25 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+
+%B trial group test
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_ts_B(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_ts_B(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_ts_B(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.long_TCn_ts_B(1,5));
+
+comp_descrip = 'Neighboring session TC (T.S.) correlation during long-term recall B trials';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_ts_B_25_30(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_ts_B_25_30(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_ts_B_25_30(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.long_TCn_ts_B_25_30(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. 6 Vs. Day 20 vs. Day 25 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
 
 %% Ex Fig 10e A&B TC corr SI long term 
+
 
 
 %% Ex Fig 10e A&B TC corr TS long term - continued
