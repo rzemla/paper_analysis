@@ -365,9 +365,204 @@ txt_input = ')';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,2);
 
-%% Import 9a from Desktop that is not synced yet with github !!!!
+%% Figure 9a - Fraction of A and B-selective place cells during learning
+%description of statistics
+txt_input = 'Fig 9a - Fraction of A and B-selective place cells during learning';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = '(';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.learnA(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.learnA(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.learnA(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.learnA(1,5));
+
+comp_descrip = 'Fraction of A-trial tuned place cells during learning - S.I.';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnA_6_7(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnA_6_7(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnA_6_7(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnA_6_7(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 6 A trial learning';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnA_6_7(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnA_6_7(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnA_6_7(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnA_6_7(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 7 A trial learning';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
 
+%B trial group test
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.learnB(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.learnB(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.learnB(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.learnB(1,5));
+
+comp_descrip = 'Fraction of B-trial tuned place cells during learning - S.I.';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnB_6_7(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnB_6_7(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnB_6_7(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnB_6_7(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 6 B trial learning';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnB_6_7(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnB_6_7(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnB_6_7(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.learnB_6_7(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 7 B trial learning';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%close parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
+
+
+%% Figure 9a - Fraction of A and B-selective place cells during recall
+%description of statistics
+% txt_input = 'Fig 4e - Fraction of A and B-selective place cells during recall';
+% writeDefaultWordText(ActXWord,WordHandle,txt_input);
+% writeWordEnter(ActXWord,WordHandle,1);
+
+%open parenthesis
+txt_input = ';';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.recallA(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.recallA(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.recallA(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.recallA(1,5));
+
+comp_descrip = 'Fraction of A-trial tuned place cells during recall - S.I.';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallA_6_7(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallA_6_7(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallA_6_7(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallA_6_7(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 6 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallA_6_7(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallA_6_7(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallA_6_7(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallA_6_7(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 7 A trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+
+%B trial group test
+%1-way LME input data - extract DOFs from test stats field
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.recallB(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.recallB(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.recallB(1,9));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_1_rm_lme.recallB(1,5));
+
+comp_descrip = 'Fraction of B-trial tuned place cells during recall - S.I.';
+
+%1-way RM linear mixed effects analysis
+write_1wayLME(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallB_6_7(1,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallB_6_7(1,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallB_6_7(1,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallB_6_7(1,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 6 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%split entry with semicolon
+txt_input = '; ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%input into paired t-test
+dof = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallB_6_7(2,7));
+test_stat = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallB_6_7(2,8));
+p_val = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallB_6_7(2,10));
+sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_ttest.recallB_6_7(2,5));
+
+%description of comparison
+comp_descrip = 'Day 1 vs. Day 7 B trial recall';
+writePairedTtestAnimal(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+
+%close parenthesis
+txt_input = ')';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+writeWordEnter(ActXWord,WordHandle,2);
 
 %% Fig 9b Tuning curve correction - SI - equivalent analysis - learning then recall
 
@@ -859,7 +1054,9 @@ txt_input = ')';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,2);
 
-%% Ex Fig 10
+%% Ex Fig 10a - fraction tuned across time - SI and TS
+
+
 
 %% Close Word document
 CloseWord(ActXWord,WordHandle,FileSpec);
