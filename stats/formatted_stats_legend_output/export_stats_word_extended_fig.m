@@ -18,6 +18,11 @@ end
 %load in figure 4 and 5 data
 ex_fig_data = load('ex_fig_table_data.mat');
 
+%get number of animals for each group (manual entry for now for Kruskall-Wallis input)
+nb_animal_stl = 6;
+nb_animal_str = 5;
+nb_animal_ltr = 3;
+
 %% Start Word document that will contain the formatted stats data
 
 WordFileName='legend_stats_formatted_extended_fig.doc';
@@ -958,7 +963,7 @@ sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_krusall_learn(1,5));
 %description of comparison
 comp_descrip = 'Day one normalized A vs. B lap correlation scores for matching neurons during learning';
 %kruskal wallis test write
-writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n, nb_animal_stl)
 
 %semicolon
 txt_input = '; ';
@@ -1009,7 +1014,7 @@ sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_krusall_recall(1,5));
 %description of comparison
 comp_descrip = 'Day one normalized A vs. B lap correlation scores for matching neurons during recall';
 %kruskal wallis test write
-writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n,nb_animal_str)
 
 %semicolon
 txt_input = '; ';
@@ -1726,7 +1731,7 @@ sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_krusall_recall_lt_si(1
 %description of comparison
 comp_descrip = 'Day one normalized A vs. B lap correlation (S.I.) scores for matching neurons';
 %kruskal wallis test write
-writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n,nb_animal_ltr)
 
 %semicolon
 txt_input = '; ';
@@ -1774,7 +1779,7 @@ sample_n = table2array(ex_fig_data.table_list.exFig9_10.t_krusall_recall_lt_ts(1
 %description of comparison
 comp_descrip = 'Day one normalized A vs. B lap correlation (T.S) scores for matching neurons';
 %kruskal wallis test write
-writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n,nb_animal_ltr)
 
 %semicolon
 txt_input = '; ';

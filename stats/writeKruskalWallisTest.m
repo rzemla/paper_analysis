@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = writeKruskalWallisTest(actx_word_p,doc_handle,comp_descrip,test_stat,p_val, dof, sample_n)
+function [outputArg1,outputArg2] = writeKruskalWallisTest(actx_word_p,doc_handle,comp_descrip,test_stat,p_val, dof, sample_n, nb_animal)
 
 %word style and font settings
 %actx_word_p.Selection.Style = 'Normal';
@@ -62,7 +62,7 @@ actx_word_p.Selection.TypeText(', ');
 actx_word_p.Selection.Font.Italic = true;
 actx_word_p.Selection.TypeText('n');
 actx_word_p.Selection.Font.Italic = false;
-actx_word_p.Selection.TypeText([' = ', num2str(neuron_sum),' neurons from ', num2str(dof+1),' mice']);
+actx_word_p.Selection.TypeText([' = ', num2str(neuron_sum),' neurons from ', num2str(nb_animal),' mice']);
 
 
 %activeX unit conversion

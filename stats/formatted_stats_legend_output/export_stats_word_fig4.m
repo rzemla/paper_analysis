@@ -1,7 +1,7 @@
 %% Import all table formatted entries here for data generated for each figure
 
 %import data for each figure
-laptop_access = 0;
+laptop_access = 1;
 
 %laptop path directory
 laptop_path_dir = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
@@ -17,6 +17,11 @@ end
 
 %load in figure 4 and 5 data
 fig4_5_data = load('fig4_5_table_data.mat');
+
+%get number of animals for each group (manual entry for now for Kruskall-Wallis input)
+nb_animal_stl = 6;
+nb_animal_str = 5;
+nb_animal_ltr = 3;
 
 %% Start Word document that will contain the formatted stats data
 
@@ -945,7 +950,7 @@ sample_n = table2array(fig4_5_data.table_list.t_krusall_learn(1,5));
 %description of comparison
 comp_descrip = 'Day one normalized A vs. B lap correlation scores for matching neurons during learning';
 %kruskal wallis test write
-writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n, nb_animal_stl)
 
 %semicolon
 txt_input = '; ';
@@ -1000,7 +1005,7 @@ sample_n = table2array(fig4_5_data.table_list.t_krusall_recall(1,5));
 %description of comparison
 comp_descrip = 'Day one normalized A vs. B lap correlation scores for matching neurons during recall';
 %kruskal wallis test write
-writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n)
+writeKruskalWallisTest(ActXWord,WordHandle,comp_descrip,test_stat,p_val, dof, sample_n, nb_animal_str)
 
 %semicolon
 txt_input = '; ';
