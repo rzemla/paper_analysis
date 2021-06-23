@@ -27,3 +27,112 @@ mean_corr.B = mean(frac_corr_B,1);
 sem_corr.A = std(frac_corr_A,0,1)./sqrt(nb_animals);
 sem_corr.B = std(frac_corr_B,0,1)./sqrt(nb_animals);
 
+%% Export the data to word
+
+%% Start Word document that will contain the formatted stats data
+
+WordFileName='fig_1_mean_sem.doc';
+CurDir=pwd;
+FileSpec = fullfile(CurDir,WordFileName);
+%active X handle for manipulating document (ActXWord)
+[ActXWord,WordHandle]=StartWord(FileSpec);
+
+fprintf('Document will be saved in %s\n',FileSpec);
+
+%% Licking mean and sem in reward zones
+
+%RF A trials
+mean_txt = mean_lick.A(1);
+sem_txt = sem_lick.A(1);
+
+txt_input = 'RF A trials licking in reward zone';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%Random AB A trials
+mean_txt = mean_lick.A(4);
+sem_txt = sem_lick.A(4);
+
+txt_input = 'Random AB A trials licking in reward zone';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%RF B trials
+mean_txt = mean_lick.B(1);
+sem_txt = sem_lick.B(1);
+
+txt_input = 'RF B trials licking in reward zone';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%Random AB B trials
+mean_txt = mean_lick.B(4);
+sem_txt = sem_lick.B(4);
+
+txt_input = 'Random AB B trials licking in reward zone';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%% Fraction correct trials mean and sem
+writeWordEnter(ActXWord,WordHandle,1);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%RF A trials
+mean_txt = mean_corr.A(1);
+sem_txt = sem_corr.A(1);
+
+txt_input = 'RF A trials fraction of correct trials';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%Random AB A trials
+mean_txt = mean_corr.A(4);
+sem_txt = sem_corr.A(4);
+
+txt_input = 'Random AB A trials fraction of correct trials';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%RF B trials
+mean_txt = mean_corr.B(1);
+sem_txt = sem_corr.B(1);
+
+txt_input = 'RF B trials fraction of correct trials';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%Random AB B trials
+mean_txt = mean_corr.B(4);
+sem_txt = sem_corr.B(4);
+
+txt_input = 'Random AB B trials fraction of correct trials';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%% Close Word document
+CloseWord(ActXWord,WordHandle,FileSpec);
+
