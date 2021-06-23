@@ -356,11 +356,7 @@ mean_sem_out.B.sem = std(pre_post_speed_mean_lap.B,0,3)./sqrt(nb_animals);
 mean_sem_out.ArelB.sem = std(pre_post_speed_mean_lap.ArelB,0,3)./sqrt(nb_animals);
 mean_sem_out.BrelA.sem = std(pre_post_speed_mean_lap.BrelA,0,3)./sqrt(nb_animals);
 
-%raw mean data
-mean_sem_out.raw_means = pre_post_speed_mean_lap;
-
 %export and save as .mat file
-save('fig_1_speed_rew_zone.mat','mean_sem_out','-v7.3');
 
 %% Plot zone data
 
