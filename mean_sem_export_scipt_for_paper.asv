@@ -1,0 +1,16 @@
+%% import prism fraction of licks data on A and B trials
+
+dirpath = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\fig1_csv_data_prism_export';
+
+%fraction of licks in reward zone
+frac_licks_A = readmatrix(fullfile(dirpath,'A fraction of licks in reward zone.csv'),'Range','B2:E5');
+frac_licks_B = readmatrix(fullfile(dirpath,'B fraction of licks in reward zone.csv'),'Range','B2:E5');
+
+%fraction correct trials
+frac_corr_A = readmatrix(fullfile(dirpath,'Fraction correct A trials.csv'),'Range','B2:E5');
+frac_corr_B = readmatrix(fullfile(dirpath,'Fraction correct B trials.csv'),'Range','B2:E5');
+
+%% Mean and sem for licking fraction of correct trials across training sessions
+
+mean_lick.A =
+
