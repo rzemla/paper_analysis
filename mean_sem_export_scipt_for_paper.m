@@ -10,6 +10,13 @@ frac_licks_B = readmatrix(fullfile(dirpath,'B fraction of licks in reward zone.c
 frac_corr_A = readmatrix(fullfile(dirpath,'Fraction correct A trials.csv'),'Range','B2:E5');
 frac_corr_B = readmatrix(fullfile(dirpath,'Fraction correct B trials.csv'),'Range','B2:E5');
 
+%% import data for figure 2 stats
+
+dirpath = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
+
+load(fullfile(dirpath,'source_data_fig2.mat'))
+
+
 %% Mean and sem for licking fraction of correct trials across training sessions
 
 nb_animals = size(frac_licks_A,2);
@@ -26,6 +33,19 @@ mean_corr.B = mean(frac_corr_B,1);
 
 sem_corr.A = std(frac_corr_A,0,1)./sqrt(nb_animals);
 sem_corr.B = std(frac_corr_B,0,1)./sqrt(nb_animals);
+
+%% Mean and sem data for figure 2
+
+nb_FOV = size(source_data_task_sel_remap.mean_AUC.run.Asel,1);
+
+mean_AUC.run.A = mean(source_data_task_sel_remap.mean_AUC.run.Asel,1);
+mean_AUC.run.B = mean(source_data_task_sel_remap.mean_AUC.run.Bsel,1);
+mean_AUC.run.AB = mean(source_data_task_sel_remap.mean_AUC.run.AB,1);
+
+sem_AUC.run.A = std(source_data_task_sel_remap.mean_AUC.run.Asel,0,1)./sqrt(nb_FOV);
+sem_AUC.run.B = std(source_data_task_sel_remap.mean_AUC.run.Bsel,0,1)./sqrt(nb_FOV);
+sem_AUC.run.AB = std(source_data_task_sel_remap.mean_AUC.run.AB,0,1)./sqrt(nb_FOV);
+
 
 %% Export the data to word
 
