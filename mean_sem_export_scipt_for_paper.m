@@ -38,6 +38,7 @@ sem_corr.B = std(frac_corr_B,0,1)./sqrt(nb_animals);
 
 nb_FOV = size(source_data_task_sel_remap.mean_AUC.run.Asel,1);
 
+%run
 mean_AUC.run.A = mean(source_data_task_sel_remap.mean_AUC.run.Asel,1);
 mean_AUC.run.B = mean(source_data_task_sel_remap.mean_AUC.run.Bsel,1);
 mean_AUC.run.AB = mean(source_data_task_sel_remap.mean_AUC.run.AB,1);
@@ -46,6 +47,14 @@ sem_AUC.run.A = std(source_data_task_sel_remap.mean_AUC.run.Asel,0,1)./sqrt(nb_F
 sem_AUC.run.B = std(source_data_task_sel_remap.mean_AUC.run.Bsel,0,1)./sqrt(nb_FOV);
 sem_AUC.run.AB = std(source_data_task_sel_remap.mean_AUC.run.AB,0,1)./sqrt(nb_FOV);
 
+%no run
+mean_AUC.norun.A = mean(source_data_task_sel_remap.mean_AUC.norun.Asel,1);
+mean_AUC.norun.B = mean(source_data_task_sel_remap.mean_AUC.norun.Bsel,1);
+mean_AUC.norun.AB = mean(source_data_task_sel_remap.mean_AUC.norun.AB,1);
+
+sem_AUC.norun.A = std(source_data_task_sel_remap.mean_AUC.norun.Asel,0,1)./sqrt(nb_FOV);
+sem_AUC.norun.B = std(source_data_task_sel_remap.mean_AUC.norun.Bsel,0,1)./sqrt(nb_FOV);
+sem_AUC.norun.AB = std(source_data_task_sel_remap.mean_AUC.norun.AB,0,1)./sqrt(nb_FOV);
 
 %% Export the data to word
 
@@ -153,6 +162,132 @@ writeWordEnter(ActXWord,WordHandle,1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 writeWordEnter(ActXWord,WordHandle,1);
 
+%% AUC for A/B/AB for run and norun epochs
+writeWordEnter(ActXWord,WordHandle,1);
+writeWordEnter(ActXWord,WordHandle,1);
+
+%A sel RUN
+txt_input = 'A sel A vs. B AUC/min RUN';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_AUC.run.A(1);
+sem_txt = sem_AUC.run.A(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_AUC.run.A(2);
+sem_txt = sem_AUC.run.A(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%B RUN
+txt_input = 'B-sel A vs. B AUC/min RUN';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_AUC.run.B(1);
+sem_txt = sem_AUC.run.B(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_AUC.run.B(2);
+sem_txt = sem_AUC.run.B(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%%%%%
+
+%AB RUN
+txt_input = 'AB A vs. B AUC/min RUN';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_AUC.run.AB(1);
+sem_txt = sem_AUC.run.AB(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_AUC.run.AB(2);
+sem_txt = sem_AUC.run.AB(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%%%%%%%%%%%%% NO RUN %%%%%%%%%%%%%%%
+
+%A sel NORUN
+txt_input = 'A sel A vs. B AUC/min NORUN';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_AUC.norun.A(1);
+sem_txt = sem_AUC.norun.A(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_AUC.norun.A(2);
+sem_txt = sem_AUC.norun.A(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%B NORUN
+txt_input = 'B-sel A vs. B AUC/min NORUN';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_AUC.norun.B(1);
+sem_txt = sem_AUC.norun.B(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_AUC.norun.B(2);
+sem_txt = sem_AUC.norun.B(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%%%%%
+
+%AB NORUN
+txt_input = 'AB A vs. B AUC/min NORUN';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_AUC.norun.AB(1);
+sem_txt = sem_AUC.norun.AB(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_AUC.norun.AB(2);
+sem_txt = sem_AUC.norun.AB(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+
+
 %% Close Word document
-CloseWord(ActXWord,WordHandle,FileSpec);
+%CloseWord(ActXWord,WordHandle,FileSpec);
 
