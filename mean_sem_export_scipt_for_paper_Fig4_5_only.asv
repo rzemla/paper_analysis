@@ -1,69 +1,36 @@
 %% import prism fraction of licks data on A and B trials
 
-dirpath = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data\fig1_csv_data_prism_export';
-
-%fraction of licks in reward zone
-frac_licks_A = readmatrix(fullfile(dirpath,'A fraction of licks in reward zone.csv'),'Range','B2:E5');
-frac_licks_B = readmatrix(fullfile(dirpath,'B fraction of licks in reward zone.csv'),'Range','B2:E5');
-
-%fraction correct trials
-frac_corr_A = readmatrix(fullfile(dirpath,'Fraction correct A trials.csv'),'Range','B2:E5');
-frac_corr_B = readmatrix(fullfile(dirpath,'Fraction correct B trials.csv'),'Range','B2:E5');
-
 %% import data for figure 2 stats
 
 dirpath = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
 
-load(fullfile(dirpath,'source_data_fig2.mat'))
-load(fullfile(dirpath,'source_data_fig3.mat'))
 load(fullfile(dirpath,'source_data_fig4_5_and_sup.mat'))
+load(fullfile(dirpath,'fig4_5_table_data.mat'))
 
-%% Mean and sem for licking fraction of correct trials across training sessions
+%% Mean and sem data for figure 4
+% %day x animal rc
+% d2_7 = source_data_short_learn_recall.PV.st_learn.A([2,7],:) ;
+% 
+% %r - animals matching, c - day (2 vs 7)
+% d2_7_trim = d2_7(:,sum(~isnan(d2_7),1) ==2)';
+% nb_samp = size(d2_7_trim,1);
+% 
+% %mean and sem
+% mean_2_7 = mean(d2_7_trim,1);
+% sem_2_7 = std(d2_7_trim,0,1)./sqrt(nb_samp);
 
-nb_animals = size(frac_licks_A,2);
-%licking mean and sem
-mean_lick.A = mean(frac_licks_A,1);
-mean_lick.B = mean(frac_licks_B,1);
+%PV A learn 2 vs 7
+[mean_2_7.PV.learn.A,sem_2_7.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.A);
 
-sem_lick.A = std(frac_licks_A,0,1)./sqrt(nb_animals);
-sem_lick.B = std(frac_licks_B,0,1)./sqrt(nb_animals);
+%PV A learn 2 vs 7
+[mean_2_7.PV.learn.B,sem_2_7.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.B);
 
-%fraction correct mean and sem
-mean_corr.A = mean(frac_corr_A,1);
-mean_corr.B = mean(frac_corr_B,1);
+%learn data
+s1 = source_data_short_learn_recall.PV.st_learn.A;
+%recall data
+s2 = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.A;
 
-sem_corr.A = std(frac_corr_A,0,1)./sqrt(nb_animals);
-sem_corr.B = std(frac_corr_B,0,1)./sqrt(nb_animals);
-
-%% Mean and sem data for figure 2
-
-nb_FOV = size(source_data_task_sel_remap.mean_AUC.run.Asel,1);
-
-%run
-mean_AUC.run.A = mean(source_data_task_sel_remap.mean_AUC.run.Asel,1);
-mean_AUC.run.B = mean(source_data_task_sel_remap.mean_AUC.run.Bsel,1);
-mean_AUC.run.AB = mean(source_data_task_sel_remap.mean_AUC.run.AB,1);
-
-sem_AUC.run.A = std(source_data_task_sel_remap.mean_AUC.run.Asel,0,1)./sqrt(nb_FOV);
-sem_AUC.run.B = std(source_data_task_sel_remap.mean_AUC.run.Bsel,0,1)./sqrt(nb_FOV);
-sem_AUC.run.AB = std(source_data_task_sel_remap.mean_AUC.run.AB,0,1)./sqrt(nb_FOV);
-
-%no run
-mean_AUC.norun.A = mean(source_data_task_sel_remap.mean_AUC.norun.Asel,1);
-mean_AUC.norun.B = mean(source_data_task_sel_remap.mean_AUC.norun.Bsel,1);
-mean_AUC.norun.AB = mean(source_data_task_sel_remap.mean_AUC.norun.AB,1);
-
-sem_AUC.norun.A = std(source_data_task_sel_remap.mean_AUC.norun.Asel,0,1)./sqrt(nb_FOV);
-sem_AUC.norun.B = std(source_data_task_sel_remap.mean_AUC.norun.Bsel,0,1)./sqrt(nb_FOV);
-sem_AUC.norun.AB = std(source_data_task_sel_remap.mean_AUC.norun.AB,0,1)./sqrt(nb_FOV);
-
-%% Fraction of Tuned neurons by SI and TS criteria
-
-mean_si = mean(source_data_task_sel_remap.frac_tuned.si,1);
-sem_si = std(source_data_task_sel_remap.frac_tuned.si,0,1)./sqrt(nb_FOV);
-
-mean_ts = mean(source_data_task_sel_remap.frac_tuned.ts,1);
-sem_ts = std(source_data_task_sel_remap.frac_tuned.ts,0,1)./sqrt(nb_FOV);
+[mean_7_lr.PV.A, sem_7_lr.PV.A] = learn_recall_7_mean_sem_PV(s1,s2)
 
 %% TC correlation difference between A B and AB neurons
 
@@ -75,19 +42,13 @@ sem_TC.A = std(source_data_task_sel_remap.mean_TC.Asel)./sqrt(nb_FOV);
 sem_TC.B = std(source_data_task_sel_remap.mean_TC.Bsel)./sqrt(nb_FOV);
 sem_TC.AB = std(source_data_task_sel_remap.mean_TC.AB)./sqrt(nb_FOV);
 
-%% Remapping fractions and zone II A vs. B shift mean and sem
 
-frac_remap_mean = mean(source_data_AB_remap.frac_class_mean);
-frac_remap_sem = std(source_data_AB_remap.frac_class_mean)./sqrt(nb_FOV);
-
-zoneII_mean = mean(source_data_AB_remap.global_shift.zoneII_diff);
-zoneII_sem = std(source_data_AB_remap.global_shift.zoneII_diff)./sqrt(nb_FOV);
 
 %% Export the data to word
 
 %% Start Word document that will contain the formatted stats data
 
-WordFileName='fig_1_mean_sem.doc';
+WordFileName='fig_4_5_mean_sem.doc';
 CurDir=pwd;
 FileSpec = fullfile(CurDir,WordFileName);
 %active X handle for manipulating document (ActXWord)
