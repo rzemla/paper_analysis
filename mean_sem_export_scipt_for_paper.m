@@ -56,6 +56,32 @@ sem_AUC.norun.A = std(source_data_task_sel_remap.mean_AUC.norun.Asel,0,1)./sqrt(
 sem_AUC.norun.B = std(source_data_task_sel_remap.mean_AUC.norun.Bsel,0,1)./sqrt(nb_FOV);
 sem_AUC.norun.AB = std(source_data_task_sel_remap.mean_AUC.norun.AB,0,1)./sqrt(nb_FOV);
 
+%% Fraction of Tuned neurons by SI and TS criteria
+
+mean_si = mean(source_data_task_sel_remap.frac_tuned.si,1);
+sem_si = std(source_data_task_sel_remap.frac_tuned.si,0,1)./sqrt(nb_FOV);
+
+mean_ts = mean(source_data_task_sel_remap.frac_tuned.ts,1);
+sem_ts = std(source_data_task_sel_remap.frac_tuned.ts,0,1)./sqrt(nb_FOV);
+
+%% TC correlation difference between A B and AB neurons
+
+mean_TC.A = mean(source_data_task_sel_remap.mean_TC.Asel);
+mean_TC.B = mean(source_data_task_sel_remap.mean_TC.Bsel);
+mean_TC.AB = mean(source_data_task_sel_remap.mean_TC.AB);
+
+sem_TC.A = std(source_data_task_sel_remap.mean_TC.Asel)./sqrt(nb_FOV);
+sem_TC.B = std(source_data_task_sel_remap.mean_TC.Bsel)./sqrt(nb_FOV);
+sem_TC.AB = std(source_data_task_sel_remap.mean_TC.AB)./sqrt(nb_FOV);
+
+%% Remapping fractions and zone II A vs. B shift mean and sem
+
+frac_remap_mean = mean(source_data_AB_remap.frac_class_mean);
+frac_remap_sem = std(source_data_AB_remap.frac_class_mean)./sqrt(nb_FOV);
+
+zoneII_mean = mean(source_data_AB_remap.global_shift.zoneII_diff);
+zoneII_sem = std(source_data_AB_remap.global_shift.zoneII_diff)./sqrt(nb_FOV);
+
 %% Export the data to word
 
 %% Start Word document that will contain the formatted stats data
@@ -286,7 +312,251 @@ write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 writeWordEnter(ActXWord,WordHandle,1);
 
+%% Fraction tuned IS
+%SI A vs. B
+txt_input = 'A vs B SI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
 
+mean_txt = mean_si(1);
+sem_txt = sem_si(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_si(2);
+sem_txt = sem_si(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%SI A vs. AB
+txt_input = 'A vs AB SI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_si(1);
+sem_txt = sem_si(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_si(3);
+sem_txt = sem_si(3);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+%SI B vs. AB
+txt_input = 'B vs AB SI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_si(2);
+sem_txt = sem_si(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_si(3);
+sem_txt = sem_si(3);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%%%%%%%%TS %%%%%%%%%%%
+%ts A vs. B
+txt_input = 'A vs B ts';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_ts(1);
+sem_txt = sem_ts(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_ts(2);
+sem_txt = sem_ts(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%ts A vs. AB
+txt_input = 'A vs AB ts';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_ts(1);
+sem_txt = sem_ts(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_ts(3);
+sem_txt = sem_ts(3);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+%ts B vs. AB
+txt_input = 'B vs AB ts';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_ts(2);
+sem_txt = sem_ts(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_ts(3);
+sem_txt = sem_ts(3);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+%% Mean TC score between selective neurons  
+%TC A vs. B
+txt_input = 'A vs B TC mean';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_TC.A;
+sem_txt = sem_TC.A;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_TC.B;
+sem_txt = sem_TC.B;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+% A vs AB TC mean
+txt_input = 'A vs AB TC mean';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_TC.A;
+sem_txt = sem_TC.A;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_TC.AB;
+sem_txt = sem_TC.AB;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+% B vs AB TC mean
+txt_input = 'B vs AB TC mean';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_TC.B;
+sem_txt = sem_TC.B;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_TC.AB;
+sem_txt = sem_TC.AB;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+
+%% Fraction remapping neurons 
+%order of each class of remappers
+%'Common'	'Activity'	'Global'	'Partial'	'Unclassified'
+
+% common vs activity 
+txt_input = 'Common vs. activity';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = frac_remap_mean(1);
+sem_txt = frac_remap_sem(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = frac_remap_mean(2);
+sem_txt = frac_remap_sem(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+% common vs global
+txt_input = 'Common vs. global';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = frac_remap_mean(1);
+sem_txt = frac_remap_sem(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = frac_remap_mean(3);
+sem_txt = frac_remap_sem(3);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+% common vs global
+txt_input = 'Common vs. partial';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = frac_remap_mean(1);
+sem_txt = frac_remap_sem(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = frac_remap_mean(4);
+sem_txt = frac_remap_sem(4);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
+
+% zone II mean sem for global remapping neurons
+txt_input = 'Zone II A vs. B for global remap';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = zoneII_mean;
+sem_txt = zoneII_sem;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+writeWordEnter(ActXWord,WordHandle,1);
 
 %% Close Word document
 %CloseWord(ActXWord,WordHandle,FileSpec);
