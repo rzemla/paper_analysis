@@ -7,22 +7,102 @@ dirpath = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
 load(fullfile(dirpath,'source_data_fig4_5_and_sup.mat'))
 load(fullfile(dirpath,'fig4_5_table_data.mat'))
 
-%% Mean and sem data for figure 4
-
-%%% All PV data
+%% Mean and sem data for PV 
+%%% All PV data A
 %PV A learn 2 vs 7
-[mean_2_7.PV.learn.A,sem_2_7.learn.A,nb_comp_2_7.PV.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.A);
+[mean_2_7.PV.learn.A,sem_2_7.PV.learn.A,nb_comp_2_7.PV.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.A);
 
-%PV A learn 2 vs 7
-[mean_2_7.PV.learn.B,sem_2_7.learn.B,nb_comp_2_7.PV.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.B);
+%PV B learn 2 vs 7
+[mean_2_7.PV.learn.B,sem_2_7.PV.learn.B,nb_comp_2_7.PV.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.B);
 
+%PV A recall 2 vs 7
+[mean_2_7.PV.recall.A,sem_2_7.PV.recall.A,nb_comp_2_7.PV.recall.A] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_recall.d4_d5_sub.A);
+
+%PV B recall 2 vs 7
+[mean_2_7.PV.recall.B,sem_2_7.PV.recall.B,nb_comp_2_7.PV.recall.B] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_recall.d4_d5_sub.B);
+
+%PV learn vs. recall A
 %learn data
 s1 = source_data_short_learn_recall.PV.st_learn.A;
 %recall data
 s2 = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.A;
-%mean and sem comp
-[mean_7_lr.PV.A, sem_7_lr.PV.A,nb_comp_PV.A] = learn_recall_7_mean_sem_PV(s1,s2);
 
+%mean and sem comp - learn vs. recall A
+[mean_7_lr.PV.A, sem_7_lr.PV.A,nb_comp_7.PV.A] = learn_recall_7_mean_sem_PV(s1,s2);
+
+%PV learn vs. recall B
+%learn data
+s1 = source_data_short_learn_recall.PV.st_learn.B;
+%recall data
+s2 = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.B;
+
+%mean and sem comp - learn vs. recall B
+[mean_7_lr.PV.B, sem_7_lr.PV.B,nb_comp_7.PV.B] = learn_recall_7_mean_sem_PV(s1,s2);
+
+%% Mean and sem data for TC TS (PV function works the same for TC corr values) 
+%%% All TS data A
+%TS A learn 2 vs 7
+[mean_2_7.TC.ts.learn.A,sem_2_7.TC.ts.learn.A,nb_comp_2_7.TC.ts.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_learn.A);
+
+%TC.ts B learn 2 vs 7
+[mean_2_7.TC.ts.learn.B,sem_2_7.TC.ts.learn.B,nb_comp_2_7.TC.ts.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_learn.B);
+
+%TC.ts A recall 2 vs 7
+[mean_2_7.TC.ts.recall.A,sem_2_7.TC.ts.recall.A,nb_comp_2_7.TC.ts.recall.A] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.A);
+
+%TC.ts B recall 2 vs 7
+[mean_2_7.TC.ts.recall.B,sem_2_7.TC.ts.recall.B,nb_comp_2_7.TC.ts.recall.B] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.B);
+
+%TC.ts learn vs. recall A
+%learn data
+s1 = source_data_short_learn_recall.TC.ts.st_learn.A;
+%recall data
+s2 = source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.A;
+
+%mean and sem comp - learn vs. recall A
+[mean_7_lr.TC.ts.A, sem_7_lr.TC.ts.A,nb_comp_7.TC.ts.A] = learn_recall_7_mean_sem_PV(s1,s2);
+
+%TC.ts learn vs. recall B
+%learn data
+s1 = source_data_short_learn_recall.TC.ts.st_learn.B;
+%recall data
+s2 = source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.B;
+
+%mean and sem comp - learn vs. recall B
+[mean_7_lr.TC.ts.B, sem_7_lr.TC.ts.B,nb_comp_7.TC.ts.B] = learn_recall_7_mean_sem_PV(s1,s2);
+
+%% Mean and sem data for TC SI (PV function works the same for TC corr values) 
+
+%%% All TC data A
+%TC A learn 2 vs 7
+[mean_2_7.TC.si.learn.A,sem_2_7.TC.si.learn.A,nb_comp_2_7.TC.si.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.TC.si.st_learn.A);
+
+%TC.si B learn 2 vs 7
+[mean_2_7.TC.si.learn.B,sem_2_7.TC.si.learn.B,nb_comp_2_7.TC.si.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.TC.si.st_learn.B);
+
+%TC.si A recall 2 vs 7
+[mean_2_7.TC.si.recall.A,sem_2_7.TC.si.recall.A,nb_comp_2_7.TC.si.recall.A] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.TC.si.st_recall.d4_d5_sub.A);
+
+%TC.si B recall 2 vs 7
+[mean_2_7.TC.si.recall.B,sem_2_7.TC.si.recall.B,nb_comp_2_7.TC.si.recall.B] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.TC.si.st_recall.d4_d5_sub.B);
+
+%TC.si learn vs. recall A
+%learn data
+s1 = source_data_short_learn_recall.TC.si.st_learn.A;
+%recall data
+s2 = source_data_short_learn_recall.TC.si.st_recall.d4_d5_sub.A;
+
+%mean and sem comp - learn vs. recall A
+[mean_7_lr.TC.si.A, sem_7_lr.TC.si.A,nb_comp_7.TC.si.A] = learn_recall_7_mean_sem_PV(s1,s2);
+
+%TC.si learn vs. recall B
+%learn data
+s1 = source_data_short_learn_recall.TC.si.st_learn.B;
+%recall data
+s2 = source_data_short_learn_recall.TC.si.st_recall.d4_d5_sub.B;
+
+%mean and sem comp - learn vs. recall B
+[mean_7_lr.TC.si.B, sem_7_lr.TC.si.B,nb_comp_7.TC.si.B] = learn_recall_7_mean_sem_PV(s1,s2);
 
 %% Export the data to word
 
@@ -36,468 +116,343 @@ FileSpec = fullfile(CurDir,WordFileName);
 
 fprintf('Document will be saved in %s\n',FileSpec);
 
-%% Licking mean and sem in reward zones
+%% PV learning
 
-%RF A trials
-mean_txt = mean_lick.A(1);
-sem_txt = sem_lick.A(1);
-
-txt_input = 'RF A trials licking in reward zone';
+%A 2 7 learning
+txt_input = 'PV Day 2 vs. 7 A trial learning';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%Random AB A trials
-mean_txt = mean_lick.A(4);
-sem_txt = sem_lick.A(4);
-
-txt_input = 'Random AB A trials licking in reward zone';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%RF B trials
-mean_txt = mean_lick.B(1);
-sem_txt = sem_lick.B(1);
-
-txt_input = 'RF B trials licking in reward zone';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%Random AB B trials
-mean_txt = mean_lick.B(4);
-sem_txt = sem_lick.B(4);
-
-txt_input = 'Random AB B trials licking in reward zone';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%% Fraction correct trials mean and sem
-writeWordEnter(ActXWord,WordHandle,1);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%RF A trials
-mean_txt = mean_corr.A(1);
-sem_txt = sem_corr.A(1);
-
-txt_input = 'RF A trials fraction of correct trials';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%Random AB A trials
-mean_txt = mean_corr.A(4);
-sem_txt = sem_corr.A(4);
-
-txt_input = 'Random AB A trials fraction of correct trials';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%RF B trials
-mean_txt = mean_corr.B(1);
-sem_txt = sem_corr.B(1);
-
-txt_input = 'RF B trials fraction of correct trials';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%Random AB B trials
-mean_txt = mean_corr.B(4);
-sem_txt = sem_corr.B(4);
-
-txt_input = 'Random AB B trials fraction of correct trials';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%% AUC for A/B/AB for run and norun epochs
-writeWordEnter(ActXWord,WordHandle,1);
-writeWordEnter(ActXWord,WordHandle,1);
-
-%A sel RUN
-txt_input = 'A sel A vs. B AUC/min RUN';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-mean_txt = mean_AUC.run.A(1);
-sem_txt = sem_AUC.run.A(1);
+%first mean and sem
+mean_txt = mean_2_7.PV.learn.A(1);
+sem_txt = sem_2_7.PV.learn.A(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_AUC.run.A(2);
-sem_txt = sem_AUC.run.A(2);
+%second mean and sem
+mean_txt = mean_2_7.PV.learn.A(2);
+sem_txt = sem_2_7.PV.learn.A(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
+%newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-%B RUN
-txt_input = 'B-sel A vs. B AUC/min RUN';
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_2_7.PV.learn.A)];
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_AUC.run.B(1);
-sem_txt = sem_AUC.run.B(1);
+%B 2 7 learning
+txt_input = 'PV Day 2 vs. 7 B trial learning';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_2_7.PV.learn.B(1);
+sem_txt = sem_2_7.PV.learn.B(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_AUC.run.B(2);
-sem_txt = sem_AUC.run.B(2);
+mean_txt = mean_2_7.PV.learn.B(2);
+sem_txt = sem_2_7.PV.learn.B(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
-writeWordEnter(ActXWord,WordHandle,1);
-
-%%%%%
-
-%AB RUN
-txt_input = 'AB A vs. B AUC/min RUN';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_AUC.run.AB(1);
-sem_txt = sem_AUC.run.AB(1);
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_2_7.PV.learn.B)];
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%% PV recall
+writeWordEnter(ActXWord,WordHandle,1);
+
+%A 2 7 recalling
+txt_input = 'PV Day 2 vs. 7 A recall recalling';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_2_7.PV.recall.A(1);
+sem_txt = sem_2_7.PV.recall.A(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_AUC.run.AB(2);
-sem_txt = sem_AUC.run.AB(2);
+%second mean and sem
+mean_txt = mean_2_7.PV.recall.A(2);
+sem_txt = sem_2_7.PV.recall.A(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
+%newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-%%%%%%%%%%%%% NO RUN %%%%%%%%%%%%%%%
-
-%A sel NORUN
-txt_input = 'A sel A vs. B AUC/min NORUN';
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_2_7.PV.recall.A)];
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_AUC.norun.A(1);
-sem_txt = sem_AUC.norun.A(1);
+%B 2 7 recalling
+txt_input = 'PV Day 2 vs. 7 B trial recalling';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_2_7.PV.recall.B(1);
+sem_txt = sem_2_7.PV.recall.B(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_AUC.norun.A(2);
-sem_txt = sem_AUC.norun.A(2);
+mean_txt = mean_2_7.PV.recall.B(2);
+sem_txt = sem_2_7.PV.recall.B(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
-writeWordEnter(ActXWord,WordHandle,1);
-
-%B NORUN
-txt_input = 'B-sel A vs. B AUC/min NORUN';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_AUC.norun.B(1);
-sem_txt = sem_AUC.norun.B(1);
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_2_7.PV.recall.B)];
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+
+%% PV learn vs. recall d7
+writeWordEnter(ActXWord,WordHandle,1);
+
+%A 2 7 learn vs. recalling
+txt_input = 'PV Day 2 vs. 7 A learn vs recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_7_lr.PV.A(1);
+sem_txt = sem_7_lr.PV.A(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_AUC.norun.B(2);
-sem_txt = sem_AUC.norun.B(2);
+%second mean and sem
+mean_txt = mean_7_lr.PV.A(2);
+sem_txt = sem_7_lr.PV.A(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
+%newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-%%%%%
-
-%AB NORUN
-txt_input = 'AB A vs. B AUC/min NORUN';
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_7.PV.A)];
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_AUC.norun.AB(1);
-sem_txt = sem_AUC.norun.AB(1);
+
+%B 7 learn vs. recalling
+txt_input = 'PV Day 2 vs. 7 B learn vs recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_7_lr.PV.B(1);
+sem_txt = sem_7_lr.PV.B(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_AUC.norun.AB(2);
-sem_txt = sem_AUC.norun.AB(2);
+mean_txt = mean_7_lr.PV.B(2);
+sem_txt = sem_7_lr.PV.B(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
-writeWordEnter(ActXWord,WordHandle,1);
-
-%% Fraction tuned IS
-%SI A vs. B
-txt_input = 'A vs B SI';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_si(1);
-sem_txt = sem_si(1);
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_7.PV.B)];
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+
+%% TC ts learning
+
+%A 2 7 learning
+txt_input = 'TC Day 2 vs. 7 A trial learning';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_2_7.TC.ts.learn.A(1);
+sem_txt = sem_2_7.TC.ts.learn.A(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_si(2);
-sem_txt = sem_si(2);
+%second mean and sem
+mean_txt = mean_2_7.TC.ts.learn.A(2);
+sem_txt = sem_2_7.TC.ts.learn.A(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
+%newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-%SI A vs. AB
-txt_input = 'A vs AB SI';
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_2_7.TC.ts.learn.A)];
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_si(1);
-sem_txt = sem_si(1);
+%B 2 7 learning
+txt_input = 'TC ts Day 2 vs. 7 B trial learning';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_2_7.TC.ts.learn.B(1);
+sem_txt = sem_2_7.TC.ts.learn.B(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_si(3);
-sem_txt = sem_si(3);
+mean_txt = mean_2_7.TC.ts.learn.B(2);
+sem_txt = sem_2_7.TC.ts.learn.B(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
-writeWordEnter(ActXWord,WordHandle,1);
-%SI B vs. AB
-txt_input = 'B vs AB SI';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_si(2);
-sem_txt = sem_si(2);
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_2_7.TC.ts.learn.B)];
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%% TC.ts recall
+writeWordEnter(ActXWord,WordHandle,1);
+
+%A 2 7 recalling
+txt_input = 'TC ts Day 2 vs. 7 A recall recalling';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_2_7.TC.ts.recall.A(1);
+sem_txt = sem_2_7.TC.ts.recall.A(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_si(3);
-sem_txt = sem_si(3);
+%second mean and sem
+mean_txt = mean_2_7.TC.ts.recall.A(2);
+sem_txt = sem_2_7.TC.ts.recall.A(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
+%newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-%%%%%%%%TS %%%%%%%%%%%
-%ts A vs. B
-txt_input = 'A vs B ts';
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_2_7.TC.ts.recall.A)];
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_ts(1);
-sem_txt = sem_ts(1);
+%B 2 7 recalling
+txt_input = 'TC ts Day 2 vs. 7 B trial recalling';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_2_7.TC.ts.recall.B(1);
+sem_txt = sem_2_7.TC.ts.recall.B(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_ts(2);
-sem_txt = sem_ts(2);
+mean_txt = mean_2_7.TC.ts.recall.B(2);
+sem_txt = sem_2_7.TC.ts.recall.B(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
-writeWordEnter(ActXWord,WordHandle,1);
-
-%ts A vs. AB
-txt_input = 'A vs AB ts';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_ts(1);
-sem_txt = sem_ts(1);
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_2_7.TC.ts.recall.B)];
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+
+%% TC ts learn vs. recall d7
+writeWordEnter(ActXWord,WordHandle,1);
+
+%A 2 7 learn vs. recalling
+txt_input = 'TC ts Day 2 vs. 7 A learn vs recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_7_lr.TC.ts.A(1);
+sem_txt = sem_7_lr.TC.ts.A(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_ts(3);
-sem_txt = sem_ts(3);
+%second mean and sem
+mean_txt = mean_7_lr.TC.ts.A(2);
+sem_txt = sem_7_lr.TC.ts.A(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
+%newline
 writeWordEnter(ActXWord,WordHandle,1);
-%ts B vs. AB
-txt_input = 'B vs AB ts';
+
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_7.TC.ts.A)];
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_ts(2);
-sem_txt = sem_ts(2);
+
+%B 7 learn vs. recalling
+txt_input = 'TC ts Day 2 vs. 7 B learn vs recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_7_lr.TC.ts.B(1);
+sem_txt = sem_7_lr.TC.ts.B(1);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
 txt_input = ' vs. ';
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_ts(3);
-sem_txt = sem_ts(3);
+mean_txt = mean_7_lr.TC.ts.B(2);
+sem_txt = sem_7_lr.TC.ts.B(2);
 write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
 
-writeWordEnter(ActXWord,WordHandle,1);
-
-%% Mean TC score between selective neurons  
-%TC A vs. B
-txt_input = 'A vs B TC mean';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_TC.A;
-sem_txt = sem_TC.A;
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-txt_input = ' vs. ';
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_7.TC.ts.B)];
 writeDefaultWordText(ActXWord,WordHandle,txt_input);
 
-mean_txt = mean_TC.B;
-sem_txt = sem_TC.B;
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-writeWordEnter(ActXWord,WordHandle,1);
-
-% A vs AB TC mean
-txt_input = 'A vs AB TC mean';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-mean_txt = mean_TC.A;
-sem_txt = sem_TC.A;
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-txt_input = ' vs. ';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-mean_txt = mean_TC.AB;
-sem_txt = sem_TC.AB;
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-writeWordEnter(ActXWord,WordHandle,1);
-
-% B vs AB TC mean
-txt_input = 'B vs AB TC mean';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-mean_txt = mean_TC.B;
-sem_txt = sem_TC.B;
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-txt_input = ' vs. ';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-mean_txt = mean_TC.AB;
-sem_txt = sem_TC.AB;
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-writeWordEnter(ActXWord,WordHandle,1);
-
-
-%% Fraction remapping neurons 
-%order of each class of remappers
-%'Common'	'Activity'	'Global'	'Partial'	'Unclassified'
-
-% common vs activity 
-txt_input = 'Common vs. activity';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-mean_txt = frac_remap_mean(1);
-sem_txt = frac_remap_sem(1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-txt_input = ' vs. ';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-mean_txt = frac_remap_mean(2);
-sem_txt = frac_remap_sem(2);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-writeWordEnter(ActXWord,WordHandle,1);
-
-% common vs global
-txt_input = 'Common vs. global';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-mean_txt = frac_remap_mean(1);
-sem_txt = frac_remap_sem(1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-txt_input = ' vs. ';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-mean_txt = frac_remap_mean(3);
-sem_txt = frac_remap_sem(3);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-writeWordEnter(ActXWord,WordHandle,1);
-
-% common vs global
-txt_input = 'Common vs. partial';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-mean_txt = frac_remap_mean(1);
-sem_txt = frac_remap_sem(1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-txt_input = ' vs. ';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-mean_txt = frac_remap_mean(4);
-sem_txt = frac_remap_sem(4);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-writeWordEnter(ActXWord,WordHandle,1);
-
-% zone II mean sem for global remapping neurons
-txt_input = 'Zone II A vs. B for global remap';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-mean_txt = zoneII_mean;
-sem_txt = zoneII_sem;
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
 writeWordEnter(ActXWord,WordHandle,1);
 
 %% Close Word document
