@@ -104,6 +104,16 @@ s2 = source_data_short_learn_recall.TC.si.st_recall.d4_d5_sub.B;
 %mean and sem comp - learn vs. recall B
 [mean_7_lr.TC.si.B, sem_7_lr.TC.si.B,nb_comp_7.TC.si.B] = learn_recall_7_mean_sem_PV(s1,s2);
 
+%% Mean and sem for neighbor analysis - PV and TC
+
+%nb_animal x day comp score
+%1 column - 1 vs. 2 ; 6th column - 6th vs. 7th day
+source_data_short_learn_recall.PV.neighbor.st_learn.A
+
+%need to trim matrices for comp
+
+
+
 %% Export the data to word
 
 %% Start Word document that will contain the formatted stats data
