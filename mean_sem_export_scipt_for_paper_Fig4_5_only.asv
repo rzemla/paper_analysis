@@ -108,11 +108,12 @@ s2 = source_data_short_learn_recall.TC.si.st_recall.d4_d5_sub.B;
 
 %nb_animal x day comp score
 %1 column - 1 vs. 2 ; 6th column - 6th vs. 7th day
-
-%PV neigh learn A 1,2 vs 6,7
 nei_mat = source_data_short_learn_recall.PV.neighbor.st_learn.A;
-[mean_out, sem_out, nb_animals] = neighbor_corr_mean_sem(nei_mat);
 
+
+%trim matrix
+nei_mat_trim = nei_mat(sum(~isnan(nei_mat(:, [1,6])),2) ==2,[1,6])
+%need to trim matrices for comp
 
 
 
