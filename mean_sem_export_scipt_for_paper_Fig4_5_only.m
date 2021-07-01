@@ -161,7 +161,7 @@ mean_cent.TC.ts.recall.B = source_data_short_learn_recall.angle_diff.ts.st_recal
 sem_cent.TC.ts.learn.B = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_sem.B(6).*rad2cm;
 sem_cent.TC.ts.recall.B = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_sem.B(6).*rad2cm;
 
-
+%% 
 
 %% Print mean diff to Word - TC ts
 txt_input = 'Mean cent diff Day 5 A learn vs recall';
