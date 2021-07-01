@@ -108,14 +108,72 @@ s2 = source_data_short_learn_recall.TC.si.st_recall.d4_d5_sub.B;
 
 %nb_animal x day comp score
 %1 column - 1 vs. 2 ; 6th column - 6th vs. 7th day
+
+%PV neigh learn A 1,2 vs 6,7
 nei_mat = source_data_short_learn_recall.PV.neighbor.st_learn.A;
+[nei_mean1_6.PV.learn.A, nei_sem1_6.PV.learn.A, nei_nb1_6.PV.learn.A] = neighbor_corr_mean_sem(nei_mat);
+
+%PV neigh recall A
+nei_mat = source_data_short_learn_recall.PV.neighbor.st_recall.A;
+[nei_mean1_6.PV.recall.A, nei_sem1_6.PV.recall.A, nei_nb1_6.PV.recall.A] = neighbor_corr_mean_sem(nei_mat);
+
+%PV neigh learn B
+nei_mat = source_data_short_learn_recall.PV.neighbor.st_learn.B;
+[nei_mean1_6.PV.learn.B, nei_sem1_6.PV.learn.B, nei_nb1_6.PV.learn.B] = neighbor_corr_mean_sem(nei_mat);
+
+%PV neigh recall B
+nei_mat = source_data_short_learn_recall.PV.neighbor.st_recall.B;
+[nei_mean1_6.PV.recall.B, nei_sem1_6.PV.recall.B, nei_nb1_6.PV.recall.B] = neighbor_corr_mean_sem(nei_mat);
 
 
-%trim matrix
-nei_mat_trim = nei_mat(sum(~isnan(nei_mat(:, [1,6])),2) ==2,[1,6])
-%need to trim matrices for comp
+%TC ts neigh learn A 1,2 vs 6,7
+nei_mat = source_data_short_learn_recall.TC.neighbor.ts.st_learn.A;
+[nei_mean1_6.TC.ts.learn.A, nei_sem1_6.TC.ts.learn.A, nei_nb1_6.TC.ts.learn.A] = neighbor_corr_mean_sem(nei_mat);
+
+%TC ts neigh recall A
+nei_mat = source_data_short_learn_recall.TC.neighbor.ts.st_recall.A;
+[nei_mean1_6.TC.ts.recall.A, nei_sem1_6.TC.ts.recall.A, nei_nb1_6.TC.ts.recall.A] = neighbor_corr_mean_sem(nei_mat);
+
+%TC ts neigh learn B
+nei_mat = source_data_short_learn_recall.TC.neighbor.ts.st_learn.B;
+[nei_mean1_6.TC.ts.learn.B, nei_sem1_6.TC.ts.learn.B, nei_nb1_6.TC.ts.learn.B] = neighbor_corr_mean_sem(nei_mat);
+
+%TC ts neigh recall B
+nei_mat = source_data_short_learn_recall.TC.neighbor.ts.st_recall.B;
+[nei_mean1_6.TC.ts.recall.B, nei_sem1_6.TC.ts.recall.B, nei_nb1_6.TC.ts.recall.B] = neighbor_corr_mean_sem(nei_mat);
+
+%% Mean centroid difference mean sem TC ts (cm conversion factor insert)
+
+%pooled by animal
+%conversion from rad to cm's
+rad2cm = 196./(2*pi);
+
+%index 6 (day 5 relative to 1 - delta change)
+mean_cent.TC.ts.learn.A = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_mean.A(6).*rad2cm;;
+mean_cent.TC.ts.recall.A = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_mean.A(6).*rad2cm;;
+
+sem_cent.TC.ts.learn.A = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_sem.A(6).*rad2cm;;
+sem_cent.TC.ts.recall.A = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_sem.A(6).*rad2cm;;
+
+mean_cent.TC.ts.learn.B = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_mean.B(6).*rad2cm;;
+mean_cent.TC.ts.recall.B = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_mean.B(6).*rad2cm;;
+
+sem_cent.TC.ts.learn.B = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_sem.B(6).*rad2cm;;
+sem_cent.TC.ts.recall.B = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_sem.B(6).*rad2cm;;
 
 
+% make cm conversion and round to 2 dec places
+mean_cent.TC.ts.learn.A
+mean_cent.TC.ts.recall.A
+
+sem_cent.TC.ts.learn.A
+sem_cent.TC.ts.recall.A
+
+mean_cent.TC.ts.learn.B
+mean_cent.TC.ts.recall.B
+
+sem_cent.TC.ts.learn.B
+sem_cent.TC.ts.recall.B
 
 %% Export the data to word
 
@@ -128,6 +186,68 @@ FileSpec = fullfile(CurDir,WordFileName);
 [ActXWord,WordHandle]=StartWord(FileSpec);
 
 fprintf('Document will be saved in %s\n',FileSpec);
+
+
+%% PV TC-ts neighbor export 1vs2 vs 6vs7
+txt_input = 'PV Neighbor 1,2 vs. 6,7 A trial learning';
+mean_both = nei_mean1_6.PV.learn.A;
+sem_both = nei_sem1_6.PV.learn.A;
+nb_comp = nei_nb1_6.PV.learn.A;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+txt_input = 'PV Neighbor 1,2 vs. 6,7 B trial learning';
+mean_both = nei_mean1_6.PV.learn.B;
+sem_both = nei_sem1_6.PV.learn.B;
+nb_comp = nei_nb1_6.PV.learn.B;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+txt_input = 'PV Neighbor 1,2 vs. 6,7 A trial recall';
+mean_both = nei_mean1_6.PV.recall.A;
+sem_both = nei_sem1_6.PV.recall.A;
+nb_comp = nei_nb1_6.PV.recall.A;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+
+txt_input = 'PV Neighbor 1,2 vs. 6,7 B trial recall';
+mean_both = nei_mean1_6.PV.recall.B;
+sem_both = nei_sem1_6.PV.recall.B;
+nb_comp = nei_nb1_6.PV.recall.B;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+%%%% TC neighbor print out
+
+txt_input = 'TC ts Neighbor 1,2 vs. 6,7 A trial learning';
+mean_both = nei_mean1_6.TC.ts.learn.A;
+sem_both = nei_sem1_6.TC.ts.learn.A;
+nb_comp = nei_nb1_6.TC.ts.learn.A;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+txt_input = 'TC ts Neighbor 1,2 vs. 6,7 B trial learning';
+mean_both = nei_mean1_6.TC.ts.learn.B;
+sem_both = nei_sem1_6.TC.ts.learn.B;
+nb_comp = nei_nb1_6.TC.ts.learn.B;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+txt_input = 'TC ts Neighbor 1,2 vs. 6,7 A trial recall';
+mean_both = nei_mean1_6.TC.ts.recall.A;
+sem_both = nei_sem1_6.TC.ts.recall.A;
+nb_comp = nei_nb1_6.TC.ts.recall.A;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+txt_input = 'TC ts Neighbor 1,2 vs. 6,7 B trial recall';
+mean_both = nei_mean1_6.TC.ts.recall.B;
+sem_both = nei_sem1_6.TC.ts.recall.B;
+nb_comp = nei_nb1_6.TC.ts.recall.B;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
 
 %% PV learning
 
