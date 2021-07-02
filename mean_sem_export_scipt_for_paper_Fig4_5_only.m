@@ -161,7 +161,34 @@ mean_cent.TC.ts.recall.B = source_data_short_learn_recall.angle_diff.ts.st_recal
 sem_cent.TC.ts.learn.B = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_sem.B(6).*rad2cm;
 sem_cent.TC.ts.recall.B = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_sem.B(6).*rad2cm;
 
-%% 
+%% Median and 95% CI for norm pooled A&B corr data for Fig 5
+
+%learn
+AB_corr_ts.learn.med = source_data_short_learn_recall.corr_analysis.st_learn.AB_corr.ts.mean_TC.pooled.AB_corr_ratio_median;
+AB_corr_ts.learn.ci = source_data_short_learn_recall.corr_analysis.st_learn.AB_corr.ts.sem_TC.pooled.AB_corr_ratio_95ci;
+
+%recall
+AB_corr_ts.recall.med = source_data_short_learn_recall.corr_analysis.st_recall.AB_corr.ts.mean_TC.pooled.AB_corr_ratio_median;
+AB_corr_ts.recall.ci = source_data_short_learn_recall.corr_analysis.st_recall.AB_corr.ts.sem_TC.pooled.AB_corr_ratio_95ci;
+
+%day 2 and 7 learn - median and ci
+AB_corr_ts.learn.med(2)
+AB_corr_ts.learn.ci(2)
+
+AB_corr_ts.learn.med(7)
+AB_corr_ts.learn.ci(7)
+
+%day 2 and 7 recall - median and ci
+AB_corr_ts.recall.med(2)
+AB_corr_ts.recall.ci(2)
+
+AB_corr_ts.recall.med(7)
+AB_corr_ts.recall.ci(7)
+
+
+%median and 95% CI calculation method (output already generated like this)
+%AB_corr_ts_med = cellfun(@nanmedian, AB_corr_ts_learn);
+%AB_corr_ts_ci = 1.57.*((cellfun(@iqr, AB_corr_ts_learn))./sqrt(cellfun(@(x) size(x,1), AB_corr_ts_learn)));
 
 %% Print mean diff to Word - TC ts
 txt_input = 'Mean cent diff Day 5 A learn vs recall';
