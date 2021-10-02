@@ -644,6 +644,9 @@ writeDefaultWordText(ActXWord,WordHandle,txt_input);
 %newline
 writeWordEnter(ActXWord,WordHandle,1);
 
+
+%% SI criterion
+
 %% Close Word document
 %CloseWord(ActXWord,WordHandle,FileSpec);
 

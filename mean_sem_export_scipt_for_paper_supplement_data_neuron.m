@@ -4,72 +4,14 @@
 
 dirpath = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
 
+
+%processed data
+load(fullfile(dirpath,'source_data_sup_2_3.mat'))
+load(fullfile(dirpath,'fig_1_speed_rew_zone.mat'))
 load(fullfile(dirpath,'source_data_fig4_5_and_sup.mat'))
-load(fullfile(dirpath,'fig4_5_table_data.mat'))
 
-%% Mean and sem data for PV 
-%%% All PV data A
-%PV A learn 2 vs 7
-[mean_2_7.PV.learn.A,sem_2_7.PV.learn.A,nb_comp_2_7.PV.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.A);
-
-%PV B learn 2 vs 7
-[mean_2_7.PV.learn.B,sem_2_7.PV.learn.B,nb_comp_2_7.PV.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.B);
-
-%PV A recall 2 vs 7
-[mean_2_7.PV.recall.A,sem_2_7.PV.recall.A,nb_comp_2_7.PV.recall.A] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_recall.d4_d5_sub.A);
-
-%PV B recall 2 vs 7
-[mean_2_7.PV.recall.B,sem_2_7.PV.recall.B,nb_comp_2_7.PV.recall.B] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_recall.d4_d5_sub.B);
-
-%PV learn vs. recall A
-%learn data
-s1 = source_data_short_learn_recall.PV.st_learn.A;
-%recall data
-s2 = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.A;
-
-%mean and sem comp - learn vs. recall A
-[mean_7_lr.PV.A, sem_7_lr.PV.A,nb_comp_7.PV.A] = learn_recall_7_mean_sem_PV(s1,s2);
-
-%PV learn vs. recall B
-%learn data
-s1 = source_data_short_learn_recall.PV.st_learn.B;
-%recall data
-s2 = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.B;
-
-%mean and sem comp - learn vs. recall B
-[mean_7_lr.PV.B, sem_7_lr.PV.B,nb_comp_7.PV.B] = learn_recall_7_mean_sem_PV(s1,s2);
-
-%% Mean and sem data for TC TS (PV function works the same for TC corr values) 
-%%% All TS data A
-%TS A learn 2 vs 7
-[mean_2_7.TC.ts.learn.A,sem_2_7.TC.ts.learn.A,nb_comp_2_7.TC.ts.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_learn.A);
-
-%TC.ts B learn 2 vs 7
-[mean_2_7.TC.ts.learn.B,sem_2_7.TC.ts.learn.B,nb_comp_2_7.TC.ts.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_learn.B);
-
-%TC.ts A recall 2 vs 7
-[mean_2_7.TC.ts.recall.A,sem_2_7.TC.ts.recall.A,nb_comp_2_7.TC.ts.recall.A] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.A);
-
-%TC.ts B recall 2 vs 7
-[mean_2_7.TC.ts.recall.B,sem_2_7.TC.ts.recall.B,nb_comp_2_7.TC.ts.recall.B] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.B);
-
-%TC.ts learn vs. recall A
-%learn data
-s1 = source_data_short_learn_recall.TC.ts.st_learn.A;
-%recall data
-s2 = source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.A;
-
-%mean and sem comp - learn vs. recall A
-[mean_7_lr.TC.ts.A, sem_7_lr.TC.ts.A,nb_comp_7.TC.ts.A] = learn_recall_7_mean_sem_PV(s1,s2);
-
-%TC.ts learn vs. recall B
-%learn data
-s1 = source_data_short_learn_recall.TC.ts.st_learn.B;
-%recall data
-s2 = source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.B;
-
-%mean and sem comp - learn vs. recall B
-[mean_7_lr.TC.ts.B, sem_7_lr.TC.ts.B,nb_comp_7.TC.ts.B] = learn_recall_7_mean_sem_PV(s1,s2);
+%load(fullfile(dirpath,''))
+%load(fullfile(dirpath,''))
 
 %% Mean and sem data for TC SI (PV function works the same for TC corr values) 
 
@@ -104,6 +46,444 @@ s2 = source_data_short_learn_recall.TC.si.st_recall.d4_d5_sub.B;
 %mean and sem comp - learn vs. recall B
 [mean_7_lr.TC.si.B, sem_7_lr.TC.si.B,nb_comp_7.TC.si.B] = learn_recall_7_mean_sem_PV(s1,s2);
 
+%% Neighboring TC correlation - SI
+%TC ts neigh learn A 1,2 vs 6,7
+nei_mat = source_data_short_learn_recall.TC.neighbor.si.st_learn.A;
+[nei_mean1_6.TC.si.learn.A, nei_sem1_6.TC.si.learn.A, nei_nb1_6.TC.si.learn.A] = neighbor_corr_mean_sem(nei_mat);
+
+%TC si neigh recall A
+nei_mat = source_data_short_learn_recall.TC.neighbor.si.st_recall.A;
+[nei_mean1_6.TC.si.recall.A, nei_sem1_6.TC.si.recall.A, nei_nb1_6.TC.si.recall.A] = neighbor_corr_mean_sem(nei_mat);
+
+%TC si neigh learn B
+nei_mat = source_data_short_learn_recall.TC.neighbor.si.st_learn.B;
+[nei_mean1_6.TC.si.learn.B, nei_sem1_6.TC.si.learn.B, nei_nb1_6.TC.si.learn.B] = neighbor_corr_mean_sem(nei_mat);
+
+%TC si neigh recall B
+nei_mat = source_data_short_learn_recall.TC.neighbor.si.st_recall.B;
+[nei_mean1_6.TC.si.recall.B, nei_sem1_6.TC.si.recall.B, nei_nb1_6.TC.si.recall.B] = neighbor_corr_mean_sem(nei_mat);
+
+
+
+%% Mean centroid difference mean sem TC SI (cm conversion factor insert)
+
+%pooled by animal
+%conversion from rad to cm's
+rad2cm = 196./(2*pi);
+
+%index 6 (day 5 relative to 1 - delta change)
+mean_cent.TC.si.learn.A = source_data_short_learn_recall.angle_diff.si.st_learn.animal.mean_mean.A(6).*rad2cm;
+mean_cent.TC.si.recall.A = source_data_short_learn_recall.angle_diff.si.st_recall.animal.mean_mean.A(6).*rad2cm;
+
+sem_cent.TC.si.learn.A = source_data_short_learn_recall.angle_diff.si.st_learn.animal.mean_sem.A(6).*rad2cm;
+sem_cent.TC.si.recall.A = source_data_short_learn_recall.angle_diff.si.st_recall.animal.mean_sem.A(6).*rad2cm;
+
+mean_cent.TC.si.learn.B = source_data_short_learn_recall.angle_diff.si.st_learn.animal.mean_mean.B(6).*rad2cm;
+mean_cent.TC.si.recall.B = source_data_short_learn_recall.angle_diff.si.st_recall.animal.mean_mean.B(6).*rad2cm;
+
+sem_cent.TC.si.learn.B = source_data_short_learn_recall.angle_diff.si.st_learn.animal.mean_sem.B(6).*rad2cm;
+sem_cent.TC.si.recall.B = source_data_short_learn_recall.angle_diff.si.st_recall.animal.mean_sem.B(6).*rad2cm;
+
+%% Median and 95% CI for norm pooled A&B corr data for Fig 5
+
+%learn
+AB_corr_si.learn.med = source_data_short_learn_recall.corr_analysis.st_learn.AB_corr.si.mean_TC.pooled.AB_corr_ratio_median;
+AB_corr_si.learn.ci = source_data_short_learn_recall.corr_analysis.st_learn.AB_corr.si.sem_TC.pooled.AB_corr_ratio_95ci;
+
+%recall
+AB_corr_si.recall.med = source_data_short_learn_recall.corr_analysis.st_recall.AB_corr.si.mean_TC.pooled.AB_corr_ratio_median;
+AB_corr_si.recall.ci = source_data_short_learn_recall.corr_analysis.st_recall.AB_corr.si.sem_TC.pooled.AB_corr_ratio_95ci;
+
+%day 2 and 7 learn - median and ci
+AB_corr_si.learn.med(2)
+AB_corr_si.learn.ci(2)
+
+AB_corr_si.learn.med(7)
+AB_corr_si.learn.ci(7)
+
+%day 2 and 7 recall - median and ci
+AB_corr_si.recall.med(2)
+AB_corr_si.recall.ci(2)
+
+AB_corr_si.recall.med(7)
+AB_corr_si.recall.ci(7)
+
+
+
+%% Format and export the data to word
+
+%% Start Word document that will contain the formatted stats data
+
+WordFileName='remaining_neuron_sup_data_mean_sem.doc';
+CurDir=pwd;
+FileSpec = fullfile(CurDir,WordFileName);
+%active X handle for manipulating document (ActXWord)
+[ActXWord,WordHandle]=StartWord(FileSpec);
+
+fprintf('Document will be saved in %s\n',FileSpec);
+
+
+mean_2_7.TC.si.learn.A
+sem_2_7.TC.si.learn.A
+
+mean_2_7.TC.si.learn.B
+sem_2_7.TC.si.learn.B
+
+
+mean_2_7.TC.si.recall.A
+sem_2_7.TC.si.recall.A
+
+mean_2_7.TC.si.recall.B
+sem_2_7.TC.si.recall.B
+
+mean_7_lr.TC.si.A
+sem_7_lr.TC.si.A
+
+mean_7_lr.TC.si.B
+sem_7_lr.TC.si.B
+
+%% Print mean and sem data to Word - TC SI
+txt_input = 'TC corr SI 2 vs 7 learning A trials';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_2_7.TC.si.learn.A(1);
+sem_txt = sem_2_7.TC.si.learn.A(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%second mean and sem
+mean_txt = mean_2_7.TC.si.learn.A(2);
+sem_txt = sem_2_7.TC.si.learn.A(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+txt_input = 'TC corr SI 2 vs 7 learning B trials';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_2_7.TC.si.learn.B(1);
+sem_txt = sem_2_7.TC.si.learn.B(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%second mean and sem
+mean_txt = mean_2_7.TC.si.learn.B(2);
+sem_txt = sem_2_7.TC.si.learn.B(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+
+txt_input = 'TC corr SI 2 vs 7 recall A trials';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_2_7.TC.si.recall.A(1);
+sem_txt = sem_2_7.TC.si.recall.A(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%second mean and sem
+mean_txt = mean_2_7.TC.si.recall.A(2);
+sem_txt = sem_2_7.TC.si.recall.A(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+txt_input = 'TC corr SI 2 vs 7 recall B trials';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_2_7.TC.si.recall.B(1);
+sem_txt = sem_2_7.TC.si.recall.B(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%second mean and sem
+mean_txt = mean_2_7.TC.si.recall.B(2);
+sem_txt = sem_2_7.TC.si.recall.B(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+%% TC si learn vs. recall d7
+writeWordEnter(ActXWord,WordHandle,1);
+
+%A 2 7 learn vs. recalling
+txt_input = 'TC si Day 2 vs. 7 A learn vs recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_7_lr.TC.si.A(1);
+sem_txt = sem_7_lr.TC.si.A(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%second mean and sem
+mean_txt = mean_7_lr.TC.si.A(2);
+sem_txt = sem_7_lr.TC.si.A(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_7.TC.si.A)];
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+
+%B 7 learn vs. recalling
+txt_input = 'TC si Day 2 vs. 7 B learn vs recall';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+mean_txt = mean_7_lr.TC.si.B(1);
+sem_txt = sem_7_lr.TC.si.B(1);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+mean_txt = mean_7_lr.TC.si.B(2);
+sem_txt = sem_7_lr.TC.si.B(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+%number of samples
+txt_input = ['nb samp ', num2str(nb_comp_7.TC.si.B)];
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+%% Neighboring TC SI comparison
+
+
+txt_input = 'TC si Neighbor 1,2 vs. 6,7 A trial learning';
+mean_both = nei_mean1_6.TC.si.learn.A;
+sem_both = nei_sem1_6.TC.si.learn.A;
+nb_comp = nei_nb1_6.TC.si.learn.A;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+txt_input = 'TC si Neighbor 1,2 vs. 6,7 B trial learning';
+mean_both = nei_mean1_6.TC.si.learn.B;
+sem_both = nei_sem1_6.TC.si.learn.B;
+nb_comp = nei_nb1_6.TC.si.learn.B;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+txt_input = 'TC si Neighbor 1,2 vs. 6,7 A trial recall';
+mean_both = nei_mean1_6.TC.si.recall.A;
+sem_both = nei_sem1_6.TC.si.recall.A;
+nb_comp = nei_nb1_6.TC.si.recall.A;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+txt_input = 'TC si Neighbor 1,2 vs. 6,7 B trial recall';
+mean_both = nei_mean1_6.TC.si.recall.B;
+sem_both = nei_sem1_6.TC.si.recall.B;
+nb_comp = nei_nb1_6.TC.si.recall.B;
+
+neighbor_corr_mean_sem_print(ActXWord,WordHandle,txt_input, mean_both, sem_both, nb_comp)
+
+
+%% Mean centroid difference across days
+
+
+txt_input = 'Mean cent diff Day 5 A learn vs recall - SI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_cent.TC.si.learn.A;
+sem_txt = sem_cent.TC.si.learn.A;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%second mean and sem
+mean_txt = mean_cent.TC.si.recall.A;
+sem_txt = sem_cent.TC.si.recall.A;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+
+txt_input = 'Mean cent diff Day 5 B learn vs recall - SI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = mean_cent.TC.si.learn.B;
+sem_txt = sem_cent.TC.si.learn.B;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+txt_input = ' vs. ';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+
+%second mean and sem
+mean_txt = mean_cent.TC.si.recall.B;
+sem_txt = sem_cent.TC.si.recall.B;
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+
+%% Normalized A vs. B lap correlation scores 
+
+%day 2 and 7 learn - median and ci
+
+txt_input = 'Med Norm A vs. B Day 2 learning - SI - median +/- CI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = AB_corr_si.learn.med(2);
+sem_txt = AB_corr_si.learn.ci(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+writeWordEnter(ActXWord,WordHandle,1);
+
+txt_input = 'Med Norm A vs. B Day 7 learning - SI - median +/- CI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = AB_corr_si.learn.med(7);
+sem_txt = AB_corr_si.learn.ci(7);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+writeWordEnter(ActXWord,WordHandle,1);
+
+txt_input = 'Med Norm A vs. B Day 2 recall - SI - median +/- CI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = AB_corr_si.recall.med(2);
+sem_txt = AB_corr_si.recall.ci(2);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+writeWordEnter(ActXWord,WordHandle,1);
+
+txt_input = 'Med Norm A vs. B Day 7 recall - SI - median +/- CI';
+writeDefaultWordText(ActXWord,WordHandle,txt_input);
+%newline
+writeWordEnter(ActXWord,WordHandle,1);
+%first mean and sem
+mean_txt = AB_corr_si.recall.med(7);
+sem_txt = AB_corr_si.recall.ci(7);
+write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
+
+
+%%
+%%%% OLD/SCRAP CODE BELOW %%%
+
+%{ 
+%% Mean and sem data for PV 
+%%% All PV data A
+%PV A learn 2 vs 7
+[mean_2_7.PV.learn.A,sem_2_7.PV.learn.A,nb_comp_2_7.PV.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.A);
+
+%PV B learn 2 vs 7
+[mean_2_7.PV.learn.B,sem_2_7.PV.learn.B,nb_comp_2_7.PV.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_learn.B);
+
+%PV A recall 2 vs 7
+[mean_2_7.PV.recall.A,sem_2_7.PV.recall.A,nb_comp_2_7.PV.recall.A] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_recall.d4_d5_sub.A);
+
+%PV B recall 2 vs 7
+[mean_2_7.PV.recall.B,sem_2_7.PV.recall.B,nb_comp_2_7.PV.recall.B] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.PV.st_recall.d4_d5_sub.B);
+
+%PV learn vs. recall A
+%learn data
+s1 = source_data_short_learn_recall.PV.st_learn.A;
+%recall data
+s2 = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.A;
+
+%mean and sem comp - learn vs. recall A
+[mean_7_lr.PV.A, sem_7_lr.PV.A,nb_comp_7.PV.A] = learn_recall_7_mean_sem_PV(s1,s2);
+
+%PV learn vs. recall B
+%learn data
+s1 = source_data_short_learn_recall.PV.st_learn.B;
+%recall data
+s2 = source_data_short_learn_recall.PV.st_recall.d4_d5_sub.B;
+
+%mean and sem comp - learn vs. recall B
+[mean_7_lr.PV.B, sem_7_lr.PV.B,nb_comp_7.PV.B] = learn_recall_7_mean_sem_PV(s1,s2);
+
+
+
+
+%% Mean and sem data for TC TS (PV function works the same for TC corr values) 
+%%% All TS data A
+%TS A learn 2 vs 7
+[mean_2_7.TC.ts.learn.A,sem_2_7.TC.ts.learn.A,nb_comp_2_7.TC.ts.learn.A] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_learn.A);
+
+%TC.ts B learn 2 vs 7
+[mean_2_7.TC.ts.learn.B,sem_2_7.TC.ts.learn.B,nb_comp_2_7.TC.ts.learn.B] = learn_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_learn.B);
+
+%TC.ts A recall 2 vs 7
+[mean_2_7.TC.ts.recall.A,sem_2_7.TC.ts.recall.A,nb_comp_2_7.TC.ts.recall.A] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.A);
+
+%TC.ts B recall 2 vs 7
+[mean_2_7.TC.ts.recall.B,sem_2_7.TC.ts.recall.B,nb_comp_2_7.TC.ts.recall.B] = recall_2_7_mean_sem_PV(source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.B);
+
+%TC.ts learn vs. recall A
+%learn data
+s1 = source_data_short_learn_recall.TC.ts.st_learn.A;
+%recall data
+s2 = source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.A;
+
+%mean and sem comp - learn vs. recall A
+[mean_7_lr.TC.ts.A, sem_7_lr.TC.ts.A,nb_comp_7.TC.ts.A] = learn_recall_7_mean_sem_PV(s1,s2);
+
+%TC.ts learn vs. recall B
+%learn data
+s1 = source_data_short_learn_recall.TC.ts.st_learn.B;
+%recall data
+s2 = source_data_short_learn_recall.TC.ts.st_recall.d4_d5_sub.B;
+
+%mean and sem comp - learn vs. recall B
+[mean_7_lr.TC.ts.B, sem_7_lr.TC.ts.B,nb_comp_7.TC.ts.B] = learn_recall_7_mean_sem_PV(s1,s2);
+
+
+
 %% Mean and sem for neighbor analysis - PV and TC
 
 %nb_animal x day comp score
@@ -126,66 +506,13 @@ nei_mat = source_data_short_learn_recall.PV.neighbor.st_recall.B;
 [nei_mean1_6.PV.recall.B, nei_sem1_6.PV.recall.B, nei_nb1_6.PV.recall.B] = neighbor_corr_mean_sem(nei_mat);
 
 
-%TC ts neigh learn A 1,2 vs 6,7
-nei_mat = source_data_short_learn_recall.TC.neighbor.ts.st_learn.A;
-[nei_mean1_6.TC.ts.learn.A, nei_sem1_6.TC.ts.learn.A, nei_nb1_6.TC.ts.learn.A] = neighbor_corr_mean_sem(nei_mat);
-
-%TC ts neigh recall A
-nei_mat = source_data_short_learn_recall.TC.neighbor.ts.st_recall.A;
-[nei_mean1_6.TC.ts.recall.A, nei_sem1_6.TC.ts.recall.A, nei_nb1_6.TC.ts.recall.A] = neighbor_corr_mean_sem(nei_mat);
-
-%TC ts neigh learn B
-nei_mat = source_data_short_learn_recall.TC.neighbor.ts.st_learn.B;
-[nei_mean1_6.TC.ts.learn.B, nei_sem1_6.TC.ts.learn.B, nei_nb1_6.TC.ts.learn.B] = neighbor_corr_mean_sem(nei_mat);
-
-%TC ts neigh recall B
-nei_mat = source_data_short_learn_recall.TC.neighbor.ts.st_recall.B;
-[nei_mean1_6.TC.ts.recall.B, nei_sem1_6.TC.ts.recall.B, nei_nb1_6.TC.ts.recall.B] = neighbor_corr_mean_sem(nei_mat);
-
-%% Mean centroid difference mean sem TC ts (cm conversion factor insert)
-
-%pooled by animal
-%conversion from rad to cm's
-rad2cm = 196./(2*pi);
-
-%index 6 (day 5 relative to 1 - delta change)
-mean_cent.TC.ts.learn.A = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_mean.A(6).*rad2cm;;
-mean_cent.TC.ts.recall.A = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_mean.A(6).*rad2cm;;
-
-sem_cent.TC.ts.learn.A = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_sem.A(6).*rad2cm;;
-sem_cent.TC.ts.recall.A = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_sem.A(6).*rad2cm;;
-
-mean_cent.TC.ts.learn.B = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_mean.B(6).*rad2cm;;
-mean_cent.TC.ts.recall.B = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_mean.B(6).*rad2cm;;
-
-sem_cent.TC.ts.learn.B = source_data_short_learn_recall.angle_diff.ts.st_learn.animal.mean_sem.B(6).*rad2cm;;
-sem_cent.TC.ts.recall.B = source_data_short_learn_recall.angle_diff.ts.st_recall.animal.mean_sem.B(6).*rad2cm;;
 
 
-% make cm conversion and round to 2 dec places
-mean_cent.TC.ts.learn.A
-mean_cent.TC.ts.recall.A
 
-sem_cent.TC.ts.learn.A
-sem_cent.TC.ts.recall.A
 
-mean_cent.TC.ts.learn.B
-mean_cent.TC.ts.recall.B
-
-sem_cent.TC.ts.learn.B
-sem_cent.TC.ts.recall.B
-
-%% Export the data to word
-
-%% Start Word document that will contain the formatted stats data
-
-WordFileName='fig_4_5_mean_sem.doc';
-CurDir=pwd;
-FileSpec = fullfile(CurDir,WordFileName);
-%active X handle for manipulating document (ActXWord)
-[ActXWord,WordHandle]=StartWord(FileSpec);
-
-fprintf('Document will be saved in %s\n',FileSpec);
+%median and 95% CI calculation method (output already generated like this)
+%AB_corr_ts_med = cellfun(@nanmedian, AB_corr_ts_learn);
+%AB_corr_ts_ci = 1.57.*((cellfun(@iqr, AB_corr_ts_learn))./sqrt(cellfun(@(x) size(x,1), AB_corr_ts_learn)));
 
 
 %% PV TC-ts neighbor export 1vs2 vs 6vs7
@@ -530,64 +857,11 @@ writeDefaultWordText(ActXWord,WordHandle,txt_input);
 writeWordEnter(ActXWord,WordHandle,1);
 
 
-%% TC ts learn vs. recall d7
-writeWordEnter(ActXWord,WordHandle,1);
-
-%A 2 7 learn vs. recalling
-txt_input = 'TC ts Day 2 vs. 7 A learn vs recall';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-%first mean and sem
-mean_txt = mean_7_lr.TC.ts.A(1);
-sem_txt = sem_7_lr.TC.ts.A(1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-txt_input = ' vs. ';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-%second mean and sem
-mean_txt = mean_7_lr.TC.ts.A(2);
-sem_txt = sem_7_lr.TC.ts.A(2);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-%number of samples
-txt_input = ['nb samp ', num2str(nb_comp_7.TC.ts.A)];
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
 
 
-%B 7 learn vs. recalling
-txt_input = 'TC ts Day 2 vs. 7 B learn vs recall';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
 
-mean_txt = mean_7_lr.TC.ts.B(1);
-sem_txt = sem_7_lr.TC.ts.B(1);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-txt_input = ' vs. ';
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-mean_txt = mean_7_lr.TC.ts.B(2);
-sem_txt = sem_7_lr.TC.ts.B(2);
-write_mean_sem(ActXWord,WordHandle, mean_txt,sem_txt);
-
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
-
-%number of samples
-txt_input = ['nb samp ', num2str(nb_comp_7.TC.ts.B)];
-writeDefaultWordText(ActXWord,WordHandle,txt_input);
-
-%newline
-writeWordEnter(ActXWord,WordHandle,1);
+%% SI criterion
 
 %% Close Word document
 %CloseWord(ActXWord,WordHandle,FileSpec);
-
+%}
