@@ -256,3 +256,53 @@ end
 %set axis font/label and font size
 set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
     'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
+
+%% Mean lick rate stats and plot for reviers
+
+% lick at each position according to normalized position of licks
+%each animal, then each training phase, the each lap; then normalized
+%position of lick
+lick_lap_norm
+
+%lick histograms
+s2 = tiledlayout(t1,4,2,'TileSpacing','normal','Padding','compact','Units','centimeters');
+s2.Layout.Tile = 2;
+s2.Layout.TileSpan = [1,1];
+
+%top histogram (RF) sub layout
+s21 = tiledlayout(s2,1,2,'TileSpacing','normal','Padding','compact','Units','centimeters');
+s21.Layout.Tile = 1;
+s21.Layout.TileSpan = [1,2];
+
+%top lick histogram on RF
+nexttile(s21,1,[1,2])
+hold on
+title('Random')
+plotHisto(cell2mat(lick_lap_norm{aa}{1}'),edges,green);
+plot_orderA = [0 3 5 7];
+plot_orderB = [0 4 6 8];
+
+%A lick histograms
+for ii=2:4
+    nexttile(s2,plot_orderA(ii),[1,1])
+    hold on
+    title('A')
+    plotHisto(cell2mat(lick_lap_norm_A{aa}{ii}'),edges,blue);
+    if ii~=4
+    xlabel('')
+    end
+end
+
+%B lick histograms
+for ii=2:4
+nexttile(s2,plot_orderB(ii),[1,1])
+hold on
+title('B')
+plotHisto(cell2mat(lick_lap_norm_B{aa}{ii}'),edges,red);
+    if ii~=4
+    xlabel('')
+    end
+    %turn off ylabel
+    ylabel('')
+end
