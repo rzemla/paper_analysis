@@ -286,10 +286,10 @@ end
 
 %calculate mean and sem
 m_10_den_RF = mean(den_10_RF,1);
-std_10_den_RF = std(den_10_RF,0,1)./sqrt(4);
+sem_10_den_RF = std(den_10_RF,0,1)./sqrt(4);
 
 m_20_den_RF = mean(den_20_RF,1);
-std_20_den_RF = std(den_20_RF,0,1)./sqrt(4);
+sem_20_den_RF = std(den_20_RF,0,1)./sqrt(4);
 
 figure
 hold on
@@ -321,24 +321,24 @@ for jj = 2:4
     end
     %A mean and sem
     m_10_den_A{jj} = mean(den_10_A{jj},1);
-    std_10_den_A{jj} = std(den_10_A{jj},0,1)./sqrt(4);
+    sem_10_den_A{jj} = std(den_10_A{jj},0,1)./sqrt(4);
     
     m_20_den_A{jj} = mean(den_20_A{jj},1);
-    std_20_den_A{jj} = std(den_20_A{jj},0,1)./sqrt(4);
+    sem_20_den_A{jj} = std(den_20_A{jj},0,1)./sqrt(4);
     
     
     %b mean and sem
     m_10_den_B{jj} = mean(den_10_B{jj},1);
-    std_10_den_B{jj} = std(den_10_B{jj},0,1)./sqrt(4);
+    sem_10_den_B{jj} = std(den_10_B{jj},0,1)./sqrt(4);
     
     m_20_den_B{jj} = mean(den_20_B{jj},1);
-    std_20_den_B{jj} = std(den_20_B{jj},0,1)./sqrt(4);
+    sem_20_den_B{jj} = std(den_20_B{jj},0,1)./sqrt(4);
 end
 
 figure('Position', [1320, 256, 404, 341])
 hold on
 ylim([0,0.7])
-errorbar(m_10_den_A{2},std_10_den_A{2})
+errorbar(m_10_den_A{2},sem_10_den_A{2})
 
 
 figure
@@ -347,91 +347,193 @@ ylim([0,0.7])
 errorbar(m_20_den_B{2},std_20_den_B{2})
 
 
-%% Bin speed plotter code (revision)master layout
-fig = figure;
-fig.Units = 'centimeters';
-fig.Position(1) = 7;
-fig.Position(2) = 0;
-fig.Position(3) = 30;
-fig.Position(4) = 36;
+%% Bin speed plotter code (revision)master layout - mean lick (10 bins)
+
+fig2 = figure('Position',[1311.7       41.667       473.33       599.33]);
+% fig.Units = 'centimeters';
+% fig.Position(1) = 7;
+% fig.Position(2) = 0;
+% fig.Position(3) = 30;
+% fig.Position(4) = 36;
+
+blue_color = [65,105,225]./255;
+red_color = [220,20,60]./255;
+green_color = [0,110,51]./255;
 
 %master layout
-gridSize = [2,2];
-t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
-
-%fraction of licks subplot
-
-s1 = tiledlayout(t1,2,1,'TileSpacing','normal','Padding','compact','Units','centimeters');
-s1.Layout.Tile = 3;
-s1.Layout.TileSpan = [1,1];
-%subplot title
-%set_subplot_title(s1,'Common', 'Arial', 16,'bold')
-
-nexttile(s1,1)
-hold on
-%axis square
-xlim([0.5 4.5])
-xticks(1:4)
-xticklabels({'Random\newline foraging' ,'5A5B','3A3B','Random\newline AB'})
-ylim([0 1.2])
-yticks(0:0.2:1)
-ylabel('Fraction of licks in reward zone')
-ae = errorbar(mean_zone_A,sem_zone_A,'Color',[65,105,225]./255,'LineWidth',2);
-be = errorbar(mean_zone_B,sem_zone_B,'Color',[220,20,60]./255,'LineWidth',2);
-
-legend([ae be],{'A','B'},'Location','northwest')
-
-
-fig = figure;
-fig.Units = 'centimeters';
-fig.Position(1) = 7;
-fig.Position(2) = 0;
-fig.Position(3) = 30;
-fig.Position(4) = 36;
-
-%master layout
-gridSize = [2,2];
-t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
-
+gridSize = [4,2];
+t2 = tiledlayout(fig2,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
 
 %lick histograms
-s2 = tiledlayout(t1,4,2,'TileSpacing','normal','Padding','compact','Units','centimeters');
-s2.Layout.Tile = 2;
-s2.Layout.TileSpan = [1,1];
+s2 = tiledlayout(t2,1,2,'TileSpacing','compact','Padding','compact','Units','centimeters');
+s2.Layout.Tile = 1;
+s2.Layout.TileSpan = [1,2];
 
-%top histogram (RF) sub layout
-s21 = tiledlayout(s2,1,2,'TileSpacing','normal','Padding','compact','Units','centimeters');
-s21.Layout.Tile = 1;
-s21.Layout.TileSpan = [1,2];
-
-%top lick histogram on RF
-nexttile(s21,1,[1,2])
+%RF
+nexttile(s2,[1 2])
 hold on
-title('Random')
-plotHisto(cell2mat(lick_lap_norm{aa}{1}'),edges,green);
-plot_orderA = [0 3 5 7];
-plot_orderB = [0 4 6 8];
+title('RF')
+%axis square
+xlim([0.5 10.5])
+xlabel([{'Spatial bins'},{'(N = 10 bins)'}])
+xticks([1,10])
+%xticklabels({'Spatial bins (N = 10 bins)'})
+ylim([0 0.6])
+yticks(0:0.2:0.5)
+ylabel('Fraction of licks')
+errorbar(m_10_den_RF,sem_10_den_RF,'Color',green_color,'LineWidth',1.5);
 
-%A lick histograms
-for ii=2:4
-    nexttile(s2,plot_orderA(ii),[1,1])
-    hold on
-    title('A')
-    plotHisto(cell2mat(lick_lap_norm_A{aa}{ii}'),edges,blue);
-    if ii~=4
-    xlabel('')
-    end
+%B reward zone line
+xline(4,'Color',red_color,'LineWidth',1,'LineStyle', '--')
+%A reward zone line
+xline(8,'Color',blue_color,'LineWidth',1,'LineStyle', '--')
+
+%A trials
+seq_order = 2:4;
+plot_order = [3,5,7];
+for ii=1:3
+nexttile(t2,plot_order(ii),[1 1])
+hold on
+if ii==1
+title('A')
+end
+xlim([0.5 10.5])
+if ii == 3
+xlabel([{'Spatial bins'},{'(N = 10 bins)'}])
+end
+xticks([1,10])
+ylim([0 1])
+yticks(0:0.5:1)
+ylabel('Fraction of licks')
+errorbar(m_10_den_A{seq_order(ii)},sem_10_den_A{seq_order(ii)},'Color',blue_color,'LineWidth',1.5)
+
+%B reward zone line
+xline(4,'Color',red_color,'LineWidth',1,'LineStyle', '--')
+%A reward zone line
+xline(8,'Color',blue_color,'LineWidth',1,'LineStyle', '--')
 end
 
-%B lick histograms
-for ii=2:4
-nexttile(s2,plot_orderB(ii),[1,1])
+
+%B trials
+seq_order = 2:4;
+plot_order = [4,6,8];
+for ii=1:3
+nexttile(t2,plot_order(ii),[1 1])
 hold on
+if ii==1
 title('B')
-plotHisto(cell2mat(lick_lap_norm_B{aa}{ii}'),edges,red);
-    if ii~=4
-    xlabel('')
-    end
-    %turn off ylabel
-    ylabel('')
 end
+xlim([0.5 10.5])
+if ii == 3
+xlabel([{'Spatial bins'},{'(N = 10 bins)'}])
+end
+xticks([1,10])
+ylim([0 1])
+yticks(0:0.5:1)
+%ylabel('Fraction of licks')
+errorbar(m_10_den_B{seq_order(ii)},sem_10_den_B{seq_order(ii)},'Color',red_color,'LineWidth',1.5)
+%B reward zone line
+xline(4,'Color',red_color,'LineWidth',1,'LineStyle', '--')
+%A reward zone line
+xline(8,'Color',blue_color,'LineWidth',1,'LineStyle', '--')
+
+end
+
+%set axis font/label and font size
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
+    'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
+%% Bin speed plotter code (revision)master layout - mean lick (10 bins)
+
+fig2 = figure('Position',[1311.7       41.667       473.33       599.33]);
+% fig.Units = 'centimeters';
+% fig.Position(1) = 7;
+% fig.Position(2) = 0;
+% fig.Position(3) = 30;
+% fig.Position(4) = 36;
+
+blue_color = [65,105,225]./255;
+red_color = [220,20,60]./255;
+green_color = [0,110,51]./255;
+
+%master layout
+gridSize = [4,2];
+t2 = tiledlayout(fig2,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
+
+%lick histograms
+s2 = tiledlayout(t2,1,2,'TileSpacing','compact','Padding','compact','Units','centimeters');
+s2.Layout.Tile = 1;
+s2.Layout.TileSpan = [1,2];
+
+%RF
+nexttile(s2,[1 2])
+hold on
+title('RF')
+%axis square
+xlim([0.5 20.5])
+xlabel([{'Spatial bins'},{'(N = 20 bins)'}])
+xticks([1,20])
+%xticklabels({'Spatial bins (N = 10 bins)'})
+ylim([0 0.6])
+yticks(0:0.2:0.5)
+ylabel('Fraction of licks')
+errorbar(m_20_den_RF,sem_20_den_RF,'Color',green_color,'LineWidth',1.5);
+
+%B reward zone line
+xline(7,'Color',red_color,'LineWidth',1,'LineStyle', '--')
+%A reward zone line
+xline(15,'Color',blue_color,'LineWidth',1,'LineStyle', '--')
+
+%A trials
+seq_order = 2:4;
+plot_order = [3,5,7];
+for ii=1:3
+nexttile(t2,plot_order(ii),[1 1])
+hold on
+if ii==1
+title('A')
+end
+xlim([0.5 20.5])
+if ii == 3
+xlabel([{'Spatial bins'},{'(N = 20 bins)'}])
+end
+xticks([1,20])
+ylim([0 1])
+yticks(0:0.5:1)
+ylabel('Fraction of licks')
+errorbar(m_20_den_A{seq_order(ii)},sem_20_den_A{seq_order(ii)},'Color',blue_color,'LineWidth',1.5)
+
+%B reward zone line
+xline(7,'Color',red_color,'LineWidth',1,'LineStyle', '--')
+%A reward zone line
+xline(15,'Color',blue_color,'LineWidth',1,'LineStyle', '--')
+end
+
+%B trials
+seq_order = 2:4;
+plot_order = [4,6,8];
+for ii=1:3
+nexttile(t2,plot_order(ii),[1 1])
+hold on
+if ii==1
+title('B')
+end
+xlim([0.5 20.5])
+if ii == 3
+xlabel([{'Spatial bins'},{'(N = 20 bins)'}])
+end
+xticks([1,20])
+ylim([0 1])
+yticks(0:0.5:1)
+%ylabel('Fraction of licks')
+errorbar(m_20_den_B{seq_order(ii)},sem_20_den_B{seq_order(ii)},'Color',red_color,'LineWidth',1.5)
+%B reward zone line
+xline(7,'Color',red_color,'LineWidth',1,'LineStyle', '--')
+%A reward zone line
+xline(15,'Color',blue_color,'LineWidth',1,'LineStyle', '--')
+
+end
+
+%set axis font/label and font size
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
+    'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
