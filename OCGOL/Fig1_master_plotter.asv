@@ -335,7 +335,7 @@ for jj = 2:4
     std_20_den_B{jj} = std(den_20_B{jj},0,1)./sqrt(4);
 end
 
-figure
+figure('Position', [1320, 256, 404, 341])
 hold on
 ylim([0,0.7])
 errorbar(m_10_den_A{2},std_10_den_A{2})
@@ -344,7 +344,21 @@ errorbar(m_10_den_A{2},std_10_den_A{2})
 figure
 hold on
 ylim([0,0.7])
-errorbar(m_20_den_B{4},std_20_den_B{4})
+errorbar(m_20_den_B{2},std_20_den_B{2})
+
+
+%% master layout
+fig = figure;
+fig.Units = 'centimeters';
+fig.Position(1) = 7;
+fig.Position(2) = 0;
+fig.Position(3) = 30;
+fig.Position(4) = 36;
+
+%master layout
+gridSize = [2,2];
+t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
+
 
 %lick histograms
 s2 = tiledlayout(t1,4,2,'TileSpacing','normal','Padding','compact','Units','centimeters');

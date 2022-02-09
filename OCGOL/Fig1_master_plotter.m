@@ -335,7 +335,7 @@ for jj = 2:4
     std_20_den_B{jj} = std(den_20_B{jj},0,1)./sqrt(4);
 end
 
-figure
+figure('Position', [1320, 256, 404, 341])
 hold on
 ylim([0,0.7])
 errorbar(m_10_den_A{2},std_10_den_A{2})
@@ -345,6 +345,54 @@ figure
 hold on
 ylim([0,0.7])
 errorbar(m_20_den_B{2},std_20_den_B{2})
+
+
+%% Bin speed plotter code (revision)master layout
+fig = figure;
+fig.Units = 'centimeters';
+fig.Position(1) = 7;
+fig.Position(2) = 0;
+fig.Position(3) = 30;
+fig.Position(4) = 36;
+
+%master layout
+gridSize = [2,2];
+t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
+
+%fraction of licks subplot
+
+s1 = tiledlayout(t1,2,1,'TileSpacing','normal','Padding','compact','Units','centimeters');
+s1.Layout.Tile = 3;
+s1.Layout.TileSpan = [1,1];
+%subplot title
+%set_subplot_title(s1,'Common', 'Arial', 16,'bold')
+
+nexttile(s1,1)
+hold on
+%axis square
+xlim([0.5 4.5])
+xticks(1:4)
+xticklabels({'Random\newline foraging' ,'5A5B','3A3B','Random\newline AB'})
+ylim([0 1.2])
+yticks(0:0.2:1)
+ylabel('Fraction of licks in reward zone')
+ae = errorbar(mean_zone_A,sem_zone_A,'Color',[65,105,225]./255,'LineWidth',2);
+be = errorbar(mean_zone_B,sem_zone_B,'Color',[220,20,60]./255,'LineWidth',2);
+
+legend([ae be],{'A','B'},'Location','northwest')
+
+
+fig = figure;
+fig.Units = 'centimeters';
+fig.Position(1) = 7;
+fig.Position(2) = 0;
+fig.Position(3) = 30;
+fig.Position(4) = 36;
+
+%master layout
+gridSize = [2,2];
+t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
+
 
 %lick histograms
 s2 = tiledlayout(t1,4,2,'TileSpacing','normal','Padding','compact','Units','centimeters');
