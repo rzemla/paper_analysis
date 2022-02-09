@@ -344,7 +344,7 @@ errorbar(m_10_den_A{2},std_10_den_A{2})
 figure
 hold on
 ylim([0,0.7])
-errorbar(m_20_den_B{2},std_20_den_B{2})
+errorbar(m_20_den_B{4},std_20_den_B{4})
 
 %lick histograms
 s2 = tiledlayout(t1,4,2,'TileSpacing','normal','Padding','compact','Units','centimeters');
