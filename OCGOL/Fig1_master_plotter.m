@@ -348,12 +348,19 @@ errorbar(m_20_den_B{2},sem_20_den_B{2})
 
 %% Mean lick relative to start of each reward zone bin for A and B trials
 
-pos = [1311.7       41.667       473.33       599.33];
+pos = [1311.7       41.667       940.33       599.33];
+%pos = [1320, 256, 404, 341];
+
+fig = figure('Position',pos);
+%master layout
+gridSize = [2,2];
+t2 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','compact','Units','centimeters');
 
 %rotate the vectors so that the bin start is in the center of the vector 
 %10 bins - A start - 4 and B start 8
 %20 bins - A start 7 and B start - 15
 a10rot = -3;
+b10rot = 1;
 
 %first cell - nb bins, 10, 20
 %second cell - vectors corresponding to training day
@@ -368,7 +375,18 @@ s_den_rotA.A{1}{2} = circshift(sem_10_den_A{2},a10rot);
 s_den_rotA.A{1}{3} = circshift(sem_10_den_A{3},a10rot);
 s_den_rotA.A{1}{4} = circshift(sem_10_den_A{4},a10rot);
 
-%B trials
+%A trials - b reward zone
+m_den_rotB.A{1}{1} = circshift(m_10_den_RF,b10rot);
+m_den_rotB.A{1}{2} = circshift(m_10_den_A{2},b10rot);
+m_den_rotB.A{1}{3} = circshift(m_10_den_A{3},b10rot);
+m_den_rotB.A{1}{4} = circshift(m_10_den_A{4},b10rot);
+
+s_den_rotB.A{1}{1} = circshift(sem_10_den_RF,b10rot);
+s_den_rotB.A{1}{2} = circshift(sem_10_den_A{2},b10rot);
+s_den_rotB.A{1}{3} = circshift(sem_10_den_A{3},b10rot);
+s_den_rotB.A{1}{4} = circshift(sem_10_den_A{4},b10rot);
+
+%B Trial - A reward zone
 m_den_rotA.B{1}{1} = circshift(m_10_den_RF,a10rot);
 m_den_rotA.B{1}{2} = circshift(m_10_den_B{2},a10rot);
 m_den_rotA.B{1}{3} = circshift(m_10_den_B{3},a10rot);
@@ -379,19 +397,68 @@ s_den_rotA.B{1}{2} = circshift(sem_10_den_B{2},a10rot);
 s_den_rotA.B{1}{3} = circshift(sem_10_den_B{3},a10rot);
 s_den_rotA.B{1}{4} = circshift(sem_10_den_B{4},a10rot);
 
+%A trials - b reward zone
+m_den_rotB.B{1}{1} = circshift(m_10_den_RF,b10rot);
+m_den_rotB.B{1}{2} = circshift(m_10_den_B{2},b10rot);
+m_den_rotB.B{1}{3} = circshift(m_10_den_B{3},b10rot);
+m_den_rotB.B{1}{4} = circshift(m_10_den_B{4},b10rot);
+
+s_den_rotB.B{1}{1} = circshift(sem_10_den_RF,b10rot);
+s_den_rotB.B{1}{2} = circshift(sem_10_den_B{2},b10rot);
+s_den_rotB.B{1}{3} = circshift(sem_10_den_B{3},b10rot);
+s_den_rotB.B{1}{4} = circshift(sem_10_den_B{4},b10rot);
+
+blue_grad = cbrewer('seq','Blues',16);
+red_grad = cbrewer('seq','Reds',16);
+
 %plot relative to A reward zone
-figure('Position',pos)
+
+
+nexttile(t2,[1,1])
 hold on
+%axis square
+title('A trials')
 for ii=1:4
-errorbar(m_den_rotA.A{1}{ii},s_den_rotA.A{1}{ii},'b-')
+ae(ii) = errorbar((2:8),m_den_rotA.A{1}{ii}(2:8),s_den_rotA.A{1}{ii}(2:8),'Color',blue_grad(ii*3,:));
 end
 
 for ii=1:4
-errorbar(m_den_rotA.B{1}{ii},s_den_rotA.B{1}{ii},'r--')
+be(ii) = errorbar((2:8),m_den_rotB.A{1}{ii}(2:8),s_den_rotB.A{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '--')
 end
 ylim([0,1])
-xlim([0,11])
+xlim([1.5,8.5])
+yticks([0 0.5 1])
+ylabel('Lick fraction')
+xticks([5])
+xticklabels({'Reward bin'})
+xlabel('Spatial bin [10 bins]')
+al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
+    'RF','5A5B','3A3B','Random'},'Location','northeast');
 
+nexttile(t2,2,[1,1])
+hold on
+%axis square
+title('B trials')
+for ii=1:4
+ae(ii) = errorbar((2:8),m_den_rotA.B{1}{ii}(2:8),s_den_rotA.B{1}{ii}(2:8),'Color',blue_grad(ii*3,:));
+end
+
+for ii=1:4
+be(ii) = errorbar((2:8),m_den_rotB.B{1}{ii}(2:8),s_den_rotB.B{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '--')
+end
+ylim([0,1])
+xlim([1.5,8.5])
+yticks([0 0.5 1])
+ylabel('Lick fraction')
+xticks([5])
+xticklabels({'Reward bin'})
+xlabel('Spatial bin [10 bins]')
+al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
+    'RF','5A5B','3A3B','Random'},'Location','northeast');
+
+%set axis font/label and font size
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
+    'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
 %% Mean lick plotter code (revision)master layout - mean lick (10 bins)
 
 fig2 = figure('Position',[1311.7       41.667       473.33       599.33]);
