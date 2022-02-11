@@ -294,12 +294,12 @@ sem_20_den_RF = std(den_20_RF,0,1)./sqrt(4);
 figure
 hold on
 ylim([0,0.5])
-errorbar(m_10_den_RF,std_10_den_RF)
+errorbar(m_10_den_RF,sem_10_den_RF)
 
 figure
 hold on
 ylim([0,0.5])
-errorbar(m_20_den_RF,std_20_den_RF)
+errorbar(m_20_den_RF,sem_20_den_RF)
 
 %for remainder of training trials except RF
 for jj = 2:4
@@ -344,10 +344,55 @@ errorbar(m_10_den_A{2},sem_10_den_A{2})
 figure
 hold on
 ylim([0,0.7])
-errorbar(m_20_den_B{2},std_20_den_B{2})
+errorbar(m_20_den_B{2},sem_20_den_B{2})
 
+%% Mean lick relative to start of each reward zone bin for A and B trials
 
-%% Bin speed plotter code (revision)master layout - mean lick (10 bins)
+pos = [1311.7       41.667       473.33       599.33];
+
+%rotate the vectors so that the bin start is in the center of the vector 
+%10 bins - A start - 4 and B start 8
+%20 bins - A start 7 and B start - 15
+a10rot = -3;
+
+%first cell - nb bins, 10, 20
+%second cell - vectors corresponding to training day
+%A trials
+m_den_rotA.A{1}{1} = circshift(m_10_den_RF,a10rot);
+m_den_rotA.A{1}{2} = circshift(m_10_den_A{2},a10rot);
+m_den_rotA.A{1}{3} = circshift(m_10_den_A{3},a10rot);
+m_den_rotA.A{1}{4} = circshift(m_10_den_A{4},a10rot);
+
+s_den_rotA.A{1}{1} = circshift(sem_10_den_RF,a10rot);
+s_den_rotA.A{1}{2} = circshift(sem_10_den_A{2},a10rot);
+s_den_rotA.A{1}{3} = circshift(sem_10_den_A{3},a10rot);
+s_den_rotA.A{1}{4} = circshift(sem_10_den_A{4},a10rot);
+
+%B trials
+m_den_rotA.B{1}{1} = circshift(m_10_den_RF,a10rot);
+m_den_rotA.B{1}{2} = circshift(m_10_den_B{2},a10rot);
+m_den_rotA.B{1}{3} = circshift(m_10_den_B{3},a10rot);
+m_den_rotA.B{1}{4} = circshift(m_10_den_B{4},a10rot);
+
+s_den_rotA.B{1}{1} = circshift(sem_10_den_RF,a10rot);
+s_den_rotA.B{1}{2} = circshift(sem_10_den_B{2},a10rot);
+s_den_rotA.B{1}{3} = circshift(sem_10_den_B{3},a10rot);
+s_den_rotA.B{1}{4} = circshift(sem_10_den_B{4},a10rot);
+
+%plot relative to A reward zone
+figure('Position',pos)
+hold on
+for ii=1:4
+errorbar(m_den_rotA.A{1}{ii},s_den_rotA.A{1}{ii},'b-')
+end
+
+for ii=1:4
+errorbar(m_den_rotA.B{1}{ii},s_den_rotA.B{1}{ii},'r--')
+end
+ylim([0,1])
+xlim([0,11])
+
+%% Mean lick plotter code (revision)master layout - mean lick (10 bins)
 
 fig2 = figure('Position',[1311.7       41.667       473.33       599.33]);
 % fig.Units = 'centimeters';
