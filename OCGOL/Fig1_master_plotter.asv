@@ -348,7 +348,7 @@ errorbar(m_20_den_B{2},sem_20_den_B{2})
 
 %% Mean lick relative to start of each reward zone bin for A and B trials
 
-pos = [1311.7       41.667       473.33       599.33];
+pos = [1311.7       41.667       940.33       599.33];
 %pos = [1320, 256, 404, 341];
 
 fig = figure('Position',pos);
@@ -360,7 +360,7 @@ t2 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','normal','Padding','c
 %10 bins - A start - 4 and B start 8
 %20 bins - A start 7 and B start - 15
 a10rot = -3;
-b10rot = 2;
+b10rot = 1;
 
 %first cell - nb bins, 10, 20
 %second cell - vectors corresponding to training day
@@ -386,15 +386,84 @@ s_den_rotB.A{1}{2} = circshift(sem_10_den_A{2},b10rot);
 s_den_rotB.A{1}{3} = circshift(sem_10_den_A{3},b10rot);
 s_den_rotB.A{1}{4} = circshift(sem_10_den_A{4},b10rot);
 
+%B Trial - A reward zone
+m_den_rotA.B{1}{1} = circshift(m_10_den_RF,a10rot);
+m_den_rotA.B{1}{2} = circshift(m_10_den_B{2},a10rot);
+m_den_rotA.B{1}{3} = circshift(m_10_den_B{3},a10rot);
+m_den_rotA.B{1}{4} = circshift(m_10_den_B{4},a10rot);
+
+s_den_rotA.B{1}{1} = circshift(sem_10_den_RF,a10rot);
+s_den_rotA.B{1}{2} = circshift(sem_10_den_B{2},a10rot);
+s_den_rotA.B{1}{3} = circshift(sem_10_den_B{3},a10rot);
+s_den_rotA.B{1}{4} = circshift(sem_10_den_B{4},a10rot);
+
+%A trials - b reward zone
+m_den_rotB.B{1}{1} = circshift(m_10_den_RF,b10rot);
+m_den_rotB.B{1}{2} = circshift(m_10_den_B{2},b10rot);
+m_den_rotB.B{1}{3} = circshift(m_10_den_B{3},b10rot);
+m_den_rotB.B{1}{4} = circshift(m_10_den_B{4},b10rot);
+
+s_den_rotB.B{1}{1} = circshift(sem_10_den_RF,b10rot);
+s_den_rotB.B{1}{2} = circshift(sem_10_den_B{2},b10rot);
+s_den_rotB.B{1}{3} = circshift(sem_10_den_B{3},b10rot);
+s_den_rotB.B{1}{4} = circshift(sem_10_den_B{4},b10rot);
+
+a10rot = -5;
+b10rot = 3;
+%20 bin equivalent
+%first cell - nb bins, 10, 20
+%second cell - vectors corresponding to training day
+%A trials
+m_den_rotA.A{2}{1} = circshift(m_20_den_RF,a20rot);
+m_den_rotA.A{2}{2} = circshift(m_20_den_A{2},a20rot);
+m_den_rotA.A{2}{3} = circshift(m_20_den_A{3},a20rot);
+m_den_rotA.A{2}{4} = circshift(m_20_den_A{4},a20rot);
+
+s_den_rotA.A{2}{1} = circshift(sem_20_den_RF,a20rot);
+s_den_rotA.A{2}{2} = circshift(sem_20_den_A{2},a20rot);
+s_den_rotA.A{2}{3} = circshift(sem_20_den_A{3},a20rot);
+s_den_rotA.A{2}{4} = circshift(sem_20_den_A{4},a20rot);
+
+%A trials - b reward zone
+m_den_rotB.A{2}{1} = circshift(m_20_den_RF,b20rot);
+m_den_rotB.A{2}{2} = circshift(m_20_den_A{2},b20rot);
+m_den_rotB.A{2}{3} = circshift(m_20_den_A{3},b20rot);
+m_den_rotB.A{2}{4} = circshift(m_20_den_A{4},b20rot);
+
+s_den_rotB.A{2}{1} = circshift(sem_20_den_RF,b20rot);
+s_den_rotB.A{2}{2} = circshift(sem_20_den_A{2},b20rot);
+s_den_rotB.A{2}{3} = circshift(sem_20_den_A{3},b20rot);
+s_den_rotB.A{2}{4} = circshift(sem_20_den_A{4},b20rot);
+
+%B Trial - A reward zone
+m_den_rotA.B{2}{1} = circshift(m_20_den_RF,a20rot);
+m_den_rotA.B{2}{2} = circshift(m_20_den_B{2},a20rot);
+m_den_rotA.B{2}{3} = circshift(m_20_den_B{3},a20rot);
+m_den_rotA.B{2}{4} = circshift(m_20_den_B{4},a20rot);
+
+s_den_rotA.B{2}{1} = circshift(sem_20_den_RF,a20rot);
+s_den_rotA.B{2}{2} = circshift(sem_20_den_B{2},a20rot);
+s_den_rotA.B{2}{3} = circshift(sem_20_den_B{3},a20rot);
+s_den_rotA.B{2}{4} = circshift(sem_20_den_B{4},a20rot);
+
+%A trials - b reward zone
+m_den_rotB.B{2}{1} = circshift(m_20_den_RF,b20rot);
+m_den_rotB.B{2}{2} = circshift(m_20_den_B{2},b20rot);
+m_den_rotB.B{2}{3} = circshift(m_20_den_B{3},b20rot);
+m_den_rotB.B{2}{4} = circshift(m_20_den_B{4},b20rot);
+
+s_den_rotB.B{2}{1} = circshift(sem_20_den_RF,b20rot);
+s_den_rotB.B{2}{2} = circshift(sem_20_den_B{2},b20rot);
+s_den_rotB.B{2}{3} = circshift(sem_20_den_B{3},b20rot);
+s_den_rotB.B{2}{4} = circshift(sem_20_den_B{4},b20rot);
+
 blue_grad = cbrewer('seq','Blues',16);
 red_grad = cbrewer('seq','Reds',16);
 
 %plot relative to A reward zone
-
-
 nexttile(t2,[1,1])
 hold on
-axis square
+%axis square
 title('A trials')
 for ii=1:4
 ae(ii) = errorbar((2:8),m_den_rotA.A{1}{ii}(2:8),s_den_rotA.A{1}{ii}(2:8),'Color',blue_grad(ii*3,:));
@@ -402,6 +471,69 @@ end
 
 for ii=1:4
 be(ii) = errorbar((2:8),m_den_rotB.A{1}{ii}(2:8),s_den_rotB.A{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '--')
+end
+ylim([0,1])
+xlim([1.5,8.5])
+yticks([0 0.5 1])
+ylabel('Lick fraction')
+xticks([5])
+xticklabels({'Reward bin'})
+xlabel('Spatial bin [10 bins]')
+al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
+    'RF','5A5B','3A3B','Random'},'Location','northeast');
+
+nexttile(t2,2,[1,1])
+hold on
+%axis square
+title('B trials')
+for ii=1:4
+ae(ii) = errorbar((2:8),m_den_rotA.B{1}{ii}(2:8),s_den_rotA.B{1}{ii}(2:8),'Color',blue_grad(ii*3,:), 'LineStyle', '-');
+end
+
+for ii=1:4
+be(ii) = errorbar((2:8),m_den_rotB.B{1}{ii}(2:8),s_den_rotB.B{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '-')
+end
+ylim([0,1])
+xlim([1.5,8.5])
+yticks([0 0.5 1])
+ylabel('Lick fraction')
+xticks([5])
+xticklabels({'Reward bin'})
+xlabel('Spatial bin [10 bins]')
+al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
+    'RF','5A5B','3A3B','Random'},'Location','northeast');
+
+nexttile(t2,[2,1])
+hold on
+%axis square
+title('A trials')
+for ii=1:4
+ae(ii) = errorbar((2:8),m_den_rotA.A{1}{ii}(2:8),s_den_rotA.A{1}{ii}(2:8),'Color',blue_grad(ii*3,:));
+end
+
+for ii=1:4
+be(ii) = errorbar((2:8),m_den_rotB.A{1}{ii}(2:8),s_den_rotB.A{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '--')
+end
+ylim([0,1])
+xlim([1.5,8.5])
+yticks([0 0.5 1])
+ylabel('Lick fraction')
+xticks([5])
+xticklabels({'Reward bin'})
+xlabel('Spatial bin [10 bins]')
+al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
+    'RF','5A5B','3A3B','Random'},'Location','northeast');
+
+nexttile(t2,2,[1,1])
+hold on
+%axis square
+title('B trials')
+for ii=1:4
+ae(ii) = errorbar((2:8),m_den_rotA.B{1}{ii}(2:8),s_den_rotA.B{1}{ii}(2:8),'Color',blue_grad(ii*3,:), 'LineStyle', '-');
+end
+
+for ii=1:4
+be(ii) = errorbar((2:8),m_den_rotB.B{1}{ii}(2:8),s_den_rotB.B{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '-')
 end
 ylim([0,1])
 xlim([1.5,8.5])

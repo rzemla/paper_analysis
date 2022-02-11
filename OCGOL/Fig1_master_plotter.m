@@ -408,13 +408,61 @@ s_den_rotB.B{1}{2} = circshift(sem_10_den_B{2},b10rot);
 s_den_rotB.B{1}{3} = circshift(sem_10_den_B{3},b10rot);
 s_den_rotB.B{1}{4} = circshift(sem_10_den_B{4},b10rot);
 
+a20rot = -5;
+b20rot = 3;
+
+%20 bin equivalent
+%first cell - nb bins, 10, 20
+%second cell - vectors corresponding to training day
+%A trials
+m_den_rotA.A{2}{1} = circshift(m_20_den_RF,a20rot);
+m_den_rotA.A{2}{2} = circshift(m_20_den_A{2},a20rot);
+m_den_rotA.A{2}{3} = circshift(m_20_den_A{3},a20rot);
+m_den_rotA.A{2}{4} = circshift(m_20_den_A{4},a20rot);
+
+s_den_rotA.A{2}{1} = circshift(sem_20_den_RF,a20rot);
+s_den_rotA.A{2}{2} = circshift(sem_20_den_A{2},a20rot);
+s_den_rotA.A{2}{3} = circshift(sem_20_den_A{3},a20rot);
+s_den_rotA.A{2}{4} = circshift(sem_20_den_A{4},a20rot);
+
+%A trials - b reward zone
+m_den_rotB.A{2}{1} = circshift(m_20_den_RF,b20rot);
+m_den_rotB.A{2}{2} = circshift(m_20_den_A{2},b20rot);
+m_den_rotB.A{2}{3} = circshift(m_20_den_A{3},b20rot);
+m_den_rotB.A{2}{4} = circshift(m_20_den_A{4},b20rot);
+
+s_den_rotB.A{2}{1} = circshift(sem_20_den_RF,b20rot);
+s_den_rotB.A{2}{2} = circshift(sem_20_den_A{2},b20rot);
+s_den_rotB.A{2}{3} = circshift(sem_20_den_A{3},b20rot);
+s_den_rotB.A{2}{4} = circshift(sem_20_den_A{4},b20rot);
+
+%B Trial - A reward zone
+m_den_rotA.B{2}{1} = circshift(m_20_den_RF,a20rot);
+m_den_rotA.B{2}{2} = circshift(m_20_den_B{2},a20rot);
+m_den_rotA.B{2}{3} = circshift(m_20_den_B{3},a20rot);
+m_den_rotA.B{2}{4} = circshift(m_20_den_B{4},a20rot);
+
+s_den_rotA.B{2}{1} = circshift(sem_20_den_RF,a20rot);
+s_den_rotA.B{2}{2} = circshift(sem_20_den_B{2},a20rot);
+s_den_rotA.B{2}{3} = circshift(sem_20_den_B{3},a20rot);
+s_den_rotA.B{2}{4} = circshift(sem_20_den_B{4},a20rot);
+
+%A trials - b reward zone
+m_den_rotB.B{2}{1} = circshift(m_20_den_RF,b20rot);
+m_den_rotB.B{2}{2} = circshift(m_20_den_B{2},b20rot);
+m_den_rotB.B{2}{3} = circshift(m_20_den_B{3},b20rot);
+m_den_rotB.B{2}{4} = circshift(m_20_den_B{4},b20rot);
+
+s_den_rotB.B{2}{1} = circshift(sem_20_den_RF,b20rot);
+s_den_rotB.B{2}{2} = circshift(sem_20_den_B{2},b20rot);
+s_den_rotB.B{2}{3} = circshift(sem_20_den_B{3},b20rot);
+s_den_rotB.B{2}{4} = circshift(sem_20_den_B{4},b20rot);
+
 blue_grad = cbrewer('seq','Blues',16);
 red_grad = cbrewer('seq','Reds',16);
 
 %plot relative to A reward zone
-
-
-nexttile(t2,[1,1])
+nexttile(t2,1,[1,1])
 hold on
 %axis square
 title('A trials')
@@ -440,11 +488,11 @@ hold on
 %axis square
 title('B trials')
 for ii=1:4
-ae(ii) = errorbar((2:8),m_den_rotA.B{1}{ii}(2:8),s_den_rotA.B{1}{ii}(2:8),'Color',blue_grad(ii*3,:));
+ae(ii) = errorbar((2:8),m_den_rotA.B{1}{ii}(2:8),s_den_rotA.B{1}{ii}(2:8),'Color',blue_grad(ii*3,:), 'LineStyle', '-');
 end
 
 for ii=1:4
-be(ii) = errorbar((2:8),m_den_rotB.B{1}{ii}(2:8),s_den_rotB.B{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '--')
+be(ii) = errorbar((2:8),m_den_rotB.B{1}{ii}(2:8),s_den_rotB.B{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '-')
 end
 ylim([0,1])
 xlim([1.5,8.5])
@@ -453,6 +501,49 @@ ylabel('Lick fraction')
 xticks([5])
 xticklabels({'Reward bin'})
 xlabel('Spatial bin [10 bins]')
+al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
+    'RF','5A5B','3A3B','Random'},'Location','northeast');
+
+%20 bin plots
+nexttile(t2,3,[1,1])
+hold on
+%axis square
+title('A trials')
+for ii=1:4
+ae(ii) = errorbar((4:16),m_den_rotA.A{2}{ii}(4:16),s_den_rotA.A{2}{ii}(4:16),'Color',blue_grad(ii*3,:));
+end
+
+for ii=1:4
+be(ii) = errorbar((4:16),m_den_rotB.A{2}{ii}(4:16),s_den_rotB.A{2}{ii}(4:16),'Color',red_grad(ii*3,:), 'LineStyle', '--');
+end
+ylim([0,1])
+xlim([3.5,16.5])
+yticks([0 0.5 1])
+ylabel('Lick fraction')
+xticks([10])
+xticklabels({'Reward bin'})
+xlabel('Spatial bin [20 bins]')
+al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
+    'RF','5A5B','3A3B','Random'},'Location','northeast');
+
+nexttile(t2,4,[1,1])
+hold on
+%axis square
+title('B trials')
+for ii=1:4
+ae(ii) = errorbar((4:16),m_den_rotA.B{2}{ii}(4:16),s_den_rotA.B{2}{ii}(4:16),'Color',blue_grad(ii*3,:), 'LineStyle', '-');
+end
+
+for ii=1:4
+be(ii) = errorbar((4:16),m_den_rotB.B{2}{ii}(4:16),s_den_rotB.B{2}{ii}(4:16),'Color',red_grad(ii*3,:), 'LineStyle', '-');
+end
+ylim([0,1])
+xlim([3.5,16.5])
+yticks([0 0.5 1])
+ylabel('Lick fraction')
+xticks([10])
+xticklabels({'Reward bin'})
+xlabel('Spatial bin [20 bins]')
 al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
     'RF','5A5B','3A3B','Random'},'Location','northeast');
 
