@@ -78,14 +78,14 @@ options.bin_choose = 2;
 [tc_corr_sel_data,source_data_task_sel_remap] = tc_pv_correlation_task_sel(path_dir,source_data_task_sel_remap);
 
 %% Master plotter for Figure 2
-
+% individual place maps derive from this code for reviewer
 fig2_master_plotter(fraction_place_plot_data,si_ts_score_dist_data,...
         task_sel_STC_data,centroid_dist_data,AUC_data, tc_corr_sel_data);
 
 %% Export source data Figure 2
 
 %navigate to matlab summary stats directory
-cd('G:\Google_drive\task_selective_place_paper\matlab_data')
+cd('E:\matlab_data_export_paper')
 
 save('source_data_fig2.mat', 'source_data_task_sel_remap','-v7.3');
 
@@ -164,7 +164,7 @@ source_data_sup_2_3.global_dist_scatter = global_dist_scatter;
 %% Export source data Figure 3
 
 %navigate to matlab summary stats directory
-cd('G:\Google_drive\task_selective_place_paper\matlab_data')
+cd('E:\matlab_data_export_paper')
 
 save('source_data_fig3.mat', 'source_data_AB_remap','-v7.3');
 
@@ -195,7 +195,7 @@ fig_sup_speed_place_field_master(event_speed_plot,pf_prop_data)
 
 fig_sup_global_remap_master(global_pf_dist,global_dist_scatter,reward_zones_all_animal)
 
-%% Speed analysis for each animal used in Figure 2/3 (mean bin speed on A/B laps) (Sup 2)
+%% Speed analysis for each animal used in Figure 2/3 (mean bin speed on A/B laps) (Sup 2) - START HERE FOR REVIEWER SPEED AND ACC analysis
 
 lap_speed_by_animal(path_dir)
 
@@ -204,7 +204,7 @@ lap_speed_by_animal(path_dir)
 %% Export data for supplementary/extended figure analysis
 
 %navigate to matlab summary stats directory
-cd('G:\Google_drive\task_selective_place_paper\matlab_data')
+cd('E:\matlab_data_export_paper')
 
 save('source_data_sup_2_3.mat', 'source_data_sup_2_3','-v7.3');
 

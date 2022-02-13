@@ -467,11 +467,11 @@ hold on
 %axis square
 title('A trials')
 for ii=1:4
-ae(ii) = errorbar((2:8),m_den_rotA.A{1}{ii}(2:8),s_den_rotA.A{1}{ii}(2:8),'Color',blue_grad(ii*3,:));
+ae(ii) = errorbar((2:8),m_den_rotA.A{1}{ii}(2:8),s_den_rotA.A{1}{ii}(2:8),'Color',blue_grad(ii*3,:),'LineWidth',1);
 end
 
 for ii=1:4
-be(ii) = errorbar((2:8),m_den_rotB.A{1}{ii}(2:8),s_den_rotB.A{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '--')
+be(ii) = errorbar((2:8),m_den_rotB.A{1}{ii}(2:8),s_den_rotB.A{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '--','LineWidth',1)
 end
 ylim([0,1])
 xlim([1.5,8.5])
@@ -488,11 +488,11 @@ hold on
 %axis square
 title('B trials')
 for ii=1:4
-ae(ii) = errorbar((2:8),m_den_rotA.B{1}{ii}(2:8),s_den_rotA.B{1}{ii}(2:8),'Color',blue_grad(ii*3,:), 'LineStyle', '-');
+ae(ii) = errorbar((2:8),m_den_rotA.B{1}{ii}(2:8),s_den_rotA.B{1}{ii}(2:8),'Color',blue_grad(ii*3,:), 'LineStyle', '--','LineWidth',1);
 end
 
 for ii=1:4
-be(ii) = errorbar((2:8),m_den_rotB.B{1}{ii}(2:8),s_den_rotB.B{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '-')
+be(ii) = errorbar((2:8),m_den_rotB.B{1}{ii}(2:8),s_den_rotB.B{1}{ii}(2:8),'Color',red_grad(ii*3,:), 'LineStyle', '-','LineWidth',1)
 end
 ylim([0,1])
 xlim([1.5,8.5])
@@ -510,11 +510,11 @@ hold on
 %axis square
 title('A trials')
 for ii=1:4
-ae(ii) = errorbar((4:16),m_den_rotA.A{2}{ii}(4:16),s_den_rotA.A{2}{ii}(4:16),'Color',blue_grad(ii*3,:));
+ae(ii) = errorbar((4:16),m_den_rotA.A{2}{ii}(4:16),s_den_rotA.A{2}{ii}(4:16),'Color',blue_grad(ii*3,:),'LineWidth',1);
 end
 
 for ii=1:4
-be(ii) = errorbar((4:16),m_den_rotB.A{2}{ii}(4:16),s_den_rotB.A{2}{ii}(4:16),'Color',red_grad(ii*3,:), 'LineStyle', '--');
+be(ii) = errorbar((4:16),m_den_rotB.A{2}{ii}(4:16),s_den_rotB.A{2}{ii}(4:16),'Color',red_grad(ii*3,:), 'LineStyle', '--','LineWidth',1);
 end
 ylim([0,1])
 xlim([3.5,16.5])
@@ -531,11 +531,11 @@ hold on
 %axis square
 title('B trials')
 for ii=1:4
-ae(ii) = errorbar((4:16),m_den_rotA.B{2}{ii}(4:16),s_den_rotA.B{2}{ii}(4:16),'Color',blue_grad(ii*3,:), 'LineStyle', '-');
+ae(ii) = errorbar((4:16),m_den_rotA.B{2}{ii}(4:16),s_den_rotA.B{2}{ii}(4:16),'Color',blue_grad(ii*3,:), 'LineStyle', '--','LineWidth',1);
 end
 
 for ii=1:4
-be(ii) = errorbar((4:16),m_den_rotB.B{2}{ii}(4:16),s_den_rotB.B{2}{ii}(4:16),'Color',red_grad(ii*3,:), 'LineStyle', '-');
+be(ii) = errorbar((4:16),m_den_rotB.B{2}{ii}(4:16),s_den_rotB.B{2}{ii}(4:16),'Color',red_grad(ii*3,:), 'LineStyle', '-','LineWidth',1);
 end
 ylim([0,1])
 xlim([3.5,16.5])
@@ -550,6 +550,7 @@ al = legend([ae,be],{'RF','5A5B','3A3B','Random',...
 %set axis font/label and font size
 set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
     'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
 %% Mean lick plotter code (revision)master layout - mean lick (10 bins)
 
 fig2 = figure('Position',[1311.7       41.667       473.33       599.33]);
