@@ -195,13 +195,17 @@ fig_sup_speed_place_field_master(event_speed_plot,pf_prop_data)
 
 fig_sup_global_remap_master(global_pf_dist,global_dist_scatter,reward_zones_all_animal)
 
-%% Speed analysis for each animal used in Figure 2/3 (mean bin speed on A/B laps) (Sup 2) - START HERE FOR REVIEWER SPEED AND ACC analysis
+%% Speed analysis for each animal used in Figure 2/3 (mean bin speed on A/B laps) (Sup 2) 
+%added speed analysis for reviewers to this section of code
 
 %0.29-0.3 - Reward B zone start bin
 %0.69-0.7 - Reward A zone start bin
 
-lap_speed_by_animal(path_dir)
+pre_post_rew_zone_speed_stats = lap_speed_by_animal(path_dir);
+rew_sp_exp = pre_post_rew_zone_speed_stats;
 
+
+rew_sp_exp.Atrial_Azone.p, rew_sp_exp.Atrial_Azone.stats.tstat
 %save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
 
 %% Export data for supplementary/extended figure analysis

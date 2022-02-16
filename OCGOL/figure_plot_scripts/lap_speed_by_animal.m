@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = lap_speed_by_animal(path_dir)
+function [stats_out] = lap_speed_by_animal(path_dir)
 
 %% Load in lap speed data
 
@@ -20,7 +20,7 @@ for ii=1:size(path_dir,2)
 end
 
 %get mean difference between A and B laps
-mean_diff = mean_speed.A - mean_speed.B; 
+mean_diff = mean_speed.A - mean_speed.B;
 
 
 %% Reviewer speed analysis
@@ -81,11 +81,11 @@ for ii=1:11
     xline(30,'Color',[220,20,60]/255,'LineWidth',1);
     xline(34,'Color',[220,20,60]/255,'LineWidth',1);
 
-        if ii==11
+    if ii==11
         xticks([32])
         xticklabels("B reward zone")
         xlabel('Spatial bin')
-            else
+    else
         xticks([])
     end
 
@@ -101,15 +101,15 @@ for ii=1:11
     s1.patch.FaceColor = [220,20,60]/255;
     ylim([0 30])
     xlim([20 45])
-        yticks([])
+    yticks([])
     xline(30,'Color',[220,20,60]/255,'LineWidth',1);
     xline(34,'Color',[220,20,60]/255,'LineWidth',1);
 
-        if ii==11
+    if ii==11
         xticks([32])
         xticklabels("B reward zone")
         xlabel('Spatial bin')
-            else
+    else
         xticks([])
     end
 end
@@ -124,15 +124,15 @@ for ii=1:11
     s2.patch.FaceColor = [220,20,60]/255;
     ylim([0 30])
     xlim([60 85])
-        yticks([])
+    yticks([])
     xline(70,'Color',[65,105,225]/255,'LineWidth',1);
     xline(74,'Color',[65,105,225]/255,'LineWidth',1);
 
-        if ii==11
+    if ii==11
         xticks([72])
         xticklabels("A reward zone")
         xlabel('Spatial bin')
-            else
+    else
         xticks([])
     end
 end
@@ -143,18 +143,26 @@ set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
 %% Plot of pre vs. post speed around reward zone for A vs.B with paired t-test
 for ii=1:11
     %A trails A zones
-pre_post_Az.A(ii,1) = nanmean(nanmean(speed_data{ii}.mean_bin_speed.A(:,60:69),2),1)
-pre_post_Az.A(ii,2) = nanmean(nanmean(speed_data{ii}.mean_bin_speed.A(:,75:84),2),1)
-%B trials B zone
-pre_post_Bz.B(ii,1) = nanmean(nanmean(speed_data{ii}.mean_bin_speed.B(:,20:29),2),1)
-pre_post_Bz.B(ii,2) = nanmean(nanmean(speed_data{ii}.mean_bin_speed.B(:,35:44),2),1)
+    pre_post_Az.A(ii,1) = nanmean(nanmean(speed_data{ii}.mean_bin_speed.A(:,60:69),2),1)
+    pre_post_Az.A(ii,2) = nanmean(nanmean(speed_data{ii}.mean_bin_speed.A(:,75:84),2),1)
+    %B trials B zone
+    pre_post_Bz.B(ii,1) = nanmean(nanmean(speed_data{ii}.mean_bin_speed.B(:,20:29),2),1)
+    pre_post_Bz.B(ii,2) = nanmean(nanmean(speed_data{ii}.mean_bin_speed.B(:,35:44),2),1)
 
 end
 
-[h,p,~,stats]= ttest(pre_post_Az.A(:,1),pre_post_Az.A(:,2))
+%% calculate stats here for comparing pre and post speed - paired t test
+[h,p,~,stats]= ttest(pre_post_Az.A(:,1),pre_post_Az.A(:,2));
+stats_out.Atrial_Azone.p = p;
+stats_out.Atrial_Azone.stats = stats;
+stats_out.Atrial_Azone.input_data = pre_post_Az.A;
 
-[h,p]= ttest(pre_post_Bz.B(:,1),pre_post_Bz.B(:,2))
+[h,p,~,stats]= ttest(pre_post_Bz.B(:,1),pre_post_Bz.B(:,2));
+stats_out.Btrial_Bzone.p = p;
+stats_out.Btrial_Bzone.stats = stats;
+stats_out.Btrial_Bzone.input_data = pre_post_Bz.B;
 
+%% 
 figure
 hold on
 ylim([0, 25])
@@ -206,9 +214,6 @@ ylabel("Speed [cm/s]")
 set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
     'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
 
-
-
-
 %% Generate subplot for all animals with mean speed on A/B laps across all bins
 
 figure('Position',[2308 118 1148 861])
@@ -223,33 +228,33 @@ for ii=1:size(path_dir,2)
     xticks([1 50 100])
     xticklabels({'0','0,5','1'});
     ylabel('Speed [cm/s]');
-    
+
     %create input function to calculate standard error of mean
     sem = @(x) nanstd(x,0,1)./sqrt(size(x,1));
-    
+
     s1 = shadedErrorBar(1:100,speed_data{ii}.mean_bin_speed.A,{@nanmean,@nanstd},'lineprops','-','transparent',true,'patchSaturation',0.20);
     set(s1.edge,'LineWidth',0.2,'LineStyle','-','Color',[[65,105,225]/255, 0.2]) %last value add transparency value
     s1.mainLine.LineWidth = 2;
     s1.mainLine.Color = [65,105,225]/255;
     s1.patch.FaceColor = [65,105,225]/255;
-    
+
     s2 = shadedErrorBar(1:100,speed_data{ii}.mean_bin_speed.B,{@nanmean,@nanstd},'lineprops','-','transparent',true,'patchSaturation',0.20);
     set(s2.edge,'LineWidth',0.2,'LineStyle','-','Color',[[220,20,60]/255, 0.2]) %last value add transparency value
     s2.mainLine.LineWidth = 2;
     s2.mainLine.Color = [220,20,60]/255;
     s2.patch.FaceColor = [220,20,60]/255;
-    
+
     %plot legend only for first animal
     if ii==1
-    legend('A laps','B laps','location','northeast','AutoUpdate','off');
+        legend('A laps','B laps','location','northeast','AutoUpdate','off');
     end
-    
+
     %plot reward zone A and B markers
     %reward zone A
     plot([70 70],[0 40],'--','Color',[65,105,225]/255)
     %reward zone B
     plot([30 30],[0 40],'--','Color',[220,20,60]/255)
-    
+
     set(gca,'FontSize',11)
     set(gca,'LineWidth',1.5)
 end
