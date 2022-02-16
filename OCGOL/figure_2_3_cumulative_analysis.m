@@ -204,8 +204,13 @@ fig_sup_global_remap_master(global_pf_dist,global_dist_scatter,reward_zones_all_
 pre_post_rew_zone_speed_stats = lap_speed_by_animal(path_dir);
 rew_sp_exp = pre_post_rew_zone_speed_stats;
 
+speed_zone_stats.A = [rew_sp_exp.Atrial_Azone.p, rew_sp_exp.Atrial_Azone.stats.tstat,rew_sp_exp.Atrial_Azone.stats.df];
+speed_zone_stats.B = [rew_sp_exp.Btrial_Bzone.p, rew_sp_exp.Btrial_Bzone.stats.tstat,rew_sp_exp.Btrial_Bzone.stats.df];
 
-rew_sp_exp.Atrial_Azone.p, rew_sp_exp.Atrial_Azone.stats.tstat
+%table for export
+t_speed = array2table([speed_zone_stats.A; speed_zone_stats.B],'VariableNames',["p-val","t-stat","df"],'RowNames',["A","B"])
+writetable(t_speed,'speed_pre_post_zone_fig2_3_sup.xls','WriteRowNames',true) 
+
 %save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
 
 %% Export data for supplementary/extended figure analysis
