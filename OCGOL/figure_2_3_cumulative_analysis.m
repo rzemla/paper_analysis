@@ -69,7 +69,7 @@ options.bin_choose = 2;
 [centroid_dist_data,source_data_task_sel_remap] = ...
     centroid_dist_selective(path_dir,reward_zones_all_animal,options,source_data_task_sel_remap);
 
-%% AUC/min scatterplots of A vs B neurons for each animal 
+%% AUC/min scatterplots of A vs B neurons for each animal - DATA FOR AUC analysis here FOR REVIEWER
 
 [AUC_data,source_data_task_sel_remap] = auc_scatterplots(path_dir,source_data_task_sel_remap);
 
@@ -208,8 +208,8 @@ speed_zone_stats.A = [rew_sp_exp.Atrial_Azone.p, rew_sp_exp.Atrial_Azone.stats.t
 speed_zone_stats.B = [rew_sp_exp.Btrial_Bzone.p, rew_sp_exp.Btrial_Bzone.stats.tstat,rew_sp_exp.Btrial_Bzone.stats.df];
 
 %table for export
-t_speed = array2table([speed_zone_stats.A; speed_zone_stats.B],'VariableNames',["p-val","t-stat","df"],'RowNames',["A","B"])
-writetable(t_speed,'speed_pre_post_zone_fig2_3_sup.xls','WriteRowNames',true) 
+t_speed = array2table([speed_zone_stats.A; speed_zone_stats.B],'VariableNames',["p-val","t-stat","df"],'RowNames',["A","B"]);
+writetable(t_speed,'speed_pre_post_zone_fig2_3_sup.xlsx','WriteRowNames',true) 
 
 %save(fullfile(path_dir{1},'cumul_analysis','lap_and_event_speed.mat'),'mean_bin_speed', 'lap_bin_split','mean_event_speed');
 
