@@ -61,7 +61,7 @@ end
 %nb events for each cell on A trials
 cum_data{1, 1}.Events_split{1, 1}.Run.properties.nb_events
 
-%% AUC comparioson
+%% AUC comparioson for reviewers
 
 % Isolate AUC of all neurons
 % Isolate AUC of SI tuned neurons
@@ -75,7 +75,6 @@ cum_data{1, 1}.Events_split{1, 1}.Run.properties.nb_events
 %.mat
 
 %Read in the idx of all SI/TS tuned task-selective neurons
-
 for ee=1:size(path_dir,2)
     load_data_select_ROIs{ee} = fullfile(path_dir{ee},'cumul_analysis','select_ROI_criteria.mat');
     ROI_idx{ee} = load(string(load_data_select_ROIs{ee}));
@@ -83,13 +82,19 @@ end
 
 %only use place cells/cells with at least 3 significant calcium events
 
-%logical list of SI only A_tuned neurons
-A_idx = ROI_idx{1, 1}.tunedLogical.si.onlyA_tuned;
+%logical list of SI/TS only A or only B tuned neurons
+for ee=1:size(path_dir,2)
+    %A_sel
+    A_idx.si{ee} = ROI_idx{1, ee}.tunedLogical.si.onlyA_tuned;
+    A_idx.ts{ee} = ROI_idx{1, ee}.tunedLogical.ts.onlyA_tuned;
+    %B_sel
+    B_idx.si{ee} = ROI_idx{1, ee}.tunedLogical.si.onlyB_tuned;
+    B_idx.ts{ee} = ROI_idx{1, ee}.tunedLogical.ts.onlyB_tuned;
+end
 
-
-%load AUC run events
-run_AUC_A = cum_data{1, 1}.Events_split{1, 1}.Run.properties.AUC;
-run_AUC_B =  cum_data{1, 1}.Events_split{1, 2}.Run.properties.AUC;
+%load AUC values run events
+AUC_A{ee}.run = cum_data{1,ee}.Events_split{1, 1}.Run.properties.AUC;
+AUC_B{ee}.run =  cum_data{1,ee}.Events_split{1, 2}.Run.properties.AUC;
 
 %constant imaging period
 dt= 0.033427969000002;
@@ -101,8 +106,13 @@ AUC_A_sel_A = run_AUC_A(A_idx);
 AUC_A_sel_B = run_AUC_B(A_idx);
 
 %check number of sig events 
-sig_events_A_laps = cellfun(@(x) size(x,2),AUC_A_sel_A,'UniformOutput',false);
+sig_events_A_laps = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel_A,'UniformOutput',false));
+sig_events_B_laps = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel_B,'UniformOutput',false));
 
+
+%transients/min
+sig_events_min.Asel.si.Alaps = sig_events_A_laps./run_time_A;
+sig_events_min.Asel.si.Blaps = sig_events_B_laps./run_time_B;
 
 %calc AUC/min for sample animal for SI selective place cells
 AUC_min.Asel.si.Alaps = cell2mat(cellfun(@(x) sum(x),AUC_A_sel_A, 'UniformOutput',false))./run_time_A;
@@ -114,6 +124,11 @@ figure
 hold on
 xlim([0.5,2.5])
 plot([1,2],[AUC_min.Asel.si.Alaps;AUC_min.Asel.si.Blaps])
+
+figure
+hold on
+xlim([0.5,2.5])
+plot([1,2],[sig_events_min.Asel.si.Alaps;sig_events_min.Asel.si.Blaps])
 
 %% Source data export struct - Fig 2 data
 
