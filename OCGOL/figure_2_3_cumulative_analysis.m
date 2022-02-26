@@ -61,6 +61,47 @@ end
 %nb events for each cell on A trials
 cum_data{1, 1}.Events_split{1, 1}.Run.properties.nb_events
 
+%% AUC comparioson
+
+% Isolate AUC of all neurons
+% Isolate AUC of SI tuned neurons
+% Isolate AUC of TS tuned neurons
+% Get time in min for run and non-run laps for all correct A and B trials
+% (1,2)
+
+%idx of SI place cells
+
+%G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1\cumul_analysis\select_ROI_criteria
+%.mat
+
+%Read in the idx of all SI/TS tuned task-selective neurons
+
+for ee=1:size(path_dir,2)
+    load_data_select_ROIs{ee} = fullfile(path_dir{ee},'cumul_analysis','select_ROI_criteria.mat');
+    ROI_idx{ee} = load(string(load_data_select_ROIs{ee}));
+end
+
+%logical list of SI only A_tuned neurons
+A_idx = ROI_idx{1, 1}.tunedLogical.si.onlyA_tuned;
+
+
+%load AUC run events
+run_AUC_A = cum_data{1, 1}.Events_split{1, 1}.Run.properties.AUC;
+run_AUC_B =  cum_data{1, 1}.Events_split{1, 2}.Run.properties.AUC;
+
+%constant imaging period
+dt= 0.033427969000002;
+%run time in min
+run_time_A = size(cum_data{1, 1}.Imaging_split{1, 1}.time_restricted,1).*dt./60;
+run_time_B = size(cum_data{1, 1}.Imaging_split{1, 2}.time_restricted,1).*dt./60;
+
+AUC_A_sel_A = run_AUC_A(A_idx);
+AUC_A_sel_B = run_AUC_B(A_idx);
+
+%check number of sig events 
+sig_events_A_laps = cellfun(@(x) size(x,2),AUC_A_sel_A,'UniformOutput',false);
+
+
 %% Source data export struct - Fig 2 data
 
 source_data_task_sel_remap = struct();
