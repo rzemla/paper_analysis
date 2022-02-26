@@ -42,6 +42,25 @@ path_dir{11} = {'G:\Figure_2_3_selective_remap\I57_LT_ABrand_no_punish_042119_1'
 load(fullfile('G:\Figure_2_3_selective_remap\cumulative_data_output','reward_zones_all_animals.mat'));
 
 
+
+%% Reviewer AUC re-analysis and nb events for each class of of task-selective place_cells
+
+%get matfile path and filename
+for ii=1:numel(path_dir)
+    cd(fullfile(string(path_dir{ii}),'output'))
+    source_path{ii} = dir ('*.mat');
+end
+
+%all data loaded in for AUC/min and event/min analysis
+parfor ii=1:numel(path_dir)
+cum_data{ii} = load(fullfile(source_path{ii}.folder, source_path{ii}.name),'Place_cell','Events_split',...
+    'Behavior_split','Imaging_split')
+disp(ii)
+end
+
+%nb events for each cell on A trials
+cum_data{1, 1}.Events_split{1, 1}.Run.properties.nb_events
+
 %% Source data export struct - Fig 2 data
 
 source_data_task_sel_remap = struct();
