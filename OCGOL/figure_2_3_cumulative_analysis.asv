@@ -81,14 +81,36 @@ for ee=1:size(path_dir,2)
     ROI_idx{ee} = load(string(load_data_select_ROIs{ee}));
 end
 
+%only use place cells/cells with at least 3 significant calcium events
+
 %logical list of SI only A_tuned neurons
 A_idx = ROI_idx{1, 1}.tunedLogical.si.onlyA_tuned;
 
 
 %load AUC run events
 run_AUC_A = cum_data{1, 1}.Events_split{1, 1}.Run.properties.AUC;
-run_AUC_B = 
+run_AUC_B =  cum_data{1, 1}.Events_split{1, 2}.Run.properties.AUC;
 
+%constant imaging period
+dt= 0.033427969000002;
+%run time in min
+run_time_A = size(cum_data{1, 1}.Imaging_split{1, 1}.time_restricted,1).*dt./60;
+run_time_B = size(cum_data{1, 1}.Imaging_split{1, 2}.time_restricted,1).*dt./60;
+
+AUC_A_sel_A = run_AUC_A(A_idx);
+AUC_A_sel_B = run_AUC_B(A_idx);
+
+%check number of sig events 
+sig_events_A_laps = cellfun(@(x) size(x,2),AUC_A_sel_A,'UniformOutput',false);
+
+
+%calc AUC/min for sample animal for SI selective place cells
+AUC_min.Asel.si.Alaps = cell2mat(cellfun(@(x) sum(x),AUC_A_sel_A, 'UniformOutput',false))./run_time_A;
+AUC_min.Asel.si.Blaps = cell2mat(cellfun(@(x) sum(x),AUC_A_sel_B, 'UniformOutput',false))./run_time_B;
+
+figure
+hold on
+plot([AUC_min.Asel.si.Alaps;AUC_min.Asel.si.Blaps])
 
 %% Source data export struct - Fig 2 data
 
