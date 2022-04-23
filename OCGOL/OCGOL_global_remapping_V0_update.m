@@ -3,22 +3,22 @@ function OCGOL_global_remapping_V0_update(path_dir,crossdir,options)
 %% Import variables and define options
 
 %run componenet registration across sessions
-% options.register = 0;
+options.register = 1;
 % 
 % %whether to load place field data processed below
-% options.loadPlaceField_data = 1;
+options.loadPlaceField_data = 0;
 % 
 % %load extracted ROI zooms/outlines
-% options.load_ROI_zooms_outlines = 1;
+options.load_ROI_zooms_outlines = 1;
 % 
 % %visualize ROI outlines of matches across sessions
-% options.visualize_match = 0;
+options.visualize_match = 1;
 % 
 % %load SCE data shuffled n=50/100 (re-shuffle later on cluster with n =1000)
-% options.loadSCE = 0;
+%options.loadSCE = 0;
 % 
 % %all A and B trials used for learning (sessions determined below)
-% options.selectTrial = [4 5];
+options.selectTrial = [4 5];
 
 %for use in global workspace
 selectTrial = options.selectTrial;
@@ -100,7 +100,7 @@ selectTrial = options.selectTrial;
 % crossdir = 'E:\OCGOL_learning_short_term\I58_LT\crossSession_update';
 
 %ANIMAL #6
-%I58 RTLP
+% %I58 RTLP
 %  path_dir = {'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_5A5B_080419_1',...
 %      'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_5A5B_080519_2',...
 %      'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_3A3B_080619_3',...
@@ -109,6 +109,32 @@ selectTrial = options.selectTrial;
 %      'E:\OCGOL_learning_short_term\I58_RTLP\I58_RTLP_randAB_no_punish_080919_6'};
 % %cross session directory
 % crossdir = 'E:\OCGOL_learning_short_term\I58_RTLP\crossSession_update';
+
+% %MR1
+%  path_dir = {'D:\OCGOL_reversal\MR1\MR1_Random_2022_02_28-001_1',...
+%      'D:\OCGOL_reversal\MR1\MR1_Random_2022_03_01-001_2',...
+%      'D:\OCGOL_reversal\MR1\MR1_Random_2022_03_02-002_3',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevAB_2022_03_03-001_4',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_04-001_5',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_05-001_6',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_08-001_7',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_09-001_8',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_10-001_9'};
+% %cross session directory
+% crossdir = 'D:\OCGOL_reversal\MR1\crossSession_update';
+
+%MR4
+ path_dir = {'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_04-001_1',...
+     'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_05-001_2',...
+     'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_06-001_3',...
+     'D:\OCGOL_reversal\MR4\MR4_RevAB_2022_03_07-002_4',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_08-001_5',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_09-001_6',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_11-001_7',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_12-001_8',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_13-001_9'};
+%cross session directory
+crossdir = 'D:\OCGOL_reversal\MR4\crossSession_update';
 
 %% Determine number of sessions to analyze for animal (automatically calculated)
 

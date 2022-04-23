@@ -80,7 +80,11 @@ for ee=1:size(path_dir,2)
     ROI_idx{ee} = load(string(load_data_select_ROIs{ee}));
 end
 
-%only use place cells/cells with at least 3 significant calcium events
+%only place cells with single fields tuned by SI or TS criteria
+%i.e intersect this logical with
+%ROI_idx{1, 4}.tunedLogical.si.AandB_tuned  with ROI_idx{1, 4}.task_remapping_ROIs.common  for each animal
+
+
 
 %logical list of SI/TS only A or only B tuned neurons
 for ee=1:size(path_dir,2)
@@ -94,8 +98,12 @@ end
 
 %load AUC values run and no run events
 for ee=1:size(path_dir,2)
+    %run
     AUC_A{ee}.run = cum_data{1,ee}.Events_split{1, 1}.Run.properties.AUC;
     AUC_B{ee}.run =  cum_data{1,ee}.Events_split{1, 2}.Run.properties.AUC;
+    %no run
+    AUC_A{ee}.norun = cum_data{1,ee}.Events_split{1, 1}.NoRun.properties.AUC;
+    AUC_B{ee}.norun =  cum_data{1,ee}.Events_split{1, 2}.NoRun.properties.AUC;    
 end
 
 %constant imaging period
@@ -116,8 +124,8 @@ end
 
 
 %animal --> run/no_run --> index of ROI
-AUC_A_sel_A = AUC_A{1, 1}.run(A_idx.si{1});
-AUC_A_sel_B = AUC_B{1, 1}.run(A_idx.si{1});
+AUC_A_sel_A = AUC_A{1, 1}.run(A_sel_idx.si{1});
+AUC_A_sel_B = AUC_B{1, 1}.run(A_sel_idx.si{1});
 
 %check number of sig events 
 sig_events_A_laps = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel_A,'UniformOutput',false));

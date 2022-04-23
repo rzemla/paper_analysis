@@ -1,0 +1,2 @@
+matchToDay1 = 0
+matchDir = /scratch/rz646/data/stacks/MR1_Random_2022_03_01-001_1

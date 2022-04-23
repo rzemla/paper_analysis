@@ -20,7 +20,7 @@ options.defineDir = 1;
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_rand_d2_051518';
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
-setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_061418';
+setDir = 'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_09-001_8';
 
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
@@ -31,7 +31,7 @@ setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_AB_06
 options.loadBehaviorData = 1;
 
 %whether to load in previously read imaging data
-options.loadImagingData = 0;
+options.loadImagingData = 1;
 
 %choose the behavior that the animal ran
 % RF, GOL-RF (GOL day 0), GOL, OCGOL
@@ -175,199 +175,199 @@ mkdir('output')
 save(fullfile(directory_name,'output','Behavior.mat'),'Behavior');
 fprintf('Done\n');
 
-%% Restrict data to complete laps
-
-% Restrict calcium data to selected lap -  restrict trace to only full laps
-options.restrict=1; 
-
-%Select from which starting lap
-options.startlap= 'first'; 
-
-%Select the end lap
-options.endlap='last';
-
-%display the calcium trace aligned to behavior figure
-options.dispfig=1; % Display figure
-
-%neurons to display
-options.ROI =40; 
-
-[Imaging, Behavior, F_vars] = restrict_data(C_df, Behavior, XML, options,F_vars);
-
-%% Event detection -initial detection with 2 sigma onset - WORKS (for restricted as well)!
-
-options.update_events = 0;
-options.imaging_rate = 30; %in Hz
-options.mindurevent = 1; %in s (250 ms Zaremba 2017 / 1 s Danielson 2016)
-options.restrict = true; %only analyze data from complete laps 
-
-%which ROI to plot
-options.ROI = 40;
-%how many iterations (after initial detection)
-options.it = 2;
-%set to zero before entering iteration stage in the later cell (initialization)
-options.iterationNb = 0;
-
-%go through this and the recalculation function 
-%make sure that the recalculation function uses the same inputs as the
-%initial function used to compute the dF/F
-tic;
-[Events] = detect_events(options, Imaging);
-toc; 
-
-%% Remove events, recalculate baseline and dF/F, baseline sigma and update events iteratively - WORKS (for restricted as well)!
-
-%add a plot summary for this
-
-%whether to use recalculate sigma and mean to detect events
-options.update_events = 1;
-%temporary
-options.dff_type = 'Rolling median';
-
-%check; imported from OCGOL
-%add pass for dF/F calculation parameters to function
-tic
-for ii =1:options.it
-    %which iteration the loop is on - used for duration filter
-    %only filters on last iteration of the loop
-    options.iterationNb = ii;
-    %Update dff and sigma
-    updated_dff = update_dff_revised(Events.onset_offset, F_vars, options);
-    
-    % Update events
-    [Events] = detect_events(options, Imaging, updated_dff);
-    
-end
-toc
-
-%% Update imaging struct with recalculated dF/F with event masking - TODO
-
-%% Resample behavioral data
-%todo - add resampling of updated dF/F in imaging struct
-
-[Behavior] = resample_behavioral_data(Behavior,Imaging,options);
-
-%% Resample data and determine run epochs
-
-%Danielson or Cossart method
-options.method='peak'; %'peak' (Danielson) or 'speed'
-
-% threshold running epochs based on :
-% min peak speed(Danielson et al. 2016a, b, 2016) 
-% OR average speed (Cossart) 
-options.moving_window=10; % window width for moving mean filter and speed filter - Cossart too
-%options.minspeed=2; %minimum speed (cm/s)  -- only if 'speed' - Cossart
-%too
-%merging is also done for Cossart in the script
-%minimum duration criterion applies as well
-
-%Danielson criteria
-options.minpeak=5;  % minimum peak speed (cm/s) -- only if 'peak' %Danielson 2016b that the animal has to reach within epoch
-options.mindur=1; %Minimum duration (s) for running epoch Danielson 2016b
-options.merge=0.5; %Merge consecutive running epochs separated by less than (s) Danielson 2016b
-options.minspeed = 0; %minimum speed for run epoch threshold (can raise in increments when animal does micromovements around stop point)
-options.dispfig=1; % Display figure
-
-%which ROI to display
-options.c2plot = 40;
-
-%TODO - merge updated dF/F from above 
-[Events, Behavior] = determine_run_epochs(Events,Behavior,Imaging, updated_dff, options);
-
-%% Split into behavior, imaging, event data into individual laps - work on this!
-
-%modify to split laps irrespective of behavior - save into a single struct
-%[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_laps(Behavior,Imaging,CSV,Events);
-
-%% Split trials based on OCGOL performance
-
-%TODO - split also the updated dF/F traces
-
-switch options.BehaviorType
-    case 'RF' %work on this
-        %[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_laps(Behavior,Imaging,CSV,Events);
-    case 'GOL-RF' %work on this
-        
-    case 'GOL' %work on this
-        
-    case 'OCGOL'
-        [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
-    case 'OCGOL-tech'
-        [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
-    case 'OCGOL-punish'
-        [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
-end
-
-%% Extract calcium event properties for split and all laps - check this
-
-%for OCGOL data
-%for each of 3 conditions = 1 - all, 2 - run, 3 = norun (inside function)
-%for each trial type (trial type)
-
-
-%TODO - update this using the updated dF/F imaging struct
-for ii=1:5
-    Events_split{ii} = event_properties(updated_dff, Events_split{ii},options);
-end
-
-%without split on all lap restricted data
-Events = event_properties(updated_dff, Events,options);
-
-%% Identification of spatially-tuned cells - works RZ with new events - split this
-% Set parameters
-options.sigma_filter=3; % Sigma (in bin) of gaussian filter (Danielson et al.2016 = 3 bins)
-options.smooth_span=3; % span for moving average filter on dF/F (Dombeck 2010 = 3) (Sheffield 2015 = 3)
-options.minevents=3; % Min nb of events during session
-options.Nbin=[2;4;5;8;10;20;25;100]; % Number of bins to test ([2;4;5;8;10;20;25;100] Danielson et al. 2016)
-options.bin_spatial_tuning=100; % Number of bins to compute spatial tuning curve (rate map) -value must be in options.Nbin
-options.Nshuffle=1000; % Nb of shuffle to perform
-options.pvalue=0.05; % Min p value to be considered as significant
-options.dispfig=1; % Display figure 
-
-%use binned position rather than raw for tuning specificity calculation
-options.binPosition = 1;
-
-tic;
-%for all type of trials --> current: 1 -A trials; 2 -B trials; 3 - all
-%laps/trials
-for ii=1:3
-    %work on this part
-    %spatial binning, rate maps, and spatial tuning score
-    disp('Calculate bin space, events, rate maps, generate STCs, and SI score')
-    [Place_cell{ii}] = spatial_properties(Behavior_split{ii}, Events_split{ii}, Imaging_split{ii},options);
-    %tuning specific calculation function here
-    disp('Calculate turining specificity score')
-    [Place_cell{ii}] = tuning_specificity_RZ_V2(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
-    
-end
-toc; 
-
-%% Save relevant variables for shuffle processing
-
-%save(fullfile(directory_name,))
-
-%% Run place cell shuffle for spatial information
-%offload this to HPC for processing
-%check what the difference is between 
-for ii=1:3
-    [Place_cell{ii}] = shuffle_place_cell(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
-end
-%alternative way of calculating shuffle for SI and TS - not finalized
-%[Place_cell{ii}]=shuffle_place_cell_spatial_V2_RZ(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
-
-%% Create tuned ROI binary mask for tuned cells and add to Place_cell struct
-%add this to shuffle script and remove from there
-%nb of ROIs
-ROInb = size(Imaging.trace,2);
-
-%for A, B, and all laps
-for ii=1:size(Place_cell,2)
-    tunedROImask = zeros(1,ROInb);
-    tunedROImask(Place_cell{1,ii}.Tuned_ROI) = 1;
-    Place_cell{1,ii}.Tuned_ROI_mask =  tunedROImask;
-end
-
-
+% %% Restrict data to complete laps
+% 
+% % Restrict calcium data to selected lap -  restrict trace to only full laps
+% options.restrict=1; 
+% 
+% %Select from which starting lap
+% options.startlap= 'first'; 
+% 
+% %Select the end lap
+% options.endlap='last';
+% 
+% %display the calcium trace aligned to behavior figure
+% options.dispfig=1; % Display figure
+% 
+% %neurons to display
+% options.ROI =40; 
+% 
+% [Imaging, Behavior, F_vars] = restrict_data(C_df, Behavior, XML, options,F_vars);
+% 
+% %% Event detection -initial detection with 2 sigma onset - WORKS (for restricted as well)!
+% 
+% options.update_events = 0;
+% options.imaging_rate = 30; %in Hz
+% options.mindurevent = 1; %in s (250 ms Zaremba 2017 / 1 s Danielson 2016)
+% options.restrict = true; %only analyze data from complete laps 
+% 
+% %which ROI to plot
+% options.ROI = 40;
+% %how many iterations (after initial detection)
+% options.it = 2;
+% %set to zero before entering iteration stage in the later cell (initialization)
+% options.iterationNb = 0;
+% 
+% %go through this and the recalculation function 
+% %make sure that the recalculation function uses the same inputs as the
+% %initial function used to compute the dF/F
+% tic;
+% [Events] = detect_events(options, Imaging);
+% toc; 
+% 
+% %% Remove events, recalculate baseline and dF/F, baseline sigma and update events iteratively - WORKS (for restricted as well)!
+% 
+% %add a plot summary for this
+% 
+% %whether to use recalculate sigma and mean to detect events
+% options.update_events = 1;
+% %temporary
+% options.dff_type = 'Rolling median';
+% 
+% %check; imported from OCGOL
+% %add pass for dF/F calculation parameters to function
+% tic
+% for ii =1:options.it
+%     %which iteration the loop is on - used for duration filter
+%     %only filters on last iteration of the loop
+%     options.iterationNb = ii;
+%     %Update dff and sigma
+%     updated_dff = update_dff_revised(Events.onset_offset, F_vars, options);
+%     
+%     % Update events
+%     [Events] = detect_events(options, Imaging, updated_dff);
+%     
+% end
+% toc
+% 
+% %% Update imaging struct with recalculated dF/F with event masking - TODO
+% 
+% %% Resample behavioral data
+% %todo - add resampling of updated dF/F in imaging struct
+% 
+% [Behavior] = resample_behavioral_data(Behavior,Imaging,options);
+% 
+% %% Resample data and determine run epochs
+% 
+% %Danielson or Cossart method
+% options.method='peak'; %'peak' (Danielson) or 'speed'
+% 
+% % threshold running epochs based on :
+% % min peak speed(Danielson et al. 2016a, b, 2016) 
+% % OR average speed (Cossart) 
+% options.moving_window=10; % window width for moving mean filter and speed filter - Cossart too
+% %options.minspeed=2; %minimum speed (cm/s)  -- only if 'speed' - Cossart
+% %too
+% %merging is also done for Cossart in the script
+% %minimum duration criterion applies as well
+% 
+% %Danielson criteria
+% options.minpeak=5;  % minimum peak speed (cm/s) -- only if 'peak' %Danielson 2016b that the animal has to reach within epoch
+% options.mindur=1; %Minimum duration (s) for running epoch Danielson 2016b
+% options.merge=0.5; %Merge consecutive running epochs separated by less than (s) Danielson 2016b
+% options.minspeed = 0; %minimum speed for run epoch threshold (can raise in increments when animal does micromovements around stop point)
+% options.dispfig=1; % Display figure
+% 
+% %which ROI to display
+% options.c2plot = 40;
+% 
+% %TODO - merge updated dF/F from above 
+% [Events, Behavior] = determine_run_epochs(Events,Behavior,Imaging, updated_dff, options);
+% 
+% %% Split into behavior, imaging, event data into individual laps - work on this!
+% 
+% %modify to split laps irrespective of behavior - save into a single struct
+% %[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_laps(Behavior,Imaging,CSV,Events);
+% 
+% %% Split trials based on OCGOL performance
+% 
+% %TODO - split also the updated dF/F traces
+% 
+% switch options.BehaviorType
+%     case 'RF' %work on this
+%         %[Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_laps(Behavior,Imaging,CSV,Events);
+%     case 'GOL-RF' %work on this
+%         
+%     case 'GOL' %work on this
+%         
+%     case 'OCGOL'
+%         [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
+%     case 'OCGOL-tech'
+%         [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
+%     case 'OCGOL-punish'
+%         [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
+% end
+% 
+% %% Extract calcium event properties for split and all laps - check this
+% 
+% %for OCGOL data
+% %for each of 3 conditions = 1 - all, 2 - run, 3 = norun (inside function)
+% %for each trial type (trial type)
+% 
+% 
+% %TODO - update this using the updated dF/F imaging struct
+% for ii=1:5
+%     Events_split{ii} = event_properties(updated_dff, Events_split{ii},options);
+% end
+% 
+% %without split on all lap restricted data
+% Events = event_properties(updated_dff, Events,options);
+% 
+% %% Identification of spatially-tuned cells - works RZ with new events - split this
+% % Set parameters
+% options.sigma_filter=3; % Sigma (in bin) of gaussian filter (Danielson et al.2016 = 3 bins)
+% options.smooth_span=3; % span for moving average filter on dF/F (Dombeck 2010 = 3) (Sheffield 2015 = 3)
+% options.minevents=3; % Min nb of events during session
+% options.Nbin=[2;4;5;8;10;20;25;100]; % Number of bins to test ([2;4;5;8;10;20;25;100] Danielson et al. 2016)
+% options.bin_spatial_tuning=100; % Number of bins to compute spatial tuning curve (rate map) -value must be in options.Nbin
+% options.Nshuffle=1000; % Nb of shuffle to perform
+% options.pvalue=0.05; % Min p value to be considered as significant
+% options.dispfig=1; % Display figure 
+% 
+% %use binned position rather than raw for tuning specificity calculation
+% options.binPosition = 1;
+% 
+% tic;
+% %for all type of trials --> current: 1 -A trials; 2 -B trials; 3 - all
+% %laps/trials
+% for ii=1:3
+%     %work on this part
+%     %spatial binning, rate maps, and spatial tuning score
+%     disp('Calculate bin space, events, rate maps, generate STCs, and SI score')
+%     [Place_cell{ii}] = spatial_properties(Behavior_split{ii}, Events_split{ii}, Imaging_split{ii},options);
+%     %tuning specific calculation function here
+%     disp('Calculate turining specificity score')
+%     [Place_cell{ii}] = tuning_specificity_RZ_V2(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
+%     
+% end
+% toc; 
+% 
+% %% Save relevant variables for shuffle processing
+% 
+% %save(fullfile(directory_name,))
+% 
+% %% Run place cell shuffle for spatial information
+% %offload this to HPC for processing
+% %check what the difference is between 
+% for ii=1:3
+%     [Place_cell{ii}] = shuffle_place_cell(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
+% end
+% %alternative way of calculating shuffle for SI and TS - not finalized
+% %[Place_cell{ii}]=shuffle_place_cell_spatial_V2_RZ(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
+% 
+% %% Create tuned ROI binary mask for tuned cells and add to Place_cell struct
+% %add this to shuffle script and remove from there
+% %nb of ROIs
+% ROInb = size(Imaging.trace,2);
+% 
+% %for A, B, and all laps
+% for ii=1:size(Place_cell,2)
+%     tunedROImask = zeros(1,ROInb);
+%     tunedROImask(Place_cell{1,ii}.Tuned_ROI) = 1;
+%     Place_cell{1,ii}.Tuned_ROI_mask =  tunedROImask;
+% end
+% 
+% 
 %% save the workspace
 
 %make output folder containing the saved variables in the experiments
