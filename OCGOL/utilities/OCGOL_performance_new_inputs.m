@@ -44,16 +44,16 @@ for ll = 1:size(lap,2)
 
 end   
 
-%QC of licks across plots
-figure;
-for ll=1:size(lap,2)
-subplot(5,8,ll)
-hold on
-title(['Licks \newline lap: ', num2str(ll)])
-xlim([0,200])
-%stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
-hold off
-end
+% %QC of licks across plots
+% figure;
+% for ll=1:size(lap,2)
+% subplot(5,8,ll)
+% hold on
+% title(['Licks \newline lap: ', num2str(ll)])
+% xlim([0,200])
+% %stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
+% hold off
+% end
 
 %% reward location (not collection)
 %get reward position on each lap
@@ -100,17 +100,17 @@ for ll = 1:size(lap,2)
 end
 
 %QC of reward collected across plots
-figure;
-for ll=1:size(lap,2)
-    subplot(5,8,ll)
-    hold on
-    title(['Rew col \newline lap: ', num2str(ll)])
-    xlim([0,200])
-    if ~isempty(reward_coll_lap{ll}.time)
-        stem(reward_coll_lap{ll}.position, ones(1,size(reward_coll_lap{ll}.position,1)),'r')
-    end
-    hold off
-end
+% figure;
+% for ll=1:size(lap,2)
+%     subplot(5,8,ll)
+%     hold on
+%     title(['Rew col \newline lap: ', num2str(ll)])
+%     xlim([0,200])
+%     if ~isempty(reward_coll_lap{ll}.time)
+%         stem(reward_coll_lap{ll}.position, ones(1,size(reward_coll_lap{ll}.position,1)),'r')
+%     end
+%     hold off
+% end
 
 
 %% separate the lick matrix into separate cells based on lapTimes matrix

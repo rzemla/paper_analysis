@@ -1,4 +1,4 @@
-function [Behavior] = GOL_performance_new_inputs(Behavior)
+function [Behavior] = OCGOL_performance_new_inputs_rev(Behavior)
 %Get performance of the animal on the OCGOL trials
 
 %% Assign variables
@@ -28,11 +28,6 @@ reward_coll = Behavior.reward_coll;
 start_lap_idx = find(time == lap{1}(1));
 end_lap_idx = find(time == lap{end}(2));
 
-%first lap start times for constraining variables to full laps
-first_lap_start_time = Behavior.lap{1}(1);
-%last lap end time
-final_lap_end_time = Behavior.lap{end}(2);
-
 %% Set parameters
 
 %reward zone size (cm)
@@ -56,14 +51,9 @@ end
 % hold on
 % title(['Licks \newline lap: ', num2str(ll)])
 % xlim([0,200])
-% stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
+% %stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
 % hold off
 % end
-
-%restrict licks to only complete laps
-lick_time_R_idx = find(lick.time >= first_lap_start_time & lick.time <= final_lap_end_time);
-lick_time_R = lick.time(lick_time_R_idx);
-lick_position_R = lick.position(lick_time_R_idx);
 
 %% reward location (not collection)
 %get reward position on each lap
@@ -109,7 +99,7 @@ for ll = 1:size(lap,2)
     nb_reward_coll_lap(ll) = size(reward_coll_lap{ll}.time,1); 
 end
 
-%QC of reward collected across plots
+% %QC of reward collected across plots
 % figure;
 % for ll=1:size(lap,2)
 %     subplot(5,8,ll)
@@ -139,9 +129,9 @@ trialOrder = lap_id.trial_based';
 %assign to string names for plotting based on trial layout
 for ii=1:size(trialOrder,1)
     if (trialOrder(ii) == 2)
-        trialName{ii} = 'Bl 2';
+        trialName{ii} = 'Ar'; %A
     elseif (trialOrder(ii) == 3)
-        trialName{ii} = 'Bl 1';
+        trialName{ii} = 'Br'; %B
     end
 end
 
@@ -158,12 +148,32 @@ end
 %for each lap
 for ii = 1:size(lap,2)
     %if A trial - check if licks in B ant or reward zone
-    if trialOrder(ii) == 2
+    if trialOrder(ii) == 3
         %if there are licks in reward zone of A (2, far reward)
         if ~isempty(find(lick_lap{ii}.position >= reward_position(ii) & lick_lap{ii}.position <= reward_position(ii)+rew_size))
             %and not in ant or reward zone of B (based on mean reward
             %position)
             if isempty(find(lick_lap{ii}.position >= (mean_B_reward - rew_size) & lick_lap{ii}.position <= mean_B_reward+rew_size))
+                trialCorrect(ii) = 1;
+                trialCorrName{ii} = 'Y';
+            else
+                trialCorrect(ii) = 0;
+                trialCorrName{ii} = 'N';mean_A_reward
+                trialOrder(ii) = 30;
+            end
+            
+        else
+            trialCorrect(ii) = 0;
+            trialCorrName{ii} = 'N';
+            trialOrder(ii) = 30;
+        end
+        %if B trial
+    elseif trialOrder(ii) == 2
+        %if there are licks in reward zone of B (3, near reward)
+        if ~isempty(find(lick_lap{ii}.position >= reward_position(ii) & lick_lap{ii}.position <= reward_position(ii)+rew_size))
+            %and not in ant or reward zone of A (based on mean reward
+            %position)
+            if isempty(find(lick_lap{ii}.position >= (mean_A_reward - rew_size) & lick_lap{ii}.position <= mean_A_reward+rew_size))
                 trialCorrect(ii) = 1;
                 trialCorrName{ii} = 'Y';
             else
@@ -177,26 +187,6 @@ for ii = 1:size(lap,2)
             trialCorrName{ii} = 'N';
             trialOrder(ii) = 20;
         end
-        %if B trial
-    elseif trialOrder(ii) == 3
-        %if there are licks in reward zone of B (3, near reward)
-        if ~isempty(find(lick_lap{ii}.position >= reward_position(ii) & lick_lap{ii}.position <= reward_position(ii)+rew_size))
-            %and not in ant or reward zone of A (based on mean reward
-            %position)
-            if isempty(find(lick_lap{ii}.position >= (mean_A_reward - rew_size) & lick_lap{ii}.position <= mean_A_reward+rew_size))
-                trialCorrect(ii) = 1;
-                trialCorrName{ii} = 'Y';
-            else
-                trialCorrect(ii) = 0;
-                trialCorrName{ii} = 'N';
-                trialOrder(ii) = 30;
-            end
-            
-        else
-            trialCorrect(ii) = 0;
-            trialCorrName{ii} = 'N';
-            trialOrder(ii) = 30;
-        end
         
     end
 end
@@ -208,29 +198,37 @@ end
 for ii = 1:size(lap,2)
     %if A trial, check that at least 1 reward delivered in reward zone area
     
-    if trialOrder(ii) == 2
+    if trialOrder(ii) == 3
         if  ~isempty(find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size))
             reward_collected_check(ii) = 1;
         else
             reward_collected_check(ii) = 0;
         end
         %if B trial, check that at least 1 reward delivered in reward zone area
-    elseif trialOrder(ii) == 3
+    elseif trialOrder(ii) == 2
         if  ~isempty(find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size))
             reward_collected_check(ii) = 1;
         else
             reward_collected_check(ii) = 0;
-            
         end
+    elseif trialOrder(ii) == 20 || trialOrder(ii) == 30 %wrong A or B trial
+         if ~isempty(find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size) | ...
+                find(reward_coll_lap{ii}.position >= reward_position(ii) & reward_coll_lap{ii}.position <= reward_position(ii)+rew_size))   
+            reward_collected_check(ii) = 1;
+        else
+            reward_collected_check(ii) = 0;
+         end
     end
 end
 
 %check at least 1 reward collected on each lap
-if sum(and(trialCorrect,reward_collected_check)) == lap_nb
+if sum(reward_collected_check) == lap_nb
     disp('At least 1 reward collected on each lap/trial.');
 else
     disp('Missed reward collection on at least 1 lap/trial');
 end
+
+%% Missed lap == wrong lap (possible change in future)
 
 %% Display fraction correct trials in command line
 
@@ -258,70 +256,6 @@ fprintf('Total A trials: %d \n', A_nb);
 fprintf('Fraction of correct B trials: %0.2f \n', frac_B);
 fprintf('Total B trials: %d \n', B_nb); 
 
-%% Find number of licks in respective zones
-
-%median of the reward positon across all complete laps
-%assign based on whether it's a Block 1 early vs Block 2 late trial
-if ~isempty(rewards{1}.position) %Block 1 early
-    reward_start_loc = median(rewards{1}.position);
-elseif ~isempty(rewards{2}.position) % Block 2 late
-    reward_start_loc = median(rewards{2}.position);
-else
-    disp('No rewards discovered in performance calculation !!!');
-end
-
-reward_zone_licks_idx = find(lick_position_R >= reward_start_loc & lick_position_R <= (reward_start_loc + 10));
-ant_zone_licks_idx = find(lick_position_R >= (reward_start_loc-10) & lick_position_R < reward_start_loc);
-
-%fraction of licks in reward zone
-frac_reward_zone_licks = length(reward_zone_licks_idx)/length(lick_position_R);
-%fraction of lick in anticipatory zone
-frac_ant_zone_licks = length(ant_zone_licks_idx)/length(lick_position_R);
-
-%dislay fraction of licks in anticipatory zone and reward zone
-disp(sprintf('Fraction of licks in anticipatory zone: %f', frac_ant_zone_licks))
-disp(sprintf('Fraction of licks in reward zone: %f', frac_reward_zone_licks))
-
-%% Plot lick distributions
-
-%how many spatial bins
-nb_spatial_bins = 100;
-
-figure;
-subplot(2,1,1)
-hold on
-xlim([0 200])
-title('Distribution of licks across entire session');
-h = histogram(lick.position,nb_spatial_bins,'Normalization','probability');
-%ylabel('Lick Count')
-ylabel('Normalized density');
-ylim([0 0.5]);
-xlabel('Binned position [cm]')
-%reward start
-stem(reward_start_loc, 0.5,'g');
-%reward end
-stem(reward_start_loc + 10, 0.5,'g');
-%ant start
-stem(reward_start_loc-10, 0.5,'m');
-hold off
-
-subplot(2,1,2)
-hold on
-xlim([0 200])
-title('Distribution of licks across complete laps');
-histogram(lick_position_R,nb_spatial_bins,'Normalization','probability');
-%ylabel('Lick Count')
-ylabel('Normalized density');
-ylim([0 0.5]);
-xlabel('Binned position [cm]')
-%reward start
-stem(reward_start_loc, 0.5,'g');
-%reward end
-stem(reward_start_loc + 10, 0.5,'g');
-%ant start
-stem(reward_start_loc-10, 0.5,'m');
-hold off
-
 %% plot
 %as single plot with trials increase along y axis
 
@@ -346,16 +280,17 @@ hold off
 %30 - (first number is trial type 3 - B trial, 2 - A trial, 0 - wrong, 1 - missed)
 %performance.trialCorrect = columns vector 1 if correct, 0 = if wrong, -1 = missed
 
-%carried over from OCGOL
 Behavior.performance.trialOrder = trialOrder;
 Behavior.performance.trialCorrect = trialCorrect';
 
-%reward location
-Behavior.performance.reward_loc = reward_start_loc;
-%fraction of licks in reward zone
-Behavior.performance.frac_rew = frac_reward_zone_licks;
-%fraction of licks in the anticipatory zone
-Behavior.performance.frac_ant = frac_ant_zone_licks;
+
+%export lick data for histogram figures
+%number of licks = binned position (100 bins; 0-1 position)
+Behavior.lick.bin_licks_lap = N_licks;
+%position and time of licks on each lap
+Behavior.lick.lick_lap = lick_lap;
+
+
 
 end
 

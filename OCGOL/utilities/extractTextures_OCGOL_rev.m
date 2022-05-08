@@ -306,7 +306,7 @@ reward_coll.idx = reward_on;
 % stem(reward_on, 2*ones(1,size(reward_on,1)), 'r');
 
 %% OCGOL quality control
-if strcmpi(options.BehaviorType,'OCGOL')
+if strcmpi(options.BehaviorType,'OCGOL') || strcmpi(options.BehaviorType,'OCGOL-rev')
     
     %runs several QC checks to make sure that important signals were not missed
     %displays alerts when signals are missed or don't match to what is

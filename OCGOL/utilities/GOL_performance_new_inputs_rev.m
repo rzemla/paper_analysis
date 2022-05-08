@@ -1,4 +1,4 @@
-function [Behavior] = GOL_performance_new_inputs(Behavior)
+function [Behavior] = GOL_performance_new_inputs_rev(Behavior)
 %Get performance of the animal on the OCGOL trials
 
 %% Assign variables
@@ -49,16 +49,16 @@ for ll = 1:size(lap,2)
 
 end   
 
-% %QC of licks across plots
-% figure;
-% for ll=1:size(lap,2)
-% subplot(5,8,ll)
-% hold on
-% title(['Licks \newline lap: ', num2str(ll)])
-% xlim([0,200])
-% stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
-% hold off
-% end
+%QC of licks across plots
+figure;
+for ll=1:size(lap,2)
+subplot(5,8,ll)
+hold on
+title(['Licks \newline lap: ', num2str(ll)])
+xlim([0,200])
+stem(lick_lap{ll}.position, ones(1,size(lick_lap{ll}.position,1)),'r')
+hold off
+end
 
 %restrict licks to only complete laps
 lick_time_R_idx = find(lick.time >= first_lap_start_time & lick.time <= final_lap_end_time);
@@ -110,17 +110,17 @@ for ll = 1:size(lap,2)
 end
 
 %QC of reward collected across plots
-% figure;
-% for ll=1:size(lap,2)
-%     subplot(5,8,ll)
-%     hold on
-%     title(['Rew col \newline lap: ', num2str(ll)])
-%     xlim([0,200])
-%     if ~isempty(reward_coll_lap{ll}.time)
-%         stem(reward_coll_lap{ll}.position, ones(1,size(reward_coll_lap{ll}.position,1)),'r')
-%     end
-%     hold off
-% end
+figure;
+for ll=1:size(lap,2)
+    subplot(5,8,ll)
+    hold on
+    title(['Rew col \newline lap: ', num2str(ll)])
+    xlim([0,200])
+    if ~isempty(reward_coll_lap{ll}.time)
+        stem(reward_coll_lap{ll}.position, ones(1,size(reward_coll_lap{ll}.position,1)),'r')
+    end
+    hold off
+end
 
 
 %% separate the lick matrix into separate cells based on lapTimes matrix
