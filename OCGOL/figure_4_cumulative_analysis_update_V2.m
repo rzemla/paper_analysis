@@ -4,9 +4,10 @@
 options.skipSesVars = 1;
 
 tic;
-[CNMF_learn,reg_learn,reg_recall,reg_recall_long,session_vars_learn,...
-        session_vars_recall,session_vars_recall_long,...
-        short_term_learn,short_term_recall,long_term_recall] = figure4_load_data(options);
+% [CNMF_learn,reg_learn,reg_recall,reg_recall_long,session_vars_learn,...
+%         session_vars_recall,session_vars_recall_long,...
+%         short_term_learn,short_term_recall,long_term_recall] = figure4_load_data(options);
+[CNMF_learn,reg_learn,session_vars_learn] = figure4_load_data(options);
 toc;
 
 %% Source data export struct - Fig 4 data

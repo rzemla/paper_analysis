@@ -80,22 +80,39 @@ for ee=1:size(path_dir,2)
     ROI_idx{ee} = load(string(load_data_select_ROIs{ee}));
 end
 
-%only use place cells/cells with at least 3 significant calcium events
+%% ROI index extraction of place cells with shared place fields on A and B trials with single PF
+%only place cells with single fields tuned by SI or TS criteria
+%single PF common place cells (non-task-selective) by SI or TS criteria -
+%extract the indices of these cells for each animaa;
+for ee=1:size(path_dir,2)
+    %SI common (non-selective place cells with single PF)
+    ROI_sel{ee}.si.common = intersect(find(ROI_idx{ee}.tunedLogical.si.AandB_tuned ==1), ROI_idx{ee}.task_remapping_ROIs.common);
+    %TS common (non-selective place cells with single PF)
+    ROI_sel{ee}.ts.common = intersect(find(ROI_idx{ee}.tunedLogical.ts.AandB_tuned ==1), ROI_idx{ee}.task_remapping_ROIs.common);
+
+end
+
+%% Extract AUC/min for each place cell for common single PF neurons
+
 
 %logical list of SI/TS only A or only B tuned neurons
 for ee=1:size(path_dir,2)
     %A_sel
-    A_idx.si{ee} = ROI_idx{1, ee}.tunedLogical.si.onlyA_tuned;
-    A_idx.ts{ee} = ROI_idx{1, ee}.tunedLogical.ts.onlyA_tuned;
+    A_sel_idx.si{ee} = ROI_idx{1, ee}.tunedLogical.si.onlyA_tuned;
+    A_sel_idx.ts{ee} = ROI_idx{1, ee}.tunedLogical.ts.onlyA_tuned;
     %B_sel
-    B_idx.si{ee} = ROI_idx{1, ee}.tunedLogical.si.onlyB_tuned;
-    B_idx.ts{ee} = ROI_idx{1, ee}.tunedLogical.ts.onlyB_tuned;
+    B_sel_idx.si{ee} = ROI_idx{1, ee}.tunedLogical.si.onlyB_tuned;
+    B_sel_idx.ts{ee} = ROI_idx{1, ee}.tunedLogical.ts.onlyB_tuned;
 end
 
-%load AUC values run events
+%load AUC values run and no run events
 for ee=1:size(path_dir,2)
+    %run
     AUC_A{ee}.run = cum_data{1,ee}.Events_split{1, 1}.Run.properties.AUC;
     AUC_B{ee}.run =  cum_data{1,ee}.Events_split{1, 2}.Run.properties.AUC;
+    %no run
+    AUC_A{ee}.norun = cum_data{1,ee}.Events_split{1, 1}.NoRun.properties.AUC;
+    AUC_B{ee}.norun =  cum_data{1,ee}.Events_split{1, 2}.NoRun.properties.AUC;    
 end
 
 %constant imaging period
@@ -104,20 +121,20 @@ dt= 0.033427969000002;
 %run time in min
 for ee=1:size(path_dir,2)
     %correct A trials
-time_length{ee}.total.A = size(cum_data{1, ee}.Behavior_split{1, 1}.run_ones,1).*dt./60;
+    time_length{ee}.total.A = size(cum_data{1, ee}.Behavior_split{1, 1}.run_ones,1).*dt./60;
+    time_length{ee}.run.A = sum(cum_data{1, ee}.Behavior_split{1, 1}.run_ones).*dt./60;
+    time_length{ee}.norun.A = sum(~cum_data{1, ee}.Behavior_split{1, 1}.run_ones).*dt./60;
 
-
-
-run_time_A = size(cum_data{1, 1}.Behavior_split{1, 1}.run_ones,1).*dt./60;
-run_time_B = size(cum_data{1, 1}.Imaging_split{1, 2}.time_restricted,1).*dt./60;
+    %correct B trials
+    time_length{ee}.total.B = size(cum_data{1, ee}.Behavior_split{1, 2}.run_ones,1).*dt./60;
+    time_length{ee}.run.B = sum(cum_data{1, ee}.Behavior_split{1, 2}.run_ones).*dt./60;
+    time_length{ee}.norun.B = sum(~cum_data{1, ee}.Behavior_split{1, 2}.run_ones).*dt./60;
 end
-
-%total time
 
 
 %animal --> run/no_run --> index of ROI
-AUC_A_sel_A = AUC_A{1, 1}.run(A_idx.si{1});
-AUC_A_sel_B = AUC_B{1, 1}.run(A_idx.si{1});
+AUC_A_sel_A = AUC_A{1, 1}.run(A_sel_idx.si{1});
+AUC_A_sel_B = AUC_B{1, 1}.run(A_sel_idx.si{1});
 
 %check number of sig events 
 sig_events_A_laps = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel_A,'UniformOutput',false));

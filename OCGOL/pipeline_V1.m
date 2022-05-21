@@ -1,3 +1,4 @@
+function pipeline_V1(setPath)
 %% Set parameters for the pipeline
 options.defineDir = 1;
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I45_RT\behavior_only\I45_RT_rand_d1_052218';
@@ -28,8 +29,8 @@ options.defineDir = 1;
 %setDir = 'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_04-001_1';
 %setDir = 'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_05-001_2';
 %setDir = 'D:\OCGOL_reversal\MR2\MR2_RevRandom_2022_03_07-001_6';
-setDir = 'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_09-001_8';
-
+%setDir = 'D:\OCGOL_reversal\MR1\MR1_RevAB_2022_03_03-001_4';
+setDir = setPath;
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
 
@@ -347,7 +348,7 @@ options.binPosition = 1;
 tic;
 %for all type of trials --> current: 1 -A trials; 2 -B trials; 3 - all
 %laps/trials
-for ii=1:5
+for ii=4:5 %Maya changed for error issues 1 to a 3
     %work on this part
     %spatial binning, rate maps, and spatial tuning score
     disp('Calculate bin space, events, rate maps, generate STCs, and SI score')
@@ -366,7 +367,7 @@ toc;
 %% Run place cell shuffle for spatial information
 %offload this to HPC for processing
 %check what the difference is between 
-for ii=1:5
+for ii=4:5 %Maya changed 1 to 3
     [Place_cell{ii}] = shuffle_place_cell(Place_cell{ii},Behavior_split{ii},Events_split{ii},options);
 end
 %alternative way of calculating shuffle for SI and TS - not finalized
@@ -378,7 +379,7 @@ end
 ROInb = size(Imaging.trace,2);
 
 %for A, B, and all laps
-for ii=1:size(Place_cell,2)
+for ii=4:size(Place_cell,2) %Maya changed 1 to 4
     tunedROImask = zeros(1,ROInb);
     tunedROImask(Place_cell{1,ii}.Tuned_ROI) = 1;
     Place_cell{1,ii}.Tuned_ROI_mask =  tunedROImask;
@@ -419,7 +420,7 @@ save([currentDate,'_ca_analysis.mat'],...
 toc
 
 disp('Done saving.');
-
+end
 %% For modifcation below
 %{
 

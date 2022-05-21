@@ -80,10 +80,19 @@ for ee=1:size(path_dir,2)
     ROI_idx{ee} = load(string(load_data_select_ROIs{ee}));
 end
 
+%% ROI index extraction of place cells with shared place fields on A and B trials with single PF
 %only place cells with single fields tuned by SI or TS criteria
-%i.e intersect this logical with
-%ROI_idx{1, 4}.tunedLogical.si.AandB_tuned  with ROI_idx{1, 4}.task_remapping_ROIs.common  for each animal
+%single PF common place cells (non-task-selective) by SI or TS criteria -
+%extract the indices of these cells for each animaa;
+for ee=1:size(path_dir,2)
+    %SI common (non-selective place cells with single PF)
+    ROI_sel{ee}.si.common = intersect(find(ROI_idx{ee}.tunedLogical.si.AandB_tuned ==1), ROI_idx{ee}.task_remapping_ROIs.common);
+    %TS common (non-selective place cells with single PF)
+    ROI_sel{ee}.ts.common = intersect(find(ROI_idx{ee}.tunedLogical.ts.AandB_tuned ==1), ROI_idx{ee}.task_remapping_ROIs.common);
 
+end
+
+%% Extract AUC/min for each place cell for common single PF neurons
 
 
 %logical list of SI/TS only A or only B tuned neurons
@@ -122,7 +131,7 @@ for ee=1:size(path_dir,2)
     time_length{ee}.norun.B = sum(~cum_data{1, ee}.Behavior_split{1, 2}.run_ones).*dt./60;
 end
 
-
+%%% MODIFY HERE %%%
 %animal --> run/no_run --> index of ROI
 AUC_A_sel_A = AUC_A{1, 1}.run(A_sel_idx.si{1});
 AUC_A_sel_B = AUC_B{1, 1}.run(A_sel_idx.si{1});

@@ -259,21 +259,21 @@ fprintf('Total B trials: %d \n', B_nb);
 %% plot
 %as single plot with trials increase along y axis
 
-%raster plot indicating trial type and whether correct or not
-figure('Position',[150 150 900 600]);
-imagesc(N_licks);
-hold on;
-%trial type
-text(105*ones(lap_nb,1),1:lap_nb,trialName);
-%correct/wrong
-tc = text(110*ones(lap_nb,1),1:lap_nb,trialCorrName);
-%add red color to wrong trials
-
-title('Lick map')
-ylabel('Lap #');
-xlabel('Spatial bin');
-colormap('jet');
-hold off
+% %raster plot indicating trial type and whether correct or not
+% figure('Position',[150 150 900 600]);
+% imagesc(N_licks);
+% hold on;
+% %trial type
+% text(105*ones(lap_nb,1),1:lap_nb,trialName);
+% %correct/wrong
+% tc = text(110*ones(lap_nb,1),1:lap_nb,trialCorrName);
+% %add red color to wrong trials
+% 
+% title('Lick map')
+% ylabel('Lap #');
+% xlabel('Spatial bin');
+% colormap('jet');
+% hold off
 
 %% Save to structure
 %performance.trialOrder = column vector with 3 (B),2 (A) corresponding to correct trials
