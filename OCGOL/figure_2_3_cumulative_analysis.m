@@ -61,7 +61,7 @@ end
 %nb events for each cell on A trials
 cum_data{1, 1}.Events_split{1, 1}.Run.properties.nb_events
 
-%% AUC comparioson for reviewers
+%% AUC comparison for reviewers
 
 % Isolate AUC of all neurons
 % Isolate AUC of SI tuned neurons
@@ -92,9 +92,14 @@ for ee=1:size(path_dir,2)
 
 end
 
-%% Extract AUC/min for each place cell for common single PF neurons
+% selective vs. non-selective place cells 
+%selective
+%place cells with single fields by SI or TS criteria - control for reviewer
+ROI_sel{ee}.si.common
+ROI_sel{ee}.ts.common
 
 
+%% Extract AUC/min for each place cell for common single 
 %logical list of SI/TS only A or only B tuned neurons
 for ee=1:size(path_dir,2)
     %A_sel
@@ -118,7 +123,7 @@ end
 %constant imaging period
 dt= 0.033427969000002;
 
-%run time in min
+%% Extract run time for run/no-run epochs in min
 for ee=1:size(path_dir,2)
     %correct A trials
     time_length{ee}.total.A = size(cum_data{1, ee}.Behavior_split{1, 1}.run_ones,1).*dt./60;
@@ -131,11 +136,49 @@ for ee=1:size(path_dir,2)
     time_length{ee}.norun.B = sum(~cum_data{1, ee}.Behavior_split{1, 2}.run_ones).*dt./60;
 end
 
-%%% MODIFY HERE %%%
+%% A and B selective neurons AUC extraction
 %animal --> run/no_run --> index of ROI
-AUC_A_sel_A = AUC_A{1, 1}.run(A_sel_idx.si{1});
-AUC_A_sel_B = AUC_B{1, 1}.run(A_sel_idx.si{1});
+%RUN A and B selective by SI criteria
+for ee=1:size(path_dir,2)
 
+    %%% A-selective neurons %%%
+    %A-sel run SI
+    AUC_A_sel{ee}.si.run.A = AUC_A{1, ee}.run(A_sel_idx.si{ee});
+    AUC_A_sel{ee}.si.run.B = AUC_B{1, ee}.run(A_sel_idx.si{ee});
+
+    %A-sel norun SI
+    AUC_A_sel{ee}.si.norun.A = AUC_A{1, ee}.norun(A_sel_idx.si{ee});
+    AUC_A_sel{ee}.si.norun.B = AUC_B{1, ee}.norun(A_sel_idx.si{ee});
+
+    %A-sel run TS
+    AUC_A_sel{ee}.ts.run.A = AUC_A{1, ee}.run(A_sel_idx.ts{ee});
+    AUC_A_sel{ee}.ts.run.B = AUC_B{1, ee}.run(A_sel_idx.ts{ee});
+
+    %A-sel norun TS
+    AUC_A_sel{ee}.ts.norun.A = AUC_A{1, ee}.norun(A_sel_idx.ts{ee});
+    AUC_A_sel{ee}.ts.norun.B = AUC_B{1, ee}.norun(A_sel_idx.ts{ee});
+ 
+    %%% B-selective neurons %%%
+    %A-sel run SI
+    AUC_B_sel{ee}.si.run.A = AUC_A{1, ee}.run(B_sel_idx.si{ee});
+    AUC_B_sel{ee}.si.run.B = AUC_B{1, ee}.run(B_sel_idx.si{ee});
+
+    %A-sel norun SI
+    AUC_B_sel{ee}.si.norun.A = AUC_A{1, ee}.norun(B_sel_idx.si{ee});
+    AUC_B_sel{ee}.si.norun.B = AUC_B{1, ee}.norun(B_sel_idx.si{ee});
+
+    %A-sel run TS
+    AUC_B_sel{ee}.ts.run.A = AUC_A{1, ee}.run(B_sel_idx.ts{ee});
+    AUC_B_sel{ee}.ts.run.B = AUC_B{1, ee}.run(B_sel_idx.ts{ee});
+
+    %A-sel norun TS
+    AUC_B_sel{ee}.ts.norun.A = AUC_A{1, ee}.norun(B_sel_idx.ts{ee});
+    AUC_B_sel{ee}.ts.norun.B = AUC_B{1, ee}.norun(B_sel_idx.ts{ee});
+
+end
+
+
+%% A and B selective neurons
 %check number of sig events 
 sig_events_A_laps = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel_A,'UniformOutput',false));
 sig_events_B_laps = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel_B,'UniformOutput',false));
