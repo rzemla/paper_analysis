@@ -94,6 +94,10 @@ end
 
 % selective vs. non-selective place cells 
 %selective
+
+%task-selective A and B as defined by paper (Including A and B selective
+%neurons)
+ROI_idx{ee}.task_selective_ROIs.A.idx
 %place cells with single fields by SI or TS criteria - control for reviewer
 ROI_sel{ee}.si.common
 ROI_sel{ee}.ts.common
@@ -136,7 +140,7 @@ for ee=1:size(path_dir,2)
     time_length{ee}.norun.B = sum(~cum_data{1, ee}.Behavior_split{1, 2}.run_ones).*dt./60;
 end
 
-%% A and B selective neurons AUC extraction
+%% A and B selective (and task selective) neurons by separate SI and TS criteria  AUC extraction
 %animal --> run/no_run --> index of ROI
 %RUN A and B selective by SI criteria
 for ee=1:size(path_dir,2)
@@ -159,30 +163,80 @@ for ee=1:size(path_dir,2)
     AUC_A_sel{ee}.ts.norun.B = AUC_B{1, ee}.norun(A_sel_idx.ts{ee});
  
     %%% B-selective neurons %%%
-    %A-sel run SI
+    %B-sel run SI
     AUC_B_sel{ee}.si.run.A = AUC_A{1, ee}.run(B_sel_idx.si{ee});
     AUC_B_sel{ee}.si.run.B = AUC_B{1, ee}.run(B_sel_idx.si{ee});
 
-    %A-sel norun SI
+    %B-sel norun SI
     AUC_B_sel{ee}.si.norun.A = AUC_A{1, ee}.norun(B_sel_idx.si{ee});
     AUC_B_sel{ee}.si.norun.B = AUC_B{1, ee}.norun(B_sel_idx.si{ee});
 
-    %A-sel run TS
+    %B-sel run TS
     AUC_B_sel{ee}.ts.run.A = AUC_A{1, ee}.run(B_sel_idx.ts{ee});
     AUC_B_sel{ee}.ts.run.B = AUC_B{1, ee}.run(B_sel_idx.ts{ee});
 
-    %A-sel norun TS
+    %B-sel norun TS
     AUC_B_sel{ee}.ts.norun.A = AUC_A{1, ee}.norun(B_sel_idx.ts{ee});
     AUC_B_sel{ee}.ts.norun.B = AUC_B{1, ee}.norun(B_sel_idx.ts{ee});
+
+
+    %A -task selective neurons per figure 2 (temporary holding vars)
+    A_sel_temp = ROI_idx{ee}.task_selective_ROIs.A.idx;
+    B_sel_temp = ROI_idx{ee}.task_selective_ROIs.B.idx;
+
+    %A-selective run
+    AUC_A_task_sel{ee}.run.A = AUC_A{1, ee}.run(A_sel_temp);
+    AUC_A_task_sel{ee}.run.B = AUC_B{1, ee}.run(A_sel_temp);
+
+    %B-sel norun SI
+    AUC_A_task_sel{ee}.norun.A = AUC_A{1, ee}.norun(A_sel_temp);
+    AUC_A_task_sel{ee}.norun.B = AUC_B{1, ee}.norun(A_sel_temp);
+
 
 end
 
 
-%% A and B selective neurons
-%check number of sig events 
-sig_events_A_laps = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel_A,'UniformOutput',false));
-sig_events_B_laps = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel_B,'UniformOutput',false));
+%% A and B selective neurons transient event extraction (count number of AUC events)
+%from AUC for each event - significant events by definition
 
+%get number of sig events from each class
+for ee=1:size(path_dir,2)
+    %A-sel events SI run
+    transients_A_sel{ee}.si.run.A = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel{1, ee}.si.run.A  ,'UniformOutput',false));
+    transients_A_sel{ee}.si.run.B = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel{1, ee}.si.run.B,'UniformOutput',false));
+
+    %A-sel events SI norun
+    transients_A_sel{ee}.si.norun.A = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel{1, ee}.si.norun.A  ,'UniformOutput',false));
+    transients_A_sel{ee}.si.norun.B = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel{1, ee}.si.norun.B,'UniformOutput',false));
+
+    %A-sel events TS run
+    transients_A_sel{ee}.ts.run.A = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel{1, ee}.ts.run.A  ,'UniformOutput',false));
+    transients_A_sel{ee}.ts.run.B = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel{1, ee}.ts.run.B,'UniformOutput',false));
+
+    %A-sel events TS norun
+    transients_A_sel{ee}.ts.norun.A = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel{1, ee}.ts.norun.A  ,'UniformOutput',false));
+    transients_A_sel{ee}.ts.norun.B = cell2mat(cellfun(@(x) size(x,2),AUC_A_sel{1, ee}.ts.norun.B,'UniformOutput',false)); 
+
+
+    %B-sel events SI run
+    transients_B_sel{ee}.si.run.A = cell2mat(cellfun(@(x) size(x,2),AUC_B_sel{1, ee}.si.run.A  ,'UniformOutput',false));
+    transients_B_sel{ee}.si.run.B = cell2mat(cellfun(@(x) size(x,2),AUC_B_sel{1, ee}.si.run.B,'UniformOutput',false));
+
+    %B-sel events SI norun
+    transients_B_sel{ee}.si.norun.A = cell2mat(cellfun(@(x) size(x,2),AUC_B_sel{1, ee}.si.norun.A  ,'UniformOutput',false));
+    transients_B_sel{ee}.si.norun.B = cell2mat(cellfun(@(x) size(x,2),AUC_B_sel{1, ee}.si.norun.B,'UniformOutput',false));
+
+    %B-sel events TS run
+    transients_B_sel{ee}.ts.run.A = cell2mat(cellfun(@(x) size(x,2),AUC_B_sel{1, ee}.ts.run.A  ,'UniformOutput',false));
+    transients_B_sel{ee}.ts.run.B = cell2mat(cellfun(@(x) size(x,2),AUC_B_sel{1, ee}.ts.run.B,'UniformOutput',false));
+
+    %B-sel events TS norun
+    transients_B_sel{ee}.ts.norun.A = cell2mat(cellfun(@(x) size(x,2),AUC_B_sel{1, ee}.ts.norun.A  ,'UniformOutput',false));
+    transients_B_sel{ee}.ts.norun.B = cell2mat(cellfun(@(x) size(x,2),AUC_B_sel{1, ee}.ts.norun.B,'UniformOutput',false));
+end
+
+
+%%
 %transients/min
 sig_events_min.Asel.si.Alaps = sig_events_A_laps./run_time_A;
 sig_events_min.Asel.si.Blaps = sig_events_B_laps./run_time_B;
