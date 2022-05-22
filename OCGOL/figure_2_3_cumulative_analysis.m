@@ -102,6 +102,9 @@ ROI_idx{ee}.task_selective_ROIs.A.idx
 ROI_sel{ee}.si.common
 ROI_sel{ee}.ts.common
 
+%A&B tuned as controls to task selective figure for transient rates for
+%Figure 2 addressing reviewers comments
+ROI_idx{1, 1}.tunedLogical.tuned_AB_si_ts
 
 %% Extract AUC/min for each place cell for common single 
 %logical list of SI/TS only A or only B tuned neurons
@@ -112,6 +115,9 @@ for ee=1:size(path_dir,2)
     %B_sel
     B_sel_idx.si{ee} = ROI_idx{1, ee}.tunedLogical.si.onlyB_tuned;
     B_sel_idx.ts{ee} = ROI_idx{1, ee}.tunedLogical.ts.onlyB_tuned;
+
+    %A&B tuned controls for comparison
+    AB_idx{ee} = ROI_idx{1, ee}.tunedLogical.tuned_AB_si_ts;
 end
 
 %load AUC values run and no run events
@@ -199,8 +205,51 @@ for ee=1:size(path_dir,2)
     %B-task selective norun 
     AUC_B_task_sel{ee}.norun.A = AUC_A{1, ee}.norun(B_sel_temp);
     AUC_B_task_sel{ee}.norun.B = AUC_B{1, ee}.norun(B_sel_temp);
+
+    %A&B tuned neurons as controls - run
+    AUC_AB{ee}.run.A = AUC_A{1, ee}.run(AB_idx{ee});
+    AUC_AB{ee}.run.B = AUC_B{1, ee}.run(AB_idx{ee});
+
+    %A&B tuned neurons as controls - norun
+    AUC_AB{ee}.norun.A = AUC_A{1, ee}.norun(AB_idx{ee});
+    AUC_AB{ee}.norun.B = AUC_B{1, ee}.norun(AB_idx{ee});
+    
+    %AB common control - run SI
+    AUC_common{ee}.si.run.A = AUC_A{1, ee}.run(ROI_sel{ee}.si.common);
+    AUC_common{ee}.si.run.B = AUC_B{1, ee}.run(ROI_sel{ee}.si.common);
+
+    %AB common control - norun SI
+    AUC_common{ee}.si.norun.A = AUC_A{1, ee}.norun(ROI_sel{ee}.si.common);
+    AUC_common{ee}.si.norun.B = AUC_B{1, ee}.norun(ROI_sel{ee}.si.common);    
+
+    %AB common control - run TS
+    AUC_common{ee}.ts.run.A = AUC_A{1, ee}.run(ROI_sel{ee}.ts.common);
+    AUC_common{ee}.ts.run.B = AUC_B{1, ee}.run(ROI_sel{ee}.ts.common);
+
+    %AB common control - norun TS
+    AUC_common{ee}.ts.norun.A = AUC_A{1, ee}.norun(ROI_sel{ee}.ts.common);
+    AUC_common{ee}.ts.norun.B = AUC_B{1, ee}.norun(ROI_sel{ee}.ts.common);     
 end
 
+
+%% Calculate AUC/min for common place fields
+
+for ee=1:size(path_dir,2)
+    %SI run
+    AUC_min_ABcom{ee}.si.run.A = cell2mat(cellfun(@(x) sum(x),AUC_common{1, ee}.si.run.A  ,'UniformOutput',false))./time_length{1, ee}.run.A;
+    AUC_min_ABcom{ee}.si.run.B = cell2mat(cellfun(@(x) sum(x),AUC_common{1, ee}.si.run.B  ,'UniformOutput',false))./time_length{1, ee}.run.B;
+    %SI norun
+    AUC_min_ABcom{ee}.si.norun.A = cell2mat(cellfun(@(x) sum(x),AUC_common{1, ee}.si.norun.A  ,'UniformOutput',false))./time_length{1, ee}.norun.A;
+    AUC_min_ABcom{ee}.si.norun.B = cell2mat(cellfun(@(x) sum(x),AUC_common{1, ee}.si.norun.B  ,'UniformOutput',false))./time_length{1, ee}.norun.B;
+
+    %TS run
+    AUC_min_ABcom{ee}.ts.run.A = cell2mat(cellfun(@(x) sum(x),AUC_common{1, ee}.ts.run.A  ,'UniformOutput',false))./time_length{1, ee}.run.A;
+    AUC_min_ABcom{ee}.ts.run.B = cell2mat(cellfun(@(x) sum(x),AUC_common{1, ee}.ts.run.B  ,'UniformOutput',false))./time_length{1, ee}.run.B;
+    %TS norun
+    AUC_min_ABcom{ee}.ts.norun.A = cell2mat(cellfun(@(x) sum(x),AUC_common{1, ee}.ts.norun.A  ,'UniformOutput',false))./time_length{1, ee}.norun.A;
+    AUC_min_ABcom{ee}.ts.norun.B = cell2mat(cellfun(@(x) sum(x),AUC_common{1, ee}.ts.norun.B  ,'UniformOutput',false))./time_length{1, ee}.norun.B;
+
+end
 
 %% A and B selective neurons transient event extraction (count number of AUC events)
 %from AUC for each event - significant events by definition
@@ -256,6 +305,31 @@ for ee=1:size(path_dir,2)
     %B task-sel events norun
     transients_B_task_sel{ee}.norun.A = cell2mat(cellfun(@(x) size(x,2),AUC_B_task_sel{1, ee}.norun.A ,'UniformOutput',false));
     transients_B_task_sel{ee}.norun.B = cell2mat(cellfun(@(x) size(x,2),AUC_B_task_sel{1, ee}.norun.B,'UniformOutput',false));
+
+    %AB events run
+    transients_AB{ee}.run.A = cell2mat(cellfun(@(x) size(x,2),AUC_AB{1, ee}.run.A  ,'UniformOutput',false));
+    transients_AB{ee}.run.B = cell2mat(cellfun(@(x) size(x,2),AUC_AB{1, ee}.run.B,'UniformOutput',false));
+
+    %AB events norun
+    transients_AB{ee}.norun.A = cell2mat(cellfun(@(x) size(x,2),AUC_AB{1, ee}.norun.A ,'UniformOutput',false));
+    transients_AB{ee}.norun.B = cell2mat(cellfun(@(x) size(x,2),AUC_AB{1, ee}.norun.B,'UniformOutput',false));
+
+    %AB common events run SI
+    transients_ABcom{ee}.si.run.A = cell2mat(cellfun(@(x) size(x,2),AUC_common{1, ee}.si.run.A  ,'UniformOutput',false));
+    transients_ABcom{ee}.si.run.B = cell2mat(cellfun(@(x) size(x,2),AUC_common{1, ee}.si.run.B,'UniformOutput',false));
+
+    %AB common events norun SI
+    transients_ABcom{ee}.si.norun.A = cell2mat(cellfun(@(x) size(x,2),AUC_common{1, ee}.si.norun.A ,'UniformOutput',false));
+    transients_ABcom{ee}.si.norun.B = cell2mat(cellfun(@(x) size(x,2),AUC_common{1, ee}.si.norun.B,'UniformOutput',false));
+
+    %AB common events run TS
+    transients_ABcom{ee}.ts.run.A = cell2mat(cellfun(@(x) size(x,2),AUC_common{1, ee}.ts.run.A  ,'UniformOutput',false));
+    transients_ABcom{ee}.ts.run.B = cell2mat(cellfun(@(x) size(x,2),AUC_common{1, ee}.ts.run.B,'UniformOutput',false));
+
+    %AB common events norun TS
+    transients_ABcom{ee}.ts.norun.A = cell2mat(cellfun(@(x) size(x,2),AUC_common{1, ee}.ts.norun.A ,'UniformOutput',false));
+    transients_ABcom{ee}.ts.norun.B = cell2mat(cellfun(@(x) size(x,2),AUC_common{1, ee}.ts.norun.B,'UniformOutput',false));
+    
 end
 
 
@@ -276,26 +350,452 @@ for ee=1:size(path_dir,2)
 
     %transient rate B task selective neurons per paper - norun
     transient_rate.B_task_sel{ee}.norun.A = transients_B_task_sel{1, ee}.norun.A./time_length{1, ee}.norun.A;
-    transient_rate.B_task_sel{ee}.norun.B = transients_B_task_sel{1, ee}.norun.B./time_length{1, ee}.norun.B;    
+    transient_rate.B_task_sel{ee}.norun.B = transients_B_task_sel{1, ee}.norun.B./time_length{1, ee}.norun.B;
+
+    %transient rate AB task selective neurons per paper -run
+    transient_rate.AB{ee}.run.A = transients_AB{1, ee}.run.A./time_length{1, ee}.run.A;
+    transient_rate.AB{ee}.run.B = transients_AB{1, ee}.run.B./time_length{1, ee}.run.B;
+
+    %transient rate AB task selective neurons per paper - norun
+    transient_rate.AB{ee}.norun.A = transients_AB{1, ee}.norun.A./time_length{1, ee}.norun.A;
+    transient_rate.AB{ee}.norun.B = transients_AB{1, ee}.norun.B./time_length{1, ee}.norun.B;
+
+    %transient rate AB common neurons per paper -run - SI
+    transient_rate.ABcom{ee}.si.run.A = transients_ABcom{1, ee}.si.run.A./time_length{1, ee}.run.A;
+    transient_rate.ABcom{ee}.si.run.B = transients_ABcom{1, ee}.si.run.B./time_length{1, ee}.run.B;
+
+    %transient rate AB common neurons per paper - norun - SI
+    transient_rate.ABcom{ee}.si.norun.A = transients_ABcom{1, ee}.si.norun.A./time_length{1, ee}.norun.A;
+    transient_rate.ABcom{ee}.si.norun.B = transients_ABcom{1, ee}.si.norun.B./time_length{1, ee}.norun.B; 
+
+    %transient rate AB common neurons per paper -run - TS
+    transient_rate.ABcom{ee}.ts.run.A = transients_ABcom{1, ee}.ts.run.A./time_length{1, ee}.run.A;
+    transient_rate.ABcom{ee}.ts.run.B = transients_ABcom{1, ee}.ts.run.B./time_length{1, ee}.run.B;
+
+    %transient rate AB common neurons per paper - norun - TS
+    transient_rate.ABcom{ee}.ts.norun.A = transients_ABcom{1, ee}.ts.norun.A./time_length{1, ee}.norun.A;
+    transient_rate.ABcom{ee}.ts.norun.B = transients_ABcom{1, ee}.ts.norun.B./time_length{1, ee}.norun.B;
+end
+
+%% Calculate mean transient rate for task selective neurons - matrix output for plotting
+for ee=1:size(path_dir,2)
+    %A first then B in matrix - A task sel run - transients/min
+    transient_rate_mean.A_task_sel.run(ee,1) = mean(transient_rate.A_task_sel{ee}.run.A);
+    transient_rate_mean.A_task_sel.run(ee,2) = mean(transient_rate.A_task_sel{ee}.run.B);
+
+    %A first then B in matrix - A task sel norun - transients/min
+    transient_rate_mean.A_task_sel.norun(ee,1) = mean(transient_rate.A_task_sel{ee}.norun.A);
+    transient_rate_mean.A_task_sel.norun(ee,2) = mean(transient_rate.A_task_sel{ee}.norun.B);
+    
+    %A first then B in matrix - B task sel run - transients/min
+    transient_rate_mean.B_task_sel.run(ee,1) = mean(transient_rate.B_task_sel{ee}.run.A);
+    transient_rate_mean.B_task_sel.run(ee,2) = mean(transient_rate.B_task_sel{ee}.run.B);
+
+    %A first then B in matrix - B task sel norun - transients/min
+    transient_rate_mean.B_task_sel.norun(ee,1) = mean(transient_rate.B_task_sel{ee}.norun.A);
+    transient_rate_mean.B_task_sel.norun(ee,2) = mean(transient_rate.B_task_sel{ee}.norun.B);
+
+    %A first then B in matrix - AB task sel run - transients/min
+    transient_rate_mean.AB.run(ee,1) = mean(transient_rate.AB{ee}.run.A);
+    transient_rate_mean.AB.run(ee,2) = mean(transient_rate.AB{ee}.run.B);
+
+    %A first then B in matrix - AB task sel norun - transients/min
+    transient_rate_mean.AB.norun(ee,1) = mean(transient_rate.AB{ee}.norun.A);
+    transient_rate_mean.AB.norun(ee,2) = mean(transient_rate.AB{ee}.norun.B);
+
+    %A first then B in matrix - AB com run - SI -  transients/min
+    transient_rate_mean.ABcom.si.run(ee,1) = mean(transient_rate.ABcom{ee}.si.run.A);
+    transient_rate_mean.ABcom.si.run(ee,2) = mean(transient_rate.ABcom{ee}.si.run.B);
+
+    %A first then B in matrix - AB com norun - SI - transients/min
+    transient_rate_mean.ABcom.si.norun(ee,1) = mean(transient_rate.ABcom{ee}.si.norun.A);
+    transient_rate_mean.ABcom.si.norun(ee,2) = mean(transient_rate.ABcom{ee}.si.norun.B);
+
+    %A first then B in matrix - AB com run - TS -  transients/min
+    transient_rate_mean.ABcom.ts.run(ee,1) = mean(transient_rate.ABcom{ee}.ts.run.A);
+    transient_rate_mean.ABcom.ts.run(ee,2) = mean(transient_rate.ABcom{ee}.ts.run.B);
+
+    %A first then B in matrix - AB com norun - TS - transients/min
+    transient_rate_mean.ABcom.ts.norun(ee,1) = mean(transient_rate.ABcom{ee}.ts.norun.A);
+    transient_rate_mean.ABcom.ts.norun(ee,2) = mean(transient_rate.ABcom{ee}.ts.norun.B);
+
+end
+
+%% Calculate mean AUC/min for common place cell controls
+for ee=1:size(path_dir,2)
+    %SI run
+    AUC_rate_mean.ABcom.si.run(ee,1) = mean(AUC_min_ABcom{ee}.si.run.A);
+    AUC_rate_mean.ABcom.si.run(ee,2) = mean(AUC_min_ABcom{ee}.si.run.B);
+
+    %SI norun
+    AUC_rate_mean.ABcom.si.norun(ee,1) = mean(AUC_min_ABcom{ee}.si.norun.A);
+    AUC_rate_mean.ABcom.si.norun(ee,2) = mean(AUC_min_ABcom{ee}.si.norun.B);
+
+    %TS run
+    AUC_rate_mean.ABcom.ts.run(ee,1) = mean(AUC_min_ABcom{ee}.ts.run.A);
+    AUC_rate_mean.ABcom.ts.run(ee,2) = mean(AUC_min_ABcom{ee}.ts.run.B);
+
+    %TS norun
+    AUC_rate_mean.ABcom.ts.norun(ee,1) = mean(AUC_min_ABcom{ee}.ts.norun.A);
+    AUC_rate_mean.ABcom.ts.norun(ee,2) = mean(AUC_min_ABcom{ee}.ts.norun.B);
+    
 end
 
 
-%% 
-%calc AUC/min for sample animal for SI selective place cells
-AUC_min.Asel.si.Alaps = cell2mat(cellfun(@(x) sum(x),AUC_A_sel_A, 'UniformOutput',false))./run_time_A;
-AUC_min.Asel.si.Blaps = cell2mat(cellfun(@(x) sum(x),AUC_A_sel_B, 'UniformOutput',false))./run_time_B;
+%% Calculate the mean of means and sem for means for plotting below
+
+%% Get mean of means and sem for bar plotting
+%A ---- B
+%A-sel
+%B-sel
+%AB
+
+%anonymous function for calculating sem
+sem = @(x) std(x,0,1)./sqrt(size(x,1));
+
+%Mean of means - task selective neurons for figure 2
+%run - transients/min with control A&B place field tuned
+grouped_mean.task_sel.run = [mean(transient_rate_mean.A_task_sel.run,1);
+    mean(transient_rate_mean.B_task_sel.run,1);
+    mean(transient_rate_mean.AB.run,1)];
+
+grouped_sem.task_sel.run = [sem(transient_rate_mean.A_task_sel.run);
+    sem(transient_rate_mean.B_task_sel.run)
+    sem(transient_rate_mean.AB.run)];
+% no run
+grouped_mean.task_sel.norun = [mean(transient_rate_mean.A_task_sel.norun,1);
+    mean(transient_rate_mean.B_task_sel.norun,1);
+    mean(transient_rate_mean.AB.norun,1)];
+
+grouped_sem.task_sel.norun = [sem(transient_rate_mean.A_task_sel.norun);
+    sem(transient_rate_mean.B_task_sel.norun)
+    sem(transient_rate_mean.AB.norun)];
+
+%common run - SI transients/min
+grouped_mean.ABcom.si.run = [mean(transient_rate_mean.ABcom.si.run,1)];
+grouped_sem.ABcom.si.run = [sem(transient_rate_mean.ABcom.si.run)];
+
+% common no run SI transients/min
+grouped_mean.ABcom.si.norun = [mean(transient_rate_mean.ABcom.si.norun,1)];
+grouped_sem.ABcom.si.norun = [sem(transient_rate_mean.ABcom.si.norun)];
+
+%common run - TS transients/min
+grouped_mean.ABcom.ts.run = [mean(transient_rate_mean.ABcom.ts.run,1)];
+grouped_sem.ABcom.ts.run = [sem(transient_rate_mean.ABcom.ts.run)];
+
+% common no run TS transients/min
+grouped_mean.ABcom.ts.norun = [mean(transient_rate_mean.ABcom.ts.norun,1)];
+grouped_sem.ABcom.ts.norun = [sem(transient_rate_mean.ABcom.ts.norun)];
 
 
+%% Plot transient/min for common SI/TS controls for reviewer
+
+paper_cmap = return_paper_colormap;
+
+fig0 = figure;
+fig0.Units = 'centimeters';
+fig0.Position(1) = 8;
+fig0.Position(2) = 1;
+fig0.Position(3) = 18;
+fig0.Position(4) = 12;
+
+%tiledLayout (replaces subplot fxn)
+gridSize = [2,2];
+t0 = tiledlayout(fig0,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','compact','Units','centimeters');
+%nest tiles within master tile
+
+% Mean plot - dummy plot no scatter data for this
+nexttile(t0,1,[1,1])
+hold on;
+%axis square
+title('S.I. - Run');
+%bar the mean for each group
+b = bar(1:1,grouped_mean.ABcom.si.run,'FaceColor', 'flat');
+pause(0.1)
+ylabel({'Transients/min'}) 
+xlim([0.5 1.5])
+ylim([0 9])
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.ABcom.si.run(:,ib)',grouped_sem.ABcom.si.run(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:1,:) =  repmat(paper_cmap(1,:),1,1);
+%set B group bars to red
+b(2).CData(1:1,:) =  repmat(paper_cmap(2,:),1,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'Non-selective place cell'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+
+nexttile(t0,2,[1,1])
+hold on;
+%axis square
+title('T.S. - Run');
+%bar the mean for each group
+b = bar(1:1,grouped_mean.ABcom.ts.run,'FaceColor', 'flat');
+pause(0.1)
+ylabel({'Transients/min'}) 
+xlim([0.5 1.5])
+ylim([0 9])
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.ABcom.ts.run(:,ib)',grouped_sem.ABcom.ts.run(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:1,:) =  repmat(paper_cmap(1,:),1,1);
+%set B group bars to red
+b(2).CData(1:1,:) =  repmat(paper_cmap(2,:),1,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'Non-selective place cell'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+
+nexttile(t0,3,[1,1])
+hold on;
+%axis square
+title('S.I. - No Run');
+%bar the mean for each group
+b = bar(1:1,grouped_mean.ABcom.si.norun,'FaceColor', 'flat');
+pause(0.1)
+ylabel({'Transients/min'}) 
+xlim([0.5 1.5])
+ylim([0 9])
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.ABcom.si.norun(:,ib)',grouped_sem.ABcom.si.norun(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:1,:) =  repmat(paper_cmap(1,:),1,1);
+%set B group bars to red
+b(2).CData(1:1,:) =  repmat(paper_cmap(2,:),1,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'Non-selective place cell'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+
+nexttile(t0,4,[1,1])
+hold on;
+%axis square
+title('T.S. - No Run');
+%bar the mean for each group
+b = bar(1:1,grouped_mean.ABcom.ts.norun,'FaceColor', 'flat');
+pause(0.1)
+ylabel({'Transients/min'}) 
+xlim([0.5 1.5])
+ylim([0 9])
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.ABcom.ts.norun(:,ib)',grouped_sem.ABcom.ts.norun(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:1,:) =  repmat(paper_cmap(1,:),1,1);
+%set B group bars to red
+b(2).CData(1:1,:) =  repmat(paper_cmap(2,:),1,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'Non-selective place cell'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',14, ...
+'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
+
+%% Plot and export that data for reviewer - temp 
 %temporary plot of data for development code
-figure
-hold on
-xlim([0.5,2.5])
-plot([1,2],[AUC_min.Asel.si.Alaps;AUC_min.Asel.si.Blaps])
 
-figure
+%return the colormaps used in paper and apply to bars
+paper_cmap = return_paper_colormap;
+
+fig0 = figure;
+fig0.Units = 'centimeters';
+fig0.Position(1) = 8;
+fig0.Position(2) = 1;
+fig0.Position(3) = 24;
+fig0.Position(4) = 12;
+
+%tiledLayout (replaces subplot fxn)
+gridSize = [2,4];
+t0 = tiledlayout(fig0,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','compact','Units','centimeters');
+%nest tiles within master tile
+
+% Mean plot - dummy plot no scatter data for this
+nexttile(t0,1,[2,2])
 hold on
-xlim([0.5,2.5])
-plot([1,2],[sig_events_min.Asel.si.Alaps;sig_events_min.Asel.si.Blaps])
+axis square
+xlim([0 10])
+ylim([0 10])
+xticks(0:2:10)
+yticks(0:2:10)
+set(gca,'FontSize',16)
+set(gca,'LineWidth',2)
+xlabel('AUC/min - A trials')
+ylabel('AUC/min - B trials')
+title('A, B selective RUN')
+
+nexttile(t0,3,[1,2])
+hold on;
+%axis square
+title('Run');
+%bar the mean for each group
+b = bar(1:3,grouped_mean.task_sel.run,'FaceColor', 'flat');
+pause(0.1)
+ylabel('Transients/min') 
+xlim([0.5 3.5])
+ylim([0 9])
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.task_sel.run(:,ib)',grouped_sem.task_sel.run(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:3,:) =  repmat(paper_cmap(1,:),3,1);
+%set B group bars to red
+b(2).CData(1:3,:) =  repmat(paper_cmap(2,:),3,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'A sel.','B sel.','A&B'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+
+nexttile(t0,7,[1,2])
+hold on;
+%axis square
+title('No run');
+%bar the mean for each group
+b2 = bar(1:3,grouped_mean.task_sel.norun,'FaceColor', 'flat');
+pause(0.1)
+ylabel('Transients/min') 
+xlim([0.5 3.5])
+ylim([0 9])
+%plot the sem for each mean for each group
+for ib = 1:numel(b2)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b2(ib).XData + b2(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b2(ib).XData + b2(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b2(ib).XData + b2(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b2(ib).XData + b2(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.task_sel.norun(:,ib)',grouped_sem.task_sel.norun(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b2(1).CData(1:3,:) =  repmat(paper_cmap(1,:),3,1);
+%set B group bars to red
+b2(2).CData(1:3,:) =  repmat(paper_cmap(2,:),3,1);
+%set B group bars to red
+%b2(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'A sel.','B sel.','A&B'});
+ylabel('Transients/min');
+legend('A laps','B laps')
+
+
 
 %% Source data export struct - Fig 2 data
 
