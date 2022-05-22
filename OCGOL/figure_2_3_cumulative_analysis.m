@@ -441,6 +441,9 @@ for ee=1:size(path_dir,2)
     
 end
 
+%%% TO DO: generate plots for AUC; do stats for all AUC/min and
+%%% transient/min comparisons
+
 
 %% Calculate the mean of means and sem for means for plotting below
 
