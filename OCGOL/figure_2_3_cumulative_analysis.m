@@ -450,17 +450,21 @@ end
 %anonymous function for calculating sem
 sem = @(x) std(x,0,1)./sqrt(size(x,1));
 
-grouped_mean.ABcom.si.run = mean(AUC_rate_mean.ABcom.si.run,1);
-grouped_sem.ABcom.si.run = sem(AUC_rate_mean.ABcom.si.run);
+%AUC/min SI run
+grouped_mean.ABcom.act_rate.si.run = mean(AUC_rate_mean.ABcom.si.run,1);
+grouped_sem.ABcom.act_rate.si.run = sem(AUC_rate_mean.ABcom.si.run);
 
-grouped_mean.ABcom.si.norun = mean(AUC_rate_mean.ABcom.si.norun,1);
-grouped_sem.ABcom.si.norun = sem(AUC_rate_mean.ABcom.si.norun);
+%AUC/min SI no run
+grouped_mean.ABcom.act_rate.si.norun = mean(AUC_rate_mean.ABcom.si.norun,1);
+grouped_sem.ABcom.act_rate.si.norun = sem(AUC_rate_mean.ABcom.si.norun);
 
-grouped_mean.ABcom.ts.run = mean(AUC_rate_mean.ABcom.ts.run,1);
-grouped_sem.ABcom.ts.run = sem(AUC_rate_mean.ABcom.ts.run);
+%AUC/min TS run
+grouped_mean.ABcom.act_rate.ts.run = mean(AUC_rate_mean.ABcom.ts.run,1);
+grouped_sem.ABcom.act_rate.ts.run = sem(AUC_rate_mean.ABcom.ts.run);
 
-grouped_mean.ABcom.ts.norun = mean(AUC_rate_mean.ABcom.ts.norun,1);
-grouped_sem.ABcom.ts.norun = sem(AUC_rate_mean.ABcom.ts.norun);
+%AUC/min TS no run
+grouped_mean.ABcom.act_rate.ts.norun = mean(AUC_rate_mean.ABcom.ts.norun,1);
+grouped_sem.ABcom.act_rate.ts.norun = sem(AUC_rate_mean.ABcom.ts.norun);
 
 
 %% Get mean of means and sem for bar plotting
@@ -504,6 +508,201 @@ grouped_sem.ABcom.ts.run = [sem(transient_rate_mean.ABcom.ts.run)];
 % common no run TS transients/min
 grouped_mean.ABcom.ts.norun = [mean(transient_rate_mean.ABcom.ts.norun,1)];
 grouped_sem.ABcom.ts.norun = [sem(transient_rate_mean.ABcom.ts.norun)];
+
+%% Plot AUC/min for common SI/TS controls for reviewer
+
+paper_cmap = return_paper_colormap;
+
+fig0 = figure;
+fig0.Units = 'centimeters';
+fig0.Position(1) = 8;
+fig0.Position(2) = 1;
+fig0.Position(3) = 18;
+fig0.Position(4) = 12;
+
+%tiledLayout (replaces subplot fxn)
+gridSize = [2,2];
+t0 = tiledlayout(fig0,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','compact','Units','centimeters');
+%nest tiles within master tile
+
+% Mean plot - dummy plot no scatter data for this
+nexttile(t0,1,[1,1])
+hold on;
+%axis square
+title('S.I. - Run');
+%bar the mean for each group
+b = bar(1:1,grouped_mean.ABcom.act_rate.si.run,'FaceColor', 'flat');
+pause(0.1)
+ylabel({'AUC/min'}) 
+xlim([0.5 1.5])
+ylim([0 10])
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.ABcom.act_rate.si.run(:,ib)',grouped_sem.ABcom.act_rate.si.run(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:1,:) =  repmat(paper_cmap(1,:),1,1);
+%set B group bars to red
+b(2).CData(1:1,:) =  repmat(paper_cmap(2,:),1,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'Non-selective place cell'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+
+nexttile(t0,2,[1,1])
+hold on;
+%axis square
+title('T.S. - Run');
+%bar the mean for each group
+b = bar(1:1,grouped_mean.ABcom.act_rate.ts.run,'FaceColor', 'flat');
+pause(0.1)
+ylabel({'AUC/min'}) 
+xlim([0.5 1.5])
+ylim([0 10])
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.ABcom.act_rate.ts.run(:,ib)',grouped_sem.ABcom.act_rate.ts.run(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:1,:) =  repmat(paper_cmap(1,:),1,1);
+%set B group bars to red
+b(2).CData(1:1,:) =  repmat(paper_cmap(2,:),1,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'Non-selective place cell'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+
+nexttile(t0,3,[1,1])
+hold on;
+%axis square
+title('S.I. - No Run');
+%bar the mean for each group
+b = bar(1:1,grouped_mean.ABcom.act_rate.si.norun,'FaceColor', 'flat');
+pause(0.1)
+ylabel({'AUC/min'}) 
+xlim([0.5 1.5])
+ylim([0 2])
+yticks([0 1 2]);
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.ABcom.act_rate.si.norun(:,ib)',grouped_sem.ABcom.act_rate.si.norun(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:1,:) =  repmat(paper_cmap(1,:),1,1);
+%set B group bars to red
+b(2).CData(1:1,:) =  repmat(paper_cmap(2,:),1,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'Non-selective place cell'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+
+nexttile(t0,4,[1,1])
+hold on;
+%axis square
+title('T.S. - No Run');
+%bar the mean for each group
+b = bar(1:1,grouped_mean.ABcom.act_rate.ts.norun,'FaceColor', 'flat');
+pause(0.1)
+ylabel({'AUC/min'}) 
+xlim([0.5 1.5])
+ylim([0 2])
+yticks([0 1 2]);
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    if ib ==1
+        xData(1,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==2
+        xData(2,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==3
+        xData(3,:) = b(ib).XData + b(ib).XOffset;
+    elseif ib ==4
+        xData(4,:) = b(ib).XData + b(ib).XOffset;
+    end
+    errorbar(xData(ib,:),grouped_mean.ABcom.act_rate.ts.norun(:,ib)',grouped_sem.ABcom.act_rate.ts.norun(:,ib),'k.','LineWidth',1)
+end
+
+%set A group bars to blue
+b(1).CData(1:1,:) =  repmat(paper_cmap(1,:),1,1);
+%set B group bars to red
+b(2).CData(1:1,:) =  repmat(paper_cmap(2,:),1,1);
+%set B group bars to red
+%b(3).CData(1:3,:) =  repmat(color_mat(3,:),3,1);
+%set B group bars to red
+%b(4).CData(1:3,:) =  repmat(color_mat(4,:),3,1);
+
+xticks([1 2 3]);
+xticklabels({'Non-selective place cell'});
+
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',14, ...
+'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
+clear xData
 
 
 %% Plot transient/min for common SI/TS controls for reviewer
@@ -618,7 +817,7 @@ b = bar(1:1,grouped_mean.ABcom.si.norun,'FaceColor', 'flat');
 pause(0.1)
 ylabel({'Transients/min'}) 
 xlim([0.5 1.5])
-ylim([0 9])
+ylim([0 3])
 %plot the sem for each mean for each group
 for ib = 1:numel(b)
     %XData property is the tick labels/group centers; XOffset is the offset
@@ -661,7 +860,7 @@ b = bar(1:1,grouped_mean.ABcom.ts.norun,'FaceColor', 'flat');
 pause(0.1)
 ylabel({'Transients/min'}) 
 xlim([0.5 1.5])
-ylim([0 9])
+ylim([0 3])
 %plot the sem for each mean for each group
 for ib = 1:numel(b)
     %XData property is the tick labels/group centers; XOffset is the offset
@@ -697,6 +896,7 @@ set(gca,'LineWidth',1.5)
 set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',14, ...
 'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
 
+clear xData
 
 %% Plot and export that data for reviewer - temp 
 %temporary plot of data for development code
@@ -782,7 +982,7 @@ b2 = bar(1:3,grouped_mean.task_sel.norun,'FaceColor', 'flat');
 pause(0.1)
 ylabel('Transients/min') 
 xlim([0.5 3.5])
-ylim([0 9])
+ylim([0 3])
 %plot the sem for each mean for each group
 for ib = 1:numel(b2)
     %XData property is the tick labels/group centers; XOffset is the offset
@@ -813,6 +1013,10 @@ xticklabels({'A sel.','B sel.','A&B'});
 ylabel('Transients/min');
 legend('A laps','B laps')
 
+legend('A laps','B laps')
+
+set(gca,'FontSize',16)
+set(gca,'LineWidth',1.5)
 
 
 %% Source data export struct - Fig 2 data
