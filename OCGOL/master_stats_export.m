@@ -36,21 +36,19 @@ p = [stats.run.A(1) stats.run.B(1) stats.run.AB(1)];
 %return adjustment p-values for AUC RUN comparison
 p_adj = holm_sidak_p_adj(p,c,alpha);
 
-%create excel importable table data
-
-%create AUC/min table
+%% create transients/min table for task sel neurons - RUN
 %Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
 %Test statistic, p-value, p-value adjusted, ad. method, Significance
 
-fig_num = repmat(2,3,1);
+fig_num = repmat('2',3,1);
 fig_sub = repmat('c',3,1);
 data_agg = repmat('by animal',3,1);
 comp_descrip = {'AUC/min difference btn A vs. B laps in RUN - A sel.';...
                 'AUC/min difference btn A vs. B laps in RUN - B sel.';...
                 'AUC/min difference btn A vs. B laps in RUN - A&B'};
-n_sample = [stats.run.A(3), stats.run.B(3),stats.run.AB(3)]';
+n_sample = [stats.run.A(3) stats.run.B(3) stats.run.AB(3)]';
 test_name = repmat('Paired Wilcoxon Sign Rank',3,1);
-n_dof = [stats.run.A(4), stats.run.B(4),stats.run.AB(4)]';
+n_dof = [stats.run.A(4) stats.run.B(4) stats.run.AB(4)]';
 test_statistic = [stats.run.A(2) stats.run.B(2) stats.run.AB(2)]';
 adj_method = repmat('Holm-Sidak (3-way)', 3,1);
 p = [stats.run.A(1) stats.run.B(1) stats.run.AB(1)]';
@@ -63,8 +61,6 @@ t_auc_run = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             'VariableNames',{'Figure','Subfigure','Data aggregation',...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
-        
-%create source data spreadsheet
 
 %% Fig 2c AUC analysis no RUN
 %AUC run data for A and B selective place cells

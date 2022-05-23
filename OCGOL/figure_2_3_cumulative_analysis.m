@@ -509,6 +509,260 @@ grouped_sem.ABcom.ts.run = [sem(transient_rate_mean.ABcom.ts.run)];
 grouped_mean.ABcom.ts.norun = [mean(transient_rate_mean.ABcom.ts.norun,1)];
 grouped_sem.ABcom.ts.norun = [sem(transient_rate_mean.ABcom.ts.norun)];
 
+%% Run stats here for reviewers
+
+%all tests - paired wilcoxon sign rank test with Holm-Sidak correction if
+%necessary
+
+%transients/min RUN A,B, AB
+%SI run/norun
+tran_ABcom.si.run = transient_rate_mean.ABcom.si.run;
+tran_ABcom.si.norun = transient_rate_mean.ABcom.si.norun;
+
+%TS run/norun
+tran_ABcom.ts.run = transient_rate_mean.ABcom.ts.run;
+tran_ABcom.ts.norun = transient_rate_mean.ABcom.ts.norun;
+
+%paired wilcoxon AB place cells w/ 1PF RUN/no RUN epochs - SI/TS
+%SI run
+stats.tran.ABcom.si.run = paired_wilcoxon_signrank(tran_ABcom.si.run(:,1),tran_ABcom.si.run(:,2));
+%SI no run
+stats.tran.ABcom.si.norun = paired_wilcoxon_signrank(tran_ABcom.si.norun(:,1),tran_ABcom.si.norun(:,2));
+
+%TS run
+stats.tran.ABcom.ts.run = paired_wilcoxon_signrank(tran_ABcom.ts.run(:,1),tran_ABcom.ts.run(:,2));
+%TS no run
+stats.tran.ABcom.ts.norun = paired_wilcoxon_signrank(tran_ABcom.ts.norun(:,1),tran_ABcom.ts.norun(:,2));
+
+
+%AUC/min AB place cells w/ 1PF RUN/no RUN epochs - SI/TS
+%SI run/norun
+auc_rate_ABcom.si.run = AUC_rate_mean.ABcom.si.run;
+auc_rate_ABcom.si.norun = AUC_rate_mean.ABcom.si.norun;
+
+%TS run/norun
+auc_rate_ABcom.ts.run = AUC_rate_mean.ABcom.ts.run;
+auc_rate_ABcom.ts.norun = AUC_rate_mean.ABcom.ts.norun;
+
+%paired wilcoxon AB place cells w/ 1PF RUN/no RUN epochs - SI/TS
+%SI run
+stats.auc_rate.ABcom.si.run = paired_wilcoxon_signrank(auc_rate_ABcom.si.run(:,1),auc_rate_ABcom.si.run(:,2));
+%SI no run
+stats.auc_rate.ABcom.si.norun = paired_wilcoxon_signrank(auc_rate_ABcom.si.norun(:,1),auc_rate_ABcom.si.norun(:,2));
+
+%TS run
+stats.auc_rate.ABcom.ts.run = paired_wilcoxon_signrank(auc_rate_ABcom.ts.run(:,1),auc_rate_ABcom.ts.run(:,2));
+%TS no run
+stats.auc_rate.ABcom.ts.norun = paired_wilcoxon_signrank(auc_rate_ABcom.ts.norun(:,1),auc_rate_ABcom.ts.norun(:,2));
+
+%% Transient rate for A,B selective place cells - stats
+%AUC/min RUN/norun A,B, AB
+%run
+tran_A_sel_run = transient_rate_mean.A_task_sel.run;
+tran_B_sel_run = transient_rate_mean.B_task_sel.run;
+tran_AB_run = transient_rate_mean.AB.run;
+
+%no run
+tran_A_sel_norun = transient_rate_mean.A_task_sel.norun;
+tran_B_sel_norun = transient_rate_mean.B_task_sel.norun;
+tran_AB_norun = transient_rate_mean.AB.norun;
+
+%paired wilcoxon A, B, AB sel on A vs B laps during RUN epochs
+%A selective
+stats.tran.run.Asel = paired_wilcoxon_signrank(tran_A_sel_run(:,1),tran_A_sel_run(:,2));
+%B selective
+stats.tran.run.Bsel = paired_wilcoxon_signrank(tran_B_sel_run(:,1),tran_B_sel_run(:,2));
+%AB
+stats.tran.run.AB = paired_wilcoxon_signrank(tran_AB_run(:,1),tran_AB_run(:,2));
+
+%3-way Holm-Sidak correction for AUC RUN comparison
+%significance level
+alpha = 0.05;
+%# of comparisons
+c = 3; 
+%input p-value vector
+p = [stats.tran.run.Asel(1) stats.tran.run.Bsel(1) stats.tran.run.AB(1)];
+%return adjustment p-values for AUC RUN comparison
+p_adj = holm_sidak_p_adj(p,c,alpha);
+
+%% Create table to write to Excel spreadsheet
+%create excel importable table data
+fig_num = repmat('3s',3,1);
+fig_sub = repmat('a',3,1);
+data_agg = repmat('by animal',3,1);
+comp_descrip = {'Transient/min difference btn A vs. B laps in RUN - A sel.';...
+                'Transient/min difference btn A vs. B laps in RUN - B sel.';...
+                'Transient/min difference btn A vs. B laps in RUN - A&B'};
+n_sample = [stats.tran.run.Asel(3), stats.tran.run.Bsel(3),stats.tran.run.AB(3)]';
+test_name = repmat('Paired Wilcoxon Sign Rank',3,1);
+n_dof = [stats.tran.run.Asel(4),stats.tran.run.Bsel(4),stats.tran.run.AB(4)]';
+test_statistic = [stats.tran.run.Asel(2) stats.tran.run.Bsel(2) stats.tran.run.AB(2)]';
+adj_method = repmat('Holm-Sidak (3-way)', 3,1);
+p = [stats.tran.run.Asel(1), stats.tran.run.Bsel(1),stats.tran.run.AB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig(p_adj);
+
+%create RUN AUC/min table
+t_tran_rate_AB_sel_run = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+%% Transient rate for A,B sel neurons - no run
+
+%paired wilcoxon A, B, AB sel on A vs B laps during NO RUN epochs
+%A selective
+stats.tran.norun.Asel = paired_wilcoxon_signrank(tran_A_sel_norun(:,1),tran_A_sel_norun(:,2));
+%B selective
+stats.tran.norun.Bsel = paired_wilcoxon_signrank(tran_B_sel_norun(:,1),tran_B_sel_norun(:,2));
+%AB
+stats.tran.norun.AB = paired_wilcoxon_signrank(tran_AB_norun(:,1),tran_AB_norun(:,2));
+
+%3-way Holm-Sidak correction for AUC NO RUN comparison
+%significance level
+alpha = 0.05;
+%# of comparisons
+c = 3; 
+%input p-value vector
+p = [stats.tran.norun.Asel(1) stats.tran.norun.Bsel(1) stats.tran.norun.AB(1)];
+%return adjustment p-values for AUC RUN comparison
+p_adj = holm_sidak_p_adj(p,c,alpha);
+
+%% Create table for excel export
+
+%create excel importable table data
+fig_num = repmat('3s',3,1);
+fig_sub = repmat('a',3,1);
+data_agg = repmat('by animal',3,1);
+comp_descrip = {'Transient/min difference btn A vs. B laps in NO RUN - A sel.';...
+                'Transient/min difference btn A vs. B laps in NO RUN - B sel.';...
+                'Transient/min difference btn A vs. B laps in NO RUN - A&B'};
+n_sample = [stats.tran.norun.Asel(3), stats.tran.norun.Bsel(3),stats.tran.norun.AB(3)]';
+test_name = repmat('Paired Wilcoxon Sign Rank',3,1);
+n_dof = [stats.tran.norun.Asel(4), stats.tran.norun.Bsel(4),stats.tran.norun.AB(4)]';
+test_statistic = [stats.tran.norun.Asel(2), stats.tran.norun.Bsel(2),stats.tran.norun.AB(2)]';
+adj_method = repmat('Holm-Sidak (3-way)', 3,1);
+p = [stats.tran.norun.Asel(1), stats.tran.norun.Bsel(1),stats.tran.norun.AB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig(p_adj);
+
+%create RUN AUC/min table
+t_tran_rate_AB_sel_norun = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+%% Create table for export to Excel - AUC/min - AB common tuned non-sel 1PF
+
+nb_entries = 4;
+
+fig_num = repmat('3s',nb_entries,1);
+fig_sub = repmat('b',nb_entries,1);
+data_agg = repmat('by animal',nb_entries,1);
+comp_descrip = {'AUC/min difference btn A vs. B laps in RUN - SI AB non-sel w/ 1PF';...
+                'AUC/min difference btn A vs. B laps in NO RUN - SI AB non-sel w/ 1PF';...
+                'AUC/min difference btn A vs. B laps in RUN - TS AB non-sel w/ 1PF';...
+                'AUC/min difference btn A vs. B laps in NO RUN - TS AB non-sel w/ 1PF'};
+n_sample = [stats.auc_rate.ABcom.si.run(3),stats.auc_rate.ABcom.si.norun(3),...
+            stats.auc_rate.ABcom.ts.run(3),stats.auc_rate.ABcom.ts.norun(3)]';
+test_name = repmat({'Paired Wilcoxon Sign Rank'},nb_entries,1);
+n_dof = [stats.auc_rate.ABcom.si.run(4),stats.auc_rate.ABcom.si.norun(4),...
+            stats.auc_rate.ABcom.ts.run(4),stats.auc_rate.ABcom.ts.norun(4)]';
+test_statistic = [stats.auc_rate.ABcom.si.run(2),stats.auc_rate.ABcom.si.norun(2),...
+            stats.auc_rate.ABcom.ts.run(2),stats.auc_rate.ABcom.ts.norun(2)]';
+adj_method = repmat('N/A', nb_entries,1);
+p_all = [stats.auc_rate.ABcom.si.run(1),stats.auc_rate.ABcom.si.norun(1),...
+            stats.auc_rate.ABcom.ts.run(1),stats.auc_rate.ABcom.ts.norun(1)]';
+p_adj = repmat('N/A', nb_entries,1);
+sig_level = check_p_value_sig(p_all);
+
+%create table
+t_auc_rate_ABcom = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+%% Create table for export to Excel - transient/min - AB common tuned non-sel 1PF
+
+nb_entries = 4;
+
+fig_num = repmat('3s',nb_entries,1);
+fig_sub = repmat('c',nb_entries,1);
+data_agg = repmat('by animal',nb_entries,1);
+comp_descrip = {'Transient/min difference btn A vs. B laps in RUN - SI AB non-sel w/ 1PF';...
+                'Transient/min difference btn A vs. B laps in NO RUN - SI AB non-sel w/ 1PF';...
+                'Transient/min difference btn A vs. B laps in RUN - TS AB non-sel w/ 1PF';...
+                'Transient/min difference btn A vs. B laps in NO RUN - TS AB non-sel w/ 1PF'};
+n_sample = [stats.tran.ABcom.si.run(3),stats.tran.ABcom.si.norun(3),...
+            stats.tran.ABcom.ts.run(3),stats.tran.ABcom.ts.norun(3)]';
+test_name = repmat({'Paired Wilcoxon Sign Rank'},nb_entries,1);
+n_dof = [stats.tran.ABcom.si.run(4),stats.tran.ABcom.si.norun(4),...
+            stats.tran.ABcom.ts.run(4),stats.tran.ABcom.ts.norun(4)]';
+test_statistic = [stats.tran.ABcom.si.run(2),stats.tran.ABcom.si.norun(2),...
+            stats.tran.ABcom.ts.run(2),stats.tran.ABcom.ts.norun(2)]';
+adj_method = repmat('N/A', nb_entries,1);
+p_all = [stats.tran.ABcom.si.run(1),stats.tran.ABcom.si.norun(1),...
+            stats.tran.ABcom.ts.run(1),stats.tran.ABcom.ts.norun(1)]';
+p_adj = repmat('N/A', nb_entries,1);
+sig_level = check_p_value_sig(p_all);
+
+%create table
+t_tran_rate_ABcom = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+
+%% Write output to Excel
+%blank row table
+t1 = repmat({' '},1,12);
+
+spreadsheet_name = 'auc_transient_task_sel_place_cells.xlsx';
+
+%exported Excel spreadsheet
+%write to Excel spreadsheet
+writetable(t_tran_rate_AB_sel_run,spreadsheet_name,'Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),spreadsheet_name,'Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_tran_rate_AB_sel_norun,spreadsheet_name,'Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),spreadsheet_name,'Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_auc_rate_ABcom,spreadsheet_name,'Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
+writetable(cell2table(t1),spreadsheet_name,'Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+writetable(t_tran_rate_ABcom,spreadsheet_name,'Sheet','Main Figure',"AutoFitWidth",true,'WriteMode','append')
+
+%% create AUC/min table
+%Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
+%Test statistic, p-value, p-value adjusted, ad. method, Significance
+
+fig_num = repmat(2,3,1);
+fig_sub = repmat('c',3,1);
+data_agg = repmat('by animal',3,1);
+comp_descrip = {'AUC/min difference btn A vs. B laps in RUN - A sel.';...
+                'AUC/min difference btn A vs. B laps in RUN - B sel.';...
+                'AUC/min difference btn A vs. B laps in RUN - A&B'};
+n_sample = [stats.run.A(3), stats.run.B(3),stats.run.AB(3)]';
+test_name = repmat('Paired Wilcoxon Sign Rank',3,1);
+n_dof = [stats.run.A(4), stats.run.B(4),stats.run.AB(4)]';
+test_statistic = [stats.run.A(2) stats.run.B(2) stats.run.AB(2)]';
+adj_method = repmat('Holm-Sidak (3-way)', 3,1);
+p = [stats.run.A(1) stats.run.B(1) stats.run.AB(1)]';
+p_adj = holm_sidak_p_adj(p,c,alpha);
+sig_level = check_p_value_sig(p_adj);
+
+%create RUN AUC/min table
+t_auc_run = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic,p,p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+
 %% Plot AUC/min for common SI/TS controls for reviewer
 
 paper_cmap = return_paper_colormap;
