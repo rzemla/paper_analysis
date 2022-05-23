@@ -423,9 +423,31 @@ end
 
 %% Calculate mean AUC/min for common place cell controls
 for ee=1:size(path_dir,2)
+    %SI run
     AUC_rate_mean.ABcom.si.run(ee,1) = mean(AUC_min_ABcom{ee}.si.run.A);
-    AUC_rate_mean.ABcom.si.run(ee,2) = mean(AUC_min_ABcom{ee}.si.run.B)
+    AUC_rate_mean.ABcom.si.run(ee,2) = mean(AUC_min_ABcom{ee}.si.run.B);
+
+    %SI norun
+    AUC_rate_mean.ABcom.si.norun(ee,1) = mean(AUC_min_ABcom{ee}.si.norun.A);
+    AUC_rate_mean.ABcom.si.norun(ee,2) = mean(AUC_min_ABcom{ee}.si.norun.B);
+
+    %TS run
+    AUC_rate_mean.ABcom.ts.run(ee,1) = mean(AUC_min_ABcom{ee}.ts.run.A);
+    AUC_rate_mean.ABcom.ts.run(ee,2) = mean(AUC_min_ABcom{ee}.ts.run.B);
+
+    %TS norun
+    AUC_rate_mean.ABcom.ts.norun(ee,1) = mean(AUC_min_ABcom{ee}.ts.norun.A);
+    AUC_rate_mean.ABcom.ts.norun(ee,2) = mean(AUC_min_ABcom{ee}.ts.norun.B);
+    
 end
+
+%%% TO DO: generate plots for AUC; do stats for all AUC/min and
+%%% transient/min comparisons
+
+
+%% Calculate the mean of means and sem for means for plotting below
+
+mean(AUC_rate_mean.ABcom.si.run,1)
 
 
 %% Get mean of means and sem for bar plotting

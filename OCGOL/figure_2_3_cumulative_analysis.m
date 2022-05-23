@@ -447,14 +447,29 @@ end
 
 %% Calculate the mean of means and sem for means for plotting below
 
+%anonymous function for calculating sem
+sem = @(x) std(x,0,1)./sqrt(size(x,1));
+
+grouped_mean.ABcom.si.run = mean(AUC_rate_mean.ABcom.si.run,1);
+grouped_sem.ABcom.si.run = sem(AUC_rate_mean.ABcom.si.run);
+
+grouped_mean.ABcom.si.norun = mean(AUC_rate_mean.ABcom.si.norun,1);
+grouped_sem.ABcom.si.norun = sem(AUC_rate_mean.ABcom.si.norun);
+
+grouped_mean.ABcom.ts.run = mean(AUC_rate_mean.ABcom.ts.run,1);
+grouped_sem.ABcom.ts.run = sem(AUC_rate_mean.ABcom.ts.run);
+
+grouped_mean.ABcom.ts.norun = mean(AUC_rate_mean.ABcom.ts.norun,1);
+grouped_sem.ABcom.ts.norun = sem(AUC_rate_mean.ABcom.ts.norun);
+
+
 %% Get mean of means and sem for bar plotting
 %A ---- B
 %A-sel
 %B-sel
 %AB
 
-%anonymous function for calculating sem
-sem = @(x) std(x,0,1)./sqrt(size(x,1));
+
 
 %Mean of means - task selective neurons for figure 2
 %run - transients/min with control A&B place field tuned
