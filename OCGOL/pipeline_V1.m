@@ -20,7 +20,7 @@ options.defineDir = 1;
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_rand_d2_051518';
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_5AB_d1_051718';
 %setDir = 'G:\Figure_1_OCGOL_learning_long_term\I47_LP\behavior_only\I47_LP_3AB_d8_052418';
-%setDir = 'D:\OCGOL_reversal\MR1\MR1_Random_2022_02_28-001_1';
+setDir = 'D:\OCGOL_reversal\MR1\MR1_Random_2022_02_28-001_1';
 %setDir='D:\OCGOL_reversal\MR1\MR1_Random_2022_03_01-001_2';
 %setDir='D:\OCGOL_reversal\MR1\MR1_Random_2022_03_02-002_3';
 %setDir='D:\OCGOL_reversal\MR2\MR2_Random_2022_03_02-001_1';
@@ -30,7 +30,7 @@ options.defineDir = 1;
 %setDir = 'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_05-001_2';
 %setDir = 'D:\OCGOL_reversal\MR2\MR2_RevRandom_2022_03_07-001_6';
 %setDir = 'D:\OCGOL_reversal\MR1\MR1_RevAB_2022_03_03-001_4';
-setDir = setPath;
+%setDir = setPath;
 %whether to define experiment directory or use GUI to select
 %1 = define in variable, 0 = GUI select
 
@@ -307,7 +307,7 @@ switch options.BehaviorType
         
     case 'GOL' %work on this
     case 'OCGOL-rev' %Maya added this in
-        [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
+        [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL_rev(Behavior,Imaging,Events,options);
     case 'OCGOL'
         [Behavior_split,Imaging_split,Events_split,Behavior_split_lap,Events_split_lap] = split_trials_OCGOL(Behavior,Imaging,Events,options);
     case 'OCGOL-tech'

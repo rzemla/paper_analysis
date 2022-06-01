@@ -161,6 +161,10 @@ centroid_dist_data.semAsel = sem_cum_prob_A;
 centroid_dist_data.meanBsel = mean(cum_prob_B_sel,1);
 centroid_dist_data.semBsel =sem_cum_prob_B;
 
+%export place field counts for animal-by_animal analysis
+centroid_dist_data.count = centroid_count_ds;
+centroid_dist_data.count_norm = centroid_count_ds_norm;
+
 %% Generate plot of mean and sem at each bin (25), plot and do stats
 % 
 % if 0

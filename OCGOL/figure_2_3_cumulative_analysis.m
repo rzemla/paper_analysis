@@ -1286,11 +1286,12 @@ source_data_task_sel_remap = struct();
 
 si_ts_score_dist_data = si_ts_score_distributions(path_dir);
 
-%% Cumulative task-selective STCs
-
+%% Cumulative task-selective STCs - modify to extract individual STCs
+%%% modify here to extract individual STCs %%%
 task_sel_STC_data = cumulative_task_sel_STC(path_dir);
 
 %% Centroid distribution for A or B selective neurons - 
+%modify here to get the location of place field centroid
 %how many bins to display
 %1 - 20 (every 5) relative to 100 bins
 %2 - 25 (every 4) relative to 100 bins
