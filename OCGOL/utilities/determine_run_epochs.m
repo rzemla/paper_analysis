@@ -161,6 +161,14 @@ switch options.method
         %% MIMIMUM DURATION OF EPOCH IS SELECTED FOR HERE
         %Minimum duration for running epoch
         %duration of each run epoch in imaging time domain
+        
+        %add conditional here to mod run epochs time if animal never stops
+        %running; if size less than 2, transpose as single run epoch input
+        if size(run_epochs_time,2) < 2
+            run_epochs_time = run_epochs_time';
+        end
+
+
         run_epochs_dur=run_epochs_time(:,2)-run_epochs_time(:,1);
         
         %for each run epoch
@@ -286,6 +294,11 @@ end
 %the actual input frames - RZ
 run_int_idx=run_idx(run_epochs_idx);
 
+%if only 1 run epoch
+if size(run_int_idx,2) <2
+    run_int_idx = run_int_idx';
+end
+
 %make binary
 
 %make vector filled with 0's that corresponds to length of imaging session
@@ -359,6 +372,11 @@ elseif run_int_idx(1,1) ~= 1
     
 end
 
+%check if any run intervals were identified
+norun_check = exist('norun_int_idx','var');
+
+
+if norun_check ~= 0
 %QC check that intervals in matrices are properly constructed
 %reconstruct run_ones using the defined run and no run intervals and check
 %that it is the same
@@ -374,6 +392,10 @@ end
 for ii=1:size(norun_int_idx,1)
 run_ones_recon(norun_int_idx(ii,1):norun_int_idx(ii,2)) = 0;
 end
+
+end
+
+run_ones_recon = run_ones;
 
 if isequal(run_ones, run_ones_recon)
     disp('Reconstructed run_ones interval agrees with original.');

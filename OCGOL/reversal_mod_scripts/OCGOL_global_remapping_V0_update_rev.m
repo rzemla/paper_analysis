@@ -1,5 +1,6 @@
 function OCGOL_global_remapping_V0_update_rev(path_dir,crossdir,options)
 
+
 %% Import variables and define options
 
 %run componenet registration across sessions
@@ -26,11 +27,11 @@ selectTrial = options.selectTrial;
 %flag to all A or B trial or only correct A or B trials
 %all correct = 0 ==> uses trials 4,5 (set for learning data)
 %all correct = 1 ==> uses trials 1,2 (set for recall data)
-% options.allCorrect = 0;
+options.allCorrect = 0;
 % 
 % %this is just for controlling the display of labels across sessions/days
 % %doesn't control anything else
-% options.learning_data = 0;
+ options.learning_data = 1;
 
 
 %ANIMAL #1
@@ -111,30 +112,45 @@ selectTrial = options.selectTrial;
 % crossdir = 'E:\OCGOL_learning_short_term\I58_RTLP\crossSession_update';
 
 %MR1
- path_dir = {'D:\OCGOL_reversal\MR1\MR1_Random_2022_02_28-001_1',...
-     'D:\OCGOL_reversal\MR1\MR1_Random_2022_03_01-001_2',...
-     'D:\OCGOL_reversal\MR1\MR1_Random_2022_03_02-002_3',...
-     'D:\OCGOL_reversal\MR1\MR1_RevAB_2022_03_03-001_4',...
-     'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_04-001_5',...
-     'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_05-001_6',...
-     'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_08-001_7',...
-     'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_09-001_8',...
-     'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_10-001_9'};
-%cross session directory
-crossdir = 'D:\OCGOL_reversal\MR1\crossSession_update';
+%  path_dir = {'D:\OCGOL_reversal\MR1\MR1_Random_2022_02_28-001_1',...
+%      'D:\OCGOL_reversal\MR1\MR1_Random_2022_03_01-001_2',...
+%      'D:\OCGOL_reversal\MR1\MR1_Random_2022_03_02-002_3',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevAB_2022_03_03-001_4',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_04-001_5',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_05-001_6',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_08-001_7',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_09-001_8',...
+%      'D:\OCGOL_reversal\MR1\MR1_RevRandom_2022_03_10-001_9'};
+% cross session directory
+% crossdir = 'D:\OCGOL_reversal\MR1\crossSession_update';
 
-%MR4
-%  path_dir = {'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_04-001_1',...
-%      'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_05-001_2',...
-%      'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_06-001_3',...
-%      'D:\OCGOL_reversal\MR4\MR4_RevAB_2022_03_07-002_4',...
-%      'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_08-001_5',...
-%      'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_09-001_6',...
-%      'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_11-001_7',...
-%      'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_12-001_8',...
-%      'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_13-001_9'};
+%MR2 reversal
+% path_dir = {'D:\OCGOL_reversal\MR2\MR2_Random_2022_03_02-001_1',...
+%      'D:\OCGOL_reversal\MR2\MR2_Random_2022_03_03-001_2',...
+%      'D:\OCGOL_reversal\MR2\MR2_Random_2022_03_04-001_3',...
+%      'D:\OCGOL_reversal\MR2\MR2_RevAB_2022_03_05-001_4',...
+%      'D:\OCGOL_reversal\MR2\MR2_RevRandom_2022_03_06-001_5',...
+%      'D:\OCGOL_reversal\MR2\MR2_RevRandom_2022_03_07-001_6',...
+%      'D:\OCGOL_reversal\MR2\MR2_RevRandom_2022_03_12-001_7',...
+%      'D:\OCGOL_reversal\MR2\MR2_RevRandom_2022_03_13-001_8',...
+%      'D:\OCGOL_reversal\MR2\MR2_RevRandom_2022_03_14-001_9'};
+% 
 % %cross session directory
-% crossdir = 'D:\OCGOL_reversal\MR4\crossSession_update';
+% crossdir = 'D:\OCGOL_reversal\MR2\crossSession_update';
+
+%excluded bc no run epochs, ran several laps without doing task
+%'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_11-001_7',...
+%MR4
+ path_dir = {'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_04-001_1',...
+     'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_05-001_2',...
+     'D:\OCGOL_reversal\MR4\MR4_Random_2022_03_06-001_3',...
+     'D:\OCGOL_reversal\MR4\MR4_RevAB_2022_03_07-002_4',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_08-001_5',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_09-001_6',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_12-001_8',...
+     'D:\OCGOL_reversal\MR4\MR4_RevRandom_2022_03_13-001_9'};
+%cross session directory
+crossdir = 'D:\OCGOL_reversal\MR4\crossSession_update';
 
 %% Determine number of sessions to analyze for animal (automatically calculated)
 
@@ -217,9 +233,35 @@ match_var = load(filtered_ROI_dir_path.name);
 registered.multi.assigned_filtered = match_var.ROI_assign_multi_filtered;
 
 
+%% Variables that need to be modified for missing session - MR4 only
+%match_var, registered
+
+if 0
+    %remove the 7th session match ROI column for MR4-7
+    match_var.ROI_assign_multi_filtered(:,7) = [];
+
+    %multi-matching session parsing
+    registered.multi.assigned(:,7) = [];
+    registered.multi.assigned_all(:,7) = [];
+    registered.multi.assigned_filtered(:,7) = [];
+    registered.multi.ROI_outlines(:,7) = [];
+    registered.multi.ROI_zooms(:,7) = [];
+
+    temp = registered.multi.assign_cell;
+    temp(7,:) = [];
+    temp(:,7) = [];
+    registered.multi.assign_cell = temp;
+
+    temp = registered.session.assign_cell;
+    temp(7,:) = [];
+    temp(:,7) = [];
+    registered.session.assign_cell = temp;
+end
+
 %% Get ROI_zooms and ROI_outlines for each neuron on each day
 %number of sessions (runs even if not all session vars are loaded)
 %already soma parsed
+%DOESN'T RUN FOR MR4 with session 7 exclusion
 nbSes = size(session_vars,2);
 
 %extract and save ROI zooms/outlines for all neurons
@@ -450,6 +492,13 @@ save(fullfile(crossdir,'perf_lap_tables.mat'),'ses_perf_table','ses_lap_ct_table
 
 %export session performance data
 save(fullfile(crossdir,'ses_perf.mat'),'ses_perf','ses_lap_ct');
+
+%test plot
+
+figure;
+hold on
+plot(ses_perf')
+legend({'All', 'A', 'B'})
 
 
 %% Split neurons by A or B task selective category - A or B selective (exclusive)
