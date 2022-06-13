@@ -260,11 +260,11 @@ for ss=1:size(crossdir_learn,2)
     TC_corr_match_learning{ss} = load(fullfile(crossdir_learn{ss},'tc_corr_match.mat'));
     
     %fractions of neurons tuned in each cateogory across learning
-    tuned_frac_learning{ss} = load(fullfile(crossdir_learn{ss},'tuned_fractions.mat'));
+    %tuned_frac_learning{ss} = load(fullfile(crossdir_learn{ss},'tuned_fractions.mat'));
     
     %tuned logicals - which neurons are tuned by each category on given
     %session
-    tuned_log_learning{ss} = load(fullfile(crossdir_learn{ss},'tuned_logicals.mat'));
+    %tuned_log_learning{ss} = load(fullfile(crossdir_learn{ss},'tuned_logicals.mat'));
     %pf vector max - vector of maximum firing place field for each neuron
     pf_vector_max_learning{ss} = load(fullfile(crossdir_learn{ss},'pf_vector_max.mat'));
     
@@ -279,9 +279,9 @@ end
 short_term_learn.PV_TC_corr = PV_TC_corr_learning;
 short_term_learn.perf = perf_learning;
 short_term_learn.TC_corr_match = TC_corr_match_learning;
-short_term_learn.tuned_frac = tuned_frac_learning;
+%short_term_learn.tuned_frac = tuned_frac_learning;
 %logical of tuned neurons (A/B/AB for TS/SI with min 5 events)
-short_term_learn.tuned_log = tuned_log_learning;
+%short_term_learn.tuned_log = tuned_log_learning;
 %max tuning vectors
 short_term_learn.pf_vector_max = pf_vector_max_learning;
 %recurrence
