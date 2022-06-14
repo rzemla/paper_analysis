@@ -7,13 +7,13 @@ function OCGOL_global_remapping_V0_update_rev(path_dir,crossdir,options)
 options.register = 0;
 % 
 % %whether to load place field data processed below
-options.loadPlaceField_data = 0;
+options.loadPlaceField_data = 1;
 % 
 % %load extracted ROI zooms/outlines
 options.load_ROI_zooms_outlines = 1;
 % 
 % %visualize ROI outlines of matches across sessions
-options.visualize_match = 1;
+options.visualize_match = 0;
 % 
 % %load SCE data shuffled n=50/100 (re-shuffle later on cluster with n =1000)
 %options.loadSCE = 0;
@@ -236,7 +236,7 @@ registered.multi.assigned_filtered = match_var.ROI_assign_multi_filtered;
 %% Variables that need to be modified for missing session - MR4 only
 %match_var, registered
 
-if 0
+if 1
     %remove the 7th session match ROI column for MR4-7
     match_var.ROI_assign_multi_filtered(:,7) = [];
 
