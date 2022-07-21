@@ -5,13 +5,13 @@
 %import data for each figure
 
 %import data for each figure
-laptop_access = 1;
+laptop_access = 0;
 
 %laptop path directory
 laptop_path_dir = 'C:\Users\rzeml\Google Drive\task_selective_place_paper\matlab_data';
 %desktop path directory
-desktop_path_dir = 'G:\Google_drive\task_selective_place_paper\matlab_data';
-
+%desktop_path_dir = 'G:\Google_drive\task_selective_place_paper\matlab_data';
+desktop_path_dir = 'E:\matlab_data_export_paper';
 if laptop_access ==1
     load(fullfile(laptop_path_dir,'source_data_fig3.mat'));
 else
@@ -23,8 +23,99 @@ end
 %% Figure 3d Fraction of each class of remapping neurons
 
 %unload fractional data
-frac_class_mean = source_data_AB_remap.frac_class_mean;
-class_names = source_data_AB_remap.class_names;
+% frac_class_mean = source_data_AB_remap.frac_class_mean;
+% class_names = source_data_AB_remap.class_names;
+% 
+% %Friedman test for all groups
+% [friedman_stats] = friedman_test(frac_class_mean);
+% 
+% %create single entry table for Friedman output
+% nb_entries = 1;
+% 
+% fig_num = repmat(3,nb_entries,1);
+% fig_sub = string(repmat('d',nb_entries,1));
+% data_agg = string(repmat('by animal',nb_entries,1));
+% comp_descrip = {'Fraction of remapping neuron subtypes (common, activity, global, partial, unclassified)';};
+% n_sample = [friedman_stats(3)]';
+% test_name = repmat({'Friedman test'},nb_entries,1);
+% n_dof = friedman_stats(4);
+% test_statistic = [friedman_stats(2)]';
+% adj_method = string(repmat('N/A', nb_entries,1));
+% p_all = [friedman_stats(1)]';
+% p_adj = string(repmat('N/A', nb_entries,1));
+% sig_level = check_p_value_sig(p_all);
+% 
+% %create table
+% t_frac_friedman = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+%             test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+%             'VariableNames',{'Figure','Subfigure','Data aggregation',...
+%             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+%             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+% 
+% %paired Wilcoxon for each comparison
+% 
+% %common vs activity
+% stats.com_act = paired_wilcoxon_signrank(frac_class_mean(:,1),frac_class_mean(:,2));
+% 
+% %common vs. global
+% stats.com_glo = paired_wilcoxon_signrank(frac_class_mean(:,1),frac_class_mean(:,3));
+% 
+% %common vs. partial
+% stats.com_par = paired_wilcoxon_signrank(frac_class_mean(:,1),frac_class_mean(:,4));
+% 
+% %create excel importable table data
+% 
+% %create AUC/min table
+% %Figure, Subfigure, Data aggregation, Comparison, N, Test, Degrees of Freedom, 
+% %Test statistic, p-value, p-value adjusted, ad. method, Significance
+% 
+% %number of repeat statistical test
+% nb_entities = 3;
+% %figure number
+% fig_num = repmat(3,nb_entities,1);
+% %subplot
+% fig_sub = repmat('d',nb_entities,1);
+% %how was data aggregated
+% data_agg = repmat('by animal',nb_entities,1);
+% %what comparison is being made
+% comp_descrip = {'Common vs. activity';...
+%                 'Common vs. global';...
+%                 'Common vs. partial'};
+% %number of subjects            
+% %which statistic to extract for each test
+% stat_idx =3;            
+% n_sample = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
+% %Test name
+% test_name = repmat('Paired Wilcoxon Sign Rank',nb_entities,1);
+% 
+% %degrees of freedom
+% stat_idx =4; 
+% n_dof = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
+% %test statistic value
+% stat_idx =2; 
+% test_statistic = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
+% %multiple comparison adjustment method
+% adj_method = repmat('Holm-Sidak (3-way)', nb_entities,1);
+% %p values
+% stat_idx = 1;
+% p = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
+% %mutiple comparisons adjusted p values
+% p_adj = holm_sidak_p_adj(p',numel(p),0.05);
+% %star statistical significance level
+% sig_level = check_p_value_sig(p_adj);
+% 
+% %create RUN AUC/min table
+% t_frac_remap = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+%             test_name, n_dof, test_statistic,p,p_adj', adj_method, sig_level,...
+%             'VariableNames',{'Figure','Subfigure','Data aggregation',...
+%             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+%             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+%% Figure 3d merge class fraction update
+
+%unload fractional data
+frac_class_mean = source_data_AB_remap.merge.frac_class_mean;
+class_names = source_data_AB_remap.merge.class_names;
 
 %Friedman test for all groups
 [friedman_stats] = friedman_test(frac_class_mean);
@@ -35,7 +126,7 @@ nb_entries = 1;
 fig_num = repmat(3,nb_entries,1);
 fig_sub = string(repmat('d',nb_entries,1));
 data_agg = string(repmat('by animal',nb_entries,1));
-comp_descrip = {'Fraction of remapping neuron subtypes (common, activity, global, partial, unclassified)';};
+comp_descrip = {'Fraction of remapping neuron subtypes (common, activity, global, other)';};
 n_sample = [friedman_stats(3)]';
 test_name = repmat({'Friedman test'},nb_entries,1);
 n_dof = friedman_stats(4);
@@ -61,7 +152,7 @@ stats.com_act = paired_wilcoxon_signrank(frac_class_mean(:,1),frac_class_mean(:,
 stats.com_glo = paired_wilcoxon_signrank(frac_class_mean(:,1),frac_class_mean(:,3));
 
 %common vs. partial
-stats.com_par = paired_wilcoxon_signrank(frac_class_mean(:,1),frac_class_mean(:,4));
+%stats.com_par = paired_wilcoxon_signrank(frac_class_mean(:,1),frac_class_mean(:,4));
 
 %create excel importable table data
 
@@ -70,7 +161,7 @@ stats.com_par = paired_wilcoxon_signrank(frac_class_mean(:,1),frac_class_mean(:,
 %Test statistic, p-value, p-value adjusted, ad. method, Significance
 
 %number of repeat statistical test
-nb_entities = 3;
+nb_entities = 2;
 %figure number
 fig_num = repmat(3,nb_entities,1);
 %subplot
@@ -79,26 +170,25 @@ fig_sub = repmat('d',nb_entities,1);
 data_agg = repmat('by animal',nb_entities,1);
 %what comparison is being made
 comp_descrip = {'Common vs. activity';...
-                'Common vs. global';...
-                'Common vs. partial'};
+                'Common vs. global'};
 %number of subjects            
 %which statistic to extract for each test
 stat_idx =3;            
-n_sample = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
+n_sample = [stats.com_act(stat_idx), stats.com_glo(stat_idx)]';
 %Test name
 test_name = repmat('Paired Wilcoxon Sign Rank',nb_entities,1);
 
 %degrees of freedom
 stat_idx =4; 
-n_dof = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
+n_dof = [stats.com_act(stat_idx), stats.com_glo(stat_idx)]';
 %test statistic value
 stat_idx =2; 
-test_statistic = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
+test_statistic = [stats.com_act(stat_idx), stats.com_glo(stat_idx)]';
 %multiple comparison adjustment method
-adj_method = repmat('Holm-Sidak (3-way)', nb_entities,1);
+adj_method = repmat('Holm-Sidak (2-way)', nb_entities,1);
 %p values
 stat_idx = 1;
-p = [stats.com_act(stat_idx), stats.com_glo(stat_idx),stats.com_par(stat_idx)]';
+p = [stats.com_act(stat_idx), stats.com_glo(stat_idx)]';
 %mutiple comparisons adjusted p values
 p_adj = holm_sidak_p_adj(p',numel(p),0.05);
 %star statistical significance level
@@ -110,6 +200,7 @@ t_frac_remap = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
             'VariableNames',{'Figure','Subfigure','Data aggregation',...
             'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
             'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
 
 %% Figure 3e Distribution of common neurons on track
 %Rayleigh test of circular uniformity
@@ -378,6 +469,21 @@ insert_table_rows(t_frac_zone_remap,spreadsheet_name,sheet_name,'append')
 
 insert_table_rows(blank_row,spreadsheet_name,sheet_name,'append')
 insert_table_rows(t_2ks_partial_pf_dist,spreadsheet_name,sheet_name,'append')
+
+%% Extract isolated stats for updated merged class fraction 
+
+t1 = repmat({' '},1,12);
+blank_row = cell2table(t1);
+
+%spreadsheet name
+spreadsheet_name = '3d_stats_updated.xlsx';
+
+%sheet name
+sheet_name = 'Figure 3';
+
+%write to Excel spreadsheet
+insert_table_rows(t_frac_friedman,spreadsheet_name,sheet_name,'overwritesheet')
+insert_table_rows(t_frac_remap,spreadsheet_name,sheet_name,'append')
 
 %% Export statistics data tabels for import into Word format out script
 

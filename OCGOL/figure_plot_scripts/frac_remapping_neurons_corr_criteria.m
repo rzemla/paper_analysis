@@ -39,6 +39,20 @@ total_class_count = sum(total_remap,1);
 %total neurons
 total_neurons = sum(sum(total_remap,1),2);
 
+%% Merge partial and unclassified place cells into other category and get updated fractions
+
+total_remap_merge = [total_remap(:,1:3), sum(total_remap(:,[4,5]),2)];
+total_remap_merge_count = sum(total_remap_merge,2);
+
+fraction_remap_merge = total_remap_merge./total_remap_merge_count;
+
+total_merge_count = sum(total_remap_merge,1);
+
+%calculate the mean and sem from new class merge of remapping neurons
+class_mean_merge = mean(fraction_remap_merge,1);
+class_std_merge = std(fraction_remap_merge,[],1);
+class_sem_merge = class_std_merge./sqrt(size(total_remap_merge,1));
+
 %% Mean, std, and sem of classes above
 class_mean = mean(fraction_remap,1);
 class_std = std(fraction_remap,[],1);
@@ -54,6 +68,16 @@ frac_remapping.class_sem = class_sem;
 source_data_AB_remap.frac_class_mean = fraction_remap;
 source_data_AB_remap.class_names = {'Common','Activity','Global','Partial', 'Unclassified'};
 
+% data export merge unclassified and partial into other class
+frac_remapping.merge.class_names = {'Common','Activity','Global','Other'};
+frac_remapping.merge.class_mean = class_mean_merge;
+frac_remapping.merge.class_sem = class_sem_merge;
+
+%export data for statistical analysis
+source_data_AB_remap.merge.frac_class_mean = fraction_remap_merge;
+source_data_AB_remap.merge.class_names = {'Common','Activity','Global','Other'};
+
+
 %% Plot bars
 
 figure()
@@ -68,6 +92,21 @@ xtickangle(45)
 set(gca,'FontSize',16)
 errorbar([1:5],class_mean,class_sem,'k.')
 ylim([0 0.4])
+
+%% Plot bars with merged class
+
+figure()
+hold on
+ylabel('Fraction of total remapping neurons')
+bar(class_mean_merge,'FaceColor',[139, 0, 139]/255)
+%add significance bars
+xticks([1:4])
+xticklabels({'Common','Rate','Global','Other'})
+%sigstar({[1,2], [1,3],[1,4]})
+xtickangle(45)
+set(gca,'FontSize',16)
+errorbar([1:4],class_mean_merge,class_sem_merge,'k.')
+ylim([0 0.6])
 
 
 %% Rearrange order to match that of color scheme below

@@ -181,11 +181,13 @@ set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',12, ...
 
 %% Remapping properies plots in Fig. 3
 
+%modifed to used merge data classes
+
 %unload the data
 %frac remap bar plot (3d)
-class_names = frac_remapping.class_names;
-class_mean = frac_remapping.class_mean ;
-class_sem = frac_remapping.class_sem;
+class_names = frac_remapping.merge.class_names;
+class_mean = frac_remapping.merge.class_mean ;
+class_sem = frac_remapping.merge.class_sem;
 
 fig = figure; % event based STC;
 fig.Units = 'centimeters';
@@ -204,12 +206,12 @@ hold on
 
 bar(class_mean,'FaceColor',[139, 0, 139]/255)
 %add significance bars
-xticks([1:5])
-xticklabels({'Common','Rate','Global','Partial','Unclassified'})
+xticks([1:4])
+xticklabels({'Common','Rate','Global','Other'})
 %sigstar({[1,2], [1,3],[1,4]})
 xtickangle(45)
-errorbar([1:5],class_mean,class_sem,'k.')
-ylim([0 0.4])
+errorbar([1:4],class_mean,class_sem,'k.')
+ylim([0 0.6])
 ylabel('Fraction of remapping neurons')
 
 %unload data

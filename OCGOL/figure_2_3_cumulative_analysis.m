@@ -1290,6 +1290,275 @@ si_ts_score_dist_data = si_ts_score_distributions(path_dir);
 %%% modify here to extract individual STCs %%%
 task_sel_STC_data = cumulative_task_sel_STC(path_dir);
 
+%% Split and plot individuals task-selective STCs from each animal
+
+task_sel_STC_data_split = cumulative_task_sel_STC_split(path_dir);
+
+%use this input for plotting new split - separate each animal with black
+%line
+cell2mat(task_sel_STC_data_split.split.STCs(:,2))
+
+
+%% Plot color-coded STCs for split STCs - make new function from this
+
+%define colors maps for rasters
+cmap_blue=cbrewer('seq', 'Blues', 32);
+cmap_red=cbrewer('seq', 'Reds', 32);
+
+%extract the counts of each class of task-selective place cells
+
+task_sel_counts = cellfun(@(x) size(x,1),task_sel_STC_data_split.split.STCs,'UniformOutput',true);
+
+%normalized value
+task_sel_counts_norm = task_sel_counts./sum(task_sel_counts,2);
+
+%paired t-test between counts
+[h,p,~,~] = ttest(task_sel_counts(:,1),task_sel_counts(:,2) );
+
+%paired t-test between norm counts
+[h,p,~,~] = ttest(task_sel_counts_norm(:,1),task_sel_counts_norm(:,2) );
+
+%generate normalized plot 
+
+
+figure;
+hold on
+plot([1,2],task_sel_counts)
+
+%bin positions 
+rewA_bin_pos = task_sel_STC_data_split.rewA_bin_pos;
+rewB_bin_pos = task_sel_STC_data_split.rewB_bin_pos;
+odor_bin_pos = task_sel_STC_data_split.odor_bin_pos;
+
+%%%%% A selective neurons - STC on A laps and STC on B laps %%%%%
+
+%set 0 value to white for both blue and red
+cmap_blue(1,:) = [1 1 1];
+cmap_red(1,:) = [1 1 1];
+
+% gridSize = [5,2];
+% t3 = tiledlayout(t,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','normal','Units','centimeters');
+% %positioning of rasters with overall master layout
+% t3.Layout.Tile = 2;
+% %span of raster layout within overall master layout
+% t3.Layout.TileSpan = [2,1];
+% 
+% fig2 = figure;
+% fig2.Units = 'centimeters';
+% fig2.Position(1) = 8;
+% fig2.Position(2) = 1;
+% fig2.Position(3) = 24;
+% fig2.Position(4) = 36;
+
+fig2 = figure;
+fig2.Units = 'centimeters';
+fig2.Position(1) = 51;
+fig2.Position(2) = 0.5;
+fig2.Position(3) = 22;
+fig2.Position(4) = 26;
+
+%tiledLayout (replaces subplot fxn)
+gridSize = [4,2];
+t2 = tiledlayout(fig2,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','normal','Units','centimeters');
+%nest tiles within master tile
+
+%how many cells for each raster to occupy
+raster_size = [2,1];
+%input raster for display (A and B neighboring)
+%for A selective neurons
+
+%A
+nexttile(t2,raster_size);
+%A laps
+temp = cell2mat(task_sel_STC_data_split.split.STCs(:,1));
+input_matrix = temp(:,1:100);
+%create blank alpha shading matrix where 
+imAlpha=ones(size(input_matrix));
+imAlpha(isnan(input_matrix))=0;
+imagesc(input_matrix,'AlphaData',imAlpha);
+
+hold on
+%pbaspect([1 1.5 1])
+title('Asel - A laps')
+
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+caxis([0 1])
+colormap(gca,cmap_blue);
+cbar= colorbar;
+cbar.Label.String = 'Normalized activity';
+cbar.Ticks = [0 0.5 1];
+ax1 = gca;
+ylabel('Neuron #');
+%xlabel('Normalized position');
+ax1.XTick = [1 100];
+ax1.XTickLabel = {'0','1'};
+
+%plot reward A and reward B zones
+%A
+plot([rewA_bin_pos rewA_bin_pos],[1 size(input_matrix,1)],'k--')
+%B
+plot([rewB_bin_pos rewB_bin_pos],[1 size(input_matrix,1)],'k--')
+%odor pos
+plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
+
+%make ticks invisible
+set(ax1, 'TickLength', [0 0]);
+
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+
+%B laps as input A sel - B laps
+temp = cell2mat(task_sel_STC_data_split.split.STCs(:,1));
+input_matrix = temp(:,101:200);
+
+%B 
+nexttile(raster_size);
+%create blank alpha shading matrix where 
+imAlpha=ones(size(input_matrix));
+imAlpha(isnan(input_matrix))=0;
+imagesc(input_matrix,'AlphaData',imAlpha);
+hold on
+%pbaspect([1 1.5 1])
+title('Asel - B laps')
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+caxis([0 1])
+colormap(gca,cmap_red);
+cbar2 = colorbar;
+cbar2.Label.String = 'Normalized activity';
+cbar2.Ticks = [0 0.5 1];
+ax2 = gca;
+%ylabel('Neuron #');
+%xlabel('Normalized position');
+ax2.XTick = [1 100];
+ax2.XTickLabel = {'0','1'};
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+
+%plot reward A and reward B zones
+%A
+plot([rewA_bin_pos rewA_bin_pos],[1 size(input_matrix,1)],'k--')
+%B
+plot([rewB_bin_pos rewB_bin_pos],[1 size(input_matrix,1)],'k--')
+%odor pos
+plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
+
+%make ticks invisible
+set(ax2, 'TickLength', [0 0]);
+
+
+%%%%% B selective neurons - STC on A laps and STC on B laps %%%%%
+
+% %set 0 value to white for both blue and red
+% cmap_blue(1,:) = [1 1 1];
+% cmap_red(1,:) = [1 1 1];
+
+%input raster for display (A and B neighboring)
+%for A selective neurons
+%figure('Position',[2182 356 934 559])
+%A
+nexttile(raster_size);
+%A laps
+temp = cell2mat(task_sel_STC_data_split.split.STCs(:,2));
+input_matrix = temp(:,1:100);
+
+%create blank alpha shading matrix where 
+imAlpha=ones(size(input_matrix));
+imAlpha(isnan(input_matrix))=0;
+imagesc(input_matrix,'AlphaData',imAlpha);
+hold on
+%pbaspect([1 1.5 1])
+title('Bsel - A laps')
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+caxis([0 1])
+colormap(gca,cmap_blue);
+if 0
+    cbar= colorbar;
+    cbar.Label.String = 'Normalized activity';
+    cbar.Ticks = [0 0.5 1];
+end
+ax1 = gca;
+ylabel('Neuron #');
+xlabel('Normalized position');
+ax1.XTick = [1 100];
+ax1.XTickLabel = {'0','1'};
+
+%plot reward A and reward B zones
+%A
+plot([rewA_bin_pos rewA_bin_pos],[1 size(input_matrix,1)],'k--')
+%B
+plot([rewB_bin_pos rewB_bin_pos],[1 size(input_matrix,1)],'k--')
+%odor pos
+plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
+
+%make ticks invisible
+set(ax1, 'TickLength', [0 0]);
+
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+
+%B laps as input
+temp = cell2mat(task_sel_STC_data_split.split.STCs(:,2));
+input_matrix = temp(:,101:200);
+
+%B 
+nexttile(raster_size);
+%create blank alpha shading matrix where 
+imAlpha=ones(size(input_matrix));
+imAlpha(isnan(input_matrix))=0;
+imagesc(input_matrix,'AlphaData',imAlpha);
+hold on
+%pbaspect([1 1.5 1])
+title('Bsel - B laps')
+%set background axis color to black
+set(gca,'color',0*[1 1 1]);
+%set colormap to 
+caxis([0 1])
+colormap(gca,cmap_red);
+
+if 0
+    cbar2 = colorbar;
+    cbar2.Label.String = 'Normalized activity';
+    cbar2.Ticks = [0 0.5 1];
+end
+
+ax2 = gca;
+ylabel('Neuron #');
+xlabel('Normalized position');
+ax2.XTick = [1 100];
+ax2.XTickLabel = {'0','1'};
+set(gca,'FontSize',14)
+set(gca,'LineWidth',1.5)
+
+%plot reward A and reward B zones
+%A
+plot([rewA_bin_pos rewA_bin_pos],[1 size(input_matrix,1)],'k--')
+%B
+plot([rewB_bin_pos rewB_bin_pos],[1 size(input_matrix,1)],'k--')
+%odor pos
+plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
+
+%make ticks invisible
+set(ax2, 'TickLength', [0 0]);
+
+set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',14, ...
+'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
+
+
+%% Extract data on individual task-sel maps for plotting and quantification per reviewer
+
+%extract counts/fractions from this
+tc_corr_sel_data.all_neurons.Asel  
+
+%edit aboe function to extract individual STCs for task-selective neurons
+%per animal - split data is already in the function - write new and
+%generate plot + count/fractional data
+
 %% Centroid distribution for A or B selective neurons - 
 %modify here to get the location of place field centroid
 %how many bins to display
