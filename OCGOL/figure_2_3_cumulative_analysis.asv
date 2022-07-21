@@ -1305,19 +1305,6 @@ cell2mat(task_sel_STC_data_split.split.STCs(:,2))
 cmap_blue=cbrewer('seq', 'Blues', 32);
 cmap_red=cbrewer('seq', 'Reds', 32);
 
-%extract the counts of each class of task-selective place cells
-
-task_sel_counts = cellfun(@(x) size(x,1),task_sel_STC_data_split.split.STCs,'UniformOutput',true);
-
-%normalized value
-task_sel_counts_norm = task_sel_counts./sum(task_sel_counts,2);
-
-%paired t-test between counts
-[h,p,~,~] = ttest(task_sel_counts(:,1),task_sel_counts(:,2) )
-
-%paired t-test between norm counts
-[h,p,~,~] = ttest(task_sel_counts_norm(:,1),task_sel_counts_norm(:,2) )
-
 figure;
 hold on
 plot([1,2],task_sel_counts)
@@ -1350,12 +1337,12 @@ cmap_red(1,:) = [1 1 1];
 fig2 = figure;
 fig2.Units = 'centimeters';
 fig2.Position(1) = 51;
-fig2.Position(2) = 0.5;
+fig2.Position(2) = -4;
 fig2.Position(3) = 22;
-fig2.Position(4) = 26;
+fig2.Position(4) = 30;
 
 %tiledLayout (replaces subplot fxn)
-gridSize = [4,2];
+gridSize = [5,2];
 t2 = tiledlayout(fig2,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','normal','Units','centimeters');
 %nest tiles within master tile
 
@@ -1543,18 +1530,99 @@ plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
 %make ticks invisible
 set(ax2, 'TickLength', [0 0]);
 
+
+nexttile(t2)
+hold on
+%axis square
+%bar the mean for each group
+b = bar(1:2,mean_norm,'FaceColor', 'flat');
+pause(0.1)
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    xData = b(ib).XData + b(ib).XOffset;
+    
+    errorbar(xData,mean_norm,sem_norm,'k.','LineWidth',1.5)
+end
+
+%set each bar to group color
+b(1).CData(1:2,:) =  color_groups;
+
+%plot lines for each animal
+plot([1,2], task_sel_counts_norm, '-', 'Color', [0.6 0.6 0.6])
+
+xticks([1 2 ]);
+xticklabels({'A-sel','B-sel'});
+ylabel('Norm. fraction of cells');
+xlim([0 3])
+ylim([0.4 0.7])
+%yticks([0:0.2:1])
+
 set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',14, ...
 'FontWeight','normal', 'LineWidth', 1.5,'layer','top')
 
 
-%% Extract data on individual task-sel maps for plotting and quantification per reviewer
+%% Bar chart comparing fraction of task-remapping place cells
 
-%extract counts/fractions from this
-tc_corr_sel_data.all_neurons.Asel  
+%% Plotter task-selective distribution
 
-%edit aboe function to extract individual STCs for task-selective neurons
-%per animal - split data is already in the function - write new and
-%generate plot + count/fractional data
+%extract the counts of each class of task-selective place cells
+task_sel_counts = cellfun(@(x) size(x,1),task_sel_STC_data_split.split.STCs,'UniformOutput',true);
+%normalized value
+task_sel_counts_norm = task_sel_counts./sum(task_sel_counts,2);
+%paired t-test between counts
+[h,p,~,~] = ttest(task_sel_counts(:,1),task_sel_counts(:,2) );
+%paired t-test between norm counts
+[h,p,~,~] = ttest(task_sel_counts_norm(:,1),task_sel_counts_norm(:,2) );
+
+%Non-norm cell task-sel counts
+
+mean_abs 
+%Norm task sell count
+mean_norm = mean(task_sel_counts_norm,1);
+sem_norm = std(task_sel_counts_norm,0,1)./sqrt(size(task_sel_counts,1))'
+    
+%paper color scheme for A,B, A&B, and neither
+color_groups = [65,105,225; 220,20,60]./255;
+
+%plot bar
+%set size of the figure
+fig = figure;
+fig.Units = 'centimeters';
+fig.Position(1) = 8;
+fig.Position(2) = 1;
+fig.Position(3) = 24;
+fig.Position(4) = 18;
+
+%tiledLayout (replaces subplot fxn)
+gridSize = [2,3];
+t1 = tiledlayout(fig,gridSize(1),gridSize(2),'TileSpacing','compact','Padding','normal','Units','centimeters');
+
+
+nexttile(t1)
+hold on
+axis square
+%bar the mean for each group
+b = bar(1:2,mean_norm,'FaceColor', 'flat');
+pause(0.1)
+%plot the sem for each mean for each group
+for ib = 1:numel(b)
+    %XData property is the tick labels/group centers; XOffset is the offset
+    %of each distinct group
+    xData = b(ib).XData + b(ib).XOffset;
+    
+    errorbar(xData,mean_norm,sem_norm,'k.','LineWidth',1.5)
+end
+
+%set each bar to group color
+b(1).CData(1:2,:) =  color_groups;
+xticks([1 2 ]);
+xticklabels({'A-sel','B-sel'});
+ylabel('Task-selective neuron count');
+xlim([0 3])
+ylim([0 1])
+yticks([0:0.2:1])
 
 %% Centroid distribution for A or B selective neurons - 
 %modify here to get the location of place field centroid
