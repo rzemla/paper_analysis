@@ -1298,16 +1298,77 @@ task_sel_STC_data_split = cumulative_task_sel_STC_split(path_dir);
 %line
 cell2mat(task_sel_STC_data_split.split.STCs(:,2))
 
+%% Statisistic for individual task-sel place cells counts 
+
+%extract the counts of each class of task-selective place cells
+task_sel_counts = cellfun(@(x) size(x,1),task_sel_STC_data_split.split.STCs,'UniformOutput',true);
+%normalized value
+task_sel_counts_norm = task_sel_counts./sum(task_sel_counts,2);
+%paired t-test between counts
+[h,p,~,~] = ttest(task_sel_counts(:,1),task_sel_counts(:,2) );
+%paired t-test between norm counts
+[h,p,~,~] = ttest(task_sel_counts_norm(:,1),task_sel_counts_norm(:,2) );
+
+%Non-norm cell task-sel counts
+mean_abs =  mean(task_sel_counts,1);
+sem_abs = std(task_sel_counts,0,1)./sqrt(size(task_sel_counts,1));
+
+%Norm task sell count
+mean_norm = mean(task_sel_counts_norm,1);
+sem_norm = std(task_sel_counts_norm,0,1)./sqrt(size(task_sel_counts,1));
+
+%% Export stats for task-sel place cell counts
+task_sel_count_ttest = paired_ttest(task_sel_counts(:,1),task_sel_counts(:,2));
+
+data_input = [task_sel_count_ttest];
+
+%what comparisons are being made
+comp_descrip_in = {'A vs B- task selective place cell count'};
+
+nb_entries = 1;
+fig_num = repmat(4,nb_entries,1);
+fig_sub = string(repmat('sr',nb_entries,1));
+data_agg = string(repmat('by animal',nb_entries,1));
+comp_descrip = {'A vs B- task selective place cell count'};
+n_sample = [data_input(3)]';
+test_name = repmat({'Paired t-test'},nb_entries,1);
+n_dof = data_input(4);
+test_statistic = [data_input(2)]';
+adj_method = string(repmat('N/A', nb_entries,1));
+p_all = [data_input(1)]';
+p_adj = string(repmat('N/A', nb_entries,1));
+sig_level = check_p_value_sig(p_all);
+
+%create table
+t_ttest_task_sel_ct = table(fig_num, fig_sub, data_agg, comp_descrip, n_sample,...
+            test_name, n_dof, test_statistic, p_all, p_adj, adj_method, sig_level,...
+            'VariableNames',{'Figure','Subfigure','Data aggregation',...
+            'Comparison','N', 'Test', 'Degrees of Freedom', 'Test statistic',...
+            'p-value', 'p-value adjusted', 'Adjustment method','Significance'});
+
+t1 = repmat({' '},1,12);
+blank_row = cell2table(t1);
+
+%sheet name
+sheet_name = 'Sup fig';
+
+%export as excel spreadsheet
+spreadsheet_name = 'task_cell_count_stats.xlsx';
+%empty row
+t1 = repmat({' '},1,12);
+
+%write to Excel spreadsheet
+insert_table_rows(t_ttest_task_sel_ct,spreadsheet_name,sheet_name,'overwritesheet')
 
 %% Plot color-coded STCs for split STCs - make new function from this
+
+%ticks numbers for black line separators
+
+animal_ticks = cumsum(task_sel_counts);
 
 %define colors maps for rasters
 cmap_blue=cbrewer('seq', 'Blues', 32);
 cmap_red=cbrewer('seq', 'Reds', 32);
-
-figure;
-hold on
-plot([1,2],task_sel_counts)
 
 %bin positions 
 rewA_bin_pos = task_sel_STC_data_split.rewA_bin_pos;
@@ -1387,6 +1448,11 @@ plot([rewB_bin_pos rewB_bin_pos],[1 size(input_matrix,1)],'k--')
 %odor pos
 plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
 
+%animal separator ticks
+for ii=1:11
+    plot([0 100],[animal_ticks(ii,1) animal_ticks(ii,1)],'k-')
+end
+
 %make ticks invisible
 set(ax1, 'TickLength', [0 0]);
 
@@ -1429,6 +1495,11 @@ plot([rewA_bin_pos rewA_bin_pos],[1 size(input_matrix,1)],'k--')
 plot([rewB_bin_pos rewB_bin_pos],[1 size(input_matrix,1)],'k--')
 %odor pos
 plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
+
+%animal separator ticks
+for ii=1:11
+    plot([0 100],[animal_ticks(ii,1) animal_ticks(ii,1)],'k-')
+end
 
 %make ticks invisible
 set(ax2, 'TickLength', [0 0]);
@@ -1480,6 +1551,11 @@ plot([rewB_bin_pos rewB_bin_pos],[1 size(input_matrix,1)],'k--')
 %odor pos
 plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
 
+%animal separator ticks
+for ii=1:11
+    plot([0 100],[animal_ticks(ii,2) animal_ticks(ii,2)],'k-')
+end
+
 %make ticks invisible
 set(ax1, 'TickLength', [0 0]);
 
@@ -1527,6 +1603,10 @@ plot([rewB_bin_pos rewB_bin_pos],[1 size(input_matrix,1)],'k--')
 %odor pos
 plot([odor_bin_pos odor_bin_pos],[1 size(input_matrix,1)],'k--')
 
+for ii=1:11
+    plot([0 100],[animal_ticks(ii,2) animal_ticks(ii,2)],'k-')
+end
+
 %make ticks invisible
 set(ax2, 'TickLength', [0 0]);
 
@@ -1566,23 +1646,6 @@ set(findobj(gcf,'type','axes'),'FontName','Arial','FontSize',14, ...
 %% Bar chart comparing fraction of task-remapping place cells
 
 %% Plotter task-selective distribution
-
-%extract the counts of each class of task-selective place cells
-task_sel_counts = cellfun(@(x) size(x,1),task_sel_STC_data_split.split.STCs,'UniformOutput',true);
-%normalized value
-task_sel_counts_norm = task_sel_counts./sum(task_sel_counts,2);
-%paired t-test between counts
-[h,p,~,~] = ttest(task_sel_counts(:,1),task_sel_counts(:,2) );
-%paired t-test between norm counts
-[h,p,~,~] = ttest(task_sel_counts_norm(:,1),task_sel_counts_norm(:,2) );
-
-%Non-norm cell task-sel counts
-mean_abs =  mean(task_sel_counts,1);
-sem_abs = std(task_sel_counts,0,1)./sqrt(size(task_sel_counts,1));
-
-%Norm task sell count
-mean_norm = mean(task_sel_counts_norm,1);
-sem_norm = std(task_sel_counts_norm,0,1)./sqrt(size(task_sel_counts,1));
     
 %paper color scheme for A,B, A&B, and neither
 color_groups = [65,105,225; 220,20,60]./255;
